@@ -1,7 +1,7 @@
 # 全局规则工程 (Global Rules Project)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.6.0`
+> - **当前系统实施总版本**：`v1.7.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -31,11 +31,19 @@
 │   │   └── atomicity_specification.md # 系统操作与工程设计原子性事务边界规范
 │   └── security/                    # 【安全防护与红线法典】
 │       └── security_baseline.md     # 免审批安全基线、防破坏红线与写后读回机制
-├── knowledge/                       # 【统一知识库与业务法典】
-├── knowledge/README.md                    # 知识库总索引与前置防冲突核验协议
-│   ├── worldview_background.md      # 世界观故事背景、源能法则、时代纪元与阵营设定
-│   ├── art_specification.md         # 游戏美术视觉与资产工程规范（风格/色彩/面数/PBR/UI）
-│   └── engineering_specification.md # 软件技术与工程架构规范（Unity LTS/URP/60FPS/MVVM/零GC）
+├── knowledge/                       # 【分层统一知识库与业务法典】
+│   ├── README.md                    # 知识库总索引、分层架构教学图与前置核验协议
+│   ├── common/                      # 【通用公共规范库 · 跨项目共享】
+│   │   ├── README.md                # 通用规范导航总览
+│   │   ├── interaction_specification.md # 交互规范（格式塔六大定律 / Don't Make Me Think 零思考）
+│   │   ├── unity_specification.md   # Unity规范（页面Scene / 弹窗Prefab / 按钮阴影位移 / .meta铁律）
+│   │   ├── web_specification.md     # Web规范（路由懒加载 / Modal Portal挂载 / box-shadow / 骨架屏）
+│   │   ├── miniprogram_specification.md # 小程序规范（主包≤1.5MB / 弹窗Component / setData差量）
+│   │   ├── engineering_specification.md # 技术架构规范（模块单向解耦 / 零GC / 状态机原子性）
+│   │   └── art_specification.md     # 视觉规范（60-30-10配比 / WCAG 4.5:1对比度 / 阴影阶梯）
+│   └── projects/                    # 【项目专属知识库 · 物理隔离防污染】
+│       ├── README.md                # 项目隔离规约与清单
+│       └── aether_echo/             # 源能回响项目（专属世界观/美术/Unity URP工程参数）
 ├── indexes/                         # 【能力索引、外部生态与快速通道】
 │   ├── shortcuts_index.md           # 地图式高速干道路由导航与快速口令矩阵（G0~G3 四级权重）
 │   ├── extension_ecosystem.md       # DSH 外部可扩展能力生态与协议全景矩阵 (MCP/Skill/CLI/API/Browser)
@@ -49,7 +57,7 @@
 │   ├── efficiency_audit_log.md      # 思考决策与执行效率全景量化审计台账 (M1~M6指标)
 │   └── README.md                    # 记忆层专属说明文档
 ├── docs/                            # 【说明、指南与核心台账】
-│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-029，总版本 v1.6.0）
+│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-030，总版本 v1.7.0）
 │   ├── diagram_generation_guide.md  # 全场景流程图、信息图与教学图生成技术指南与标准模板库
 │   ├── memory_architecture.md       # AI 分层长短期记忆体系架构与工程落地规范
 │   └── rules_tutorial.md            # 全局规则运转教学指南与图解
@@ -75,7 +83,7 @@
 1. **查权限与红线**：核对沙箱权限（`Approval: never`），查阅 `rules/security/security_baseline.md` 守住安全红线；
 2. **看元规与干道**：阅读 `rules/system/meta_rules.md` 明确最高准则，通过 `indexes/shortcuts_index.md` 优先命中 G0/G1 高速干道路由；
 3. **核知识库**：检阅 `knowledge/README.md`，执行前置防冲突核查，确保新任务与世界观/美术/工程设定绝不冲突（非游戏坚决不载入游戏设定）；
-4. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v1.6.0`）；
+4. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v1.7.0`）；
 5. **读记忆**：读取 `memory/` 目录继承跨会话偏好与避坑经验（指纹单次读，写后才重读）；
 6. **定轨道与首动命名**：依据六维价值打分(60分)与四维难度打分(100分)双螺旋决策，复杂任务**首个工具调用必须执行 `./scripts/rename_session.sh` 锁定会话**；十六步严格执行不可跳步；收尾必给结构化交付入口与六维量化审计指标卡片。
 

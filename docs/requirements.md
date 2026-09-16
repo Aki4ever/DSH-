@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.6.0`
+> - **当前系统实施总版本**：`v1.7.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -632,6 +632,41 @@
   - [x] 原生免库 `read_image` 质检验证图像高清渲染无变形；
   - [x] 能力索引文档内嵌图表与链接无缝更新；
   - [x] 需求台账、审计日志与工程实施总版本号推进至 `v1.6.0`。
+
+---
+
+### REQ-030: 分层知识库多项目隔离架构与原子级全平台工程规范
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v1.7.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **核心诉求与目标**：
+  1. **Codex 与 DSH 能力体系流程对比图解**：
+     - 梳理 Codex（专用子代理矩阵/外层Hook/Confirm）与 DSH（四级干道路由/十六步流水线/免审批自律/M1~M6效率审计）的全景对比与转化映射；
+     - 产出高保真矢量信息图 `assets/generated_images/codex_vs_dsh_architecture_comparison.svg`。
+  2. **知识库分层架构重构与多项目物理隔离**：
+     - 确立 `knowledge/common/`（跨项目公共规范共享）与 `knowledge/projects/`（按工程物理隔离）双层拓扑架构；
+     - 产出分层架构教学图 `assets/generated_images/knowledge_base_layered_architecture.svg`；
+     - 将游戏世界观等特定资产隔离进 `knowledge/projects/aether_echo/`，严格阻断跨业务上下文污染。
+  3. **细化到原子级的跨平台工程与交互规范**：
+     - **交互规范**：格式塔六大定律（接近/相似/闭合/主体背景）与 Don't Make Me Think 零思考直觉、防呆与三秒法则；
+     - **Unity 规范**：主页面必做成 Scene、弹窗浮层必做成 Prefab、按钮必配 Drop Shadow 阴影与物理下沉动效、动静分离双 Canvas 与 `.meta` 同生共死；
+     - **Web 规范**：页面路由懒加载、Modal Portal 挂载防层叠上下文污染、立体 box-shadow 与骨架屏；
+     - **小程序规范**：主包 ≤1.5MB、组件化弹窗与防滚动穿透、`hover-class` 原生按压、`setData` 路径差量更新。
+- **关联文件**：
+  - `knowledge/README.md`
+  - `knowledge/common/*`
+  - `knowledge/projects/*`
+  - `assets/generated_images/codex_vs_dsh_architecture_comparison.svg`
+  - `assets/generated_images/knowledge_base_layered_architecture.svg`
+  - `README.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 完成两张高保真矢量对比与教学图创建并支持直达；
+  - [x] `knowledge/common/` 六大通用规范文件落地，细致到 Scene/Prefab/阴影/格式塔像素级；
+  - [x] `knowledge/projects/` 建立物理隔离，完成示例项目迁移；
+  - [x] 全局实施总版本号推进至 `v1.7.0`。
+
 
 
 

@@ -1,0 +1,170 @@
+<svg width="1080" height="760" viewBox="0 0 1080 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1080" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A0D14"/>
+      <stop offset="50%" stop-color="#121722"/>
+      <stop offset="100%" stop-color="#080A0F"/>
+    </linearGradient>
+    <linearGradient id="glowBorder" x1="0" y1="0" x2="1080" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00A8FF"/>
+      <stop offset="50%" stop-color="#2EC4B6"/>
+      <stop offset="100%" stop-color="#FF5252"/>
+    </linearGradient>
+    <linearGradient id="codexHeader" x1="0" y1="0" x2="480" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2D1B4E"/>
+      <stop offset="100%" stop-color="#1A122E"/>
+    </linearGradient>
+    <linearGradient id="dshHeader" x1="0" y1="0" x2="480" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0D3B52"/>
+      <stop offset="100%" stop-color="#0A2233"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="480" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#161C28"/>
+      <stop offset="100%" stop-color="#0F131C"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="30" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1080" height="760" rx="24" fill="url(#bgGrad)"/>
+  <rect x="2" y="2" width="1076" height="756" rx="22" stroke="url(#glowBorder)" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- 发光氛围球 -->
+  <circle cx="150" cy="120" r="180" fill="#9D4EDD" opacity="0.08" filter="blur(80px)"/>
+  <circle cx="920" cy="120" r="180" fill="#00A8FF" opacity="0.08" filter="blur(80px)"/>
+  <circle cx="540" cy="650" r="220" fill="#2EC4B6" opacity="0.07" filter="blur(90px)"/>
+
+  <!-- 顶部主标题 -->
+  <g transform="translate(50, 36)">
+    <rect x="0" y="0" width="12" height="32" rx="4" fill="#00A8FF"/>
+    <text x="24" y="24" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="800" letter-spacing="1">Codex vs DSH 能力体系与流程全景对比图</text>
+    <text x="560" y="24" fill="#2EC4B6" font-family="system-ui, sans-serif" font-size="14" font-weight="700">· 跨架构流程映射与执行标准</text>
+    <rect x="880" y="4" width="100" height="26" rx="13" fill="#1C2433" stroke="#2EC4B6" stroke-width="1"/>
+    <text x="930" y="21" text-anchor="middle" fill="#2EC4B6" font-family="sans-serif" font-size="12" font-weight="700">v1.6.0 标准版</text>
+  </g>
+
+  <!-- 左侧：Codex 专用体系 -->
+  <g transform="translate(50, 90)">
+    <!-- 标题卡 -->
+    <rect width="475" height="52" rx="10" fill="url(#codexHeader)" stroke="#9D4EDD" stroke-width="1.5"/>
+    <circle cx="28" cy="26" r="12" fill="#9D4EDD" opacity="0.3"/>
+    <text x="28" y="31" text-anchor="middle" fill="#C77DFF" font-family="sans-serif" font-size="14" font-weight="bold">C</text>
+    <text x="50" y="32" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="17" font-weight="bold">Codex 体系 (专用子代理与钩子矩阵)</text>
+
+    <!-- 模块 1：门禁与前置 -->
+    <g transform="translate(0, 64)">
+      <rect width="475" height="110" rx="10" fill="url(#cardGrad)" stroke="#2B3245" stroke-width="1"/>
+      <text x="18" y="28" fill="#C77DFF" font-family="sans-serif" font-size="14" font-weight="bold">1. 前置准入与授权门禁</text>
+      <text x="18" y="52" fill="#D0D7DE" font-family="sans-serif" font-size="12">• confirm-before-coding: 命中索引设任务复用范围</text>
+      <text x="18" y="72" fill="#D0D7DE" font-family="sans-serif" font-size="12">• 模型外 Hook 阻断: 凭证/破坏性删除/生产部署独立确认</text>
+      <text x="18" y="92" fill="#8B949E" font-family="sans-serif" font-size="12">• task-preflight: 六维价值打分(60分)与F1/F2/F3硬留证</text>
+    </g>
+
+    <!-- 模块 2：专用调度与子代理 -->
+    <g transform="translate(0, 184)">
+      <rect width="475" height="140" rx="10" fill="url(#cardGrad)" stroke="#2B3245" stroke-width="1"/>
+      <text x="18" y="28" fill="#C77DFF" font-family="sans-serif" font-size="14" font-weight="bold">2. 垂直职能子代理群 (Subagent Matrix)</text>
+      <text x="18" y="52" fill="#D0D7DE" font-family="sans-serif" font-size="12">• manage-requirements: 统一管理不变量与版本差异</text>
+      <text x="18" y="72" fill="#D0D7DE" font-family="sans-serif" font-size="12">• audit-workflow-efficiency: 管 Owner/版本/指纹/反例</text>
+      <text x="18" y="92" fill="#D0D7DE" font-family="sans-serif" font-size="12">• select-mcp-tool / computer-use: 外部与桌面写入最小路径</text>
+      <text x="18" y="112" fill="#D0D7DE" font-family="sans-serif" font-size="12">• govern-unity-project: 序列化/资源身份/契约变动审计</text>
+      <text x="18" y="130" fill="#8B949E" font-family="sans-serif" font-size="11">• cli-creator / manage-problem-log: 规范检查与核心CLI规划</text>
+    </g>
+
+    <!-- 模块 3：执行与健康机制 -->
+    <g transform="translate(0, 334)">
+      <rect width="475" height="120" rx="10" fill="url(#cardGrad)" stroke="#2B3245" stroke-width="1"/>
+      <text x="18" y="28" fill="#C77DFF" font-family="sans-serif" font-size="14" font-weight="bold">3. 运行健康与收尾交付</text>
+      <text x="18" y="52" fill="#D0D7DE" font-family="sans-serif" font-size="12">• codex-runtime / storage-health: 进程/存储健康与零写入</text>
+      <text x="18" y="72" fill="#D0D7DE" font-family="sans-serif" font-size="12">• 两步无进展熔断: 档位预算执行，两次无进展即留证熔断</text>
+      <text x="18" y="92" fill="#D0D7DE" font-family="sans-serif" font-size="12">• deliver-latest-product-entry: 仅交已验证入口，保留回滚</text>
+      <text x="18" y="110" fill="#8B949E" font-family="sans-serif" font-size="11">• 强一致用持久状态/幂等/读回，弱一致用短上文</text>
+    </g>
+  </g>
+
+  <!-- 右侧：DSH 原生体系 -->
+  <g transform="translate(555, 90)">
+    <!-- 标题卡 -->
+    <rect width="475" height="52" rx="10" fill="url(#dshHeader)" stroke="#00A8FF" stroke-width="1.5"/>
+    <circle cx="28" cy="26" r="12" fill="#00A8FF" opacity="0.3"/>
+    <text x="28" y="31" text-anchor="middle" fill="#00A8FF" font-family="sans-serif" font-size="14" font-weight="bold">D</text>
+    <text x="50" y="32" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="17" font-weight="bold">DSH 体系 (宿主基座与四级干道流水线)</text>
+
+    <!-- 模块 1：门禁与前置 -->
+    <g transform="translate(0, 64)">
+      <rect width="475" height="110" rx="10" fill="url(#cardGrad)" stroke="#00A8FF" stroke-width="1.2"/>
+      <text x="18" y="28" fill="#00A8FF" font-family="sans-serif" font-size="14" font-weight="bold">1. 免审批安全与首动握手门禁</text>
+      <text x="18" y="52" fill="#D0D7DE" font-family="sans-serif" font-size="12">• 免审批自律法典: security_baseline.md 八大红线原语阻断</text>
+      <text x="18" y="72" fill="#00A8FF" font-weight="bold" font-family="sans-serif" font-size="12">• 首动重命名门禁: 必须且必定首发 rename_session.sh</text>
+      <text x="18" y="92" fill="#D0D7DE" font-family="sans-serif" font-size="12">• 双螺旋打分模型: 60分价值评估 + 100分难度轨道分流</text>
+    </g>
+
+    <!-- 模块 2：四级干道路由与原生引擎 -->
+    <g transform="translate(0, 184)">
+      <rect width="475" height="140" rx="10" fill="url(#cardGrad)" stroke="#00A8FF" stroke-width="1.2"/>
+      <text x="18" y="28" fill="#00A8FF" font-family="sans-serif" font-size="14" font-weight="bold">2. 地图式高速干道路由 (G0 ~ G3)</text>
+      <text x="18" y="52" fill="#D0D7DE" font-family="sans-serif" font-size="12">• G0 特快高速 (权重100): 最高元规与安全红线，0延迟放行</text>
+      <text x="18" y="72" fill="#D0D7DE" font-family="sans-serif" font-size="12">• G1 国道主干 (权重80): 快速口令秒级直达 / 六大业务管道</text>
+      <text x="18" y="92" fill="#D0D7DE" font-family="sans-serif" font-size="12">• G2 省道支线 (权重50): Unity规范 / 原子性事务 / 知识库法典</text>
+      <text x="18" y="112" fill="#D0D7DE" font-family="sans-serif" font-size="12">• G3 县道便道 (权重20): 局部模板与避坑，按需指纹单次读取</text>
+      <text x="18" y="130" fill="#8B949E" font-family="sans-serif" font-size="11">• 原生引擎: subagent, subagent_fork, workflow, create_goal</text>
+    </g>
+
+    <!-- 模块 3：执行与健康机制 -->
+    <g transform="translate(0, 334)">
+      <rect width="475" height="120" rx="10" fill="url(#cardGrad)" stroke="#00A8FF" stroke-width="1.2"/>
+      <text x="18" y="28" fill="#00A8FF" font-family="sans-serif" font-size="14" font-weight="bold">3. 16步固化流水线与全景量化审计</text>
+      <text x="18" y="52" fill="#D0D7DE" font-family="sans-serif" font-size="12">• S01 ~ S16 细化流水线: 探境➔定标➔筹策➔攻坚➔质检➔归卷</text>
+      <text x="18" y="72" fill="#D0D7DE" font-family="sans-serif" font-size="12">• 写后强制读回: write/edit 后必执行 read 校验真实生效</text>
+      <text x="18" y="92" fill="#2EC4B6" font-weight="bold" font-family="sans-serif" font-size="12">• M1~M6 效率审计: 意图/命名/有效率/读回/流程/入口台账</text>
+      <text x="18" y="110" fill="#D0D7DE" font-family="sans-serif" font-size="11">• 交互式交付物必给: URL / 图片Markdown预览 / 源码内联</text>
+    </g>
+  </g>
+
+  <!-- 底部：两大体系融合升华与架构共生关系 -->
+  <g transform="translate(50, 560)">
+    <rect width="980" height="155" rx="14" fill="#131926" stroke="#2EC4B6" stroke-width="1.5"/>
+    <circle cx="28" cy="26" r="10" fill="#2EC4B6"/>
+    <text x="28" y="30" text-anchor="middle" fill="#131926" font-family="sans-serif" font-size="11" font-weight="bold">★</text>
+    <text x="46" y="30" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="15" font-weight="bold">体系升华：Codex 契约精髓在 DSH 宿主环境下的 100% 落地转化</text>
+    <line x1="20" y1="44" x2="960" y2="44" stroke="#222C3E" stroke-width="1"/>
+    
+    <g transform="translate(20, 56)">
+      <rect width="220" height="85" rx="8" fill="#1A2234" stroke="#37435B" stroke-width="1"/>
+      <text x="14" y="24" fill="#00A8FF" font-family="sans-serif" font-size="12" font-weight="bold">① 语言与报错三段式</text>
+      <text x="14" y="44" fill="#8B949E" font-family="sans-serif" font-size="11">Codex: 报错附中文释义</text>
+      <text x="14" y="62" fill="#2EC4B6" font-family="sans-serif" font-size="11">DSH: 释义+原因+建议</text>
+      <text x="14" y="76" fill="#D0D7DE" font-family="sans-serif" font-size="10">严禁裸抛原始异常堆栈</text>
+    </g>
+
+    <g transform="translate(260, 56)">
+      <rect width="220" height="85" rx="8" fill="#1A2234" stroke="#37435B" stroke-width="1"/>
+      <text x="14" y="24" fill="#00A8FF" font-family="sans-serif" font-size="12" font-weight="bold">② 双螺旋打分与门禁</text>
+      <text x="14" y="44" fill="#8B949E" font-family="sans-serif" font-size="11">Codex: 60分价值+门禁</text>
+      <text x="14" y="62" fill="#2EC4B6" font-family="sans-serif" font-size="11">DSH: 60分价值+100分难度</text>
+      <text x="14" y="76" fill="#D0D7DE" font-family="sans-serif" font-size="10">首发脚本锁死8字任务名</text>
+    </g>
+
+    <g transform="translate(500, 56)">
+      <rect width="220" height="85" rx="8" fill="#1A2234" stroke="#37435B" stroke-width="1"/>
+      <text x="14" y="24" fill="#00A8FF" font-family="sans-serif" font-size="12" font-weight="bold">③ 上下文指纹与熔断</text>
+      <text x="14" y="44" fill="#8B949E" font-family="sans-serif" font-size="11">Codex: 指纹单次/两步熔断</text>
+      <text x="14" y="62" fill="#2EC4B6" font-family="sans-serif" font-size="11">DSH: 哈希校验+写后读回</text>
+      <text x="14" y="76" fill="#D0D7DE" font-family="sans-serif" font-size="10">两次无进展阻断回退稳定步</text>
+    </g>
+
+    <g transform="translate(740, 56)">
+      <rect width="220" height="85" rx="8" fill="#1A2234" stroke="#37435B" stroke-width="1"/>
+      <text x="14" y="24" fill="#00A8FF" font-family="sans-serif" font-size="12" font-weight="bold">④ 效率审计与入口直达</text>
+      <text x="14" y="44" fill="#8B949E" font-family="sans-serif" font-size="11">Codex: deliver-latest-entry</text>
+      <text x="14" y="62" fill="#2EC4B6" font-family="sans-serif" font-size="11">DSH: M1~M6量化审计看板</text>
+      <text x="14" y="76" fill="#D0D7DE" font-family="sans-serif" font-size="10">Web/图片/文件零查找直达</text>
+    </g>
+  </g>
+</svg>

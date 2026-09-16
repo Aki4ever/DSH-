@@ -1,0 +1,157 @@
+<svg width="1080" height="760" viewBox="0 0 1080 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="kbBg" x1="0" y1="0" x2="1080" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#080C14"/>
+      <stop offset="50%" stop-color="#101726"/>
+      <stop offset="100%" stop-color="#06090F"/>
+    </linearGradient>
+    <linearGradient id="kbBorder" x1="0" y1="0" x2="1080" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2EC4B6"/>
+      <stop offset="50%" stop-color="#00A8FF"/>
+      <stop offset="100%" stop-color="#FF9F1C"/>
+    </linearGradient>
+    <linearGradient id="topCard" x1="0" y1="0" x2="980" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#142236"/>
+      <stop offset="100%" stop-color="#0E1724"/>
+    </linearGradient>
+    <linearGradient id="subCard" x1="0" y1="0" x2="310" y2="170" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#182030"/>
+      <stop offset="100%" stop-color="#101520"/>
+    </linearGradient>
+    <linearGradient id="projCard" x1="0" y1="0" x2="475" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1C273C"/>
+      <stop offset="100%" stop-color="#131B2A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 全局背景 -->
+  <rect width="1080" height="760" rx="24" fill="url(#kbBg)"/>
+  <rect x="2" y="2" width="1076" height="756" rx="22" stroke="url(#kbBorder)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- 光晕 -->
+  <circle cx="180" cy="140" r="160" fill="#2EC4B6" opacity="0.08" filter="blur(70px)"/>
+  <circle cx="900" cy="620" r="180" fill="#00A8FF" opacity="0.08" filter="blur(80px)"/>
+
+  <!-- 顶部主标题 -->
+  <g transform="translate(50, 36)">
+    <rect x="0" y="0" width="12" height="32" rx="4" fill="#2EC4B6"/>
+    <text x="24" y="24" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="800" letter-spacing="1">分层知识库与多项目隔离架构教学图</text>
+    <text x="530" y="24" fill="#00A8FF" font-family="system-ui, sans-serif" font-size="14" font-weight="700">· 通用规范共享 ＋ 项目领域隔离</text>
+    <rect x="880" y="4" width="100" height="26" rx="13" fill="#182333" stroke="#00A8FF" stroke-width="1"/>
+    <text x="930" y="21" text-anchor="middle" fill="#00A8FF" font-family="sans-serif" font-size="12" font-weight="700">知识法典 v1.6.0</text>
+  </g>
+
+  <!-- 第一层：【通用规范知识库】knowledge/common/ -->
+  <g transform="translate(50, 86)">
+    <rect width="980" height="340" rx="14" fill="url(#topCard)" stroke="#2EC4B6" stroke-width="1.5"/>
+    <circle cx="28" cy="26" r="10" fill="#2EC4B6"/>
+    <text x="28" y="30" text-anchor="middle" fill="#0E1724" font-family="sans-serif" font-size="11" font-weight="bold">1</text>
+    <text x="46" y="31" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">【上层总纲 · 通用工程与设计规范库】knowledge/common/ (跨项目 100% 共享继承)</text>
+
+    <!-- 三个细分大卡片 -->
+    <!-- 卡片 1：通用交互与格式塔心理学 -->
+    <g transform="translate(20, 50)">
+      <rect width="300" height="268" rx="10" fill="url(#subCard)" stroke="#2A374E" stroke-width="1"/>
+      <rect x="14" y="14" width="8" height="18" rx="2" fill="#FF9F1C"/>
+      <text x="28" y="28" fill="#FF9F1C" font-family="sans-serif" font-size="13" font-weight="bold">通用交互规范 (UX Standard)</text>
+      <line x1="14" y1="38" x2="286" y2="38" stroke="#253043" stroke-width="1"/>
+      
+      <text x="14" y="58" fill="#E2E8F0" font-family="sans-serif" font-size="12" font-weight="bold">🧠 格式塔心理学六大律：</text>
+      <text x="20" y="76" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 接近律：相关联元素物理间距聚拢</text>
+      <text x="20" y="94" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 相似律：同功能采用一致视觉形态</text>
+      <text x="20" y="112" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 闭合律：卡片/边框自成独立信息块</text>
+      <text x="20" y="130" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 主体背景律：弹窗蒙层与焦点高亮</text>
+
+      <text x="14" y="158" fill="#E2E8F0" font-family="sans-serif" font-size="12" font-weight="bold">💡 Don't Make Me Think 准则：</text>
+      <text x="20" y="176" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 零思考直觉：主操作视觉权重唯一</text>
+      <text x="20" y="194" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 防呆设计：危险按钮二次验证阻断</text>
+      <text x="20" y="212" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 状态可循：加载骨架屏与明确反馈</text>
+      <text x="20" y="230" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 三秒法则：首屏信息核心诉求秒懂</text>
+    </g>
+
+    <!-- 卡片 2：通用 Unity 工程规范 -->
+    <g transform="translate(340, 50)">
+      <rect width="300" height="268" rx="10" fill="url(#subCard)" stroke="#00A8FF" stroke-width="1.2"/>
+      <rect x="14" y="14" width="8" height="18" rx="2" fill="#00A8FF"/>
+      <text x="28" y="28" fill="#00A8FF" font-family="sans-serif" font-size="13" font-weight="bold">通用 Unity 规范 (Unity Core)</text>
+      <line x1="14" y1="38" x2="286" y2="38" stroke="#253043" stroke-width="1"/>
+
+      <text x="14" y="58" fill="#E2E8F0" font-family="sans-serif" font-size="12" font-weight="bold">🏗️ 场景与弹窗原子边界：</text>
+      <text x="20" y="76" fill="#00A8FF" font-weight="bold" font-family="sans-serif" font-size="11">★ 主页面必做成 Scene 独立加载</text>
+      <text x="20" y="94" fill="#00A8FF" font-weight="bold" font-family="sans-serif" font-size="11">★ 弹窗/浮层必做成 Prefab 动态实例化</text>
+      <text x="20" y="112" fill="#A0AEC0" font-family="sans-serif" font-size="11">• Canvas 分离：动静分离双 Canvas 批处理</text>
+      <text x="20" y="130" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 排序层级：明确 Background / Normal / Top</text>
+
+      <text x="14" y="158" fill="#E2E8F0" font-family="sans-serif" font-size="12" font-weight="bold">🔘 按钮与视觉反馈规范：</text>
+      <text x="20" y="176" fill="#2EC4B6" font-weight="bold" font-family="sans-serif" font-size="11">★ 按钮必配投影阴影 (Drop Shadow)</text>
+      <text x="20" y="194" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 四态反馈：Normal / Hover / Pressed / Disabled</text>
+      <text x="20" y="212" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 按压位移：Pressed 状态 Y 轴微沉 2~4px</text>
+      <text x="20" y="230" fill="#A0AEC0" font-family="sans-serif" font-size="11">• .meta 铁律：资产与 .meta 同生共死</text>
+    </g>
+
+    <!-- 卡片 3：通用 Web 与小程序规范 -->
+    <g transform="translate(660, 50)">
+      <rect width="300" height="268" rx="10" fill="url(#subCard)" stroke="#2A374E" stroke-width="1"/>
+      <rect x="14" y="14" width="8" height="18" rx="2" fill="#2EC4B6"/>
+      <text x="28" y="28" fill="#2EC4B6" font-family="sans-serif" font-size="13" font-weight="bold">Web 与小程序规范 (Web & MiniApp)</text>
+      <line x1="14" y1="38" x2="286" y2="38" stroke="#253043" stroke-width="1"/>
+
+      <text x="14" y="58" fill="#E2E8F0" font-family="sans-serif" font-size="12" font-weight="bold">🌐 通用 Web 标准：</text>
+      <text x="20" y="76" fill="#A0AEC0" font-family="sans-serif" font-size="11">• SPA 路由与视图切分 (Pages/Views)</text>
+      <text x="20" y="94" fill="#A0AEC0" font-family="sans-serif" font-size="11">• Modal 弹窗使用 Portal 挂载防层级污染</text>
+      <text x="20" y="112" fill="#A0AEC0" font-family="sans-serif" font-size="11">• CSS 阴影: box-shadow 营造卡片层级</text>
+      <text x="20" y="130" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 响应式断点与无障碍 ARIA 支持</text>
+
+      <text x="14" y="158" fill="#E2E8F0" font-family="sans-serif" font-size="12" font-weight="bold">📱 通用小程序标准：</text>
+      <text x="20" y="176" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 分包加载策略：主包 &lt; 2MB 极速首屏</text>
+      <text x="20" y="194" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 组件化弹窗：Component 独立生命周期</text>
+      <text x="20" y="212" fill="#A0AEC0" font-family="sans-serif" font-size="11">• setData 差量更新：严禁高频全量传输</text>
+      <text x="20" y="230" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 登录态静默换取与 Token 无感刷新</text>
+    </g>
+  </g>
+
+  <!-- 中间层连接引导指示 -->
+  <g transform="translate(50, 440)">
+    <line x1="140" y1="0" x2="140" y2="24" stroke="#2EC4B6" stroke-width="2" stroke-dasharray="4 3"/>
+    <polygon points="140,28 135,20 145,20" fill="#2EC4B6"/>
+    <text x="260" y="16" fill="#A0AEC0" font-family="sans-serif" font-size="11" text-anchor="middle">强制继承通用规范</text>
+
+    <line x1="840" y1="0" x2="840" y2="24" stroke="#00A8FF" stroke-width="2" stroke-dasharray="4 3"/>
+    <polygon points="840,28 835,20 845,20" fill="#00A8FF"/>
+    <text x="840" y="16" fill="#A0AEC0" font-family="sans-serif" font-size="11" text-anchor="middle">领域严格隔离 · 严禁跨项目串扰</text>
+  </g>
+
+  <!-- 第二层：【多项目独立知识库】knowledge/projects/ -->
+  <g transform="translate(50, 475)">
+    <rect width="980" height="245" rx="14" fill="#0D131E" stroke="#FF9F1C" stroke-width="1.5"/>
+    <circle cx="28" cy="26" r="10" fill="#FF9F1C"/>
+    <text x="28" y="30" text-anchor="middle" fill="#0D131E" font-family="sans-serif" font-size="11" font-weight="bold">2</text>
+    <text x="46" y="31" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">【下层领域 · 项目专属知识库】knowledge/projects/ (按工程物理隔离，防上下文污染)</text>
+
+    <!-- 项目 A：源能回响 -->
+    <g transform="translate(20, 50)">
+      <rect width="460" height="175" rx="10" fill="url(#projCard)" stroke="#354460" stroke-width="1"/>
+      <circle cx="20" cy="20" r="8" fill="#9D4EDD"/>
+      <text x="36" y="25" fill="#C77DFF" font-family="sans-serif" font-size="14" font-weight="bold">项目 A: 源能回响 (Aether Echo - 游戏工程)</text>
+      <line x1="14" y1="36" x2="446" y2="36" stroke="#222D40" stroke-width="1"/>
+      <text x="16" y="58" fill="#E2E8F0" font-family="sans-serif" font-size="12">• 目录路径: <tspan fill="#C77DFF">knowledge/projects/aether_echo/</tspan></text>
+      <text x="16" y="80" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 专属世界观背景: 源能以太法则、三大阵营、纪元设定</text>
+      <text x="16" y="100" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 专属美术规范: 半写实轻科幻风格、面数与骨骼指标、PBR贴图</text>
+      <text x="16" y="120" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 专属工程参数: Unity LTS + URP + 60FPS 基线 + MVVM解耦</text>
+      <text x="16" y="148" fill="#FF5252" font-weight="bold" font-family="sans-serif" font-size="11">🚫 隔离红线: 非此项目任务，绝对禁止载入该世界观设定！</text>
+    </g>
+
+    <!-- 项目 B：独立应用/其他项目 -->
+    <g transform="translate(500, 50)">
+      <rect width="460" height="175" rx="10" fill="url(#projCard)" stroke="#354460" stroke-width="1"/>
+      <circle cx="20" cy="20" r="8" fill="#00A8FF"/>
+      <text x="36" y="25" fill="#00A8FF" font-family="sans-serif" font-size="14" font-weight="bold">项目 B: 通用管理工具 / Web服务 / 小程序</text>
+      <line x1="14" y1="36" x2="446" y2="36" stroke="#222D40" stroke-width="1"/>
+      <text x="16" y="58" fill="#E2E8F0" font-family="sans-serif" font-size="12">• 目录路径: <tspan fill="#00A8FF">knowledge/projects/&lt;project_name&gt;/</tspan></text>
+      <text x="16" y="80" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 专属业务领域: 电商/后台/工具等专属实体与数据字典</text>
+      <text x="16" y="100" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 专属接口契约: OpenAPI 接口定义与特定数据表映射</text>
+      <text x="16" y="120" fill="#A0AEC0" font-family="sans-serif" font-size="11">• 专属部署环境: 生产域名、部署集群配置与环境变量字典</text>
+      <text x="16" y="148" fill="#2EC4B6" font-weight="bold" font-family="sans-serif" font-size="11">✅ 继承特性: 自动继承 Scene/Prefab/阴影/格式塔通用规范！</text>
+    </g>
+  </g>
+</svg>

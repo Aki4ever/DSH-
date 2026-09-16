@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.5.0`
-> - **对应实施版本**：`v1.5.0`
+> - **当前文档版本**：`v1.7.0`
+> - **对应实施版本**：`v1.7.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -48,10 +48,15 @@
 
 | 文档路径 | 中文全称 | 核心管理内容与约束 |
 | :--- | :--- | :--- |
-| [`knowledge/README.md`](../knowledge/README.md) | **核心知识库总索引与前置核验协议** | 知识库总览、前置冲突阻断卡点与强制核查工作流。 |
-| [`knowledge/worldview_background.md`](../knowledge/worldview_background.md) | **世界观与故事背景知识库** | 源能以太法则、时代纪元、三大阵营架构、专有名词与叙事禁忌。 |
-| [`knowledge/art_specification.md`](../knowledge/art_specification.md) | **游戏美术视觉与资产工程规范** | 半写实轻科幻风格、色彩矩阵、3D面数/骨骼预算、PBR材质通道与UI排版。 |
-| [`knowledge/engineering_specification.md`](../knowledge/engineering_specification.md) | **软件技术与工程架构规范** | Unity LTS/URP基线、60FPS/DrawCall性能预算、MVVM解耦架构与零GC法则。 |
+| [`knowledge/README.md`](../knowledge/README.md) | **系统分层知识库总索引与教学图** | 知识库总览、分层架构教学图、前置防冲突阻断卡点与项目隔离导航。 |
+| [`knowledge/common/interaction_specification.md`](../knowledge/common/interaction_specification.md) | **通用交互与体验设计规范** | 格式塔六大定律实操、Don't Make Me Think 零思考设计与防呆机制。 |
+| [`knowledge/common/unity_specification.md`](../knowledge/common/unity_specification.md) | **通用 Unity 客户端工程规范** | 页面做成 Scene、弹窗做成 Prefab、按钮必配 Drop Shadow 阴影与微动效。 |
+| [`knowledge/common/web_specification.md`](../knowledge/common/web_specification.md) | **通用 Web 前端工程规范** | 路由懒加载、Modal Portal 根挂载防层叠污染、box-shadow 与骨架屏。 |
+| [`knowledge/common/miniprogram_specification.md`](../knowledge/common/miniprogram_specification.md) | **通用小程序研发工程规范** | 主包≤1.5MB、组件化弹窗防滚动穿透、hover-class、setData 路径差量。 |
+| [`knowledge/common/engineering_specification.md`](../knowledge/common/engineering_specification.md) | **通用技术架构与工程规范** | 四层单向解耦模型、零 GC 循环法则、状态机流转原子性。 |
+| [`knowledge/common/art_specification.md`](../knowledge/common/art_specification.md) | **通用视觉与色彩设计规范** | 60-30-10 色彩平衡定律、WCAG 4.5:1 对比度标准、三层阴影空间。 |
+| [`knowledge/projects/README.md`](../knowledge/projects/README.md) | **项目专属知识库隔离总规** | 独立工程物理隔离、非游戏禁载游戏设定铁律与继承体系。 |
+| [`knowledge/projects/aether_echo/README.md`](../knowledge/projects/aether_echo/README.md) | **源能回响项目专属法典** | 源能以太法则、时代纪元年表、阵营势力、专属半写实轻科幻美术与 URP。 |
 
 ---
 
@@ -59,7 +64,7 @@
 
 | 分类 | 文档/脚本路径 | 说明 |
 | :--- | :--- | :--- |
-| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-028 完整记录，总版本 `v1.5.0`） |
+| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-030 完整记录，总版本 `v1.7.0`） |
 | **图表生成** | [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 全场景流程图、信息图与教学图生成技术指南与标准模板库 |
 | **教学指南** | [`docs/rules_tutorial.md`](../docs/rules_tutorial.md) | 规则体系运转教学图解与实操说明 |
 | **记忆架构** | [`docs/memory_architecture.md`](../docs/memory_architecture.md) | AI 分层长短期记忆体系架构与工程落地规范 |
