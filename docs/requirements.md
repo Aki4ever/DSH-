@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.1.0`
+> - **当前系统实施总版本**：`v1.2.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -443,5 +443,46 @@
 - **验收标准**：
   - [x] 原子性规范文档 `rules/coding/atomicity_specification.md` 落地；
   - [x] 操作级与设计级原子性分类详实，覆盖日常研发与 Unity 开发；
+  - [x] 实施版本号与工程保持同步。
+
+---
+
+### REQ-023: 外部智能体能力生态 (MCP / Skill / CLI / API) 扩展全景调研与矩阵建设
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v1.2.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **核心诉求与目标**：
+  1. 系统调研现代 AI 智能体生态最前沿的 6 大可扩展能力（MCP 协议、Agent Skills、CLI 工具链、OpenAPI 自动反射、Playwright 无头浏览器、插件集成）；
+  2. 梳理官方及开源精选 MCP Servers 清单与通信机制；
+  3. 输出《DSH 外部可扩展能力生态与协议全景矩阵》文档。
+- **关联文件**：
+  - `indexes/extension_ecosystem.md`
+  - `indexes/dsh_capabilities.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 扩展矩阵文档 `indexes/extension_ecosystem.md` 落地；
+  - [x] 覆盖 MCP、Skill、CLI、API、浏览器与插件六大维度并提供横向对比；
+  - [x] 实施版本号与工程保持同步。
+
+---
+
+### REQ-024: 全场景流程图、信息图与教学图生成技术指南与标准模板库
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v1.2.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **核心诉求与目标**：
+  1. 梳理五大主流图表生成技术方案（ASCII 字符图、Mermaid.js、原生 SVG、PlantUML、Excalidraw）；
+  2. 建立针对终端会话、工程文档、高保真卡片的场景选型决策树；
+  3. 提供流程图、时序图、状态图、SVG 信息卡片标准模版库及 AI 防踩坑铁律；
+  4. 输出《全场景流程图、信息图与教学图生成技术指南与标准模板库》文档。
+- **关联文件**：
+  - `docs/diagram_generation_guide.md`
+  - `templates/graphical_block_template.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 指南文档 `docs/diagram_generation_guide.md` 建立；
+  - [x] 包含场景决策树、横向对比表格与即拷即用标准模版库；
   - [x] 实施版本号与工程保持同步。
 

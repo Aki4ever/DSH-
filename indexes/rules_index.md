@@ -1,13 +1,13 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.1.0`
-> - **对应实施版本**：`v1.1.0`
+> - **当前文档版本**：`v1.2.0`
+> - **对应实施版本**：`v1.2.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
 
-本文档是全局规则工程所有规则、流程、协议、知识库与资产的**全局索引地图**。按层级与业务领域编目，方便快速定位与召回。
+本文档是全局规则工程所有规则、流程、协议、知识库、外部生态与资产的**全局索引地图**。按层级与业务领域编目，方便快速定位与召回。
 
 ---
 
@@ -54,11 +54,12 @@
 
 ---
 
-## 📂 五、台账、模板与工具脚本 (Assets & Tools)
+## 📂 五、台账、模板与工具指南 (Assets, Guides & Tools)
 
 | 分类 | 文档/脚本路径 | 说明 |
 | :--- | :--- | :--- |
-| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-022 完整记录，总版本 `v1.1.0`） |
+| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-024 完整记录，总版本 `v1.2.0`） |
+| **图表生成** | [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 全场景流程图、信息图与教学图生成技术指南与标准模板库 |
 | **教学指南** | [`docs/rules_tutorial.md`](../docs/rules_tutorial.md) | 规则体系运转教学图解与实操说明 |
 | **记忆架构** | [`docs/memory_architecture.md`](../docs/memory_architecture.md) | AI 分层长短期记忆体系架构与工程落地规范 |
 | **标准模板** | [`templates/requirement_template.md`](../templates/requirement_template.md) | 标准需求卡片录入模板（支持实施版本号） |
@@ -69,10 +70,11 @@
 
 ---
 
-## 🧠 六、能力索引、快速通道与记忆中枢 (Indexes & Memory)
+## 🧠 六、能力索引、生态扩展与记忆中枢 (Indexes, Ecosystem & Memory)
 
 | 分类 | 路径 | 核心内容 |
 | :--- | :--- | :--- |
+| **外部生态** | [`indexes/extension_ecosystem.md`](extension_ecosystem.md) | DSH 外部可扩展能力生态与协议全景矩阵（MCP / Skill / CLI / API / Browser） |
 | **快速通道** | [`indexes/shortcuts_index.md`](shortcuts_index.md) | 快速通道快捷词汇与指令路由映射总表（口令直达输出） |
 | **能力体系** | [`indexes/dsh_capabilities.md`](dsh_capabilities.md) | DSH 宿主基座全景能力架构图与运行机制 |
 | **工具接口** | [`indexes/tool_interfaces.md`](tool_interfaces.md) | 全量系统工具与插件标准接口矩阵封装 |

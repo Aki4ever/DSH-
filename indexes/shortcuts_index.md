@@ -1,8 +1,8 @@
 # 快速通道快捷词汇与指令路由索引 (Quick Shortcuts Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.1.0`
-> - **对应实施版本**：`v1.1.0`
+> - **当前文档版本**：`v1.2.0`
+> - **对应实施版本**：`v1.2.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -21,6 +21,8 @@
 | **“unity规范”**<br>*(或“unity工程规范”、“unity代码规范”)* | 查阅 Unity 目录与代码规范 | 读取 [`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) | 输出 Unity 标准工程目录树、.meta 同生共死铁律、asmdef 解耦与生命周期规约 |
 | **“原子性规范”**<br>*(或“哪些操作要做成原子性的”)* | 查阅操作与设计原子性清单 | 读取 [`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) | 输出操作级原子性（双向同步/目录四件套/.meta成对）与设计级原子性（存档/交易/状态机）清单 |
 | **“避坑经验”**<br>*(或“长期避坑指南”)* | 查阅历史排查沉淀的避坑指南 | 读取 [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 输出转义字符避坑、会话锁定、沙箱策略与底层关键认知 |
+| **“生态扩展”**<br>*(或“mcp生态”、“外部能力扩展”)* | 查阅外部智能体扩展能力生态 | 读取 [`indexes/extension_ecosystem.md`](extension_ecosystem.md) | 输出 MCP 协议、Agent Skills、CLI 工具链、OpenAPI 反射与无头浏览器扩展全景矩阵 |
+| **“生成图表”**<br>*(或“流程图生成”、“教学图模版”)* | 查阅图表生成规范与模板库 | 读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 输出流程图/时序图/状态图/SVG 信息卡片场景决策树、标准模版与 AI 避坑铁律 |
 | **“快速体检”**<br>*(或“系统自检”)* | 执行工程完整性自检 | 执行 `./scripts/rename_session.sh` 并巡检 Git 状态 | 输出当前工作区状态、版本号对齐情况与健康度检查报告 |
 
 ---
