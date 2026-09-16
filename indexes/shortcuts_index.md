@@ -1,77 +1,74 @@
-# 快速通道快捷词汇与指令路由索引 (Quick Shortcuts Matrix)
+# 快速通道指令路由与地图式高速干道导航索引 (Arterial Routing & Quick Shortcuts Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.2.0`
-> - **对应实施版本**：`v1.2.0`
+> - **当前文档版本**：`v1.4.0`
+> - **对应实施版本**：`v1.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
 
-本文档是系统针对高频日常操作定制的**快速通道快捷词汇与响应路由字典**。用户只需输入日常大白话快捷口令，智能体即可命中规则并直接输出标准化权威内容，无需冗长多轮问答。
+本文档是系统连接意图与规则落地的**高权重地图式导航枢纽**。参考工业级地图导航（如高德/Google Maps）的“高速干道优先、快速收敛、避免小道”算法，将全局规则体系抽象为**四级路网权重拓扑**。用户输入口令或日常指令时，智能体优先走高速干道，实现秒级直接收敛，彻底杜绝无序漫游。
 
 ---
 
-## 🚀 一、核心快速通道口令与路由映射表
-
-| 用户输入快捷词汇 (示例) | 核心命中意图 | 标准响应动作与数据源 | 输出内容要点与交付形式 |
-| :--- | :--- | :--- | :--- |
-| **“看看当前dsh体系能力”**<br>*(或“dsh能力体系”、“系统能力全景”)* | 召回 DSH 宿主基座全景能力架构 | 读取 [`indexes/dsh_capabilities.md`](dsh_capabilities.md) | 输出三层架构全景图（Web GUI ➔ Runtime Host ➔ Execution Core）及四大核心维度（会话与投影、沙箱安全、多模态、多智能体）深度解析 |
-| **“查看规则全景”**<br>*(或“规则索引”、“有哪些规则”)* | 召回所有规则与规范总目录 | 读取 [`indexes/rules_index.md`](rules_index.md) | 输出系统级元规则、流程规则、编码规范、知识库与工具脚本全景表格 |
-| **“查看知识库”**<br>*(或“知识库”、“查世界观/美术/工程”)* | 检阅产品世界观、美术与工程标准 | 读取 [`knowledge/README.md`](../knowledge/README.md) | 输出知识库总览、前置冲突阻断卡点协议，以及世界观/美术/工程规范入口 |
-| **“unity规范”**<br>*(或“unity工程规范”、“unity代码规范”)* | 查阅 Unity 目录与代码规范 | 读取 [`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) | 输出 Unity 标准工程目录树、.meta 同生共死铁律、asmdef 解耦与生命周期规约 |
-| **“原子性规范”**<br>*(或“哪些操作要做成原子性的”)* | 查阅操作与设计原子性清单 | 读取 [`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) | 输出操作级原子性（双向同步/目录四件套/.meta成对）与设计级原子性（存档/交易/状态机）清单 |
-| **“避坑经验”**<br>*(或“长期避坑指南”)* | 查阅历史排查沉淀的避坑指南 | 读取 [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 输出转义字符避坑、会话锁定、沙箱策略与底层关键认知 |
-| **“生态扩展”**<br>*(或“mcp生态”、“外部能力扩展”)* | 查阅外部智能体扩展能力生态 | 读取 [`indexes/extension_ecosystem.md`](extension_ecosystem.md) | 输出 MCP 协议、Agent Skills、CLI 工具链、OpenAPI 反射与无头浏览器扩展全景矩阵 |
-| **“生成图表”**<br>*(或“流程图生成”、“教学图模版”)* | 查阅图表生成规范与模板库 | 读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 输出流程图/时序图/状态图/SVG 信息卡片场景决策树、标准模版与 AI 避坑铁律 |
-| **“生成图片 <描述>”**<br>*(或“画图 <描述>”)* | 驱动图形生成管道创作图片 | 执行 `scripts/generate_image.py` | 自动调用生图管道，保存至 `assets/generated_images/` 并在界面渲染大图 |
-| **“快速体检”**<br>*(或“系统自检”)* | 执行工程完整性自检 | 执行 `./scripts/rename_session.sh` 并巡检 Git 状态 | 输出当前工作区状态、版本号对齐情况与健康度检查报告 |
-
----
-
-## ⚡ 二、快速通道执行示范：输入“看看当前dsh体系能力”
-
-当智能体收到包含“**看看当前dsh体系能力**”的指令时，必须按照以下标准骨架立刻输出结构化全景：
+## 🗺️ 一、四级干道路网权重拓扑架构 (Road Network Hierarchy)
 
 ```text
-┌───────────────────────────────────────────────────────────────┐
-│                 DSH Web GUI (客户端呈现层)                      │
-│       - 侧边栏任务栏 (Session Projections / Title 投影)         │
-│       - 视口自适应渲染 (Sticky 视口置顶 / 主题 CSS 变量)         │
-│       - 实时双向流 (SSE mux / events.host / events.mux)        │
-└──────────────────────────────┬────────────────────────────────┘
-                               │ HTTP / SSE / JSON RPC
-┌──────────────────────────────▼────────────────────────────────┐
-│               DSH Runtime Host (宿主执行层)                    │
-│   ┌─────────────────────┬─────────────────┬───────────────┐   │
-│   │   ApiProxy 路由网关  │   会话持久化引擎 │   沙箱安全网关 │   │
-│   │   (Fetch Handler)   │   (JSONL.zstd)  │   (Sandbox)   │   │
-│   └─────────────────────┴─────────────────┴───────────────┘   │
-└──────────────────────────────┬────────────────────────────────┘
-                               │ 工具调度与进程隔离
-┌──────────────────────────────▼────────────────────────────────┐
-│               执行引擎与能力底座 (Execution Core)               │
-│   - 文件读写与正则检索 (read, write, edit, glob, grep)         │
-│   - 命令行与多模态视觉 (bash, read_image)                      │
-│   - 协同编排 (subagent, subagent_fork, workflow, ralph)       │
-│   - 任务目标治理 (todo_write, goal 系统)                       │
-└───────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                   🗺️ 地图式指令干道路由导航拓扑                        │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ 用户意图输入
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 🔴 [G0 级 · 特快高速公路 · 权重 100]                                   │
+│    - 系统全局元规则：rules/system/meta_rules.md                         │
+│    - 免审批安全红线法典：rules/security/security_baseline.md            │
+│    ★ 特性：0 延迟前置门禁，最高仲裁效力，高危指令绝对阻断                 │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ 安全放行
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 🔵 [G1 级 · 国道业务主干 · 权重 80]                                    │
+│    - 快速通道口令秒级直达（如下表字典，探➔攻➔归 极简闭环）               │
+│    - 六大核心业务管道分流：[R规 / F功 / D文 / S系 / O运 / Q测]          │
+│    - 需求台账双向对齐：docs/requirements.md                            │
+│    ★ 特性：高频业务优先走干线，零长流程空转，直接输出交付物              │
+└───────────────────┬────────────────────────────────┬───────────────────┘
+                    │ 遇到深度专业研发               │ 需翻阅冷门资产/模版
+                    ▼                                ▼
+┌──────────────────────────────────────┐  ┌──────────────────────────────┐
+│ 🟡 [G2 级 · 省道专业支线 · 权重 50]   │  │ 🟢 [G3 级 · 县道便道 · 权重 20]│
+│    - Unity 规范 / 原子性事务规约     │  │    - 标准模版 (templates/*)  │
+│    - 知识库三法典 (世界观/美术/工程) │  │    - 历史避坑 (lessons/*)    │
+│    ★ 特性：垂直领域精准召回          │  │    ★ 特性：按需只读一次，防漫游│
+└──────────────────────────────────────┘  └──────────────────────────────┘
 ```
-
-### 核心能力维度具体说明：
-1. **会话生命周期与投影机制 (Session & Projections)**：
-   - 多会话通过 `JSONL.zstd` 持久化；
-   - 智能体通过 HTTP RPC `session.rename` 可向 host 实时锁定侧边栏标题。
-2. **沙箱隔离与安全基线 (Sandbox Policy)**：
-   - 具备 `danger-full-access` 完全模式与 `workspace-write` 受限模式；
-   - 本环境支持免审批自律运行（`Approval: never`），自主遵循安全红线。
-3. **多模态视觉解析 (Multimodal Vision)**：
-   - 原生支持 `read_image` 读图分析，由宿主 `input: [text, image]` 自动放行。
-4. **多智能体编排生态 (Multi-Agent Ecosystem)**：
-   - `subagent`（单轮独立沙箱）、`subagent_fork`（继承上下文深入）、`workflow`（JS脚本高并发流水线）、`ralph`（冷启动新鲜智能体自愈环路）。
 
 ---
 
-## 🛠️ 三、快速通道命中与响应准则
+## 🚀 二、G1 级高速干道快速口令与路由映射表 (含直达入口)
 
-1. **零冗余问答**：一旦用户输入命中上述任一关键词，智能体无需再次反问确认，应直接给出完整结构化交付内容；
-2. **轻量管道分流**：纯快速通道查询任务属于“探 ➔ 攻 ➔ 归”极简流程（难度打分 ≤ 35 分），快速响应，绝不进行不必要的长流程空转。
+| 快速口令 (示例) | 路由路网 | 命中意图 | 标准动作与数据源 | 结构化交互交付入口 (必给) |
+| :--- | :---: | :--- | :--- | :--- |
+| **“看看当前dsh体系能力”**<br>*(或“系统能力全景”)* | **G1 干线** | 召回 DSH 宿主基座全景架构 | 读取 [`indexes/dsh_capabilities.md`](dsh_capabilities.md) | 输出三层架构全景图，提供 Web 控制台入口：[http://127.0.0.1:50447](http://127.0.0.1:50447) |
+| **“查看规则全景”**<br>*(或“规则索引”)* | **G1 干线** | 召回所有规则与规范总图 | 读取 [`indexes/rules_index.md`](rules_index.md) | 输出分层规则表，提供源码入口：[`indexes/rules_index.md`](rules_index.md) |
+| **“安全红线”**<br>*(或“安全基线”)* | **G0 高速** | 查阅免审批环境八大红线 | 读取 [`rules/security/security_baseline.md`](../rules/security/security_baseline.md) | 输出八大阻断清单，提供入口：[`rules/security/security_baseline.md`](../rules/security/security_baseline.md) |
+| **“查看知识库”**<br>*(或“知识库总览”)* | **G2 支线** | 检阅世界观、美术与工程标准 | 读取 [`knowledge/README.md`](../knowledge/README.md) | 输出知识库总览，提供入口：[`knowledge/README.md`](../knowledge/README.md) |
+| **“unity规范”** | **G2 支线** | 查阅 Unity 目录与代码规范 | 读取 [`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) | 输出 Unity 目录与 .meta 铁律，提供入口：[`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) |
+| **“原子性规范”** | **G2 支线** | 查阅操作与设计原子性清单 | 读取 [`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) | 输出操作级与设计级事务清单，提供入口：[`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) |
+| **“避坑经验”** | **G3 辅道** | 查阅排查沉淀的避坑认知 | 读取 [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 输出避坑指引，提供入口：[`memory/lessons_learned.md`](../memory/lessons_learned.md) |
+| **“生态扩展”** | **G1 干线** | 查阅外部智能体扩展生态 | 读取 [`indexes/extension_ecosystem.md`](extension_ecosystem.md) | 输出 MCP / Skills / CLI / API 矩阵，提供入口：[`indexes/extension_ecosystem.md`](extension_ecosystem.md) |
+| **“生成图表”** | **G1 干线** | 查阅图表标准与决策树 | 读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 输出五大图表模版，提供入口：[`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) |
+| **“生成图片 <描述>”** | **G1 干线** | 驱动图形管道创作图片 | 执行 `scripts/generate_image.py` | 自动生图，输出 `![描述](路径)` 并附带可点击打开链接 |
+| **“快速体检”** | **G1 干线** | 执行工程健康度巡检 | 执行 `./scripts/rename_session.sh` 并巡检 Git | 输出工作区与版本对齐报告，提供 Git 状态回执 |
+
+---
+
+## 🧭 三、干道路由命中与收敛算法 (Arterial Convergence Algorithm)
+
+1. **高权重干道直达 (Shortest Arterial Route)**：
+   - 当用户指令明确命中 G0/G1 范畴时，智能体**仅走主干道**，严禁在 G2/G3 层级反复遍历盲读无关文件；
+2. **渐进式支路下探 (Progressive Off-ramp)**：
+   - 只有当任务涉及深度专业领域（如 Unity 开发、架构事务拆解）时，才从 G1 出口下探至 G2 专业支线；
+3. **交付物必带交互入口 (Delivery-as-an-Entrypoint)**：
+   - 无论走哪级路由，任务最终交付必须包含标准可点击直达入口，杜绝“交付无入口、查找靠翻找”。

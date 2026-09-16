@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.3.0`
+> - **当前系统实施总版本**：`v1.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -536,4 +536,38 @@
   - [x] 提炼输出面向 DSH 执行的高效结构化需求文案；
   - [x] 系统元规则与任务执行流程完成增量吸收与升级；
   - [x] 全局实施版本号统一推进至 `v1.3.0`。
+
+---
+
+### REQ-027: 交互式输出入口标准与地图式高速干道路由规范
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v1.4.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **核心诉求与目标**：
+  1. **结构化输出入口必给规范 (Delivery-as-an-Entrypoint)**：
+     - 交付物输出必须提供直达入口：网页必须给完整 URL，图片必须给 Markdown 图片渲染及可点击打开链接，文件/脚本给出直接执行命令与可点击文件路径；
+     - 在系统元规则与任务流程【归卷】阶段确立统一标准。
+  2. **地图式高速干道路由机制 (High-Weight Arterial Routing)**：
+     - 参考地图导航“高速优先、主干收敛、避免小道”算法，将全局规则与指令路由分划为四级路网（G0 宪法级元规 ➔ G1 业务高速主干 ➔ G2 细分领域支线 ➔ G3 辅助旁道）；
+     - 优先命中高权重高速干道，实现秒级收敛，避免大模型漫游遍历消耗上下文。
+  3. **现有规则体系全量审计与短板补齐**：
+     - 补齐此前未建立的 `rules/security/security_baseline.md` 免审批安全基线防破坏细则；
+     - 完善 `indexes/shortcuts_index.md` 干道路由权重字典；
+     - 系统实施版本号推进至 `v1.4.0`。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `rules/security/security_baseline.md`
+  - `indexes/shortcuts_index.md`
+  - `rules/system/thinking_framework.md`
+  - `indexes/rules_index.md`
+  - `README.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 交付物输出入口规范化组件确立；
+  - [x] 地图式四级干道路由模型建立并完成索引更新；
+  - [x] `rules/security/security_baseline.md` 安全自律规则落地；
+  - [x] 实施总版本号推进至 `v1.4.0`。
+
 

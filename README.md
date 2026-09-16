@@ -1,7 +1,7 @@
 # 全局规则工程 (Global Rules Project)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.3.0`
+> - **当前系统实施总版本**：`v1.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -29,14 +29,15 @@
 │   ├── coding/                      # 【代码与工程规范】
 │   │   ├── unity_project_standard.md # Unity 结构化工程目录、文件形式与 C# 架构全局规范
 │   │   └── atomicity_specification.md # 系统操作与工程设计原子性事务边界规范
-│   └── security/                    # 安全防护与红线准则
+│   └── security/                    # 【安全防护与红线法典】
+│       └── security_baseline.md     # 免审批安全基线、防破坏红线与写后读回机制
 ├── knowledge/                       # 【统一知识库与业务法典】
-│   ├── README.md                    # 知识库总索引与前置防冲突核验协议
+├── knowledge/README.md                    # 知识库总索引与前置防冲突核验协议
 │   ├── worldview_background.md      # 世界观故事背景、源能法则、时代纪元与阵营设定
 │   ├── art_specification.md         # 游戏美术视觉与资产工程规范（风格/色彩/面数/PBR/UI）
 │   └── engineering_specification.md # 软件技术与工程架构规范（Unity LTS/URP/60FPS/MVVM/零GC）
 ├── indexes/                         # 【能力索引、外部生态与快速通道】
-│   ├── shortcuts_index.md           # 快速通道快捷词汇与指令路由索引（口令秒级直达）
+│   ├── shortcuts_index.md           # 地图式高速干道路由导航与快速口令矩阵（G0~G3 四级权重）
 │   ├── extension_ecosystem.md       # DSH 外部可扩展能力生态与协议全景矩阵 (MCP/Skill/CLI/API/Browser)
 │   ├── dsh_capabilities.md          # DSH 宿主基座全景能力与系统机制索引
 │   ├── tool_interfaces.md           # 全量插件与工具标准接口矩阵封装
@@ -47,12 +48,12 @@
 │   ├── lessons_learned.md           # 实战排查沉淀的避坑指南与底层机制认知
 │   └── README.md                    # 记忆层专属说明文档
 ├── docs/                            # 【说明、指南与核心台账】
-│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-026，总版本 v1.3.0）
+│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-027，总版本 v1.4.0）
 │   ├── diagram_generation_guide.md  # 全场景流程图、信息图与教学图生成技术指南与标准模板库
 │   ├── memory_architecture.md       # AI 分层长短期记忆体系架构与工程落地规范
 │   └── rules_tutorial.md            # 全局规则运转教学指南与图解
 ├── templates/                       # 【标准模板资产】
-├── templates/requirement_template.md      # 结构化需求标准卡片模板（含实施版本号）
+│   ├── requirement_template.md      # 结构化需求标准卡片模板（含实施版本号）
 │   ├── directory_readme_template.md # 目录专属说明标准模板
 │   └── graphical_block_template.md  # 原生图形化区块卡片组件标准模板
 ├── scripts/                         # 【自动化辅助工具】
@@ -70,12 +71,12 @@
 
 ### 1. 任务启动自检六步法
 每次开启任务或新会话，第一步按顺序自检：
-1. **查权限**：核对沙箱读写模式与免审批状态（`Approval: never`）；
-2. **看元规**：阅读 `rules/system/meta_rules.md` 明确最高准则与双轨分流；
-3. **核知识库**：检阅 `knowledge/README.md`，执行前置防冲突核查，确保新任务与世界观/美术/工程设定绝不冲突；
-4. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v1.3.0`）；
-5. **读记忆**：读取 `memory/` 目录继承跨会话偏好与避坑经验；
-6. **定轨道**：依据 100 分制打分判定走快速轻量流还是标准完备流；首动执行会话重命名。
+1. **查权限与红线**：核对沙箱权限（`Approval: never`），查阅 `rules/security/security_baseline.md` 守住安全红线；
+2. **看元规与干道**：阅读 `rules/system/meta_rules.md` 明确最高准则，通过 `indexes/shortcuts_index.md` 优先命中 G0/G1 高速干道路由；
+3. **核知识库**：检阅 `knowledge/README.md`，执行前置防冲突核查，确保新任务与世界观/美术/工程设定绝不冲突（非游戏坚决不载入游戏设定）；
+4. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v1.4.0`）；
+5. **读记忆**：读取 `memory/` 目录继承跨会话偏好与避坑经验（指纹单次读，写后才重读）；
+6. **定轨道**：依据六维价值打分(60分)与四维难度打分(100分)双螺旋决策，判定走快速流还是标准流；首动执行会话重命名；收尾必给结构化交付入口。
 
 ### 2. 快速通道指令直达
 常用操作无需长句问答，输入口令直达目标：
