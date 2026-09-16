@@ -491,3 +491,24 @@
   - [x] 包含场景决策树、横向对比表格与即拷即用标准模版库；
   - [x] 实施版本号与工程保持同步。
 
+---
+
+### REQ-025: 图形生成模型模态配置激活与绘图管道建设
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v1.2.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **核心诉求与目标**：
+  1. 调整宿主配置 `$DSH_HOME/settings.yaml`，为模型补充 `output: [image]` / `output: [text, image]` 模态声明，并扩充可用图像生成模型；
+  2. 落地 `scripts/generate_image.py` 绘图脚本，支持 API 与本地矢量双模式，自动保存至 `assets/generated_images/`；
+  3. 建立 Web 界面 `![描述](路径)` 直接图显闭环，并在快捷通道字典中增加口令直达。
+- **关联文件**：
+  - `$DSH_HOME/settings.yaml`
+  - `scripts/generate_image.py`
+  - `indexes/shortcuts_index.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 宿主配置文件模态声明生效；
+  - [x] 图像生成脚本 `scripts/generate_image.py` 成功产出测试图并实现图显；
+  - [x] 实施版本号与工程保持同步。
+

@@ -47,7 +47,7 @@
 │   ├── lessons_learned.md           # 实战排查沉淀的避坑指南与底层机制认知
 │   └── README.md                    # 记忆层专属说明文档
 ├── docs/                            # 【说明、指南与核心台账】
-│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-024，总版本 v1.2.0）
+│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-025，总版本 v1.2.0）
 │   ├── diagram_generation_guide.md  # 全场景流程图、信息图与教学图生成技术指南与标准模板库
 │   ├── memory_architecture.md       # AI 分层长短期记忆体系架构与工程落地规范
 │   └── rules_tutorial.md            # 全局规则运转教学指南与图解
@@ -56,6 +56,7 @@
 │   ├── directory_readme_template.md # 目录专属说明标准模板
 │   └── graphical_block_template.md  # 原生图形化区块卡片组件标准模板
 ├── scripts/                         # 【自动化辅助工具】
+│   ├── generate_image.py            # 图形生成、自动保存与图显渲染脚本
 │   ├── rename_session.sh            # 会话一键重命名并锁定 RPC 脚本
 │   └── init_dir.sh                  # 目录一键自动化初始化脚本
 ├── .gitignore                       # 版本管理忽略规则
@@ -81,6 +82,7 @@
 - 输入 **“看看当前dsh体系能力”** ➔ 输出 DSH 全景架构图与四大维度说明；
 - 输入 **“生态扩展”** ➔ 输出 MCP、Agent Skills、CLI 工具链与外部能力扩展全景矩阵；
 - 输入 **“生成图表”** ➔ 输出全场景流程图、时序图、SVG 信息卡片标准模版与场景决策树；
+- 输入 **“生成图片 <描述>”** ➔ 驱动图形生成管道创作图片并直接图显；
 - 输入 **“查看规则全景”** ➔ 输出规则体系完整地图；
 - 输入 **“查看知识库”** ➔ 输出世界观、美术与工程标准总览；
 - 输入 **“unity规范”** ➔ 输出 Unity 目录架构与 .meta 铁律；

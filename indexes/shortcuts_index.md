@@ -23,6 +23,7 @@
 | **“避坑经验”**<br>*(或“长期避坑指南”)* | 查阅历史排查沉淀的避坑指南 | 读取 [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 输出转义字符避坑、会话锁定、沙箱策略与底层关键认知 |
 | **“生态扩展”**<br>*(或“mcp生态”、“外部能力扩展”)* | 查阅外部智能体扩展能力生态 | 读取 [`indexes/extension_ecosystem.md`](extension_ecosystem.md) | 输出 MCP 协议、Agent Skills、CLI 工具链、OpenAPI 反射与无头浏览器扩展全景矩阵 |
 | **“生成图表”**<br>*(或“流程图生成”、“教学图模版”)* | 查阅图表生成规范与模板库 | 读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 输出流程图/时序图/状态图/SVG 信息卡片场景决策树、标准模版与 AI 避坑铁律 |
+| **“生成图片 <描述>”**<br>*(或“画图 <描述>”)* | 驱动图形生成管道创作图片 | 执行 `scripts/generate_image.py` | 自动调用生图管道，保存至 `assets/generated_images/` 并在界面渲染大图 |
 | **“快速体检”**<br>*(或“系统自检”)* | 执行工程完整性自检 | 执行 `./scripts/rename_session.sh` 并巡检 Git 状态 | 输出当前工作区状态、版本号对齐情况与健康度检查报告 |
 
 ---
