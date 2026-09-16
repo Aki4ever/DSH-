@@ -131,22 +131,35 @@ $$\mathbf{[分类编号][难度分]\ 8字以内概述}$$
 
 ---
 
-## 📌 六、DSH 视口吸顶置顶组件规范 (Sticky Pin Component)
+## 📌 六、DSH 原生图形化区块组件规范 (Native Graphical Block Components)
 
-在长对话中，智能体使用自适应吸顶置顶组件，让关键结论或工单信息始终锚定在视口最上方：
+由于 DSH 聊天渲染引擎（`MarkdownText`）严格屏蔽任何裸 HTML 标签（如 `<div>`、`<details>`、`<summary>`，写入会被直接打印为源码字符串），**必须全面采用 GFM 原生语法构建标准图形化组件**。
 
-```html
-<div style="position: sticky; top: 0px; z-index: 99; background: var(--dsw-alias-bg-base, #1e1e2e); border: 1px solid var(--dsw-alias-border-l1, #45475a); border-radius: 8px; padding: 10px 14px; margin: 8px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--dsw-alias-border-l2, #585b70); padding-bottom: 6px; margin-bottom: 6px;">
-    <span style="font-weight: bold; font-size: 13px;">📌 核心置顶内容 [已激活视口吸附]</span>
-    <span style="font-size: 11px; color: var(--dsw-alias-label-secondary, #a6adc8);">（随页面向下滚动吸附置顶）</span>
-  </div>
-  <div style="font-size: 13px; line-height: 1.5;">
-    <!-- 关键段落或成果清单正文 -->
-  </div>
-</div>
+### 1. 原生图形化置顶核心卡片 (Sticky Banner Card)
+使用二级引用配合胶囊状态与双线区隔，DSH 会将其渲染为具有主题色条的高亮卡片组件：
+
+```markdown
+> ### 📌 **核心置顶卡片** `[ 状态：已锁定 ]`
+> ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+> - **任务编号**：`[R004][55分] 任务栏命名与折叠`
+> - **核心动作**：任务首发已自动执行脚本完成重命名
+> - **交付目标**：全量替换为零乱码原生图形化区块组件
 ```
+
+### 2. 原生段落区块化折叠示意卡片 (Block Accordion Component)
+每个独立的逻辑段落（背景、工单、方案、改动、质检）统一封装为带独立边框色条的区块化卡片，标题附带开闭状态标记：
+
+```markdown
+> #### 🔍 **第一区块：需求深度理解与剖析** `[ ▶ 展开详情 ]`
+> ────────────────────────────────────────────────────────────
+> 这里放置第一区块详细展开内容...
+
+> #### 📋 **第二区块：标准化任务执行工单** `[ ▼ 核心正文 ]`
+> ────────────────────────────────────────────────────────────
+> 这里放置第二区块执行工单...
+```
+
 - **特性**：
-  1. 原生 CSS `position: sticky`，完美兼容 DSH Web GUI；
-  2. 采用 `--dsw-alias-*` 主题变量，自动无缝适配亮色/暗色主题；
-  3. 用户向下滚动屏幕时，卡片吸附在顶端，关键信息绝不离眼。
+  1. **100% 杜绝源码乱码**：完全兼容 DSH Web 渲染，绝对不会出现任何暴露的 HTML 标签；
+  2. **图形化色彩与边框**：触发 DSH 前端自带的引用色条、圆角与层次分明的背景底色；
+  3. **段落区块分明**：各逻辑模块边界极其清晰，阅读体验极佳。
