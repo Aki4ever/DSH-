@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.4.0`
+> - **当前系统实施总版本**：`v1.5.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -569,5 +569,38 @@
   - [x] 地图式四级干道路由模型建立并完成索引更新；
   - [x] `rules/security/security_baseline.md` 安全自律规则落地；
   - [x] 实施总版本号推进至 `v1.4.0`。
+
+---
+
+### REQ-028: 全流程不可跳步固化机制、会话命名首动门禁与全景效率量化审计看板
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v1.5.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **核心诉求与目标**：
+  1. **全流程不可跳步固化 (Strict 16-Step Pipeline)**：
+     - 将标准六步闭环（探-定-筹-攻-验-归）固化为不可拆解、不可合并、不可脑内跳过的十六个标准细分工序；
+     - 每一工序必须输出明确的执行回执或证据卡片，杜绝随意跳步与执行漂移。
+  2. **会话重命名首动门禁机制 (First-Action Handshake Gate)**：
+     - 系统性解决“侧边栏任务命名丢失或截断”痛点，确立硬性契约：
+     - 任何任务首轮定标后，发出的第一个工具调用必须且必定是 `./scripts/rename_session.sh`，未完成重命名禁止下发任何业务文件写操作；
+     - 开箱自检协议与收尾归卷协议双重设卡拦截校准。
+  3. **效率量化审计机制与可溯源台账 (Efficiency Audit Ledger)**：
+     - 建立涵盖 6 项量化指标（意图收敛度、思考管道耗时、工具调用有效率、写后读回覆盖率、流程完整度、命名履约率）的效率评估模型；
+     - 新建 `memory/efficiency_audit_log.md` 长期审计台账，支持跨任务横向对比与后续自调优；
+     - 在任务收尾【归卷】阶段强制输出《任务执行效率与思考审计指标卡片》。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `memory/efficiency_audit_log.md`
+  - `indexes/rules_index.md`
+  - `README.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 确立首动作重命名强制门禁；
+  - [x] 细化十六步不可跳步固化流程与阶段交付证据要求；
+  - [x] 建立 `memory/efficiency_audit_log.md` 台账与六维量化审计指标模型；
+  - [x] 实施总版本号推进至 `v1.5.0`。
+
 
 

@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.4.0`
-> - **对应实施版本**：`v1.4.0`
+> - **当前文档版本**：`v1.5.0`
+> - **对应实施版本**：`v1.5.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -59,7 +59,7 @@
 
 | 分类 | 文档/脚本路径 | 说明 |
 | :--- | :--- | :--- |
-| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-027 完整记录，总版本 `v1.4.0`） |
+| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-028 完整记录，总版本 `v1.5.0`） |
 | **图表生成** | [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 全场景流程图、信息图与教学图生成技术指南与标准模板库 |
 | **教学指南** | [`docs/rules_tutorial.md`](../docs/rules_tutorial.md) | 规则体系运转教学图解与实操说明 |
 | **记忆架构** | [`docs/memory_architecture.md`](../docs/memory_architecture.md) | AI 分层长短期记忆体系架构与工程落地规范 |
@@ -77,8 +77,9 @@
 | 分类 | 路径 | 核心内容 |
 | :--- | :--- | :--- |
 | **外部生态** | [`indexes/extension_ecosystem.md`](extension_ecosystem.md) | DSH 外部可扩展能力生态与协议全景矩阵（MCP / Skill / CLI / API / Browser） |
-| **快速通道** | [`indexes/shortcuts_index.md`](shortcuts_index.md) | 快速通道快捷词汇与指令路由映射总表（口令直达输出） |
+| **快速通道** | [`indexes/shortcuts_index.md`](shortcuts_index.md) | 地图式高速干道路由导航与快速口令矩阵（G0~G3 四级权重） |
 | **能力体系** | [`indexes/dsh_capabilities.md`](dsh_capabilities.md) | DSH 宿主基座全景能力架构图与运行机制 |
 | **工具接口** | [`indexes/tool_interfaces.md`](tool_interfaces.md) | 全量系统工具与插件标准接口矩阵封装 |
 | **长期记忆** | [`memory/context_memory.md`](../memory/context_memory.md) | 用户偏好、长期环境约定与核心参数沉淀 |
 | **经验知识** | [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 实战排查出的避坑指南与底层机制认知 |
+| **效率审计** | [`memory/efficiency_audit_log.md`](../memory/efficiency_audit_log.md) | 思考决策与执行效率全景量化审计台账 (M1~M6六维指标) |

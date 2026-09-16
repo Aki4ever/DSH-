@@ -1,7 +1,7 @@
 # 全局规则工程 (Global Rules Project)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.4.0`
+> - **当前系统实施总版本**：`v1.5.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -46,9 +46,10 @@
 ├── memory/                          # 【长短期记忆中枢】
 │   ├── context_memory.md            # 全局上下文约定、用户偏好与运行基线
 │   ├── lessons_learned.md           # 实战排查沉淀的避坑指南与底层机制认知
+│   ├── efficiency_audit_log.md      # 思考决策与执行效率全景量化审计台账 (M1~M6指标)
 │   └── README.md                    # 记忆层专属说明文档
 ├── docs/                            # 【说明、指南与核心台账】
-│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-027，总版本 v1.4.0）
+│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-028，总版本 v1.5.0）
 │   ├── diagram_generation_guide.md  # 全场景流程图、信息图与教学图生成技术指南与标准模板库
 │   ├── memory_architecture.md       # AI 分层长短期记忆体系架构与工程落地规范
 │   └── rules_tutorial.md            # 全局规则运转教学指南与图解
@@ -74,9 +75,9 @@
 1. **查权限与红线**：核对沙箱权限（`Approval: never`），查阅 `rules/security/security_baseline.md` 守住安全红线；
 2. **看元规与干道**：阅读 `rules/system/meta_rules.md` 明确最高准则，通过 `indexes/shortcuts_index.md` 优先命中 G0/G1 高速干道路由；
 3. **核知识库**：检阅 `knowledge/README.md`，执行前置防冲突核查，确保新任务与世界观/美术/工程设定绝不冲突（非游戏坚决不载入游戏设定）；
-4. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v1.4.0`）；
+4. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v1.5.0`）；
 5. **读记忆**：读取 `memory/` 目录继承跨会话偏好与避坑经验（指纹单次读，写后才重读）；
-6. **定轨道**：依据六维价值打分(60分)与四维难度打分(100分)双螺旋决策，判定走快速流还是标准流；首动执行会话重命名；收尾必给结构化交付入口。
+6. **定轨道与首动命名**：依据六维价值打分(60分)与四维难度打分(100分)双螺旋决策，复杂任务**首个工具调用必须执行 `./scripts/rename_session.sh` 锁定会话**；十六步严格执行不可跳步；收尾必给结构化交付入口与六维量化审计指标卡片。
 
 ### 2. 快速通道指令直达
 常用操作无需长句问答，输入口令直达目标：
