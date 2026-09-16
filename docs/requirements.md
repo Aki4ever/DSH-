@@ -341,22 +341,27 @@
 
 ### REQ-018: 快速通道快捷词汇与指令路由机制
 - **当前状态**：`[ACTIVE]` 生效中
-- **实施版本**：`v1.1.0`
+- **实施版本**：`v1.2.0`
 - **提出时间**：2026-09-16
 - **最新更新**：2026-09-16
 - **核心诉求与目标**：
   1. 用户输入自然语言快捷词（例如“看看当前dsh体系能力”），智能体秒级匹配输出 DSH 全景能力架构图与具体说明；
   2. 建立快速通道快捷词汇映射矩阵，杜绝冗余多轮会话消耗；
-  3. 沉淀快捷通道使用指南至索引目录。
+  3. 沉淀快捷通道使用指南至索引目录；
+  4. 产出端到端任务流转全景流程图（Mermaid + ASCII 框线架构）并集成落库。
 - **关联文件**：
   - `indexes/shortcuts_index.md`
   - `indexes/dsh_capabilities.md`
+  - `docs/diagram_generation_guide.md`
   - `rules/workflow/component_naming.md`
   - `docs/requirements.md`
 - **验收标准**：
   - [x] 快速通道索引文件 `indexes/shortcuts_index.md` 建立；
   - [x] 输入“看看当前dsh体系能力”等词汇具备标准化全量输出路由；
+  - [x] 端到端任务流转全景流程图持久化落库至 `indexes/dsh_capabilities.md`；
   - [x] 实施版本号与工程保持同步。
+- **演进记录**：
+  - **2026-09-16 [升级 v1.2.0]**：在 `indexes/dsh_capabilities.md` 中集成端到端任务流转全景流程图（Mermaid 与 ASCII 框线架构），联动外部生态扩展与图解指南。
 
 ---
 
