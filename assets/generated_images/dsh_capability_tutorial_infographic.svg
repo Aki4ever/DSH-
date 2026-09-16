@@ -1,0 +1,117 @@
+<svg width="860" height="620" viewBox="0 0 860 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="860" y2="620" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0F1218"/>
+      <stop offset="50%" stop-color="#181D26"/>
+      <stop offset="100%" stop-color="#0A0C10"/>
+    </linearGradient>
+    <linearGradient id="blueCard" x1="0" y1="0" x2="800" y2="90" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E2638"/>
+      <stop offset="100%" stop-color="#141924"/>
+    </linearGradient>
+    <linearGradient id="glowBorder" x1="0" y1="0" x2="860" y2="620" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00A8FF"/>
+      <stop offset="50%" stop-color="#2EC4B6"/>
+      <stop offset="100%" stop-color="#8A2BE2"/>
+    </linearGradient>
+    <filter id="shadow" x="-10" y="-10" width="880" height="640" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#000000" flood-opacity="0.65"/>
+    </filter>
+  </defs>
+
+  <!-- 全局大背景 -->
+  <rect width="860" height="620" rx="20" fill="url(#bgGrad)"/>
+  <rect x="2" y="2" width="856" height="616" rx="18" stroke="url(#glowBorder)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- 发光氛围光晕 -->
+  <circle cx="120" cy="80" r="140" fill="#00A8FF" opacity="0.08" filter="blur(60px)"/>
+  <circle cx="750" cy="520" r="160" fill="#2EC4B6" opacity="0.08" filter="blur(70px)"/>
+
+  <!-- 顶部主标题栏 -->
+  <g transform="translate(40, 32)">
+    <circle cx="10" cy="14" r="7" fill="#2EC4B6"/>
+    <text x="28" y="22" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="800" letter-spacing="0.5">DSH 宿主能力体系全景教学图</text>
+    <text x="320" y="22" fill="#00A8FF" font-family="system-ui, sans-serif" font-size="13" font-weight="700">· V1.2.0 标准架构法典</text>
+    <rect x="680" y="4" width="100" height="24" rx="12" fill="#202736" stroke="#2EC4B6" stroke-width="1"/>
+    <text x="730" y="20" text-anchor="middle" fill="#2EC4B6" font-family="sans-serif" font-size="11" font-weight="700">教学实战认证</text>
+  </g>
+
+  <!-- 第一层卡片：呈现感知层 -->
+  <g transform="translate(40, 75)">
+    <rect width="780" height="95" rx="12" fill="url(#blueCard)" stroke="#00A8FF" stroke-width="1.5"/>
+    <rect x="18" y="16" width="32" height="32" rx="8" fill="#00A8FF" opacity="0.2"/>
+    <text x="34" y="38" text-anchor="middle" fill="#00A8FF" font-family="sans-serif" font-size="18" font-weight="bold">1</text>
+    <text x="62" y="32" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">【第一层：呈现感知层】Web GUI 客户端</text>
+    <text x="62" y="52" fill="#A0AEC0" font-family="system-ui, sans-serif" font-size="12">人机交互、进度透传与视觉渲染第一窗口</text>
+    <line x1="62" y1="62" x2="760" y2="62" stroke="#2B313E" stroke-width="1"/>
+    <text x="62" y="80" fill="#DCE3EB" font-family="system-ui, sans-serif" font-size="12">
+      🔹 <tspan fill="#00A8FF" font-weight="600">8字标题投影</tspan>: session.rename 永久锁死任务名  |  🔹 <tspan fill="#00A8FF" font-weight="600">视口吸顶</tspan>: GFM 原生卡片置顶关键结论  |  🔹 <tspan fill="#00A8FF" font-weight="600">SSE 双向流</tspan>: 毫秒级多路流式推送
+    </text>
+  </g>
+
+  <!-- 第二层卡片：宿主控制层 -->
+  <g transform="translate(40, 185)">
+    <rect width="780" height="95" rx="12" fill="url(#blueCard)" stroke="#FFB900" stroke-width="1.5"/>
+    <rect x="18" y="16" width="32" height="32" rx="8" fill="#FFB900" opacity="0.2"/>
+    <text x="34" y="38" text-anchor="middle" fill="#FFB900" font-family="sans-serif" font-size="18" font-weight="bold">2</text>
+    <text x="62" y="32" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">【第二层：宿主控制层】DSH Runtime Host</text>
+    <text x="62" y="52" fill="#A0AEC0" font-family="system-ui, sans-serif" font-size="12">路由安全网关、状态持久化与调度中心</text>
+    <line x1="62" y1="62" x2="760" y2="62" stroke="#2B313E" stroke-width="1"/>
+    <text x="62" y="80" fill="#DCE3EB" font-family="system-ui, sans-serif" font-size="12">
+      🔸 <tspan fill="#FFB900" font-weight="600">ApiProxy 网关</tspan>: HTTP/JSON RPC 调度  |  🔸 <tspan fill="#FFB900" font-weight="600">压缩持久化</tspan>: JSONL.zstd 增量存取与 Fork  |  🔸 <tspan fill="#FFB900" font-weight="600">沙箱控制</tspan>: danger-full-access 免弹窗自律
+    </text>
+  </g>
+
+  <!-- 第三层卡片：核心执行层 -->
+  <g transform="translate(40, 295)">
+    <rect width="780" height="110" rx="12" fill="url(#blueCard)" stroke="#2EC4B6" stroke-width="1.5"/>
+    <rect x="18" y="16" width="32" height="32" rx="8" fill="#2EC4B6" opacity="0.2"/>
+    <text x="34" y="38" text-anchor="middle" fill="#2EC4B6" font-family="sans-serif" font-size="18" font-weight="bold">3</text>
+    <text x="62" y="32" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">【第三层：核心执行层】Execution Core (引擎与工具底座)</text>
+    <text x="62" y="52" fill="#A0AEC0" font-family="system-ui, sans-serif" font-size="12">基础工具机体、多模态、多智能体协同编排网络</text>
+    <line x1="62" y1="62" x2="760" y2="62" stroke="#2B313E" stroke-width="1"/>
+    <text x="62" y="78" fill="#DCE3EB" font-family="system-ui, sans-serif" font-size="12">
+      ⚡ <tspan fill="#2EC4B6" font-weight="600">基础工具</tspan>: read 先读 / edit 精准改 / grep 搜代码  |  ⚡ <tspan fill="#2EC4B6" font-weight="600">视觉解析</tspan>: read_image 免库直读  |  ⚡ <tspan fill="#2EC4B6" font-weight="600">目标治理</tspan>: todo_write 看板
+    </text>
+    <text x="62" y="96" fill="#DCE3EB" font-family="system-ui, sans-serif" font-size="12">
+      ⚡ <tspan fill="#2EC4B6" font-weight="600">智能编排</tspan>: subagent (单轮独立沙箱) · subagent_fork (历史克隆) · workflow (JS异步管道) · ralph (新鲜自愈)
+    </text>
+  </g>
+
+  <!-- 第四层卡片：外部扩展与图解层 -->
+  <g transform="translate(40, 420)">
+    <rect width="780" height="95" rx="12" fill="url(#blueCard)" stroke="#8A2BE2" stroke-width="1.5"/>
+    <rect x="18" y="16" width="32" height="32" rx="8" fill="#8A2BE2" opacity="0.2"/>
+    <text x="34" y="38" text-anchor="middle" fill="#8A2BE2" font-family="sans-serif" font-size="18" font-weight="bold">4</text>
+    <text x="62" y="32" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">【第四层：外部生态与图形扩展层】Extension Ecosystem</text>
+    <text x="62" y="52" fill="#A0AEC0" font-family="system-ui, sans-serif" font-size="12">MCP 协议、优质 CLI、知识库法典与图形生成管道</text>
+    <line x1="62" y1="62" x2="760" y2="62" stroke="#2B313E" stroke-width="1"/>
+    <text x="62" y="80" fill="#DCE3EB" font-family="system-ui, sans-serif" font-size="12">
+      🔮 <tspan fill="#8A2BE2" font-weight="600">MCP Servers</tspan>: Postgres / Git / BraveSearch  |  🔮 <tspan fill="#8A2BE2" font-weight="600">CLI 工具链</tspan>: gh / jq / rg  |  🔮 <tspan fill="#8A2BE2" font-weight="600">图形管道</tspan>: scripts/generate_image.py
+    </text>
+  </g>
+
+  <!-- 底部教学闭环导流条 -->
+  <g transform="translate(40, 530)">
+    <rect width="780" height="60" rx="10" fill="#131822" stroke="#2B313E" stroke-width="1"/>
+    <text x="24" y="35" fill="#A0AEC0" font-family="sans-serif" font-size="12" font-weight="bold">教学实操四步法：</text>
+    
+    <rect x="130" y="14" width="140" height="32" rx="6" fill="#1A2234" stroke="#00A8FF" stroke-width="1"/>
+    <text x="200" y="34" text-anchor="middle" fill="#00A8FF" font-family="sans-serif" font-size="12" font-weight="bold">1. 探境开箱自检</text>
+
+    <text x="282" y="34" fill="#64748B" font-family="sans-serif" font-size="14">➔</text>
+
+    <rect x="304" y="14" width="140" height="32" rx="6" fill="#1A2234" stroke="#FFB900" stroke-width="1"/>
+    <text x="374" y="34" text-anchor="middle" fill="#FFB900" font-family="sans-serif" font-size="12" font-weight="bold">2. 定标锁定8字名</text>
+
+    <text x="456" y="34" fill="#64748B" font-family="sans-serif" font-size="14">➔</text>
+
+    <rect x="478" y="14" width="140" height="32" rx="6" fill="#1A2234" stroke="#2EC4B6" stroke-width="1"/>
+    <text x="548" y="34" text-anchor="middle" fill="#2EC4B6" font-family="sans-serif" font-size="12" font-weight="bold">3. 攻坚精准协同</text>
+
+    <text x="630" y="34" fill="#64748B" font-family="sans-serif" font-size="14">➔</text>
+
+    <rect x="652" y="14" width="112" height="32" rx="6" fill="#1A2234" stroke="#8A2BE2" stroke-width="1"/>
+    <text x="708" y="34" text-anchor="middle" fill="#8A2BE2" font-family="sans-serif" font-size="12" font-weight="bold">4. 原子归卷同步</text>
+  </g>
+</svg>
