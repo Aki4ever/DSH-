@@ -1,13 +1,27 @@
 # DSH 宿主系统能力体系索引与全景架构 (DSH Capabilities Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.2.0`
-> - **对应实施版本**：`v1.2.0`
+> - **当前文档版本**：`v1.6.0`
+> - **对应实施版本**：`v1.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
 
 本文档是 DeepSeek Harness (DSH) 宿主运行环境与基座能力的**系统化全景图与端到端流转法典**，旨在为智能体和开发者提供一站式的系统分层定位、核心机制说明与执行流转流程图。
+
+---
+
+## 🎨 系统架构与执行流转高保真教学图
+
+### 1. DSH 宿主能力体系全景架构图 (Architecture Matrix)
+![DSH 宿主能力体系全景架构图](../assets/generated_images/dsh_system_architecture_infographic.svg)
+
+> 💡 **矢量图源文件**：[`assets/generated_images/dsh_system_architecture_infographic.svg`](../assets/generated_images/dsh_system_architecture_infographic.svg) | 高清栅格图：[`assets/generated_images/dsh_system_architecture_infographic.svg.png`](../assets/generated_images/dsh_system_architecture_infographic.svg.png)
+
+### 2. DSH 任务执行闭环与十六步流水线教学图 (Execution Flowchart)
+![DSH 任务执行闭环与十六步流水线教学图](../assets/generated_images/dsh_pipeline_teaching_flowchart.svg)
+
+> 💡 **矢量图源文件**：[`assets/generated_images/dsh_pipeline_teaching_flowchart.svg`](../assets/generated_images/dsh_pipeline_teaching_flowchart.svg) | 高清栅格图：[`assets/generated_images/dsh_pipeline_teaching_flowchart.svg.png`](../assets/generated_images/dsh_pipeline_teaching_flowchart.svg.png)
 
 ---
 

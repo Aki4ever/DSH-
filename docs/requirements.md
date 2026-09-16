@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.5.0`
+> - **当前系统实施总版本**：`v1.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -601,6 +601,38 @@
   - [x] 细化十六步不可跳步固化流程与阶段交付证据要求；
   - [x] 建立 `memory/efficiency_audit_log.md` 台账与六维量化审计指标模型；
   - [x] 实施总版本号推进至 `v1.5.0`。
+
+---
+
+### REQ-029: DSH全景能力体系流程深度梳理与高保真矢量教学图解
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v1.6.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **核心诉求与目标**：
+  1. **能力体系深度剖析与架构全景可视化**：
+     - 细致梳理 DSH 四层分层架构（呈现感知层、宿主控制层、核心执行层、外部扩展层）与核心机制（8字标题投影、无乱码吸顶卡片、SSE 实时流、JSONL.zstd 增量压缩与分支、danger-full-access 免审批沙箱、多模态直读、多智能体协同流水线）；
+     - 设计并生成现代暗黑风格的高保真矢量架构信息图 `assets/generated_images/dsh_system_architecture_infographic.svg`。
+  2. **端到端执行流程教学与工序固化**：
+     - 梳理双轨分流决策（快轨 ≤35分 vs 慢轨 >35分）与不可跳步的标准十六步流水线；
+     - 设计并生成全流程教学流程图 `assets/generated_images/dsh_pipeline_teaching_flowchart.svg`，涵盖门禁证据、工具调度、写后读回与三位一体归卷；
+     - 生成 1200px 高清渲染栅格图，并通过 `read_image` 完成多模态原图质检闭环。
+  3. **生态联动与审计合规**：
+     - 同步更新能力索引文档 `indexes/dsh_capabilities.md`，内嵌高保真图表；
+     - 记录审计明细至 `memory/efficiency_audit_log.md`，全局实施总版本号推进至 `v1.6.0`。
+- **关联文件**：
+  - `indexes/dsh_capabilities.md`
+  - `assets/generated_images/dsh_system_architecture_infographic.svg`
+  - `assets/generated_images/dsh_pipeline_teaching_flowchart.svg`
+  - `memory/efficiency_audit_log.md`
+  - `README.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 产出四层架构全景信息图与十六步流水线教学流程图；
+  - [x] 原生免库 `read_image` 质检验证图像高清渲染无变形；
+  - [x] 能力索引文档内嵌图表与链接无缝更新；
+  - [x] 需求台账、审计日志与工程实施总版本号推进至 `v1.6.0`。
+
 
 
 

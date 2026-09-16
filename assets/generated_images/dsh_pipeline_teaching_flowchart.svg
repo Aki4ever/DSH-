@@ -1,0 +1,257 @@
+<svg width="920" height="700" viewBox="0 0 920 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flowBg" x1="0" y1="0" x2="920" y2="700" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#090D14"/>
+      <stop offset="50%" stop-color="#101723"/>
+      <stop offset="100%" stop-color="#06090E"/>
+    </linearGradient>
+    <linearGradient id="flowLineGrad" x1="0" y1="0" x2="920" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="25%" stop-color="#FBBF24"/>
+      <stop offset="50%" stop-color="#34D399"/>
+      <stop offset="75%" stop-color="#C084FC"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="phaseCard1" x1="0" y1="0" x2="260" y2="230" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#101E30"/>
+      <stop offset="100%" stop-color="#0B1320"/>
+    </linearGradient>
+    <linearGradient id="phaseCard2" x1="0" y1="0" x2="260" y2="230" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#221C11"/>
+      <stop offset="100%" stop-color="#141009"/>
+    </linearGradient>
+    <linearGradient id="phaseCard3" x1="0" y1="0" x2="260" y2="230" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0E2421"/>
+      <stop offset="100%" stop-color="#081715"/>
+    </linearGradient>
+    <linearGradient id="phaseCard4" x1="0" y1="0" x2="260" y2="230" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1A1226"/>
+      <stop offset="100%" stop-color="#100A19"/>
+    </linearGradient>
+    <linearGradient id="phaseCard5" x1="0" y1="0" x2="260" y2="230" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#28111A"/>
+      <stop offset="100%" stop-color="#18090F"/>
+    </linearGradient>
+    <linearGradient id="phaseCard6" x1="0" y1="0" x2="260" y2="230" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10252D"/>
+      <stop offset="100%" stop-color="#09161B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 全局大背景 -->
+  <rect width="920" height="700" rx="16" fill="url(#flowBg)"/>
+  <rect x="1.5" y="1.5" width="917" height="697" rx="14.5" stroke="#1F2937" stroke-width="1.5"/>
+  <rect x="40" y="2" width="840" height="2" fill="url(#flowLineGrad)"/>
+
+  <!-- 顶部标题与元数据 -->
+  <g transform="translate(40, 24)">
+    <circle cx="12" cy="16" r="7" fill="#34D399"/>
+    <text x="32" y="23" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="800" letter-spacing="0.5">DSH 任务执行闭环与十六步流水线教学图</text>
+    <text x="565" y="22" fill="#34D399" font-family="sans-serif" font-size="12" font-weight="700">· 双轨分流与不可跳步工序</text>
+    <rect x="740" y="5" width="100" height="24" rx="12" fill="#0E2421" stroke="#34D399" stroke-width="1"/>
+    <text x="790" y="21" text-anchor="middle" fill="#34D399" font-family="sans-serif" font-size="11" font-weight="700">闭环教学法典</text>
+  </g>
+
+  <!-- 双轨分流横幅指示器 -->
+  <g transform="translate(40, 64)">
+    <rect width="840" height="42" rx="8" fill="#131B28" stroke="#253347" stroke-width="1"/>
+    <text x="18" y="26" fill="#94A3B8" font-family="sans-serif" font-size="12" font-weight="700">双轨分流决策：</text>
+    
+    <rect x="110" y="7" width="345" height="28" rx="5" fill="#101F35" stroke="#0284C7" stroke-width="1"/>
+    <text x="120" y="25" fill="#38BDF8" font-family="sans-serif" font-size="11" font-weight="700">快轨 (难度 ≤ 35分)</text>
+    <text x="235" y="25" fill="#BAE6FD" font-family="sans-serif" font-size="11">极简三步: 【探】➔【攻】➔【归】</text>
+
+    <rect x="465" y="7" width="365" height="28" rx="5" fill="#1C182A" stroke="#7C3AED" stroke-width="1"/>
+    <text x="475" y="25" fill="#C084FC" font-family="sans-serif" font-size="11" font-weight="700">慢轨 (难度 > 35分)</text>
+    <text x="590" y="25" fill="#E9D5FF" font-family="sans-serif" font-size="11">严密十六步: 探 ➔ 定 ➔ 筹 ➔ 攻 ➔ 验 ➔ 归</text>
+  </g>
+
+  <!-- 六大阶段卡片网格 (2行 x 3列) -->
+
+  <!-- 阶段 1：【探境】(Exploration) -->
+  <g transform="translate(40, 120)">
+    <rect width="268" height="235" rx="10" fill="url(#phaseCard1)" stroke="#0284C7" stroke-width="1.2"/>
+    <rect x="12" y="12" width="28" height="28" rx="6" fill="#0284C7" opacity="0.2"/>
+    <text x="26" y="32" text-anchor="middle" fill="#38BDF8" font-family="sans-serif" font-size="16" font-weight="900">一</text>
+    <text x="48" y="31" fill="#FFFFFF" font-family="sans-serif" font-size="15" font-weight="700">【探境】环境自检与基线</text>
+    <line x1="12" y1="48" x2="256" y2="48" stroke="#1E293B" stroke-width="1"/>
+
+    <g transform="translate(14, 60)">
+      <rect width="240" height="38" rx="5" fill="#081424" stroke="#1E3A5F" stroke-width="1"/>
+      <text x="10" y="18" fill="#38BDF8" font-family="sans-serif" font-size="11" font-weight="700">S01 环境权限与安全自检</text>
+      <text x="10" y="31" fill="#94A3B8" font-family="sans-serif" font-size="10">核查 DSH 沙箱模式与免审批策略</text>
+    </g>
+
+    <g transform="translate(14, 106)">
+      <rect width="240" height="38" rx="5" fill="#081424" stroke="#1E3A5F" stroke-width="1"/>
+      <text x="10" y="18" fill="#38BDF8" font-family="sans-serif" font-size="11" font-weight="700">S02 干道路由与业务基线</text>
+      <text x="10" y="31" fill="#94A3B8" font-family="sans-serif" font-size="10">命中 G0/G1 干道，严防与设定冲突</text>
+    </g>
+
+    <g transform="translate(14, 154)">
+      <rect width="240" height="66" rx="5" fill="#060F1C"/>
+      <text x="8" y="18" fill="#64748B" font-family="sans-serif" font-size="10" font-weight="700">★ 门禁证据与交付物：</text>
+      <text x="8" y="34" fill="#94A3B8" font-family="sans-serif" font-size="10">输出安全自检备忘与干道声明；</text>
+      <text x="8" y="50" fill="#94A3B8" font-family="sans-serif" font-size="10">若发现业务设定冲突，立即阻断！</text>
+    </g>
+  </g>
+
+  <!-- 阶段 2：【定标】(Targeting) -->
+  <g transform="translate(326, 120)">
+    <rect width="268" height="235" rx="10" fill="url(#phaseCard2)" stroke="#D97706" stroke-width="1.2"/>
+    <rect x="12" y="12" width="28" height="28" rx="6" fill="#D97706" opacity="0.2"/>
+    <text x="26" y="32" text-anchor="middle" fill="#FBBF24" font-family="sans-serif" font-size="16" font-weight="900">二</text>
+    <text x="48" y="31" fill="#FFFFFF" font-family="sans-serif" font-size="15" font-weight="700">【定标】意图提炼与命名</text>
+    <line x1="12" y1="48" x2="256" y2="48" stroke="#2D2115" stroke-width="1"/>
+
+    <g transform="translate(14, 60)">
+      <rect width="240" height="38" rx="5" fill="#181208" stroke="#4A3416" stroke-width="1"/>
+      <text x="10" y="18" fill="#FBBF24" font-family="sans-serif" font-size="11" font-weight="700">S03/S04 意图查重与双螺旋打分</text>
+      <text x="10" y="31" fill="#94A3B8" font-family="sans-serif" font-size="10">价值 60分模型 + 难度 100分模型</text>
+    </g>
+
+    <g transform="translate(14, 106)">
+      <rect width="240" height="38" rx="5" fill="#181208" stroke="#EA580C" stroke-width="1"/>
+      <text x="10" y="18" fill="#FB923C" font-family="sans-serif" font-size="11" font-weight="700">S05 首动握手重命名门禁 🚨</text>
+      <text x="10" y="31" fill="#FED7AA" font-family="sans-serif" font-size="10">首个工具必调 rename_session (8字)</text>
+    </g>
+
+    <g transform="translate(14, 154)">
+      <rect width="240" height="66" rx="5" fill="#120D06"/>
+      <text x="8" y="18" fill="#64748B" font-family="sans-serif" font-size="10" font-weight="700">★ 门禁证据与交付物：</text>
+      <text x="8" y="34" fill="#94A3B8" font-family="sans-serif" font-size="10">会话标题锁定回执 (session.rename)；</text>
+      <text x="8" y="50" fill="#94A3B8" font-family="sans-serif" font-size="10">S06 输出视口 Sticky 置顶工单卡片</text>
+    </g>
+  </g>
+
+  <!-- 阶段 3：【筹策】(Planning) -->
+  <g transform="translate(612, 120)">
+    <rect width="268" height="235" rx="10" fill="url(#phaseCard3)" stroke="#059669" stroke-width="1.2"/>
+    <rect x="12" y="12" width="28" height="28" rx="6" fill="#059669" opacity="0.2"/>
+    <text x="26" y="32" text-anchor="middle" fill="#34D399" font-family="sans-serif" font-size="16" font-weight="900">三</text>
+    <text x="48" y="31" fill="#FFFFFF" font-family="sans-serif" font-size="15" font-weight="700">【筹策】步骤拆解与边界</text>
+    <line x1="12" y1="48" x2="256" y2="48" stroke="#16382F" stroke-width="1"/>
+
+    <g transform="translate(14, 60)">
+      <rect width="240" height="38" rx="5" fill="#091815" stroke="#174E43" stroke-width="1"/>
+      <text x="10" y="18" fill="#34D399" font-family="sans-serif" font-size="11" font-weight="700">S07 全局 Todo 清单初始化</text>
+      <text x="10" y="31" fill="#94A3B8" font-family="sans-serif" font-size="10">调用 todo_write (单在办单一推进)</text>
+    </g>
+
+    <g transform="translate(14, 106)">
+      <rect width="240" height="38" rx="5" fill="#091815" stroke="#174E43" stroke-width="1"/>
+      <text x="10" y="18" fill="#34D399" font-family="sans-serif" font-size="11" font-weight="700">S08 原子边界与回滚预案</text>
+      <text x="10" y="31" fill="#94A3B8" font-family="sans-serif" font-size="10">框定受影响文件，明确异常回滚策略</text>
+    </g>
+
+    <g transform="translate(14, 154)">
+      <rect width="240" height="66" rx="5" fill="#061210"/>
+      <text x="8" y="18" fill="#64748B" font-family="sans-serif" font-size="10" font-weight="700">★ 门禁证据与交付物：</text>
+      <text x="8" y="34" fill="#94A3B8" font-family="sans-serif" font-size="10">完整的全周期结构化任务列表；</text>
+      <text x="8" y="50" fill="#94A3B8" font-family="sans-serif" font-size="10">零在办非法状态防范与状态同步</text>
+    </g>
+  </g>
+
+  <!-- 第二行：阶段 4、5、6 -->
+
+  <!-- 阶段 4：【攻坚】(Execution) -->
+  <g transform="translate(40, 370)">
+    <rect width="268" height="235" rx="10" fill="url(#phaseCard4)" stroke="#7C3AED" stroke-width="1.2"/>
+    <rect x="12" y="12" width="28" height="28" rx="6" fill="#7C3AED" opacity="0.2"/>
+    <text x="26" y="32" text-anchor="middle" fill="#C084FC" font-family="sans-serif" font-size="16" font-weight="900">四</text>
+    <text x="48" y="31" fill="#FFFFFF" font-family="sans-serif" font-size="15" font-weight="700">【攻坚】精准落地与协同</text>
+    <line x1="12" y1="48" x2="256" y2="48" stroke="#371E4A" stroke-width="1"/>
+
+    <g transform="translate(14, 58)">
+      <rect width="240" height="34" rx="5" fill="#130C1E" stroke="#482269" stroke-width="1"/>
+      <text x="10" y="16" fill="#C084FC" font-family="sans-serif" font-size="11" font-weight="700">S09 前置指纹单次读取</text>
+      <text x="10" y="28" fill="#94A3B8" font-family="sans-serif" font-size="10">上下文经济学：同一文件不无故复读</text>
+    </g>
+
+    <g transform="translate(14, 98)">
+      <rect width="240" height="34" rx="5" fill="#130C1E" stroke="#482269" stroke-width="1"/>
+      <text x="10" y="16" fill="#C084FC" font-family="sans-serif" font-size="11" font-weight="700">S10/S11 原子编写与读回 (Read-Back)</text>
+      <text x="10" y="28" fill="#94A3B8" font-family="sans-serif" font-size="10">write / edit 精准微调，写后必读回！</text>
+    </g>
+
+    <g transform="translate(14, 138)">
+      <rect width="240" height="82" rx="5" fill="#0C0714"/>
+      <text x="8" y="16" fill="#C084FC" font-family="sans-serif" font-size="10" font-weight="700">多智能体分流调用：</text>
+      <text x="8" y="32" fill="#94A3B8" font-family="sans-serif" font-size="10">· subagent: 独立隔离审查</text>
+      <text x="8" y="47" fill="#94A3B8" font-family="sans-serif" font-size="10">· subagent_fork: 继承上下文攻坚</text>
+      <text x="8" y="62" fill="#94A3B8" font-family="sans-serif" font-size="10">· workflow: 并发流水线 | ralph 自愈</text>
+    </g>
+  </g>
+
+  <!-- 阶段 5：【质检】(Verification) -->
+  <g transform="translate(326, 370)">
+    <rect width="268" height="235" rx="10" fill="url(#phaseCard5)" stroke="#E11D48" stroke-width="1.2"/>
+    <rect x="12" y="12" width="28" height="28" rx="6" fill="#E11D48" opacity="0.2"/>
+    <text x="26" y="32" text-anchor="middle" fill="#FB7185" font-family="sans-serif" font-size="16" font-weight="900">五</text>
+    <text x="48" y="31" fill="#FFFFFF" font-family="sans-serif" font-size="15" font-weight="700">【质检】功能跑通与联动</text>
+    <line x1="12" y1="48" x2="256" y2="48" stroke="#4C1425" stroke-width="1"/>
+
+    <g transform="translate(14, 60)">
+      <rect width="240" height="38" rx="5" fill="#1C0A12" stroke="#5C162E" stroke-width="1"/>
+      <text x="10" y="18" fill="#FB7185" font-family="sans-serif" font-size="11" font-weight="700">S12 工程与脚本真实跑通</text>
+      <text x="10" y="31" fill="#94A3B8" font-family="sans-serif" font-size="10">必须输出真实命令执行与测试回执</text>
+    </g>
+
+    <g transform="translate(14, 106)">
+      <rect width="240" height="38" rx="5" fill="#1C0A12" stroke="#5C162E" stroke-width="1"/>
+      <text x="10" y="18" fill="#FB7185" font-family="sans-serif" font-size="11" font-weight="700">S13 关联存量文件联动排查</text>
+      <text x="10" y="31" fill="#94A3B8" font-family="sans-serif" font-size="10">消除死链、文本冲突或旧版本残留</text>
+    </g>
+
+    <g transform="translate(14, 154)">
+      <rect width="240" height="66" rx="5" fill="#13060C"/>
+      <text x="8" y="18" fill="#64748B" font-family="sans-serif" font-size="10" font-weight="700">★ 门禁证据与交付物：</text>
+      <text x="8" y="34" fill="#94A3B8" font-family="sans-serif" font-size="10">杜绝假设性通过，报错必三段式释义；</text>
+      <text x="8" y="50" fill="#94A3B8" font-family="sans-serif" font-size="10">两步无进展立即启动熔断与回滚防护</text>
+    </g>
+  </g>
+
+  <!-- 阶段 6：【归卷】(Roll-in) -->
+  <g transform="translate(612, 370)">
+    <rect width="268" height="235" rx="10" fill="url(#phaseCard6)" stroke="#0D9488" stroke-width="1.2"/>
+    <rect x="12" y="12" width="28" height="28" rx="6" fill="#0D9488" opacity="0.2"/>
+    <text x="26" y="32" text-anchor="middle" fill="#2DD4BF" font-family="sans-serif" font-size="16" font-weight="900">六</text>
+    <text x="48" y="31" fill="#FFFFFF" font-family="sans-serif" font-size="15" font-weight="700">【归卷】原子提交与审计</text>
+    <line x1="12" y1="48" x2="256" y2="48" stroke="#163F3C" stroke-width="1"/>
+
+    <g transform="translate(14, 58)">
+      <rect width="240" height="34" rx="5" fill="#0A181C" stroke="#164E54" stroke-width="1"/>
+      <text x="10" y="16" fill="#2DD4BF" font-family="sans-serif" font-size="11" font-weight="700">S14 三位一体原子回写</text>
+      <text x="10" y="28" fill="#94A3B8" font-family="sans-serif" font-size="10">需求台账 + 规则知识库 + 版本号同步</text>
+    </g>
+
+    <g transform="translate(14, 98)">
+      <rect width="240" height="34" rx="5" fill="#0A181C" stroke="#164E54" stroke-width="1"/>
+      <text x="10" y="16" fill="#2DD4BF" font-family="sans-serif" font-size="11" font-weight="700">S15 Git 语义化提交与推送</text>
+      <text x="10" y="28" fill="#94A3B8" font-family="sans-serif" font-size="10">feat/docs/refactor 严格语义化提交</text>
+    </g>
+
+    <g transform="translate(14, 138)">
+      <rect width="240" height="82" rx="5" fill="#061114"/>
+      <text x="8" y="16" fill="#2DD4BF" font-family="sans-serif" font-size="10" font-weight="700">S16 交付入口与效率审计：</text>
+      <text x="8" y="32" fill="#94A3B8" font-family="sans-serif" font-size="10">· 交付直达卡片 (图片/链接/命令直达)</text>
+      <text x="8" y="47" fill="#94A3B8" font-family="sans-serif" font-size="10">· 输出 M1~M6 效率量化审计看板</text>
+      <text x="8" y="62" fill="#94A3B8" font-family="sans-serif" font-size="10">· 记录 memory/efficiency_audit_log.md</text>
+    </g>
+  </g>
+
+  <!-- 底部教学图注栏 -->
+  <g transform="translate(40, 620)">
+    <rect width="840" height="60" rx="8" fill="#0C1017" stroke="#1F2937" stroke-width="1"/>
+    <circle cx="20" cy="30" r="5" fill="#34D399"/>
+    <text x="34" y="34" fill="#94A3B8" font-family="sans-serif" font-size="12" font-weight="700">核心执行铁律：</text>
+    <text x="135" y="34" fill="#E2E8F0" font-family="sans-serif" font-size="11">
+      <tspan fill="#38BDF8">门禁在先</tspan> ➔ 
+      <tspan fill="#FBBF24">8字定名</tspan> ➔ 
+      <tspan fill="#34D399">单指纹读取</tspan> ➔ 
+      <tspan fill="#C084FC">写后必读回</tspan> ➔ 
+      <tspan fill="#FB7185">真机跑通</tspan> ➔ 
+      <tspan fill="#2DD4BF">原子三位归卷与M1~M6审计</tspan>
+    </text>
+  </g>
+</svg>

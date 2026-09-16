@@ -1,0 +1,205 @@
+<svg width="920" height="700" viewBox="0 0 920 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="920" y2="700" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#090D14"/>
+      <stop offset="50%" stop-color="#111722"/>
+      <stop offset="100%" stop-color="#070A0F"/>
+    </linearGradient>
+    <linearGradient id="glowTop" x1="0" y1="0" x2="920" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D2FF"/>
+      <stop offset="50%" stop-color="#2EC4B6"/>
+      <stop offset="100%" stop-color="#8A2BE2"/>
+    </linearGradient>
+    <linearGradient id="cardBlue" x1="0" y1="0" x2="840" y2="105" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#141E2F"/>
+      <stop offset="100%" stop-color="#0E1622"/>
+    </linearGradient>
+    <linearGradient id="cardAmber" x1="0" y1="0" x2="840" y2="105" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#261E14"/>
+      <stop offset="100%" stop-color="#18130B"/>
+    </linearGradient>
+    <linearGradient id="cardTeal" x1="0" y1="0" x2="840" y2="135" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#102524"/>
+      <stop offset="100%" stop-color="#0B1817"/>
+    </linearGradient>
+    <linearGradient id="cardPurple" x1="0" y1="0" x2="840" y2="105" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22152D"/>
+      <stop offset="100%" stop-color="#140C1D"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-10" y="-6" width="940" height="720" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- 全局大背景 -->
+  <rect width="920" height="700" rx="16" fill="url(#bgGrad)"/>
+  <rect x="1.5" y="1.5" width="917" height="697" rx="14.5" stroke="#1F2937" stroke-width="1.5"/>
+  <rect x="40" y="2" width="840" height="2" fill="url(#glowTop)"/>
+
+  <!-- 背景氛围光晕 -->
+  <circle cx="160" cy="120" r="140" fill="#00D2FF" opacity="0.06" filter="blur(60px)"/>
+  <circle cx="760" cy="540" r="160" fill="#8A2BE2" opacity="0.06" filter="blur(70px)"/>
+
+  <!-- 顶部主标题栏 -->
+  <g transform="translate(40, 24)">
+    <circle cx="12" cy="16" r="7" fill="#00D2FF"/>
+    <text x="32" y="23" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="800" letter-spacing="0.5">DSH 宿主能力体系全景架构图 (Architecture Matrix)</text>
+    <text x="590" y="22" fill="#00D2FF" font-family="sans-serif" font-size="12" font-weight="700">· V1.5.0 全局法典</text>
+    <rect x="740" y="5" width="100" height="24" rx="12" fill="#172234" stroke="#00D2FF" stroke-width="1"/>
+    <text x="790" y="21" text-anchor="middle" fill="#00D2FF" font-family="sans-serif" font-size="11" font-weight="700">系统内核全景</text>
+  </g>
+
+  <!-- 第一层：呈现感知层 (Presentation Layer) -->
+  <g transform="translate(40, 68)">
+    <rect width="840" height="110" rx="10" fill="url(#cardBlue)" stroke="#00D2FF" stroke-width="1.2"/>
+    <rect x="16" y="14" width="34" height="34" rx="8" fill="#00D2FF" opacity="0.15"/>
+    <text x="33" y="38" text-anchor="middle" fill="#00D2FF" font-family="sans-serif" font-size="18" font-weight="900">L1</text>
+    <text x="62" y="31" fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="700">【呈现感知层】DSH Web GUI (客户端交互与视图渲染)</text>
+    <text x="62" y="49" fill="#94A3B8" font-family="sans-serif" font-size="12">人机交互窗口 · 标题侧边栏强一致同步 · SSE 毫秒级多路推流</text>
+    
+    <line x1="16" y1="60" x2="824" y2="60" stroke="#1E293B" stroke-width="1"/>
+
+    <!-- L1 模块胶囊 -->
+    <g transform="translate(16, 68)">
+      <rect width="258" height="32" rx="6" fill="#0B1321" stroke="#1E3A5F" stroke-width="1"/>
+      <text x="12" y="21" fill="#38BDF8" font-family="sans-serif" font-size="12" font-weight="700">侧边栏 8字投影</text>
+      <text x="110" y="21" fill="#94A3B8" font-family="sans-serif" font-size="11">session.rename RPC 强一致锁定</text>
+
+      <rect x="270" width="258" height="32" rx="6" fill="#0B1321" stroke="#1E3A5F" stroke-width="1"/>
+      <text x="282" y="21" fill="#38BDF8" font-family="sans-serif" font-size="12" font-weight="700">视口置顶吸附</text>
+      <text x="370" y="21" fill="#94A3B8" font-family="sans-serif" font-size="11">GFM 原生无乱码工单与指标卡片</text>
+
+      <rect x="540" width="268" height="32" rx="6" fill="#0B1321" stroke="#1E3A5F" stroke-width="1"/>
+      <text x="552" y="21" fill="#38BDF8" font-family="sans-serif" font-size="12" font-weight="700">SSE 事件双向流</text>
+      <text x="652" y="21" fill="#94A3B8" font-family="sans-serif" font-size="11">毫秒级 token 流与进度广播</text>
+    </g>
+  </g>
+
+  <!-- 第二层：宿主控制层 (Runtime Host) -->
+  <g transform="translate(40, 190)">
+    <rect width="840" height="110" rx="10" fill="url(#cardAmber)" stroke="#F59E0B" stroke-width="1.2"/>
+    <rect x="16" y="14" width="34" height="34" rx="8" fill="#F59E0B" opacity="0.15"/>
+    <text x="33" y="38" text-anchor="middle" fill="#F59E0B" font-family="sans-serif" font-size="18" font-weight="900">L2</text>
+    <text x="62" y="31" fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="700">【宿主控制层】DSH Runtime Host (安全网关与持久化引擎)</text>
+    <text x="62" y="49" fill="#94A3B8" font-family="sans-serif" font-size="12">RPC 请求中继调度 · 会话分支克隆 · 免审批沙箱基线守卫</text>
+
+    <line x1="16" y1="60" x2="824" y2="60" stroke="#2D2115" stroke-width="1"/>
+
+    <!-- L2 模块胶囊 -->
+    <g transform="translate(16, 68)">
+      <rect width="258" height="32" rx="6" fill="#19130B" stroke="#4A3416" stroke-width="1"/>
+      <text x="12" y="21" fill="#FBBF24" font-family="sans-serif" font-size="12" font-weight="700">ApiProxy 网关</text>
+      <text x="108" y="21" fill="#94A3B8" font-family="sans-serif" font-size="11">HTTP / JSON-RPC / SSE 统一接入</text>
+
+      <rect x="270" width="258" height="32" rx="6" fill="#19130B" stroke="#4A3416" stroke-width="1"/>
+      <text x="282" y="21" fill="#FBBF24" font-family="sans-serif" font-size="12" font-weight="700">JSONL.zstd 增量</text>
+      <text x="390" y="21" fill="#94A3B8" font-family="sans-serif" font-size="11">极高压缩比持久化与 Fork 分支</text>
+
+      <rect x="540" width="268" height="32" rx="6" fill="#19130B" stroke="#4A3416" stroke-width="1"/>
+      <text x="552" y="21" fill="#FBBF24" font-family="sans-serif" font-size="12" font-weight="700">免审批沙箱策略</text>
+      <text x="656" y="21" fill="#94A3B8" font-family="sans-serif" font-size="11">danger-full-access 自主守护</text>
+    </g>
+  </g>
+
+  <!-- 第三层：执行核心层 (Execution Core & Tools) -->
+  <g transform="translate(40, 312)">
+    <rect width="840" height="175" rx="10" fill="url(#cardTeal)" stroke="#10B981" stroke-width="1.2"/>
+    <rect x="16" y="14" width="34" height="34" rx="8" fill="#10B981" opacity="0.15"/>
+    <text x="33" y="38" text-anchor="middle" fill="#10B981" font-family="sans-serif" font-size="18" font-weight="900">L3</text>
+    <text x="62" y="31" fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="700">【执行核心层】Execution Core (底层工具族群与智能协同网络)</text>
+    <text x="62" y="49" fill="#94A3B8" font-family="sans-serif" font-size="12">基础原子工具机体 · 跨轮目标治理 · 多模型多模态 · 多智能体协同流水线</text>
+
+    <line x1="16" y1="60" x2="824" y2="60" stroke="#16382F" stroke-width="1"/>
+
+    <!-- L3 第一行：基础工具 -->
+    <g transform="translate(16, 68)">
+      <rect width="195" height="42" rx="6" fill="#0C1B19" stroke="#174E43" stroke-width="1"/>
+      <text x="12" y="20" fill="#34D399" font-family="sans-serif" font-size="12" font-weight="700">文件操作族</text>
+      <text x="12" y="35" fill="#94A3B8" font-family="sans-serif" font-size="11">read / write / edit 精准微调</text>
+
+      <rect x="203" width="195" height="42" rx="6" fill="#0C1B19" stroke="#174E43" stroke-width="1"/>
+      <text x="215" y="20" fill="#34D399" font-family="sans-serif" font-size="12" font-weight="700">终端与代码检索</text>
+      <text x="215" y="35" fill="#94A3B8" font-family="sans-serif" font-size="11">bash / glob / grep (Ripgrep)</text>
+
+      <rect x="406" width="200" height="42" rx="6" fill="#0C1B19" stroke="#174E43" stroke-width="1"/>
+      <text x="418" y="20" fill="#34D399" font-family="sans-serif" font-size="12" font-weight="700">视觉与多模态</text>
+      <text x="418" y="35" fill="#94A3B8" font-family="sans-serif" font-size="11">read_image 原生直读免格式转换</text>
+
+      <rect x="614" width="194" height="42" rx="6" fill="#0C1B19" stroke="#174E43" stroke-width="1"/>
+      <text x="626" y="20" fill="#34D399" font-family="sans-serif" font-size="12" font-weight="700">目标看板与协同</text>
+      <text x="626" y="35" fill="#94A3B8" font-family="sans-serif" font-size="11">todo_write 任务看板 / goal</text>
+    </g>
+
+    <!-- L3 第二行：多智能体编排网络 -->
+    <g transform="translate(16, 118)">
+      <rect width="808" height="46" rx="6" fill="#081413" stroke="#1E5C4F" stroke-width="1"/>
+      <text x="14" y="28" fill="#2DD4BF" font-family="sans-serif" font-size="12" font-weight="800">多智能体编排生态 ➔</text>
+      
+      <rect x="140" y="8" width="156" height="30" rx="4" fill="#132B27"/>
+      <text x="150" y="28" fill="#6EE7B7" font-family="sans-serif" font-size="11" font-weight="700">subagent</text>
+      <text x="210" y="28" fill="#94A3B8" font-family="sans-serif" font-size="11">独立沙箱外包</text>
+
+      <rect x="304" y="8" width="162" height="30" rx="4" fill="#132B27"/>
+      <text x="314" y="28" fill="#6EE7B7" font-family="sans-serif" font-size="11" font-weight="700">subagent_fork</text>
+      <text x="404" y="28" fill="#94A3B8" font-family="sans-serif" font-size="11">克隆上下文</text>
+
+      <rect x="474" y="8" width="166" height="30" rx="4" fill="#132B27"/>
+      <text x="484" y="28" fill="#6EE7B7" font-family="sans-serif" font-size="11" font-weight="700">workflow</text>
+      <text x="546" y="28" fill="#94A3B8" font-family="sans-serif" font-size="11">JS 并发流水线</text>
+
+      <rect x="648" y="8" width="150" height="30" rx="4" fill="#132B27"/>
+      <text x="658" y="28" fill="#6EE7B7" font-family="sans-serif" font-size="11" font-weight="700">ralph</text>
+      <text x="696" y="28" fill="#94A3B8" font-family="sans-serif" font-size="11">冷启动自愈环路</text>
+    </g>
+  </g>
+
+  <!-- 第四层：开放扩展与图形管道 (Extension Ecosystem) -->
+  <g transform="translate(40, 499)">
+    <rect width="840" height="110" rx="10" fill="url(#cardPurple)" stroke="#A855F7" stroke-width="1.2"/>
+    <rect x="16" y="14" width="34" height="34" rx="8" fill="#A855F7" opacity="0.15"/>
+    <text x="33" y="38" text-anchor="middle" fill="#A855F7" font-family="sans-serif" font-size="18" font-weight="900">L4</text>
+    <text x="62" y="31" fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="700">【开放生态与图形管道】Extension Ecosystem (外部协议与图形基础设施)</text>
+    <text x="62" y="49" fill="#94A3B8" font-family="sans-serif" font-size="12">MCP 协议动态挂载 · 系统级优质 CLI 工具链 · 原生图形渲染管道</text>
+
+    <line x1="16" y1="60" x2="824" y2="60" stroke="#371E4A" stroke-width="1"/>
+
+    <!-- L4 模块胶囊 -->
+    <g transform="translate(16, 68)">
+      <rect width="258" height="32" rx="6" fill="#170E21" stroke="#482269" stroke-width="1"/>
+      <text x="12" y="21" fill="#C084FC" font-family="sans-serif" font-size="12" font-weight="700">Anthropic MCP 协议</text>
+      <text x="135" y="21" fill="#94A3B8" font-family="sans-serif" font-size="11">Postgres / Git / BraveSearch</text>
+
+      <rect x="270" width="258" height="32" rx="6" fill="#170E21" stroke="#482269" stroke-width="1"/>
+      <text x="282" y="21" fill="#C084FC" font-family="sans-serif" font-size="12" font-weight="700">系统级 CLI 工具链</text>
+      <text x="398" y="21" fill="#94A3B8" font-family="sans-serif" font-size="11">gh / jq / ripgrep / docker</text>
+
+      <rect x="540" width="268" height="32" rx="6" fill="#170E21" stroke="#482269" stroke-width="1"/>
+      <text x="552" y="21" fill="#C084FC" font-family="sans-serif" font-size="12" font-weight="700">图形生成管道</text>
+      <text x="640" y="21" fill="#94A3B8" font-family="sans-serif" font-size="11">scripts/generate_image.py 自愈</text>
+    </g>
+  </g>
+
+  <!-- 底部教学闭环导引条 -->
+  <g transform="translate(40, 622)">
+    <rect width="840" height="58" rx="8" fill="#0C1017" stroke="#1F2937" stroke-width="1"/>
+    <text x="20" y="34" fill="#94A3B8" font-family="sans-serif" font-size="12" font-weight="700">全流程四大纪律：</text>
+
+    <rect x="130" y="14" width="160" height="30" rx="4" fill="#111C2D" stroke="#00D2FF" stroke-width="1"/>
+    <text x="210" y="34" text-anchor="middle" fill="#38BDF8" font-family="sans-serif" font-size="11" font-weight="700">1. 首动锁定 8 字标题</text>
+
+    <text x="300" y="34" fill="#64748B" font-family="sans-serif" font-size="13">➔</text>
+
+    <rect x="320" y="14" width="160" height="30" rx="4" fill="#201A10" stroke="#F59E0B" stroke-width="1"/>
+    <text x="400" y="34" text-anchor="middle" fill="#FBBF24" font-family="sans-serif" font-size="11" font-weight="700">2. 单指纹同路径只读一次</text>
+
+    <text x="490" y="34" fill="#64748B" font-family="sans-serif" font-size="13">➔</text>
+
+    <rect x="510" y="14" width="150" height="30" rx="4" fill="#0C201C" stroke="#10B981" stroke-width="1"/>
+    <text x="585" y="34" text-anchor="middle" fill="#34D399" font-family="sans-serif" font-size="11" font-weight="700">3. 写后必强制读回质检</text>
+
+    <text x="670" y="34" fill="#64748B" font-family="sans-serif" font-size="13">➔</text>
+
+    <rect x="690" y="14" width="138" height="30" rx="4" fill="#1D1126" stroke="#A855F7" stroke-width="1"/>
+    <text x="759" y="34" text-anchor="middle" fill="#C084FC" font-family="sans-serif" font-size="11" font-weight="700">4. 原子三位一体归卷</text>
+  </g>
+</svg>
