@@ -152,15 +152,56 @@
 
 ---
 
+## ⚠️ 第十四条：前置风险揭示与防御律 (Pre-flight Risk Disclosure Law)
+
+1. **凡谋先审险，凡动必有备**：
+   - 复杂任务与破坏性操作前，必须通过四维风险雷达（技术依赖、数据破坏、需求边界、权限安全）进行显式扫描，输出《前置风险评估卡》与回滚预案；
+   - 未经风险揭示与边界评估，严禁直接下发业务文件写操作或环境变更。
+2. **高危红线硬性阻断**：
+   - 凡涉及生产环境数据库破坏、大规模跨目录批量删除、敏感凭证泄露或严重需求冲突，智能体必须强制暂停并阻断执行，向用户预警确认。遵循 [`rules/workflow/risk_disclosure.md`](../workflow/risk_disclosure.md)。
+
+---
+
+## 🧪 第十五条：自动化测试与质量零缺陷门禁律 (Automated Testing & Quality Gate Law)
+
+1. **需求即断言，代码未测非可信**：
+   - 需求拆解必须映射为明确可断言的测试用例，所有功能实现必须通过终端真实运行自动化测试脚本（E2E、API集成、单元测试或结构校验脚本），杜绝脑内假想通过。
+2. **100% 绿灯交付硬门禁**：
+   - 自动化测试通过率必须为 100%。遇到断言失败立即原地阻断并修复，未全绿严禁回写需求台账、严禁提交代码、严禁声称交付。遵循 [`rules/coding/testing_and_quality_gate.md`](../coding/testing_and_quality_gate.md)。
+
+---
+
+## 📱 第十六条：页面视觉资产与台账化管控律 (Visual Page Ledger Law)
+
+1. **一项目一册，全生命周期可溯**：
+   - 凡涉及 Web 前端、Unity UI、客户端与小程序的工程，必须在专属《项目页面台账》中维护独立全景索引表，统一规范截图并归档；
+   - 页面截图严格执行四段式语义命名：`Page_[模块名]_[页面中文名]_[状态/模式].png`。
+2. **跨会话精准指代**：
+   - 后续需求迭代与缺陷排查，必须直接引用台账页面编号（如 `P-001`、`P-002`），彻底消除模糊指代。遵循 [`rules/workflow/page_ledger_specification.md`](../workflow/page_ledger_specification.md)。
+
+---
+
+## 🔄 第十七条：任务复盘与系统自迭代进化律 (Post-Mortem & Self-Evolution Law)
+
+1. **凡事必有复盘 (No Mission Without Review)**：
+   - 任务收尾阶段必须输出三维《任务复盘与流程进化报告 (AAR)》，剖析偏差、深挖根因、提出规则与工作流改进建议，严禁形式主义空转。
+2. **双向自迭代闭环**：
+   - 排坑实战认知即时增量回写至 [`memory/lessons_learned.md`](../../memory/lessons_learned.md)；
+   - 流程痛点与优化建议转化为规则版本演进提案，推动工程规范自我进化。遵循 [`rules/workflow/post_mortem_and_evolution.md`](../workflow/post_mortem_and_evolution.md)。
+
+---
+
 ## 🧭 第八条：规则优先级与仲裁顺序 (Precedence Order)
 
 当发生规则冲突或边界模糊时，遵循以下优先级判定顺序：
 ```text
 系统级元规则 (meta_rules.md)
-  └── 安全防破坏红线 (Security Baseline)
+  └── 安全防破坏红线与前置风险揭示 (Security Baseline & Risk Disclosure)
         └── 事务原子性与不留孤岛 (atomicity_specification.md)
               └── 知识库业务法典 (knowledge/* 世界观/美术/工程)
-                    └── 流程协同与双轨分流 (task_execution_flow.md)
-                          └── 编码与技术规范 (Coding Standards)
-                                └── 临时性操作偏好 (Ad-hoc Preferences)
+                    └── 质量测试零缺陷门禁 (testing_and_quality_gate.md)
+                          └── 流程协同与双轨分流 (task_execution_flow.md)
+                                └── 页面资产台账与截图规范 (page_ledger_specification.md)
+                                      └── 编码与技术规范 (Coding Standards)
+                                            └── 临时性操作偏好 (Ad-hoc Preferences)
 ```

@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.7.0`
-> - **对应实施版本**：`v1.7.0`
+> - **当前文档版本**：`v1.8.0`
+> - **对应实施版本**：`v1.8.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -27,7 +27,10 @@
 
 | 文档路径 | 中文全称 | 核心作用与边界 |
 | :--- | :--- | :--- |
-| [`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) | **任务执行结构化流程与图形规范** | 快慢双轨分流、六大分类编号、100分制打分、8字标题、知识库前置审查与原子化收尾。 |
+| [`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) | **任务执行结构化流程与图形规范** | 快慢双轨分流、六大分类编号、100分制打分、8字标题、十六步流水线闭环。 |
+| [`rules/workflow/risk_disclosure.md`](../rules/workflow/risk_disclosure.md) | **任务前置风险揭示与评估规范** | 四维风险雷达、写前必揭示门禁、《前置风险评估卡》与高危阻断预案。 |
+| [`rules/workflow/page_ledger_specification.md`](../rules/workflow/page_ledger_specification.md) | **页面视觉台账与截图指代规范** | 一项目一册、四段式截图命名、独立项目台账、跨会话编号精准指代。 |
+| [`rules/workflow/post_mortem_and_evolution.md`](../rules/workflow/post_mortem_and_evolution.md) | **任务复盘与系统自迭代进化规范** | 任务收尾三维 AAR 强制复盘、根因深挖、记忆层经验沉淀与规则自迭代。 |
 | [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md) | **实施版本号治理与全生命周期同步规范** | 语义化版本管理（SemVer）、需求-知识库-实施三位一体强同步铁律。 |
 | [`rules/workflow/change_flow.md`](../rules/workflow/change_flow.md) | **规则与需求变更六步工作流** | 接收意图 ➔ 查重拦截 ➔ 登记台账 ➔ 编写规则 ➔ 联动排查 ➔ 提交推送。 |
 | [`rules/workflow/audit_and_cleanup.md`](../rules/workflow/audit_and_cleanup.md) | **规则更新联动排查与存量治理规范** | 消除孤岛规则、过期死链清理、结构去重与版本历史治理细则。 |
@@ -39,6 +42,7 @@
 
 | 文档路径 | 中文全称 | 核心作用与边界 |
 | :--- | :--- | :--- |
+| [`rules/coding/testing_and_quality_gate.md`](../rules/coding/testing_and_quality_gate.md) | **自动化测试与工程质量门禁规范** | 需求即断言、真实执行用例、100% 绿灯硬性交付门禁、未测禁言交付。 |
 | [`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) | **Unity 结构化工程目录与文件形式规范** | `_Project/` 根目录隔离、.meta 同生共死铁律、asmdef 模块解耦、C# 生命周期守则。 |
 | [`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) | **系统操作与工程设计原子性事务规范** | 明确操作级原子性（双向同步/目录四件套/.meta）与设计级原子性（存档/交易/状态机）。 |
 
@@ -64,11 +68,14 @@
 
 | 分类 | 文档/脚本路径 | 说明 |
 | :--- | :--- | :--- |
-| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-030 完整记录，总版本 `v1.7.0`） |
+| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-031 完整记录，总版本 `v1.8.0`） |
 | **图表生成** | [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 全场景流程图、信息图与教学图生成技术指南与标准模板库 |
 | **教学指南** | [`docs/rules_tutorial.md`](../docs/rules_tutorial.md) | 规则体系运转教学图解与实操说明 |
 | **记忆架构** | [`docs/memory_architecture.md`](../docs/memory_architecture.md) | AI 分层长短期记忆体系架构与工程落地规范 |
 | **标准模板** | [`templates/requirement_template.md`](../templates/requirement_template.md) | 标准需求卡片录入模板（支持实施版本号） |
+| **标准模板** | [`templates/risk_assessment_template.md`](../templates/risk_assessment_template.md) | 前置四维风险评估卡标准模板 |
+| **标准模板** | [`templates/page_ledger_template.md`](../templates/page_ledger_template.md) | 项目页面资产与视觉台账模板 |
+| **标准模板** | [`templates/post_mortem_template.md`](../templates/post_mortem_template.md) | AAR 任务复盘与流程进化报告模板 |
 | **标准模板** | [`templates/directory_readme_template.md`](../templates/directory_readme_template.md) | 目录专属说明标准模板 |
 | **标准模板** | [`templates/graphical_block_template.md`](../templates/graphical_block_template.md) | 原生图形化区块卡片组件标准模板 |
 | **自动化脚本** | [`scripts/generate_image.py`](../scripts/generate_image.py) | 图形生成、自动保存与图显渲染脚本 |

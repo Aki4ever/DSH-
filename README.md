@@ -1,7 +1,7 @@
 # 全局规则工程 (Global Rules Project)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.7.0`
+> - **当前系统实施总版本**：`v1.8.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -16,17 +16,21 @@
 .
 ├── rules/                           # 核心规则目录
 │   ├── system/                      # 【系统级基础规则】
-│   │   ├── meta_rules.md            # 系统最高元规则（双向同步/去重/全中文/排查/双轨分流/知识库审查/事务原子性）
+│   │   ├── meta_rules.md            # 系统最高元规则（双向同步/去重/全中文/排查/双轨分流/风险揭示/测试门禁/页面台账/自迭代）
 │   │   ├── thinking_framework.md    # 搜索引擎逻辑映射与智能体六步思考决策管道
 │   │   ├── language_standard.md     # 全文档中文化与通俗直白表达规范
 │   │   └── initialization_protocol.md # 会话开箱自检与目录一键初始化协议
 │   ├── workflow/                    # 【流程协同规范】
-│   │   ├── task_execution_flow.md   # 快慢双轨分流、100分制打分、8字标题、知识库前置核验与原子化收尾
+│   │   ├── task_execution_flow.md   # 快慢双轨分流、100分制打分、8字标题、风险揭示、自动化测试与自迭代十六步流水线
+│   │   ├── risk_disclosure.md       # 事前四维风险雷达揭示、评估卡与高危阻断预案规范
+│   │   ├── page_ledger_specification.md # 交付页面视觉台账、四段式截图命名与跨会话精准指代规范
+│   │   ├── post_mortem_and_evolution.md # 事后三维 AAR 任务复盘与双向自迭代进化规范
 │   │   ├── versioning_standard.md   # 实施版本号治理与全生命周期同步规范 (SemVer)
 │   │   ├── change_flow.md           # 规则与需求变更六步工作流
 │   │   ├── audit_and_cleanup.md     # 联动排查、存量资源治理与结构冗余去重规范
 │   │   └── component_naming.md      # 标准组件中文指代、架构统一指代与快速通道指引
 │   ├── coding/                      # 【代码与工程规范】
+│   │   ├── testing_and_quality_gate.md # 需求即断言、真实运行与自动化测试 100% 绿灯硬门禁
 │   │   ├── unity_project_standard.md # Unity 结构化工程目录、文件形式与 C# 架构全局规范
 │   │   └── atomicity_specification.md # 系统操作与工程设计原子性事务边界规范
 │   └── security/                    # 【安全防护与红线法典】
@@ -57,12 +61,15 @@
 │   ├── efficiency_audit_log.md      # 思考决策与执行效率全景量化审计台账 (M1~M6指标)
 │   └── README.md                    # 记忆层专属说明文档
 ├── docs/                            # 【说明、指南与核心台账】
-│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-030，总版本 v1.7.0）
+│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-031，总版本 v1.8.0）
 │   ├── diagram_generation_guide.md  # 全场景流程图、信息图与教学图生成技术指南与标准模板库
 │   ├── memory_architecture.md       # AI 分层长短期记忆体系架构与工程落地规范
 │   └── rules_tutorial.md            # 全局规则运转教学指南与图解
 ├── templates/                       # 【标准模板资产】
 │   ├── requirement_template.md      # 结构化需求标准卡片模板（含实施版本号）
+│   ├── risk_assessment_template.md  # 前置四维风险评估卡标准模板
+│   ├── page_ledger_template.md      # 项目页面资产与视觉台账模板
+│   ├── post_mortem_template.md      # AAR 任务复盘与流程进化报告模板
 │   ├── directory_readme_template.md # 目录专属说明标准模板
 │   └── graphical_block_template.md  # 原生图形化区块卡片组件标准模板
 ├── scripts/                         # 【自动化辅助工具】

@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.7.0`
+> - **当前系统实施总版本**：`v1.8.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -666,6 +666,48 @@
   - [x] `knowledge/common/` 六大通用规范文件落地，细致到 Scene/Prefab/阴影/格式塔像素级；
   - [x] `knowledge/projects/` 建立物理隔离，完成示例项目迁移；
   - [x] 全局实施总版本号推进至 `v1.7.0`。
+
+---
+
+### REQ-031: 智能体四大工程交付规范与自迭代演进体系
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v1.8.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **核心诉求与目标**：
+  1. **前置风险揭示与评估机制 (Pre-flight Risk Disclosure)**：
+     - 凡谋先审险，凡动必有备。在动手编写代码或变更环境前，必须通过四维风险雷达（技术依赖、数据破坏、需求边界、权限安全）显式评估并输出《前置风险评估卡》与回滚预案；
+     - 遇到不可逆高危操作强制阻断提示确认。落地 `rules/workflow/risk_disclosure.md` 与 `templates/risk_assessment_template.md`。
+  2. **自动化测试与 100% 绿灯质量门禁 (Automated Testing & Quality Gate)**：
+     - 需求即断言，工程未测非可信。必须将需求映射为可自动运行的测试用例，通过终端真实执行；
+     - 确立 100% 绿灯硬门禁，未测或测试失败严禁结项交付。落地 `rules/coding/testing_and_quality_gate.md`。
+  3. **页面资产台账与截图指代规范 (Page Ledger Protocol)**：
+     - 视图必有凭据，页面皆有命名，一项目一册。前端/GUI 项目必须为所有页面在标准视口下捕获截图，按四段式规范命名（`Page_[模块]_[页面]_[状态].png`），在独立《项目页面台账》中全生命周期追踪；
+     - 多轮对话必须按台账编号（如 `P-001`）精准指代。落地 `rules/workflow/page_ledger_specification.md` 与 `templates/page_ledger_template.md`。
+  4. **任务复盘与系统自迭代进化体系 (Post-Mortem & Self-Evolution)**：
+     - 任务交付非终点，复盘沉淀促进化。收尾阶段强制输出 AAR 复盘报告，剖析偏差、深挖根因、提出规则与工作流演进建议；
+     - 双向自迭代闭环：排坑实战认知即时增量写入 `memory/lessons_learned.md`，流程优化推动规则库版本持续升级。落地 `rules/workflow/post_mortem_and_evolution.md` 与 `templates/post_mortem_template.md`。
+- **关联文件**：
+  - `rules/workflow/risk_disclosure.md`
+  - `rules/coding/testing_and_quality_gate.md`
+  - `rules/workflow/page_ledger_specification.md`
+  - `rules/workflow/post_mortem_and_evolution.md`
+  - `templates/risk_assessment_template.md`
+  - `templates/page_ledger_template.md`
+  - `templates/post_mortem_template.md`
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `rules/workflow/versioning_standard.md`
+  - `memory/lessons_learned.md`
+  - `README.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 四大工程规范文档全部落地并读回验证；
+  - [x] 三套标准卡片与台账模板全部落地；
+  - [x] 系统最高元规则与十六步流水线深度融合联动；
+  - [x] 经验记忆库完成避坑条目增量更新；
+  - [x] 自动化测试验证脚本全部跑通；
+  - [x] 实施总版本号严格推进至 `v1.8.0`。
 
 
 
