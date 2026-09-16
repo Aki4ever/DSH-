@@ -31,11 +31,13 @@
 │   ├── lessons_learned.md           # 实战排查沉淀的避坑指南与底层机制认知
 │   └── README.md                    # 记忆层专属说明文档
 ├── docs/                            # 【说明与核心台账】
-│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-015 闭环记录）
+│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-017 闭环记录）
+│   ├── memory_architecture.md       # AI 分层长短期记忆体系架构与工程落地规范
 │   └── rules_tutorial.md            # 全局规则运转教学指南与图解
 ├── templates/                       # 【标准模板资产】
 │   ├── requirement_template.md      # 结构化需求标准卡片模板
-│   └── directory_readme_template.md # 目录专属说明标准模板
+│   ├── directory_readme_template.md # 目录专属说明标准模板
+│   └── graphical_block_template.md  # 原生图形化区块卡片组件标准模板
 ├── scripts/                         # 【自动化辅助工具】
 │   ├── rename_session.sh            # 会话一键重命名并锁定 RPC 脚本
 │   └── init_dir.sh                  # 目录一键自动化初始化脚本
