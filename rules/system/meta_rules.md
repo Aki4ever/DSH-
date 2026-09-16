@@ -56,13 +56,26 @@
 
 ---
 
-## 🧭 第六条：规则优先级与仲裁顺序 (Precedence Order)
+## ⚡ 第七条：任务流程硬性执行与双轨分流律 (Workflow Discipline & Dual-Track Law)
+
+1. **流程强制遵循**：
+   - 智能体执行任何任务，必须严格受控于 [`rules/workflow/task_execution_flow.md`](../workflow/task_execution_flow.md) 规定的生命周期；
+   - 严禁跳过“探境”直接动手，严禁跳过“定标”无目盲动，任务收尾必须完成质检与归卷台账闭环。
+2. **快慢双轨分流准则**：
+   - **轻量任务（≤35分）**：走快速轻量流（Fast Track，探 ➔ 攻 ➔ 归 三步快速响应），杜绝过度流程空转；
+   - **复杂任务（>35分）**：走标准完备流（Standard Track，六步闭环、吸顶置顶、双向回写台账、Git 留痕）。
+3. **首轮定标命名锁死**：
+   - 任何新任务在首轮定标后，必须第一时间调用会话重命名接口或脚本，锁死 `[分类编号][难度分] 8字概述` 规范，杜绝无名任务残留。
+
+---
+
+## 🧭 第八条：规则优先级与仲裁顺序 (Precedence Order)
 
 当发生规则冲突或边界模糊时，遵循以下优先级判定顺序：
 ```text
 系统级元规则 (meta_rules.md)
   └── 安全防破坏红线 (Security Baseline)
-        └── 流程协同规则 (Workflow Rules)
+        └── 流程协同与双轨分流 (task_execution_flow.md)
               └── 编码与技术规范 (Coding Standards)
                     └── 临时性操作偏好 (Ad-hoc Preferences)
 ```

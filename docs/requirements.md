@@ -234,3 +234,37 @@
   - [x] 吸顶置顶交互组件规范与原型落地；
   - [x] 历史存量会话全部完成 8 字新标题重命名推送；
   - [x] 需求台账与 Git 提交闭环。
+
+---
+
+### REQ-015: 全局体系七维升级与能力索引记忆中枢
+- **当前状态**：`[ACTIVE]` 生效中
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **核心诉求与目标**：
+  1. 自动化解决会话漏重命名问题，沉淀 `scripts/rename_session.sh` 并固化首轮定标强制重命名动作；
+  2. 将任务标准执行流程提升并固化为全局最高元规则硬性约束；
+  3. 建立任务快慢双轨分流管道（简单任务轻量流 ≤35分，复杂任务完备六步流 >35分）；
+  4. 将系统所有插件与工具抽象封装为标准函数接口形式，定义输入、输出与边界；
+  5. 新增顶级索引层 `indexes/`（包含能力全景、工具接口矩阵与规则索引）；
+  6. 新增结构与内容冗余去重与治理机制；
+  7. 新增短期（视口吸顶内存）与长期（`memory/` 持久化知识库与避坑指南）双层记忆体系。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/system/initialization_protocol.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `rules/workflow/audit_and_cleanup.md`
+  - `indexes/dsh_capabilities.md`
+  - `indexes/tool_interfaces.md`
+  - `indexes/rules_index.md`
+  - `memory/context_memory.md`
+  - `memory/lessons_learned.md`
+  - `scripts/rename_session.sh`
+  - `README.md`
+- **验收标准**：
+  - [x] 自动化重命名脚本落地并在执行流中首发调用；
+  - [x] 元规则与工作流完成快慢双轨及流程强制硬约束升级；
+  - [x] 顶级目录 `indexes/` 与 `memory/` 骨架及说明文档建立；
+  - [x] 工具接口矩阵详实封装完成；
+  - [x] 结构去重规范明确；
+  - [x] 主页 README 完成多层联动索引更新。
