@@ -38,3 +38,9 @@
 | **模型调度** | **大模型网关** / **DeepSeek 直连器** | `dsh-llm` / `dsh-llm-deepseek` |
 | **会话状态** | **会话状态存储** / **历史修剪器** | `dsh-session` / `dsh-compaction` |
 | **图形前端** | **Web GUI 界面** / **工作区管理器** | `dsh-web-app` / `dsh-workspace` |
+
+---
+
+## ⚡ 三、快速通道口令体系
+
+日常高频交互支持自然语言快捷通道（如“看看当前dsh体系能力”、“查看规则全景”、“查看知识库”等），详见快速通道总表：[`indexes/shortcuts_index.md`](../../indexes/shortcuts_index.md)。命中快捷词汇后将直接触发精准直达输出。

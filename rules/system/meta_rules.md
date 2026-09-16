@@ -69,13 +69,34 @@
 
 ---
 
+## 📚 第九条：知识库权威与前置防冲突律 (Knowledge Base Precedence)
+
+1. **知识库最高业务权威**：
+   - [`knowledge/`](../../knowledge/README.md) 中收纳的世界观背景、美术视觉规范与工程架构规范，是系统产品设定的最高法定基线。
+2. **前置审查卡点 (Pre-flight Audit)**：
+   - 任何新需求的制定与代码开发，在【探境】和【定标】阶段必须优先检索并核对知识库；
+   - **零冲突红线**：严禁出现违背世界观故事设定、破坏美术设计语言或突破工程性能预算的代码与方案；一旦检出冲突，必须强制阻断并即刻告警。
+
+---
+
+## ⚛️ 第十条：事务不可分割与原子性律 (Atomicity & Indivisibility Law)
+
+1. **全成或全败原则 (All-or-Nothing)**：
+   - 系统所有关键操作与设计遵循 [`rules/coding/atomicity_specification.md`](../coding/atomicity_specification.md)；
+   - 运维操作（需求与规则双向回写、目录四件套初始化、Unity资产与.meta成对操作、版本号同步）必须同批闭环，严禁产生单边遗留与孤儿文件；
+   - 架构设计（数据存档、道具交易、有限状态机流转）必须做成事务级原子操作，失败必须完整回滚，严禁中间态脏数据暴露。
+
+---
+
 ## 🧭 第八条：规则优先级与仲裁顺序 (Precedence Order)
 
 当发生规则冲突或边界模糊时，遵循以下优先级判定顺序：
 ```text
 系统级元规则 (meta_rules.md)
   └── 安全防破坏红线 (Security Baseline)
-        └── 流程协同与双轨分流 (task_execution_flow.md)
-              └── 编码与技术规范 (Coding Standards)
-                    └── 临时性操作偏好 (Ad-hoc Preferences)
+        └── 事务原子性与不留孤岛 (atomicity_specification.md)
+              └── 知识库业务法典 (knowledge/* 世界观/美术/工程)
+                    └── 流程协同与双轨分流 (task_execution_flow.md)
+                          └── 编码与技术规范 (Coding Standards)
+                                └── 临时性操作偏好 (Ad-hoc Preferences)
 ```

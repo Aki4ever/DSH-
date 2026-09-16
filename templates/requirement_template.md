@@ -7,6 +7,7 @@
 ### REQ-XXX: [简明需求名称]
 
 - **当前状态**：`[ACTIVE]` 生效中 / `[EVOLVING]` 演进中 / `[DEPRECATED]` 已废弃
+- **实施版本**：`vX.Y.Z` (遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md))
 - **提出时间**：YYYY-MM-DD
 - **最新更新**：YYYY-MM-DD
 - **责任归属**：AI 智能体 / 用户
