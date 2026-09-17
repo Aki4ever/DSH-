@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.8.0`
-> - **对应实施版本**：`v1.8.0`
+> - **当前文档版本**：`v2.4.0`
+> - **对应实施版本**：`v2.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -59,6 +59,7 @@
 | [`knowledge/common/miniprogram_specification.md`](../knowledge/common/miniprogram_specification.md) | **通用小程序研发工程规范** | 主包≤1.5MB、组件化弹窗防滚动穿透、hover-class、setData 路径差量。 |
 | [`knowledge/common/engineering_specification.md`](../knowledge/common/engineering_specification.md) | **通用技术架构与工程规范** | 四层单向解耦模型、零 GC 循环法则、状态机流转原子性。 |
 | [`knowledge/common/art_specification.md`](../knowledge/common/art_specification.md) | **通用视觉与色彩设计规范** | 60-30-10 色彩平衡定律、WCAG 4.5:1 对比度标准、三层阴影空间。 |
+| [`knowledge/common/dsh_native_ui_components.md`](../knowledge/common/dsh_native_ui_components.md) | **DSH 原生可视化组件体系法典** | 九大层级组件命名、React Slot 插槽树拓扑、原子工具卡片契约与注入规范。 |
 | [`knowledge/projects/README.md`](../knowledge/projects/README.md) | **项目专属知识库隔离总规** | 独立工程物理隔离、非游戏禁载游戏设定铁律与继承体系。 |
 | [`knowledge/projects/aether_echo/README.md`](../knowledge/projects/aether_echo/README.md) | **源能回响项目专属法典** | 源能以太法则、时代纪元年表、阵营势力、专属半写实轻科幻美术与 URP。 |
 
@@ -68,16 +69,20 @@
 
 | 分类 | 文档/脚本路径 | 说明 |
 | :--- | :--- | :--- |
-| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-031 完整记录，总版本 `v1.8.0`） |
+| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-037 完整记录，总版本 `v2.4.0`） |
 | **图表生成** | [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 全场景流程图、信息图与教学图生成技术指南与标准模板库 |
 | **教学指南** | [`docs/rules_tutorial.md`](../docs/rules_tutorial.md) | 规则体系运转教学图解与实操说明 |
 | **记忆架构** | [`docs/memory_architecture.md`](../docs/memory_architecture.md) | AI 分层长短期记忆体系架构与工程落地规范 |
+| **标准模板** | [`templates/project_dsh_bootstrap_template.md`](../templates/project_dsh_bootstrap_template.md) | 项目 DSH 赋能规划卡标准模板 (立项必填) |
 | **标准模板** | [`templates/requirement_template.md`](../templates/requirement_template.md) | 标准需求卡片录入模板（支持实施版本号） |
 | **标准模板** | [`templates/risk_assessment_template.md`](../templates/risk_assessment_template.md) | 前置四维风险评估卡标准模板 |
 | **标准模板** | [`templates/page_ledger_template.md`](../templates/page_ledger_template.md) | 项目页面资产与视觉台账模板 |
 | **标准模板** | [`templates/post_mortem_template.md`](../templates/post_mortem_template.md) | AAR 任务复盘与流程进化报告模板 |
 | **标准模板** | [`templates/directory_readme_template.md`](../templates/directory_readme_template.md) | 目录专属说明标准模板 |
 | **标准模板** | [`templates/graphical_block_template.md`](../templates/graphical_block_template.md) | 原生图形化区块卡片组件标准模板 |
+| **自动化脚本** | [`scripts/git_sync_remote.sh`](../scripts/git_sync_remote.sh) | 工程远程 Git 智能探针、缺地址开页引导与强同步引擎 |
+| **自动化脚本** | [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh) | 全域资产数字指纹计算、新鲜度嗅探与防漂移审计引擎 |
+| **自动化脚本** | [`scripts/disk_check_and_cleanup.sh`](../scripts/disk_check_and_cleanup.sh) | 周期性磁盘空间巡检与安全自愈清理脚本 |
 | **自动化脚本** | [`scripts/generate_image.py`](../scripts/generate_image.py) | 图形生成、自动保存与图显渲染脚本 |
 | **自动化脚本** | [`scripts/rename_session.sh`](../scripts/rename_session.sh) | 会话一键重命名并锁定 RPC 脚本 |
 | **自动化脚本** | [`scripts/init_dir.sh`](../scripts/init_dir.sh) | 新建目录自动化初始化四件套脚本 |

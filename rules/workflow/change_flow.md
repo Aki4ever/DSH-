@@ -36,14 +36,13 @@
   - `rules/security/`：凭证防护与安全红线。
 
 ### 第五步：存量排查与旧资源治理
-- 依据 [`rules/workflow/audit_and_cleanup.md`](audit_and_cleanup.md) 展开联动排查；
-- 全局检索受影响的旧规则、文档、模板和脚本；
-- 对冲突内容及时修正，对过时内容标记废弃或清理，确保全局无冲突。
+- 依据 [`rules/workflow/audit_and_cleanup.md`](audit_and_cleanup.md) 展开联动排查，消除死链与矛盾；
+- 运行 `./scripts/disk_check_and_cleanup.sh --auto` 执行磁盘水位巡检与安全自愈清理。
 
-### 第六步：Git 语义化提交与推送
-- 执行 `git add .`；
-- 编写语义化提交信息：
+### 第六步：自动化测试与 Git 语义化提交
+- 真实执行质量测试用例，100% 绿灯方可准入提交；
+- 执行 `git add .` 并编写语义化提交：
   - 新增：`feat(rule): add REQ-xxx <规则名称>`
   - 优化：`update(rule): refine REQ-xxx <更新说明>`
   - 废除：`deprecate(rule): retire REQ-xxx <废除原因>`
-- 推送至远程 `origin/main`。
+- 同步推送至远程 `origin/main`。

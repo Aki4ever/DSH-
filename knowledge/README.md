@@ -1,8 +1,8 @@
 # 系统分层知识库总索引与前置核验协议 (Knowledge Base Hub)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.6.0`
-> - **对应实施版本**：`v1.6.0`
+> - **当前文档版本**：`v2.4.0`
+> - **对应实施版本**：`v2.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -30,7 +30,8 @@ knowledge/
 │   ├── web_specification.md           # 通用 Web 工程规范 (页面路由懒加载 / Modal Portal挂载 / box-shadow)
 │   ├── miniprogram_specification.md   # 通用小程序规范 (主包≤1.5MB / 弹窗Component防穿透 / setData差量更新)
 │   ├── engineering_specification.md   # 通用技术工程规范 (模块解耦 / 单向调用 / 零GC / 状态机原子性)
-│   └── art_specification.md           # 通用视觉与色彩规范 (60-30-10配比 / WCAG 4.5:1对比度 / 阴影阶梯)
+│   ├── art_specification.md           # 通用视觉与色彩规范 (60-30-10配比 / WCAG 4.5:1对比度 / 阴影阶梯)
+│   └── dsh_native_ui_components.md    # DSH 原生可视化组件体系法典 (九大层级 / Slot拓扑 / 原子工具卡)
 └── projects/                          # 【第二层：项目专属知识库】(按工程物理隔离，严禁串扰)
     ├── README.md                      # 项目隔离规约与清单
     └── aether_echo/                   # 示例核心项目：源能回响 (Aether Echo - 游戏工程)

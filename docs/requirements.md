@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v1.8.0`
+> - **当前系统实施总版本**：`v2.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -708,6 +708,199 @@
   - [x] 经验记忆库完成避坑条目增量更新；
   - [x] 自动化测试验证脚本全部跑通；
   - [x] 实施总版本号严格推进至 `v1.8.0`。
+
+---
+
+### REQ-032: DSH 宿主原生可视化组件体系架构梳理与分层知识库归卷
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v1.9.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **标准需求重构文案 (利于 Agent 执行的标准化任务单)**：
+  - **任务代号**：`DSH-NATIVE-UI-DISCOVERY-AND-CATALOG`
+  - **背景阐述**：DeepSeek Harness (DSH) 官方 Web 客户端基于 Cordis 微内核与 React Slot 插槽体系构建。为了让智能体与研发人员在任务执行、组件设计、图表生成与工具调用中无缝调用原生呈现能力，需对宿主运行时前端包（`@deepseek-ai/dsh-client-ui-*`）进行源码级逆向梳理，建立权威的可视化组件命名对照表与插槽拓扑，并沉淀入库。
+  - **范围界定**：覆盖视口外壳、左侧侧边栏、双视图环 (Chat/Trajectory)、对话流节点、原子工具卡片、右侧详情抽屉、输入坞控制区、抢占式面板及偏好设置中心九大层级。
+  - **核心诉求与交付物**：
+    1. **源码级架构解构**：深度解析 Cordis 插槽驱动机制（`single` / `keyed` / `list` / `chain` 四类 Slot）与 Projection 响应式投影；
+    2. **中英文分类命名全集**：给出 30+ 原生可视化组件的中英文名称、类名标识、Slot Key、对应 npm 包与交互职能对照表；
+    3. **知识库沉淀与法典化**：落成 `knowledge/common/dsh_native_ui_components.md`，并在 `knowledge/README.md` 与 `indexes/dsh_capabilities.md` 中建立双向检索通道；
+    4. **规范实施与版本同步**：严格执行三位一体强同步，将系统实施总版本递增至 `v1.9.0`。
+- **关联文件**：
+  - `knowledge/common/dsh_native_ui_components.md`
+  - `knowledge/README.md`
+  - `indexes/dsh_capabilities.md`
+  - `indexes/rules_index.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 源码层深度排查 DSH 运行时所有 `dsh-client-ui-*` 模块；
+  - [x] 形成九大层级、分类详尽的原生可视化组件与 Slot 插槽命名清单；
+  - [x] 完成《DSH 宿主原生可视化组件与插槽体系法典》入库与读回校验；
+  - [x] 完成知识库总目录及全景能力矩阵的索引联动更新；
+  - [x] 需求台账、知识库与能力索引版本号原子同步至 `v1.9.0`。
+
+---
+
+### REQ-033: 系统运行能效三维优化工程 (磁盘自愈 + Token 瘦身 + 流程分层)
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v2.0.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **标准需求重构文案 (利于 Agent 执行的标准化任务单)**：
+  - **任务代号**：`SYS-TRIPLE-OPTIMIZATION`
+  - **背景阐述**：针对系统磁盘水位逼近 96% 告警上限、规则库上下文 Token 膨胀以及部分轻量任务受困于繁冗工序的痛点，实施三位一体系统能效优化工程。
+  - **核心诉求与交付物**：
+    1. **周期性硬盘检测与安全自愈清理**：编写运维自愈脚本 `scripts/disk_check_and_cleanup.sh`，设置 90% 空间告警阈值，扫描清除临时溢出目录 (`dsh-spill-*`) 与元数据碎片；建立 `knowledge/`、`memory/`、`rules/`、`indexes/`、`docs/` 绝对禁止删除的有价资产白名单保护制度，并沉淀入 `rules/workflow/audit_and_cleanup.md`。
+    2. **全局规则高密度 Token 瘦身压缩**：重构 `rules/system/meta_rules.md`、`rules/workflow/task_execution_flow.md` 等核心文件，提炼十七大元法则，剔除冗长情绪化铺垫，信息密度提升，规则核心文档行数精简 60%+，显著降低模型装载开销。
+    3. **流程硬约束 (Hard Line) 与捷径通道 (Fast Track) 显式分层落地**：明确界定高危/核心任务必走十六道工序，单点轻量/查询/微调任务准许走敏捷三步流（豁免改名、免四维大表、免 todo_write、读回代测、精要交付），在 `task_execution_flow.md` 与 `shortcuts_index.md` 深度落地，确保规则与落实一致。
+    4. **版本治理三位一体强同步**：推进全局实施总版本号至里程碑式 `v2.0.0`。
+- **关联文件**：
+  - `scripts/disk_check_and_cleanup.sh`
+  - `rules/workflow/audit_and_cleanup.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `rules/system/meta_rules.md`
+  - `indexes/shortcuts_index.md`
+  - `indexes/rules_index.md`
+  - `knowledge/README.md`
+  - `indexes/dsh_capabilities.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 落地 `scripts/disk_check_and_cleanup.sh` 并真实执行 `--clean` 成功释放临时垃圾；
+  - [x] 确立核心资产白名单保护机制，并写入 `rules/workflow/audit_and_cleanup.md`；
+  - [x] 重构 `rules/workflow/task_execution_flow.md` 显式划分强制流程与捷径通道；
+  - [x] 重构 `rules/system/meta_rules.md`，实现核心规则高密度 Token 瘦身；
+  - [x] 更新 `indexes/shortcuts_index.md` 注入磁盘清理口令与双轨判定矩阵；
+  - [x] 全局文档版本号与需求台账强同步推进至 `v2.0.0`。
+
+---
+
+### REQ-034: 任务全生命周期 DSH 原生可视化组件全量深度装配
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v2.1.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **标准需求重构文案 (利于 Agent 执行的标准化任务单)**：
+  - **任务代号**：`NATIVE-VISUAL-FULL-PIPELINE-INTEGRATION`
+  - **背景阐述**：DSH 客户端具备基于 Cordis 插件与 React Slot 构建的高保真原生可视化系统（包括侧边栏标题、TodoPanel、GoalBar、各工具专用原子卡片、可点击交付链接、时序轨迹等）。为彻底消除文字单调白板与能力闲置，将任务执行过程中所有涉及可视化的节点进行 100% 全量组件化强绑定。
+  - **核心诉求与交付物**：
+    1. **全生命周期组件装配法典化**：在 `rules/workflow/task_execution_flow.md` 第三节详细定义全工序可视化组件 100% 装配矩阵，涵盖 11 类核心场景（标题投影、GoalBar、TodoPanel、TerminalCard、ReadCard、DiffCard、SearchCard、WebCard、UserQuestionsView、turnTail 可点击产出、GFM 色条区块）；
+    2. **知识库装配契约入库**：在 `knowledge/common/dsh_native_ui_components.md` 第五节增设智能体任务全生命周期装配契约；
+    3. **即刻实装与实效呈现**：在当前及后续任务交互中，严格执行 `todo_write` 驱动输入坞进度条、专用工具驱动原子卡片、行内代码驱动可点击交付物、GFM 引用块驱动主题高亮卡；
+    4. **三位一体版本号强同步**：推进全局实施总版本号至 `v2.1.0`。
+- **关联文件**：
+  - `rules/workflow/task_execution_flow.md`
+  - `knowledge/common/dsh_native_ui_components.md`
+  - `indexes/dsh_capabilities.md`
+  - `indexes/rules_index.md`
+  - `knowledge/README.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 确立任务全流程 11 大原生可视化组件强绑定装配矩阵；
+  - [x] 更新 `task_execution_flow.md` 并读回校验；
+  - [x] 更新 `dsh_native_ui_components.md` 并写入装配契约；
+  - [x] 知识库总览、规则总索引与能力全景版本号原子同步推进至 `v2.1.0`；
+  - [x] 本轮输出完整践行原生组件驱动，包含可点击交付物与 GFM 原生卡片。
+
+---
+
+### REQ-035: DSH-First 项目立项赋能、全景能力树与双层接口法典化规范
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v2.2.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **标准需求重构文案 (利于 Agent 执行的标准化任务单)**：
+  - **任务代号**：`DSH-CAPABILITY-TREE-AND-DUAL-TIER-SPEC`
+  - **背景阐述**：新项目规划若缺乏与 DSH 宿主基座的深度联动，极易沦为孤岛；同时，宿主能力缺乏全景树形拓扑，导致人类与智能体检索效率受限；工具接口缺乏反例约束与执行代码示例，容易诱发调用幻觉与执行反复。
+  - **核心诉求与交付物**：
+    1. **立项 DSH-First 强约束机制**：确立新项目必须优先评估 DSH 六维能力树且至少集成 1 项（CLI/MCP/API/插件/Agent/Skill），在 `rules/system/meta_rules.md` 增设立项第十八条，并落地 `templates/project_dsh_bootstrap_template.md`（《项目 DSH 赋能规划卡》标准模板）；
+    2. **DSH 全景能力六维树形拓扑**：在 `indexes/dsh_capabilities.md` 中重构注入完整的六维能力架构树（CLI、MCP、API、Plugins、Multi-Agent、Skills），支持秒级极速定位；
+    3. **双层能力接口规范全面落地**：重构 `indexes/tool_interfaces.md`，对核心工具统一编写“外层索引卡（名称、核心描述、正向边界 When to use、反例约束 When NOT to use）”与“内层实操手册（参数 Schema、执行代码示例、前端可视化映射、异常防御）”；
+    4. **三位一体版本号强同步**：推进全局实施总版本号至 `v2.2.0`。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `templates/project_dsh_bootstrap_template.md`
+  - `indexes/dsh_capabilities.md`
+  - `indexes/tool_interfaces.md`
+  - `indexes/rules_index.md`
+  - `knowledge/README.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 最高元规则注入第十八条“立项 DSH 优先与保底集成律”；
+  - [x] 落地《项目 DSH 赋能规划卡标准模板》；
+  - [x] 完成 DSH 全景能力六维树形拓扑结构图谱构建并写入能力矩阵；
+  - [x] 工具接口手册全面补齐外层反例约束与内层可执行代码示例；
+  - [x] 需求台账、规则总索引与知识库总目录版本号强同步推进至 `v2.2.0`。
+
+---
+
+### REQ-036: 全域资产最新规则对齐、数字指纹机制与新鲜度追踪工程
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v2.3.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **标准需求重构文案 (利于 Agent 执行的标准化任务单)**：
+  - **任务代号**：`ASSET-FINGERPRINT-AND-FULL-SPECTRUM-ALIGNMENT`
+  - **背景阐述**：消除新旧任务双重标准与存量资产规则落后断层；建立数字指纹机制，快速辨别全域内容新鲜度，预防暗中代码与规范漂移。
+  - **核心诉求与交付物**：
+    1. **全域资产最新规则对齐律**：新增任务严格按最新规范执行，存量资产遵循“遇碰即对齐 (Touch-and-Align)”机制，修改到哪里就升级对齐到哪里；在 `rules/system/meta_rules.md` 增设第十九条，并强化 `task_execution_flow.md` 执行工序；
+    2. **工程数字指纹与新鲜度三级雷达**：建立资产短指纹（SHA-256 8位）+ 修改时间 + 声明版本的追踪体系，划分 🟢TIER-0 Fresh / 🟡TIER-1 Stale / ⚪TIER-2 None 三级状态；
+    3. **自动化嗅探脚本与持久化台账**：落地 `scripts/fingerprint_audit.sh`（支持 `--freshness` 雷达看盘、`--scan` 刷新底册、`--verify` 一致性断言），并生成持久化台账 `memory/asset_fingerprint_ledger.md`；
+    4. **三位一体版本号强同步**：推进全局实施总版本号至 `v2.3.0`。
+- **关联文件**：
+  - `scripts/fingerprint_audit.sh`
+  - `memory/asset_fingerprint_ledger.md`
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `indexes/shortcuts_index.md`
+  - `indexes/rules_index.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 落地 `scripts/fingerprint_audit.sh` 并实测跑通三种运行模式；
+  - [x] 生成并入库 `memory/asset_fingerprint_ledger.md`；
+  - [x] 元规则增设第十九条，流程法典固化“遇碰即对齐”工序；
+  - [x] 快捷口令索引注入“资产指纹 / 新鲜度雷达”命令；
+  - [x] 需求台账与全局所有关联文档版本原子同步推进至 `v2.3.0`。
+
+---
+
+### REQ-037: 工程远程 Git 强同步、缺地址开页引导与独立仓库治理规约
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v2.4.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **标准需求重构文案 (利于 Agent 执行的标准化任务单)**：
+  - **任务代号**：`ENGINEERING-REMOTE-GIT-MANDATORY-SYNC`
+  - **背景阐述**：消除工程改动停留在本地单机可能导致的资产脱节与丢失风险；杜绝多工程混用同一 Git 地址引起的代码与规范污染；解决缺失远程地址时缺乏主动开页引导的痛点。
+  - **核心诉求与交付物**：
+    1. **远程 Git 强同步硬门禁**：凡发生代码/规则/配置变更的任务，收尾 S15 工序必须执行 `git_sync_remote.sh` 成功推送到远端；未推送到远程严禁声称交付闭环；
+    2. **缺地址智能探针与开页引导**：无远程 `origin` 时，自动调用操作系统指令唤起常用代码托管平台新建仓库页面（GitHub/Gitee），并在终端引导用户绑定 URL；
+    3. **一工程一独立仓库原则**：每个工程项目必须使用专属独立的远程仓库地址，严格物理隔离；
+    4. **动态任务摘要 Commit Message 规范**：格式标准化为 `<type>(<scope>): [<任务代号>] <8字概述> - <变更事实摘要>`；
+    5. **最高元规则与流水线固化**：元规则增设第二十条，十六步流水线与快捷口令全面接入，全局实施总版本号严格推进至 `v2.4.0`。
+- **关联文件**：
+  - `scripts/git_sync_remote.sh`
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `indexes/shortcuts_index.md`
+  - `indexes/rules_index.md`
+  - `knowledge/README.md`
+  - `indexes/dsh_capabilities.md`
+  - `indexes/tool_interfaces.md`
+  - `memory/asset_fingerprint_ledger.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 落地 `scripts/git_sync_remote.sh` 支持智能探针、开页引导与自动推送；
+  - [x] 最高元规则固化第二十条“工程远程 Git 强同步与独立仓库律”；
+  - [x] S15 流程固化远程 Git 强同步门禁；
+  - [x] 快捷口令索引注入“远程同步”命令；
+  - [x] 当前全量累积变更真实执行推送至远程 GitHub 仓库并收集 Commit-Hash；
+  - [x] 需求台账、规则总索引与知识库总目录版本强同步推进至 `v2.4.0`。
+
+
+
+
+
+
 
 
 

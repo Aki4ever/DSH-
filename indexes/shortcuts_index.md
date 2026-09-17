@@ -1,8 +1,8 @@
 # 快速通道指令路由与地图式高速干道导航索引 (Arterial Routing & Quick Shortcuts Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.4.0`
-> - **对应实施版本**：`v1.4.0`
+> - **当前文档版本**：`v2.4.0`
+> - **对应实施版本**：`v2.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -61,6 +61,9 @@
 | **“生成图表”** | **G1 干线** | 查阅图表标准与决策树 | 读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 输出五大图表模版，提供入口：[`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) |
 | **“生成图片 <描述>”** | **G1 干线** | 驱动图形管道创作图片 | 执行 `scripts/generate_image.py` | 自动生图，输出 `![描述](路径)` 并附带可点击打开链接 |
 | **“快速体检”** | **G1 干线** | 执行工程健康度巡检 | 执行 `./scripts/rename_session.sh` 并巡检 Git | 输出工作区与版本对齐报告，提供 Git 状态回执 |
+| **“磁盘体检”**<br>*(或“清理垃圾/释放空间”)* | **G1 干线** | 检查磁盘水位与清理 DSH 临时垃圾 | 执行 `./scripts/disk_check_and_cleanup.sh --clean` | 输出释放容量、当前水位报告与白名单保护状态 |
+| **“资产指纹”**<br>*(或“新鲜度雷达/指纹审计”)* | **G1 干线** | 扫描全域资产新鲜度与数字指纹 | 执行 `./scripts/fingerprint_audit.sh --freshness` | 输出资产新鲜度三级雷达看盘与落后清单 |
+| **“远程同步”**<br>*(或“提交并推送/git同步”)* | **G1 干线** | 触发任务收尾远程 Git 强同步 | 执行 `./scripts/git_sync_remote.sh <ID> <Title> <Summary>` | 自动探针、未配置自动开页引导、输出远程 Commit-Hash |
 
 ---
 
@@ -72,3 +75,15 @@
    - 只有当任务涉及深度专业领域（如 Unity 开发、架构事务拆解）时，才从 G1 出口下探至 G2 专业支线；
 3. **交付物必带交互入口 (Delivery-as-an-Entrypoint)**：
    - 无论走哪级路由，任务最终交付必须包含标准可点击直达入口，杜绝“交付无入口、查找靠翻找”。
+
+---
+
+## 🚦 四、双轨决策速查表 (Hard Line vs Fast Track)
+
+| 意图与任务特征 | 难度分 | 路由通道 | 必走/豁免关键点 |
+| :--- | :---: | :---: | :--- |
+| **纯查询/参数读取/口令检索** | $\le 20$ 分 | **⚡ Fast Track** | 免改名、免 todo_write、免四维大表，直出结论 |
+| **单文件文字微调/拼写修补** | $20\sim35$ 分 | **⚡ Fast Track** | 免重命名与独立测试脚本，`read` 读回自验即交付 |
+| **规则新增/核心逻辑重大修改** | $40\sim70$ 分 | **🚨 Hard Line** | 首动改名、前置审查、风险评估卡、todo_write、测试门禁、升版 |
+| **跨系统重构/代码研发/版本发布** | $> 70$ 分 | **🚨 Hard Line** | 严格十六步全工序闭环、自动化测试 100% 绿灯、三位一体强同步 |
+
