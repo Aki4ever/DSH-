@@ -1,8 +1,8 @@
 # 系统级全局元规则 (System Meta-Rules)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v2.5.0`
-> - **对应实施版本**：`v2.5.0`
+> - **当前文档版本**：`v2.6.0`
+> - **对应实施版本**：`v2.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **生效状态**：`[Release 稳定生效]`
 
@@ -86,9 +86,14 @@
 - **一工程一独立仓库**：每个工程项目必须使用专属独立的远程仓库地址，严禁多工程混用串扰。
 - **缺地址开页引导机制**：若未检测到远程仓库地址，智能体必须主动打开浏览器页面（如 `https://github.com/new`）引导用户创建并提供仓库 URL，配置绑定后自动续推。
 
+### 第二十一条：全局调度锁与并发资源防冲突律 (Global Scheduler Lock Law)
+- **读写分离分级调度**：只读操作（检阅、grep、指纹比对）默认放行多任务共享并行；写操作（核心文件修改、Git 远程提交、重构、磁盘清理）必须申领排他独占锁，严禁并发争抢同一资源。
+- **自动化冲突编排**：筹策阶段前置嗅探资源依赖，冲突时自动按“时序串行”或“避让排队”编排，杜绝进程打架与脏写悬空；通过 [`scripts/global_scheduler_lock.sh`](../../scripts/global_scheduler_lock.sh) 实现微秒级无感原子锁。
+- **超时自愈熔断**：排他锁默认持有超时为 180 秒（TTL），超时后自动判定为孤儿锁并自愈释放，绝对禁止永久死锁。
+
 ---
 
 ## ⚖️ 规则裁决优先级顺序 (Precedence Order)
 
 发生冲突时按以下层级自上而下绝对裁决：
-$$\text{元规则} \succ \text{安全红线与风险揭示} \succ \text{事务原子性} \succ \text{知识库业务法典} \succ \text{质量测试门禁} \succ \text{远程Git强同步} \succ \text{流程双轨分流} \succ \text{编码规范}$$
+$$\text{元规则} \succ \text{安全红线与风险揭示} \succ \text{事务原子性} \succ \text{全局调度锁} \succ \text{知识库业务法典} \succ \text{质量测试门禁} \succ \text{远程Git强同步} \succ \text{流程双轨分流} \succ \text{编码规范}$$

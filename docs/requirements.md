@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v2.5.0`
+> - **当前系统实施总版本**：`v2.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -929,6 +929,42 @@
   - [x] 执行流程法典 S01 强化语种自检；
   - [x] 需求台账、规则总索引与知识库总目录版本强同步推进至 `v2.5.0`；
   - [x] 资产指纹通过校验，变更成功推送到远端 Git 仓库。
+
+---
+
+### REQ-039: 全自动轻量级全局调度锁与并发资源防冲突规约
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v2.6.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **标准需求重构文案 (利于 Agent 执行的标准化任务单)**：
+  - **任务代号**：`AUTOMATED-GLOBAL-SCHEDULER-LOCK`
+  - **背景阐述**：在多任务、多智能体协同或运行后台工作流时，并发修改同一核心文件或执行 Git 提交容易发生争抢与脏写冲突；传统的排队缺乏自动化自愈机制，容易导致死锁或效率停滞。
+  - **核心诉求与交付物**：
+    1. **全自动读写分离分级调度**：只读操作默认放行多任务共享并发；变更与敏感操作自动申领排他独占锁，互斥隔离杜绝打架；
+    2. **POSIX 原子锁与极速效能**：基于目录原子创建机制实现微秒级低开销加锁，免去重型依赖；
+    3. **超时熔断自愈 (TTL)**：排他锁默认持有超时为 180 秒，超时后自动判定为孤儿锁并自愈释放，杜绝系统挂死；
+    4. **自动化中枢脚本**：落地 `scripts/global_scheduler_lock.sh`（支持 `--acquire`、`--release`、`--status`、`--run` 包装执行与 `--clean`）；
+    5. **最高元规则与流水线法典固化**：在 `rules/system/meta_rules.md` 增设第二十一条，十六步流水线 S08/S15 阶段嵌入锁治理门禁，全局版本严格推进至 `v2.6.0`。
+- **关联文件**：
+  - `scripts/global_scheduler_lock.sh`
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `indexes/shortcuts_index.md`
+  - `indexes/rules_index.md`
+  - `indexes/dsh_capabilities.md`
+  - `indexes/tool_interfaces.md`
+  - `knowledge/README.md`
+  - `memory/asset_fingerprint_ledger.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 落地 `scripts/global_scheduler_lock.sh` 并实测抢锁、冲突阻断、自愈熔断与包装运行 100% 绿灯；
+  - [x] 最高元规则固化第二十一条“全局调度锁与并发资源防冲突律”；
+  - [x] 执行流水线 S08/S15 嵌入锁治理工序；
+  - [x] 快捷口令索引注入“调度锁”看盘口令；
+  - [x] 需求台账、规则总索引与知识库总目录版本强同步推进至 `v2.6.0`；
+  - [x] 资产指纹通过校验，变更成功推送到远端 Git 仓库。
+
 
 
 

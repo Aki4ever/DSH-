@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v2.5.0`
-> - **对应实施版本**：`v2.5.0`
+> - **当前文档版本**：`v2.6.0`
+> - **对应实施版本**：`v2.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -69,7 +69,7 @@
 
 | 分类 | 文档/脚本路径 | 说明 |
 | :--- | :--- | :--- |
-| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-038 完整记录，总版本 `v2.5.0`） |
+| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-039 完整记录，总版本 `v2.6.0`） |
 | **图表生成** | [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 全场景流程图、信息图与教学图生成技术指南与标准模板库 |
 | **教学指南** | [`docs/rules_tutorial.md`](../docs/rules_tutorial.md) | 规则体系运转教学图解与实操说明 |
 | **记忆架构** | [`docs/memory_architecture.md`](../docs/memory_architecture.md) | AI 分层长短期记忆体系架构与工程落地规范 |
@@ -80,6 +80,7 @@
 | **标准模板** | [`templates/post_mortem_template.md`](../templates/post_mortem_template.md) | AAR 任务复盘与流程进化报告模板 |
 | **标准模板** | [`templates/directory_readme_template.md`](../templates/directory_readme_template.md) | 目录专属说明标准模板 |
 | **标准模板** | [`templates/graphical_block_template.md`](../templates/graphical_block_template.md) | 原生图形化区块卡片组件标准模板 |
+| **自动化脚本** | [`scripts/global_scheduler_lock.sh`](../scripts/global_scheduler_lock.sh) | 全自动轻量级全局调度锁中枢与并发资源防冲突引擎 |
 | **自动化脚本** | [`scripts/git_sync_remote.sh`](../scripts/git_sync_remote.sh) | 工程远程 Git 智能探针、缺地址开页引导与强同步引擎 |
 | **自动化脚本** | [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh) | 全域资产数字指纹计算、新鲜度嗅探与防漂移审计引擎 |
 | **自动化脚本** | [`scripts/disk_check_and_cleanup.sh`](../scripts/disk_check_and_cleanup.sh) | 周期性磁盘空间巡检与安全自愈清理脚本 |

@@ -1,8 +1,8 @@
 # 快速通道指令路由与地图式高速干道导航索引 (Arterial Routing & Quick Shortcuts Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v2.5.0`
-> - **对应实施版本**：`v2.5.0`
+> - **当前文档版本**：`v2.6.0`
+> - **对应实施版本**：`v2.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -64,6 +64,7 @@
 | **“磁盘体检”**<br>*(或“清理垃圾/释放空间”)* | **G1 干线** | 检查磁盘水位与清理 DSH 临时垃圾 | 执行 `./scripts/disk_check_and_cleanup.sh --clean` | 输出释放容量、当前水位报告与白名单保护状态 |
 | **“资产指纹”**<br>*(或“新鲜度雷达/指纹审计”)* | **G1 干线** | 扫描全域资产新鲜度与数字指纹 | 执行 `./scripts/fingerprint_audit.sh --freshness` | 输出资产新鲜度三级雷达看盘与落后清单 |
 | **“远程同步”**<br>*(或“提交并推送/git同步”)* | **G1 干线** | 触发任务收尾远程 Git 强同步 | 执行 `./scripts/git_sync_remote.sh <ID> <Title> <Summary>` | 自动探针、未配置自动开页引导、输出远程 Commit-Hash |
+| **“调度锁”**<br>*(或“资源锁/防冲突/排队看盘”)* | **G1 干线** | 查看当前全局资源锁占用大盘与自愈清理 | 执行 `./scripts/global_scheduler_lock.sh --status` | 输出活跃排他锁清单、持有任务、超时判定与防打架调度策略 |
 
 ---
 
