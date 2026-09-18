@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v2.4.0`
+> - **当前系统实施总版本**：`v2.5.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -895,6 +895,41 @@
   - [x] 快捷口令索引注入“远程同步”命令；
   - [x] 当前全量累积变更真实执行推送至远程 GitHub 仓库并收集 Commit-Hash；
   - [x] 需求台账、规则总索引与知识库总目录版本强同步推进至 `v2.4.0`。
+
+---
+
+### REQ-038: 上下文压缩同语种一致性与语言镜像保真规约
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v2.5.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **标准需求重构文案 (利于 Agent 执行的标准化任务单)**：
+  - **任务代号**：`CONTEXT-COMPACTION-LANGUAGE-CONSISTENCY`
+  - **背景阐述**：在长会话触发自动检查点或上下文压缩时，由于英文预设 Prompt 干扰，容易误将中文对话提炼为英文摘要，破坏了语言一致性并引入阅读疲劳与认知漂移。
+  - **核心诉求与交付物**：
+    1. **同语种镜像保真硬门禁**：确立上下文压缩、检查点提炼与跨轮次摘要输出语言必须与前文主导输入语种 100% 保持一致（输入是中文，压缩提炼必须完全使用中文，严禁跳切为英文摘要）；
+    2. **元规则第三条升级**：在 `rules/system/meta_rules.md` 第三条明确写入“上下文压缩同语种镜像保真律”；
+    3. **语言规范法典化**：重构 `rules/system/language_standard.md`，新增第二节《上下文压缩与跨轮摘要同语种镜像守则》及五大标准化中文提炼骨架；
+    4. **流程法典与全局索引同步**：在 `task_execution_flow.md` S01 增加语种自检，全局总索引与知识库推进至 `v2.5.0`；
+    5. **三位一体版本强同步与 Git 强推**：刷新资产指纹台账，执行 `scripts/git_sync_remote.sh` 强同步推送到远程仓库。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/system/language_standard.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `indexes/rules_index.md`
+  - `indexes/dsh_capabilities.md`
+  - `indexes/tool_interfaces.md`
+  - `indexes/shortcuts_index.md`
+  - `knowledge/README.md`
+  - `memory/asset_fingerprint_ledger.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 元规则第三条固化“上下文压缩同语种镜像保真律”；
+  - [x] 重构升级 `rules/system/language_standard.md` 写入中文提炼模板；
+  - [x] 执行流程法典 S01 强化语种自检；
+  - [x] 需求台账、规则总索引与知识库总目录版本强同步推进至 `v2.5.0`；
+  - [x] 资产指纹通过校验，变更成功推送到远端 Git 仓库。
+
 
 
 
