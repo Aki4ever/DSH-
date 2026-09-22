@@ -3,7 +3,7 @@
 > ### 🏷️ **版本信息与实施追踪**
 > - **当前台账版本**：`v2.8.0`
 > - **基线对齐版本**：`v2.8.0`
-> - **最后全盘扫描时间**：2026-09-22 20:40
+> - **最后全盘扫描时间**：2026-09-22 20:41
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)
 
 本文档记录工程全域受管资产（规则、知识库、架构索引、工程模板、自动化脚本与需求台账）的**数字指纹（SHA-256 8位短哈希）**、**最后修改时间**与**新鲜度等级**，为全域资产对齐与防止暗中代码漂移提供唯一客观事实依据。
@@ -80,7 +80,7 @@ v2.0.0` | 🟡 TIER-1 | 待升级对齐 |
 | `templates/requirement_template.md` | `a7b212cf` | 2026-09-16 16:35 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `templates/risk_assessment_template.md` | `84777cc3` | 2026-09-16 18:22 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/control_gates.sh` | `917765b0` | 2026-09-22 20:12 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/control_gates.sh` | `0a418b61` | 2026-09-22 20:41 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/disk_check_and_cleanup.sh` | `053f8584` | 2026-09-16 19:03 | `v2.0.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/fingerprint_audit.sh` | `cc27085b` | 2026-09-22 20:40 | `v2.3.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/generate_image.py` | `96b41a0f` | 2026-09-16 16:58 | `-` | ⚪ TIER-2 | 指纹监控中 |
