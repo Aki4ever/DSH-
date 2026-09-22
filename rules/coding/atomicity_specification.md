@@ -1,10 +1,10 @@
 # 系统操作与工程设计原子性事务边界规范 (Atomicity Specification)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v2.3.0`
-> - **对应实施版本**：`v2.3.0`
-> - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
-> - **最后更新日期**：2026-09-16
+> - **当前文档版本**：`v2.9.0`
+> - **对应实施版本**：`v2.9.0`
+> - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
+> - **最后更新日期**：2026-09-22
 > - **版本状态**：`[Release 稳定生效]`
 
 本文档系统规范了在项目运维、日常开发以及系统设计中，**哪些操作和设计必须做成原子性 (Atomicity)**，并给出事务边界与失败回滚准则。杜绝半成品残留、脏数据与状态悬空。

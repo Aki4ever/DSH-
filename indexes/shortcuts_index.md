@@ -1,8 +1,8 @@
 # 快速通道指令路由与地图式高速干道导航索引 (Arterial Routing & Quick Shortcuts Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v2.7.0`
-> - **对应实施版本**：`v2.7.0`
+> - **当前文档版本**：`v2.9.0`
+> - **对应实施版本**：`v2.9.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -65,6 +65,11 @@
 | **“资产指纹”**<br>*(或“新鲜度雷达/指纹审计”)* | **G1 干线** | 扫描全域资产新鲜度与数字指纹 | 执行 `./scripts/fingerprint_audit.sh --freshness` | 输出资产新鲜度三级雷达看盘与落后清单 |
 | **“远程同步”**<br>*(或“提交并推送/git同步”)* | **G1 干线** | 触发任务收尾远程 Git 强同步 | 执行 `./scripts/git_sync_remote.sh <ID> <Title> <Summary>` | 自动探针、未配置自动开页引导、输出远程 Commit-Hash |
 | **“调度锁”**<br>*(或“资源锁/防冲突/排队看盘”)* | **G1 干线** | 查看当前全局资源锁占用大盘与自愈清理 | 执行 `./scripts/global_scheduler_lock.sh --status` | 输出活跃排他锁清单、持有任务、超时判定与防打架调度策略 |
+| **“门禁看板”**<br>*(或“管控机制/闸门状态”)* | **G1 干线** | 查看管控机制四道门禁是否全过 | 执行 `./scripts/control_gates.sh check` | 输出量化看板（G1~G4 状态 + 指标 + 卡点） |
+| **“查啰嗦”**<br>*(或“冗余检测/重复内容”)* | **G1 干线** | 检出同一内容被写两遍 | 执行 `node scripts/redundancy_scan.mjs --root .` | 输出高相似块对清单；有重复则合并为迭代版本 |
+| **“查打架”**<br>*(或“冲突检测/自相矛盾”)* | **G1 干线** | 检出同一事实两种说法（版本/计数/指标/标识/死链） | 执行 `node scripts/conflict_scan.mjs --root .` | 输出冲突清单与裁决建议；**先裁决再改，禁止自行取舍** |
+| **“存量校准”**<br>*(或“遇碰即对齐/对齐清单”)* | **G1 干线** | 检查存量资产是否跟上新规范 | 执行 `node scripts/legacy_align_scan.mjs --root .` | 输出待对齐清单；须清零或书面说明原因 |
+| **“手写图上屏”**<br>*(或“SVG 出图/精确栅格化”)* | **G1 干线** | 把手写 SVG 精确渲染为 PNG | 执行 `python3 scripts/generate_image.py --svg <文件.svg>` | 输出与设计尺寸一致的 PNG，保留原始排版与配色 |
 
 ---
 

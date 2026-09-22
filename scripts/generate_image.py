@@ -12,6 +12,7 @@ import json
 import time
 import argparse
 import base64
+import subprocess
 import urllib.request
 import urllib.error
 import zlib
@@ -212,15 +213,57 @@ def generate_image(prompt, model=None, size="1024x1024", output_dir="assets/gene
         "notice": "上游 API 处于冷却保护状态，已无缝由本地矢量渲染引擎产出高质量图形交付物。"
     }
 
+def rasterize_svg(svg_path, output_path=None, width=None, height=None):
+    """把手写 SVG 精确栅格化为 PNG（走 scripts/svg2png.sh，内部为系统 WebKit 渲染）。
+
+    为什么需要：手写的信息图/流程图必须保留作者排版，不能交给图像模型重画；
+    而 macOS 自带的 qlmanage 对细长比例 SVG 会非等比拉伸，出图会变形。
+    """
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "svg2png.sh")
+    if not os.path.exists(script):
+        return {"ok": False, "error": f"未找到矢量渲染脚本: {script}"}
+    cmd = [script, svg_path]
+    if output_path:
+        cmd.append(output_path)
+    if width:
+        cmd.append(str(width))
+        cmd.append(str(height))
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+    if proc.returncode != 0:
+        return {"ok": False, "error": proc.stderr.strip() or proc.stdout.strip()}
+    out = output_path or (svg_path[:-4] + ".svg.png" if svg_path.endswith(".svg") else svg_path + ".png")
+    return {
+        "ok": True,
+        "mode": "local_svg_rasterize",
+        "model": "webkit-exact-rasterizer",
+        "file_path": out,
+        "markdown": f"![{os.path.basename(out)}]({out})",
+        "notice": "已按设计尺寸精确栅格化（保留原始排版与配色）。",
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description="DSH 图形生成与自动保存脚本")
-    parser.add_argument("prompt", help="图像生成的提示词 (Prompt)")
+    parser.add_argument("prompt", nargs="?", help="图像生成的提示词 (Prompt)")
+    parser.add_argument("--svg", dest="svg_in", default=None, help="把手写 SVG 精确栅格化为 PNG（不走图像模型）")
+    parser.add_argument("--out", dest="out_path", default=None, help="配合 --svg 指定输出 PNG 路径")
+    parser.add_argument("--w", dest="width", default=None, help="配合 --svg 指定输出宽度")
+    parser.add_argument("--h", dest="height", default=None, help="配合 --svg 指定输出高度")
     parser.add_argument("--model", "-m", default=None, help="指定图像模型 (默认自动尝试 gpt-image-2.5 等候选模型)")
     parser.add_argument("--size", "-s", default="1024x1024", help="图像分辨率 (默认: 1024x1024)")
     parser.add_argument("--output-dir", "-o", default="assets/generated_images", help="图像本地存储目录")
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL, help="模型 API Base URL")
-    
+
     args = parser.parse_args()
+
+    if args.svg_in:
+        res = rasterize_svg(args.svg_in, args.out_path, args.width, args.height)
+        print(json.dumps(res, ensure_ascii=False, indent=2))
+        sys.exit(0 if res.get("ok") else 1)
+
+    if not args.prompt:
+        parser.error("必须提供提示词，或使用 --svg 指定要栅格化的 SVG 文件")
+
     res = generate_image(
         prompt=args.prompt,
         model=args.model,

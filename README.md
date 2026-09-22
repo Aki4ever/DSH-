@@ -1,7 +1,7 @@
 # 全局规则工程 (Global Rules Project)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v2.8.0`
+> - **当前系统实施总版本**：`v2.9.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-22
 > - **版本状态**：`[Release 稳定生效]`
@@ -61,7 +61,8 @@
 │   ├── efficiency_audit_log.md      # 思考决策与执行效率全景量化审计台账 (M1~M6指标)
 │   └── README.md                    # 记忆层专属说明文档
 ├── docs/                            # 【说明、指南与核心台账】
-│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-043，总版本 v2.8.0）
+│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-044，总版本 v2.9.0）
+│   ├── constraint_mechanism_spec.md # 【管控机制】正式命名、四层分工、双检处置与存量校准要求
 │   ├── diagram_generation_guide.md  # 全场景流程图、信息图与教学图生成技术指南与标准模板库
 │   ├── memory_architecture.md       # AI 分层长短期记忆体系架构与工程落地规范
 │   └── rules_tutorial.md            # 全局规则运转教学指南与图解
@@ -73,17 +74,25 @@
 │   ├── directory_readme_template.md # 目录专属说明标准模板
 │   └── graphical_block_template.md  # 原生图形化区块卡片组件标准模板
 ├── scripts/                         # 【自动化辅助工具】
-│   ├── generate_image.py            # 图形生成、自动保存与图显渲染脚本
+│   ├── generate_image.py            # 图形生成、自动保存与图显渲染脚本（含手写 SVG 精确出图模式）
+│   ├── svg2png.sh                   # 手写 SVG 精确栅格化（WebKit 渲染，保留原始排版）
+│   ├── svg_rasterize.swift          # 上述渲染器的源码（首次调用自动编译并缓存）
 │   ├── rename_session.sh            # 会话一键重命名并锁定 RPC 脚本
 │   ├── init_dir.sh                  # 目录一键自动化初始化脚本
-│   ├── control_gates.sh             # 【管控内核】四项门禁判定与量化看板
-│   └── redundancy_scan.mjs          # 【真冗余检测】词级相似度 + 元数据过滤
-├── ai-control/                      # 【AI 执行流程管控系统】
+│   ├── control_gates.sh             # 【管控机制·状态层】四项门禁判定与量化看板
+│   ├── redundancy_scan.mjs          # 【管控机制·判定层】冗余检测（词级相似度 + 元数据过滤）
+│   ├── conflict_scan.mjs            # 【管控机制·判定层】冲突检测（版本/计数/指标/标识/死链）
+│   ├── legacy_align_scan.mjs        # 【管控机制·判定层】存量校准（遇碰即对齐清单）
+│   ├── global_scheduler_lock.sh     # 全局调度锁与并发资源防冲突
+│   ├── git_sync_remote.sh           # 远程 Git 强同步与缺地址开页引导
+│   ├── fingerprint_audit.sh         # 资产数字指纹与新鲜度审计
+│   └── disk_check_and_cleanup.sh    # 磁盘巡检与安全自愈清理
+├── ai-control/                      # 【管控机制·实现目录】判定层与拦截层落地
 │   ├── config/gates.conf            # 门禁阈值唯一调参入口（改完即时生效）
-│   ├── plugin/index.mjs             # 硬门禁插件：常显看板 + 工具调用否决
+│   ├── plugin/index.mjs             # 【拦截层】常显看板 + 工具调用否决
 │   ├── plugin/loader.mjs            # 故障安全加载器（失败降级为空插件）
-│   ├── plugin/selftest.mjs          # 插件自检（23 项，禁止凭语法通过上线）
-│   └── reports/                     # 管控快照与冗余检测结果留痕
+│   ├── plugin/selftest.mjs          # 插件自检（33 项，禁止凭语法通过上线）
+│   └── reports/                     # 管控快照与检测结果留痕
 ├── AGENTS.md                        # 项目级约束（会话自动注入）
 ├── .gitignore                       # 版本管理忽略规则
 ├── .gitattributes                   # 文本换行与格式配置
@@ -92,14 +101,25 @@
 
 ---
 
-## 🎛️ AI 执行流程管控（开工前置）
+## 🎛️ 管控机制（开工前置）
 
-本工程受**四项基础必要性门禁**强制约束，任何改动型动作前须先确认门禁全过。
+本工程所有硬约束由**管控机制**统一承载，名称的唯一权威出处见
+[`indexes/rules_index.md`](indexes/rules_index.md)。任何改动型动作前须先确认门禁全过；
 门禁状态由磁盘实况推导，**绝不采信自我宣称**，并常显于每轮对话。
 
+| 分层 | 职责 |
+| :--- | :--- |
+| **注入层** | 常驻红线与路由指针（本文件、`AGENTS.md`、快速通道索引） |
+| **状态层** | 由磁盘实况推导真值，产出状态快照 |
+| **判定层** | 四道门禁判定 + 冗余／冲突双检 + 存量校准 |
+| **拦截层** | 门禁未过时拒绝改动型工具调用 |
+
 ```bash
-./scripts/control_gates.sh check     # 输出量化看板（进度/卡点/指标）
-./scripts/control_gates.sh badge     # 一行式进度徽标
+./scripts/control_gates.sh check                      # 状态层：输出量化看板（进度/卡点/指标）
+./scripts/control_gates.sh badge                      # 状态层：一行式进度徽标
+node scripts/redundancy_scan.mjs --root .              # 判定层：冗余检测（重复内容 → 合并为迭代版本）
+node scripts/conflict_scan.mjs --root .                # 判定层：冲突检测（同一事实两种说法 → 先裁决再迭代）
+node scripts/legacy_align_scan.mjs --root .            # 判定层：存量校准（遇碰即对齐清单）
 ```
 
 | 门禁 | 含义 | 量化指标 |
@@ -109,23 +129,25 @@
 | **G3 需求文档同步** | 台账与 Git 工作树对齐 | 需求条目数 / 未提交变更数 |
 | **G4 冗余检测** | 实质重复率健康 | 高相似块对 / 重复标题数 |
 
+- **双检处置分流**：冗余 → 合并为迭代版本（保留单一权威源）；冲突 → 先出裁决方案，由用户确认后迭代，**禁止自行取舍**；
 - **调参入口**：`ai-control/config/gates.conf`（改完即时生效，无需重启）；
 - **临时绕过**：环境变量 `DSH_CONTROL_GUARD=off`；
+- **机制说明与信息图**：[`docs/constraint_mechanism_spec.md`](docs/constraint_mechanism_spec.md) · [`assets/generated_images/gcm_gate_control_infographic.svg`](assets/generated_images/gcm_gate_control_infographic.svg)；
 - **完整说明**：见 [`ai-control/README.md`](ai-control/README.md)。
 
 ---
 
 ## 🚀 核心工作规程与快速上手
 
-### 1. 任务启动自检六步法
+### 1. 任务启动自检七步法
 每次开启任务或新会话，第一步按顺序自检：
-1. **过门禁（新增第零步）**：运行 `./scripts/control_gates.sh check` 确认四项门禁全过；未过则先修复，禁止跳过；
+1. **过门禁（第零步）**：运行 `./scripts/control_gates.sh check` 确认四项门禁全过；未过则先修复，禁止跳过；
 2. **查权限与红线**：查阅 `rules/security/security_baseline.md` 守住安全红线；
 3. **看元规与干道**：阅读 `rules/system/meta_rules.md` 明确最高准则，通过 `indexes/shortcuts_index.md` 优先命中 G0/G1 高速干道路由；
 4. **核知识库**：检阅 `knowledge/README.md`，执行前置防冲突核查，确保新任务与世界观/美术/工程设定绝不冲突（非游戏坚决不载入游戏设定）；
-5. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v2.8.0`）；
+5. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v2.9.0`）；
 6. **读记忆**：读取 `memory/` 目录继承跨会话偏好与避坑经验（指纹单次读，写后才重读）；
-7. **定轨道与首动命名**：依据六维价值打分(60分)与四维难度打分(100分)双螺旋决策，复杂任务**首个工具调用必须执行 `./scripts/rename_session.sh` 锁定会话**；十六步严格执行不可跳步；收尾必给结构化交付入口、管控进度徽标与六维量化审计指标卡片。
+7. **定轨道与首动命名**：依据六维价值打分(60分)与四维难度打分(100分)双螺旋决策，复杂任务**首个工具调用必须执行 `./scripts/rename_session.sh` 锁定会话**；十六步流水线中带判定脚本的工序严格执行，未配判定手段的工序按建议执行（见 `rules/workflow/task_execution_flow.md`）；收尾必给结构化交付入口、管控进度徽标与六维量化审计指标卡片。
 
 ### 2. 快速通道指令直达
 常用操作无需长句问答，输入口令直达目标：

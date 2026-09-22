@@ -1,8 +1,9 @@
-# ai-control 目录说明（AI 执行流程管控系统）
+# ai-control 目录说明（管控机制实现目录）
 
 ## 📌 目录定位
 - **路径**: `ai-control/`
-- **主要作用**: 承载"AI 执行流程管控"系统——强制四项基础必要性工序按序完成，并把执行进度**常显可视化、可量化**。核心设计原则是：**状态由磁盘实况推导，绝不采信模型自我宣称**。
+- **主要作用**: 承载**管控机制**的判定层与拦截层——强制四项基础必要性工序按序完成，并把执行进度**常显可视化、可量化**。核心设计原则是：**状态由磁盘实况推导，绝不采信模型自我宣称**。
+- **名称口径**: 本机制的正式名称是"管控机制"（四层：注入层 / 状态层 / 判定层 / 拦截层），唯一权威出处见 `indexes/rules_index.md` 第〇章。旧称"AI 执行流程管控系统""门禁内核""硬门禁插件"一律废止。
 
 ---
 
@@ -13,9 +14,9 @@ ai-control/
 ├── config/
 │   └── gates.conf          门禁阈值配置（唯一需要手改的调参入口）
 ├── plugin/
-│   ├── index.mjs           硬门禁插件：常显看板 + 工具调用否决
+│   ├── index.mjs           拦截层：常显看板 + 工具调用否决
 │   ├── loader.mjs          故障安全加载器（加载失败降级为空插件）
-│   └── selftest.mjs        插件自检（23 项，禁止凭语法通过上线）
+│   └── selftest.mjs        插件自检（33 项，禁止凭语法通过上线）
 └── reports/
     ├── latest_status.md    最近一次管控快照（人类可读）
     └── redundancy.json     最近一次冗余检测结果
@@ -40,6 +41,20 @@ ai-control/
 
 ---
 
+## 🔍 双检与存量校准（判定层）
+
+门禁回答"能不能动手"，双检回答"改得对不对、旧账还清了没有"：
+
+| 检测器 | 判定什么 | 处置方式 |
+| :--- | :--- | :--- |
+| `scripts/redundancy_scan.mjs` | 同一内容写了两遍（真复制粘贴） | 冗余 → 合并为迭代版本，保留单一权威源 |
+| `scripts/conflict_scan.mjs` | 同一事实说了两样（版本/计数/指标/标识/死链五类） | 冲突 → 先出裁决方案，由用户确认后再迭代 |
+| `scripts/legacy_align_scan.mjs` | 存量资产是否跟上新规范（命名/入口/版本/指纹/台账五类） | 待对齐清单必须清零或书面说明原因 |
+
+**硬要求**：检测器不可用时一律判"未通过"，**不允许以"检测失效"充当通过**。
+
+---
+
 ## 🛠️ 常用命令
 
 ```bash
@@ -50,9 +65,13 @@ ai-control/
 ./scripts/control_gates.sh advance <id>   # 仅在真实通过时允许记账推进
 ./scripts/control_gates.sh reset     # 清空缓存，强制重算
 
-node scripts/redundancy_scan.mjs --root .        # 真冗余扫描
-node scripts/redundancy_scan.mjs --self-test     # 检测器自检
-node ai-control/plugin/selftest.mjs              # 硬门禁插件自检
+node scripts/redundancy_scan.mjs --root .        # 冗余扫描（重复内容）
+node scripts/redundancy_scan.mjs --self-test     # 冗余检测器自检
+node scripts/conflict_scan.mjs --root .          # 冲突扫描（同一事实两种说法）
+node scripts/conflict_scan.mjs --self-test       # 冲突检测器自检（20 项）
+node scripts/legacy_align_scan.mjs --root .      # 存量校准（遇碰即对齐清单）
+node scripts/legacy_align_scan.mjs --self-test   # 存量校准自检（16 项）
+node ai-control/plugin/selftest.mjs              # 拦截层插件自检（33 项）
 ```
 
 ---

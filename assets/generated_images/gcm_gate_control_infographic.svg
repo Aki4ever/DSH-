@@ -1,0 +1,179 @@
+<svg width="1120" height="1560" viewBox="0 0 1120 1560" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1120" y2="1560" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#080C13"/>
+      <stop offset="50%" stop-color="#101725"/>
+      <stop offset="100%" stop-color="#06090E"/>
+    </linearGradient>
+    <linearGradient id="glowTop" x1="0" y1="0" x2="1120" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D2FF"/>
+      <stop offset="50%" stop-color="#2EC4B6"/>
+      <stop offset="100%" stop-color="#8A2BE2"/>
+    </linearGradient>
+    <linearGradient id="cardBlue" x1="0" y1="0" x2="1040" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#141E2F"/>
+      <stop offset="100%" stop-color="#0D1521"/>
+    </linearGradient>
+    <linearGradient id="cardTeal" x1="0" y1="0" x2="1040" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0F2422"/>
+      <stop offset="100%" stop-color="#0A1615"/>
+    </linearGradient>
+    <linearGradient id="cardPurple" x1="0" y1="0" x2="1040" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E1330"/>
+      <stop offset="100%" stop-color="#120C1E"/>
+    </linearGradient>
+    <linearGradient id="cardAmber" x1="0" y1="0" x2="1040" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#261C10"/>
+      <stop offset="100%" stop-color="#17110A"/>
+    </linearGradient>
+    <linearGradient id="barGrad" x1="0" y1="0" x2="1120" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D2FF"/>
+      <stop offset="50%" stop-color="#2EC4B6"/>
+      <stop offset="100%" stop-color="#8A2BE2"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-40" y="-20" width="1200" height="1640" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+    <marker id="arrowCyan" markerWidth="11" markerHeight="11" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#2EC4B6"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="11" markerHeight="11" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#FF6B6B"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="11" markerHeight="11" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#4ADE80"/>
+    </marker>
+  </defs>
+
+  <rect width="1120" height="1560" fill="url(#bgGrad)"/>
+  <rect x="0" y="0" width="1120" height="6" fill="url(#glowTop)"/>
+
+  <!-- ══════════ 标题 ══════════ -->
+  <text x="60" y="76" fill="#F2F6FC" font-size="40" font-weight="700">管控机制 · 一张图看懂</text>
+  <text x="60" y="112" fill="#8FA3BF" font-size="19">它不负责"干活"，只负责回答一件事：现在到底能不能动手？</text>
+  <rect x="60" y="132" width="1000" height="1" fill="#22314A"/>
+
+  <!-- 一句话定义 -->
+  <rect x="60" y="156" width="1000" height="76" rx="12" fill="url(#cardTeal)" stroke="#1E4B47" stroke-width="1.5"/>
+  <text x="88" y="190" fill="#2EC4B6" font-size="21" font-weight="700">一句话定义</text>
+  <text x="88" y="218" fill="#D7E3F2" font-size="18">不听"我做完了"这句话，只看硬盘上真实有什么，用它决定你能不能动工程。</text>
+
+  <!-- ══════════ 第一部分：怎么运作 ══════════ -->
+  <text x="60" y="288" fill="#7FD8FF" font-size="24" font-weight="700">① 它是怎么运作的？——像进厂前的四道安检门</text>
+  <text x="60" y="316" fill="#8FA3BF" font-size="17">你（或者智能体）想改东西，必须先依次通过四道门。四道门全过才放行；任何一道没过，就停在门口。</text>
+
+  <!-- 四道门 -->
+  <g filter="url(#cardShadow)">
+    <rect x="60" y="340" width="230" height="150" rx="12" fill="url(#cardBlue)" stroke="#24507A" stroke-width="1.5"/>
+    <rect x="305" y="340" width="230" height="150" rx="12" fill="url(#cardBlue)" stroke="#24507A" stroke-width="1.5"/>
+    <rect x="550" y="340" width="230" height="150" rx="12" fill="url(#cardBlue)" stroke="#24507A" stroke-width="1.5"/>
+    <rect x="795" y="340" width="265" height="150" rx="12" fill="url(#cardBlue)" stroke="#24507A" stroke-width="1.5"/>
+  </g>
+  <text x="82" y="374" fill="#00D2FF" font-size="17" font-weight="700">第一道门 · 家底齐不齐</text>
+  <text x="82" y="402" fill="#C9D7E8" font-size="15">仓库在不在</text>
+  <text x="82" y="426" fill="#C9D7E8" font-size="15">目录骨架是否完整</text>
+  <text x="82" y="450" fill="#C9D7E8" font-size="15">防丢文件是否齐全</text>
+  <text x="82" y="474" fill="#6F86A6" font-size="13">代号 G1</text>
+
+  <text x="327" y="374" fill="#00D2FF" font-size="17" font-weight="700">第二道门 · 东西乱不乱</text>
+  <text x="327" y="402" fill="#C9D7E8" font-size="15">每个目录都有主人</text>
+  <text x="327" y="426" fill="#C9D7E8" font-size="15">没有"没人管"的目录</text>
+  <text x="327" y="450" fill="#C9D7E8" font-size="15">没有临时垃圾文件</text>
+  <text x="327" y="474" fill="#6F86A6" font-size="13">代号 G2</text>
+
+  <text x="572" y="374" fill="#00D2FF" font-size="17" font-weight="700">第三道门 · 账记没记</text>
+  <text x="572" y="402" fill="#C9D7E8" font-size="15">需求台账条目数对得上</text>
+  <text x="572" y="426" fill="#C9D7E8" font-size="15">版本号前后一致</text>
+  <text x="572" y="450" fill="#C9D7E8" font-size="15">改动有没有提交入库</text>
+  <text x="572" y="474" fill="#6F86A6" font-size="13">代号 G3</text>
+
+  <text x="817" y="374" fill="#00D2FF" font-size="17" font-weight="700">第四道门 · 是否啰嗦</text>
+  <text x="817" y="402" fill="#C9D7E8" font-size="15">同一件事写了两遍吗</text>
+  <text x="817" y="426" fill="#C9D7E8" font-size="15">重复内容是否已合并</text>
+  <text x="817" y="450" fill="#C9D7E8" font-size="15">（只留一份权威版本）</text>
+  <text x="817" y="474" fill="#6F86A6" font-size="13">代号 G4</text>
+
+  <path d="M290 415 L302 415" stroke="#2EC4B6" stroke-width="2.5" marker-end="url(#arrowCyan)"/>
+  <path d="M535 415 L547 415" stroke="#2EC4B6" stroke-width="2.5" marker-end="url(#arrowCyan)"/>
+  <path d="M780 415 L792 415" stroke="#2EC4B6" stroke-width="2.5" marker-end="url(#arrowCyan)"/>
+
+  <!-- 门后结果 -->
+  <rect x="60" y="510" width="1000" height="60" rx="10" fill="#0C1A12" stroke="#1E5B36" stroke-width="1.5"/>
+  <path d="M1060 540 L1080 540" stroke="#4ADE80" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+  <text x="88" y="547" fill="#4ADE80" font-size="18" font-weight="700">四道门全过 → 放行</text>
+  <text x="330" y="547" fill="#B9CDBF" font-size="16">允许修改文件、允许提交推送；每轮对话顶部会显示进度徽标，随时看得到走到哪一步</text>
+
+  <rect x="60" y="584" width="1000" height="60" rx="10" fill="#1C0F12" stroke="#6B2830" stroke-width="1.5"/>
+  <path d="M1060 614 L1080 614" stroke="#FF6B6B" stroke-width="2.5" marker-end="url(#arrowRed)"/>
+  <text x="88" y="621" fill="#FF6B6B" font-size="18" font-weight="700">任意一道没过 → 拦下</text>
+  <text x="330" y="621" fill="#D8BEC2" font-size="16">拒绝修改类操作并告诉你卡在哪；但"看文件、查资料、列计划"永远允许，不会把人锁死</text>
+
+  <!-- ══════════ 第二部分：判定依据来自哪里 ══════════ -->
+  <text x="60" y="706" fill="#7FD8FF" font-size="24" font-weight="700">② 它凭什么说"没过"？——依据全部来自硬盘实况</text>
+  <text x="60" y="734" fill="#8FA3BF" font-size="17">不是问一句"你做完了吗"，而是真的去数、去比对。下面这些检查都是真实能跑的命令。</text>
+
+  <g filter="url(#cardShadow)">
+    <rect x="60" y="756" width="1000" height="196" rx="12" fill="url(#cardPurple)" stroke="#3C2A5C" stroke-width="1.5"/>
+  </g>
+  <text x="88" y="790" fill="#C4A6FF" font-size="17" font-weight="700">两条检查命令（一条查"啰嗦"，一条查"打架"）</text>
+
+  <rect x="88" y="808" width="440" height="122" rx="9" fill="#120C1E" stroke="#3C2A5C" stroke-width="1"/>
+  <text x="106" y="836" fill="#E4D8FF" font-size="16" font-weight="700">查啰嗦 · 冗余检测</text>
+  <text x="106" y="862" fill="#B9A9D8" font-size="14">同一段内容被复制到两处 → 算出相似度</text>
+  <text x="106" y="886" fill="#B9A9D8" font-size="14">相似度 ≥ 0.85 判定为真重复</text>
+  <text x="106" y="912" fill="#8E7DB5" font-size="13">处置：合并成一份，其余改成指针</text>
+
+  <rect x="548" y="808" width="490" height="122" rx="9" fill="#120C1E" stroke="#3C2A5C" stroke-width="1"/>
+  <text x="566" y="836" fill="#E4D8FF" font-size="16" font-weight="700">查打架 · 冲突检测（五类）</text>
+  <text x="566" y="862" fill="#B9A9D8" font-size="14">版本号不一致 / 标题说六步实际三步</text>
+  <text x="566" y="886" fill="#B9A9D8" font-size="14">同一指标两个数字 / 同一编号两个名字 / 链接指向不存在的文件</text>
+  <text x="566" y="912" fill="#8E7DB5" font-size="13">处置：先给出裁决方案，由人确认后再改</text>
+
+  <text x="88" y="946" fill="#8E7DB5" font-size="13">两条命令：node scripts/redundancy_scan.mjs --root . ｜ node scripts/conflict_scan.mjs --root .（另有存量校准：node scripts/legacy_align_scan.mjs --root .）</text>
+
+  <!-- ══════════ 第三部分：四层分工 ══════════ -->
+  <text x="60" y="1010" fill="#7FD8FF" font-size="24" font-weight="700">③ 它由四层组成（以后可以直接点名优化某一层）</text>
+
+  <g filter="url(#cardShadow)">
+    <rect x="60" y="1032" width="1000" height="72" rx="10" fill="url(#cardAmber)" stroke="#5A4423" stroke-width="1.5"/>
+    <rect x="60" y="1120" width="1000" height="72" rx="10" fill="url(#cardBlue)" stroke="#24507A" stroke-width="1.5"/>
+    <rect x="60" y="1208" width="1000" height="72" rx="10" fill="url(#cardBlue)" stroke="#24507A" stroke-width="1.5"/>
+    <rect x="60" y="1296" width="1000" height="72" rx="10" fill="url(#cardPurple)" stroke="#3C2A5C" stroke-width="1.5"/>
+  </g>
+
+  <text x="88" y="1064" fill="#FFC978" font-size="18" font-weight="700">第一层 · 注入层</text>
+  <text x="300" y="1064" fill="#E4D6C2" font-size="16">每次对话开头自动贴在眼前的"不可违背的几条红线"，其余细则按需再读</text>
+  <text x="88" y="1085" fill="#8B7A61" font-size="13">作用：保证再长的会话也不会忘掉底线</text>
+
+  <text x="88" y="1152" fill="#7FD8FF" font-size="18" font-weight="700">第二层 · 状态层</text>
+  <text x="300" y="1152" fill="#C9D7E8" font-size="16">真的去数硬盘，算出四道门各自过没过，写进一份状态文件</text>
+  <text x="88" y="1173" fill="#6F86A6" font-size="13">作用：所有进度只有一个来源，不会各说各话</text>
+
+  <text x="88" y="1240" fill="#7FD8FF" font-size="18" font-weight="700">第三层 · 判定层</text>
+  <text x="300" y="1240" fill="#C9D7E8" font-size="16">四道门判定 + 冗余检测 + 冲突检测 + 存量校准，都在这层</text>
+  <text x="88" y="1261" fill="#6F86A6" font-size="13">作用：把"写得对不对"变成可量化的数字</text>
+
+  <text x="88" y="1328" fill="#C4A6FF" font-size="18" font-weight="700">第四层 · 拦截层</text>
+  <text x="300" y="1328" fill="#D6C8EF" font-size="16">门没过时，真的会拦住修改类操作；只读和列计划不拦</text>
+  <text x="88" y="1349" fill="#8E7DB5" font-size="13">作用：让约束真的生效，而不是一句提醒</text>
+
+  <!-- ══════════ 第四部分：为什么可信 ══════════ -->
+  <text x="60" y="1414" fill="#7FD8FF" font-size="24" font-weight="700">④ 为什么可以信它？——三个防作弊设计</text>
+
+  <rect x="60" y="1436" width="326" height="96" rx="10" fill="#0E1622" stroke="#24507A" stroke-width="1.2"/>
+  <text x="80" y="1466" fill="#00D2FF" font-size="16" font-weight="700">只认硬盘，不认嘴</text>
+  <text x="80" y="1492" fill="#A8BBD4" font-size="14">结论由脚本实算得出，</text>
+  <text x="80" y="1514" fill="#A8BBD4" font-size="14">自我宣称一律不算数</text>
+
+  <rect x="397" y="1436" width="326" height="96" rx="10" fill="#0E1622" stroke="#24507A" stroke-width="1.2"/>
+  <text x="417" y="1466" fill="#00D2FF" font-size="16" font-weight="700">查不出来就算不过</text>
+  <text x="417" y="1492" fill="#A8BBD4" font-size="14">检测工具失效时判"未通过"，</text>
+  <text x="417" y="1514" fill="#A8BBD4" font-size="14">不允许"查不了"当"没问题"</text>
+
+  <rect x="734" y="1436" width="326" height="96" rx="10" fill="#0E1622" stroke="#24507A" stroke-width="1.2"/>
+  <text x="754" y="1466" fill="#00D2FF" font-size="16" font-weight="700">留了紧急逃生门</text>
+  <text x="754" y="1492" fill="#A8BBD4" font-size="14">确有必要时可临时关闭拦截，</text>
+  <text x="754" y="1514" fill="#A8BBD4" font-size="14">但必须在记录里留痕</text>
+
+  <text x="60" y="1552" fill="#5C7192" font-size="13">全局规则工程 · 管控机制（注入层 / 状态层 / 判定层 / 拦截层）· 权威口径见 indexes/rules_index.md</text>
+</svg>

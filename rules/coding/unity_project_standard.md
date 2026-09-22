@@ -1,10 +1,10 @@
 # Unity 结构化工程目录与文件形式全局规范 (Unity Project & File Standard)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v1.2.0`
-> - **对应实施版本**：`v1.2.0`
-> - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
-> - **最后更新日期**：2026-09-16
+> - **当前文档版本**：`v2.9.0`
+> - **对应实施版本**：`v2.9.0`
+> - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
+> - **最后更新日期**：2026-09-22
 > - **版本状态**：`[Release 稳定生效]`
 
 本文档是针对 Unity 游戏工程的**文件形式、目录架构、资产组织与代码规范**的全局最高执行准则。旨在彻底根除资产杂乱、`.meta` 丢失、编译膨胀与模块耦合等顽疾，为后续高效、规范地编写 Unity 业务代码提供坚实底座。
