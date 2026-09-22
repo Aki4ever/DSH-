@@ -23,6 +23,15 @@ MANAGED_DIRS=(
   "templates"
   "scripts"
   "docs"
+  "ai-control"
+)
+
+# 2.1 受管根级文件定义
+#     根级文件不隶属于任何受管目录，必须单独列出，否则会逃出指纹监控
+#     （新增目录也需同步登记到 MANAGED_DIRS，这是人工维护点）
+MANAGED_ROOT_FILES=(
+  "AGENTS.md"
+  "README.md"
 )
 
 # 辅助函数: 计算单个文件的 SHA-256 短哈希 (8位)
@@ -68,11 +77,19 @@ collect_assets() {
         if [ -f "$f" ]; then
           # 排除图片二进制与临时文件
           local rel_path="${f#$CURRENT_DIR/}"
-          if [[ "$rel_path" != assets/* ]] && [[ "$rel_path" != *.png ]] && [[ "$rel_path" != *.svg ]] && [[ "$rel_path" != *.tmp ]] && [[ "$rel_path" != *~ ]]; then
+          # 排除图片二进制、临时文件与自动生成物
+          # （生成物每次运行都变化，纳入指纹监控会造成永久性假漂移）
+          if [[ "$rel_path" != assets/* ]] && [[ "$rel_path" != *.png ]] && [[ "$rel_path" != *.svg ]] && [[ "$rel_path" != *.tmp ]] && [[ "$rel_path" != *~ ]] && [[ "$rel_path" != ai-control/reports/* ]]; then
             files+=("$rel_path")
           fi
         fi
       done < <(find "$CURRENT_DIR/$dir" -type f | sort)
+    fi
+  done
+  # 根级受管文件（不隶属任何目录）
+  for f in "${MANAGED_ROOT_FILES[@]}"; do
+    if [ -f "$CURRENT_DIR/$f" ]; then
+      files+=("$f")
     fi
   done
   echo "${files[@]}"
