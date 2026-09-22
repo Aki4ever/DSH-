@@ -64,3 +64,42 @@
 - **避坑对策**：
   - 前端工程必须建《项目页面台账》（`P-001`、`P-002`），页面截图按四段式规范命名，后续需求以编号精确指代；
   - 复杂任务动手前强制输出《前置风险评估卡》，凡高危破坏性操作必前置阻断预警。
+
+---
+
+### 9. 【Swift 工具链】仅装 Command Line Tools 时 SwiftUI 与 XCTest 双双不可用
+- **踩坑现象**：macOS 上编写 SwiftUI 界面后编译报错 `external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State()'; plugin for module 'SwiftUIMacros' not found`；测试代码 `import XCTest` 报 `unable to resolve module dependency: 'XCTest'`。
+- **底层根因**：未安装完整 Xcode、仅有 Command Line Tools 时：
+  1. `usr/lib/swift/host/plugins/` 下只有 `libObservationMacros.dylib`、`libSwiftMacros.dylib` 与 `testing/`，**不存在 `SwiftUIMacros` 插件**，而此 SDK 中 `@State`/`@Binding`/`@Observable` 等已全部改为宏实现，故 SwiftUI 在该环境下**根本无法编译**（全盘搜索亦无该插件）；
+  2. 工具链**不随附 XCTest**，但随附 swift-testing（`Testing.framework` 位于 `Library/Developer/Frameworks`）。
+- **避坑对策**：
+  - 动手前先探测环境：`ls usr/lib/swift/host/plugins/`、`xcrun --find swift-frontend`；
+  - 无完整 Xcode 时，桌面界面改用 **AppKit + WKWebView + 内置 HTML/CSS/JS 前端**，
+    该方案零依赖、无需 Node 构建链，且编译实测可用；
+  - 单元测试统一使用 **swift-testing**（`import Testing` + `@Test`/`@Suite`/`#expect`），
+    不要照搬 XCTest 写法。
+
+---
+
+### 10. 【SPM 测试】增量编译漏传测试宏插件路径导致误报失败
+- **踩坑现象**：首次 `swift test` 全绿，第二次（增量）起突然报 96 处
+  `external macro implementation type 'TestingMacros.TestDeclarationMacro' could not be found … plugin for module 'TestingMacros' not found`。
+- **底层根因**：SPM 在**增量** emit-module 步骤中未自动附加 `-plugin-path`，导致宏插件目录未进入编译参数（首次全新构建反而正常）。
+- **避坑对策**：
+  - 显式传入插件路径：`swift test -Xswiftc -plugin-path -Xswiftc "$PLUGIN_DIR"`；
+  - `$PLUGIN_DIR` 动态探测更稳：`$(dirname $(xcrun --find swift-frontend))/../lib/swift/host/plugins/testing`，避免硬编码路径在他人机器上失效；
+  - 门禁脚本须检查最终是否出现 `Test run with … passed` 摘要且无 `✘`/`error: `，否则判失败（防止「零测试也算通过」）。
+
+---
+
+### 11. 【视觉台账】`screencapture` 受 TCC 隐私门禁拒绝，应改用应用内渲染快照
+- **踩坑现象**：`screencapture -x full.png` 返回 `could not create image from display`；
+  指定区域 `screencapture -x -R x,y,w,h` 返回 `could not create image from rect`。
+- **底层根因**：macOS 对屏幕录制实行 TCC 隐私授权，未授予终端/宿主「屏幕录制」权限时，
+  两种截图方式**都会失败**（报错文案不同，极易被误判为坐标算错）。
+- **避坑对策**：
+  - 不要反复调坐标或怀疑分辨率，先识别为权限问题；
+  - **GUI 页面台账改用应用内的渲染快照**（如 `WKWebView.takeSnapshot`）：
+    不需要任何系统权限、只含页面内容无桌面干扰、窗口尺寸可固定使出图可复现；
+  - 为截图设计可复现入口：用环境变量固定窗口矩形（如 `KEYINJECTOR_WINDOW_RECT="x,y,w,h"`）
+    并让应用在**设置了该变量时不自动居中**，否则窗口位置会被 `center()` 覆盖导致取景漂移。
