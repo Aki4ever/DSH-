@@ -1,8 +1,8 @@
 # 任务执行结构化流程与双轨分流法典 (Task Execution Flow)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v2.9.0`
-> - **对应实施版本**：`v2.9.0`
+> - **当前文档版本**：`v3.0.0`
+> - **对应实施版本**：`v3.0.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](versioning_standard.md)
 > - **生效状态**：`[Release 稳定生效]`
 
@@ -80,11 +80,16 @@
 | 是否重复造轮子 | `node scripts/redundancy_scan.mjs --root .` | 高相似块对 = 0（有重复则先合并） |
 | 事实是否自相矛盾 | `node scripts/conflict_scan.mjs --root .` | 冲突数 = 0（有冲突则先出裁决方案） |
 | 存量是否跟上新规范 | `node scripts/legacy_align_scan.mjs --root .` | 待对齐数 = 0（未清零须书面说明原因） |
+| 快速通道是否可用 | `node scripts/channel_audit.mjs --root .` | 问题数 = 0（无死通道、说法可命中、触发词不冲突） |
 | 资产是否暗中漂移 | `./scripts/fingerprint_audit.sh --scan` | 台账更新完毕，Stale 项有对齐计划 |
 | 进度徽标 | `./scripts/control_gates.sh badge` | 输出一行式进度，贴进收尾 |
 
-> 说明：以上六条命令是"流程真的执行了"的唯一客观证据。
+> 说明：以上七条命令是"流程真的执行了"的唯一客观证据。
 > 十六步中未列入本表的工序（S01 / S02 / S06 / S09 / S10）即为 🟡 建议等级。
+>
+> **已退役的判定**：`scripts/test_v180_spec.sh` 曾作为 v1.8.0 的质量门禁，但其断言把元规则条号
+> 与工序编号写死，随版本演进 26 项中 10 项长期失败且无人运行，已正式退役（退役说明见该文件头）。
+> 它的覆盖范围由本表七条**全库活体判定**取代 —— 教训是：**判定必须查活体事实，不能查写死的编号**。
 
 ---
 
@@ -97,7 +102,7 @@
 | 交互与执行阶段 | 必须调用的工具 / 语法规范 | 对应激活的 DSH 原生可视化组件 (Slot) | 强制等级 |
 | :--- | :--- | :--- | :---: |
 | **1. 侧边栏标题投影** | `./scripts/rename_session.sh` | `sidebar.workspaces` 侧边栏会话节点 | 🟢 强制（S05 判定） |
-| **2. 长期自主目标治理** | `create_goal` / `update_goal` | `conversation.input.dock` 的 `GoalBar` (order 10) | 🟡 建议（长任务推荐） |
+| **2. 长期自主目标治理** | `create_goal` / `update_goal` | `conversation.input.dock` 的 `GoalBar` (order 10) | 🟢 强制（长任务：跨轮与自主续跑必须建目标） |
 | **3. 多步骤实时进度条** | `todo_write` | `conversation.input.dock` 的 `TodoPanel` (order 0) | 🟢 强制（S07 判定） |
 | **4. 终端系统命令执行** | `bash` / `pwsh` 原生工具 | `tool.call.toolview` 的 `TerminalCard` | 🟢 强制（判定命令须贴真实输出） |
 | **5. 文件检阅与源码阅读** | `read` 原生工具 | `tool.call.toolview` 的 `ReadCard` | 🟢 强制（S11 读回校验） |
@@ -107,6 +112,47 @@
 | **9. 交互式澄清与表单提问**| `ask_user_question` 原生工具 | `conversation.composer` 的 `UserQuestionsView` | 🟡 建议（有歧义时推荐） |
 | **10. 轮次产出物直达跳转** | 收尾回复中以 `` `path/file` `` 引用文件 | `conversation.chat.turnTail` (deliverables 插件) | 🟢 强制（S16 判定） |
 | **11. 结构化卡片排版** | GFM 二级引用块 `> ### 📌 ...` 与表格 | 聊天流全局渲染高亮色条卡片 | 🟡 建议 |
+
+---
+
+## 📌 三之一、任务常显在输入框（可视化任务条）
+
+**要求**：任务无论**完成与否**，都必须常显在输入框上方，用户不必往回翻记录就知道"在做什么、还剩什么"。
+
+### 1. 挂载在哪（DSH 原生，无需自研组件）
+
+| 常显组件 | 挂载槽位 | 展示内容 | 由什么驱动 |
+| :--- | :--- | :--- | :--- |
+| **`TodoPanel`** 任务待办条 | `conversation.input.dock`（order=0） | 实时清单：已完成 N · 进行中 N · 待办 N，默认折叠为一行，可展开 | `todo_write` 写入的清单 |
+| **`GoalBar`** 目标条 | `conversation.input.dock`（order=10） | 长期目标文本与轮次进度（含 Edit/Pause/Resume/Clear） | `create_goal` / `update_goal` |
+
+### 2. 唯一失效条件（源码级判定依据）
+
+`TodoPanel` 的实现里有一条硬判定：`if (todos.length === 0) return null;`
+（依据：`@deepseek-ai/dsh-client-ui-conversation` 客户端渲染代码）。
+
+因此结论很明确：
+
+- **清单非空 → 常显**，完成态照样常显（完成项显示为勾选态，标题栏计数仍列出"已完成 N"）；
+- **清单为空 → 消失**，这才是"输入框上方空了"的唯一原因；
+- 补充事实：`todo_write` 的 `content` 必须是非空字符串（依据：`@deepseek-ai/dsh-tool-todo` 校验），
+  所以清单**只会被整表替换、不会被清空** —— 只要写入过，就一直在。
+
+### 3. 执行规范（三条硬要求）
+
+1. **开工即建清单**：标准完备流任务在动手前必须 `todo_write`，至少含 3 项，且**任何时刻至少一项为 `in_progress`**；
+2. **收尾不清空**：任务结束时保留**全部完成态**的清单（标 completed 即可），**严禁**用空数组或删除动作清掉清单；
+3. **长任务建目标条**：预计跨多轮、需要自主续跑或按轮次推进的任务，必须 `create_goal`，使 `GoalBar` 常显目标与轮次。
+
+### 4. 判定手段（可执行）
+
+| 判定什么 | 怎么做 | 通过标准 |
+| :--- | :--- | :--- |
+| 清单是否存在且实时 | 自查最近一次 `todo_write` 调用的内容（工具回执即证据） | 清单非空，且状态与本轮真实进展一致 |
+| 目标条是否存在 | `get_goal` | 长任务返回 `phase=active` 的目标与轮次 |
+| 输入框上方为空时如何归因 | 若清单为空 → 属"未建清单/被清空"违规，立即补建；若清单非空仍看不到 → 属前端渲染问题，按宿主问题上报，不要反复写清单 | 归因明确，不猜 |
+
+> **一句话记忆**：清单在，进度就在；清单空，进度就没了。所以"不清空清单"不是洁癖，是常显的前提。
 
 ---
 

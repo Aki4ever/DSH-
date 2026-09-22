@@ -24,6 +24,7 @@
 
 import { readFile, readdir, stat, access } from 'node:fs/promises'
 import { join, relative, dirname, resolve, extname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 // ── 参数解析 ─────────────────────────────────────────────────────────────────
 function parseArgs(argv) {
@@ -500,24 +501,32 @@ function selfTest() {
 }
 
 // ── 入口 ─────────────────────────────────────────────────────────────────────
-const args = parseArgs(process.argv)
-if (args.selfTest) selfTest()
+// ── 入口 ─────────────────────────────────────────────────────────────────────
+// 只有"被当作主程序直接运行"时才执行扫描与输出；被其它脚本 import 时
+// 只提供可复用的判定函数（例如通道注册审计器复用 checkLinks 的死链判定口径），
+// 否则一旦被导入就会顺带跑一遍全库扫描并打印报告，污染调用方输出。
+const isMain = process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))
 
-const result = await scan({ root: args.root, dirs: args.dirs })
+if (isMain) {
+  const args = parseArgs(process.argv)
+  if (args.selfTest) selfTest()
 
-if (args.json) {
-  console.log(JSON.stringify(result, null, 2))
-} else {
-  console.log('=== 管控机制 · 冲突检测报告 ===')
-  console.log(`基准总版本：${result.ledgerVersion ? `v${result.ledgerVersion}` : '未识别'} · 扫描文件 ${result.filesScanned} · 冲突 ${result.conflictCount} 项`)
-  const high = result.conflicts.filter((c) => c.level === 'high').length
-  console.log(`其中：高危 ${high} 项 · 中危 ${result.conflictCount - high} 项`)
-  for (const c of result.conflicts.slice(0, args.top)) {
-    console.log(`\n[${c.type}] ${c.subject}`)
-    console.log(`   A: ${c.a.file} → ${c.a.value}`)
-    console.log(`   B: ${c.b.file} → ${c.b.value}`)
-    console.log(`   裁决建议：${c.advice}`)
+  const result = await scan({ root: args.root, dirs: args.dirs })
+
+  if (args.json) {
+    console.log(JSON.stringify(result, null, 2))
+  } else {
+    console.log('=== 管控机制 · 冲突检测报告 ===')
+    console.log(`基准总版本：${result.ledgerVersion ? `v${result.ledgerVersion}` : '未识别'} · 扫描文件 ${result.filesScanned} · 冲突 ${result.conflictCount} 项`)
+    const high = result.conflicts.filter((c) => c.level === 'high').length
+    console.log(`其中：高危 ${high} 项 · 中危 ${result.conflictCount - high} 项`)
+    for (const c of result.conflicts.slice(0, args.top)) {
+      console.log(`\n[${c.type}] ${c.subject}`)
+      console.log(`   A: ${c.a.file} → ${c.a.value}`)
+      console.log(`   B: ${c.b.file} → ${c.b.value}`)
+      console.log(`   裁决建议：${c.advice}`)
+    }
+    if (result.conflictCount > args.top) console.log(`\n…… 其余 ${result.conflictCount - args.top} 项已省略（--top 调整）`)
+    console.log(result.conflictCount === 0 ? '\n✅ 未发现冲突' : '\n⚠️ 存在冲突，须先出裁决方案再迭代（禁止自行取舍）')
   }
-  if (result.conflictCount > args.top) console.log(`\n…… 其余 ${result.conflictCount - args.top} 项已省略（--top 调整）`)
-  console.log(result.conflictCount === 0 ? '\n✅ 未发现冲突' : '\n⚠️ 存在冲突，须先出裁决方案再迭代（禁止自行取舍）')
 }

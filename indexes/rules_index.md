@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v2.9.0`
-> - **对应实施版本**：`v2.9.0`
+> - **当前文档版本**：`v3.0.0`
+> - **对应实施版本**：`v3.0.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-22
 > - **版本状态**：`[Release 稳定生效]`
@@ -23,7 +23,7 @@
 | :--- | :--- | :--- |
 | **注入层** | 只放红线与路由指针，按需加载细则 | [`AGENTS.md`](../AGENTS.md)（项目级）、`$DSH_HOME/AGENTS.md`（宿主级）、[`indexes/shortcuts_index.md`](shortcuts_index.md) |
 | **状态层** | 由磁盘实况推导真值，产出 `status.json` | [`scripts/control_gates.sh`](../scripts/control_gates.sh)、[`ai-control/config/gates.conf`](../ai-control/config/gates.conf) |
-| **判定层** | 逐道门禁判定，并做冗余与冲突双检 | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs) |
+| **判定层** | 门禁判定 + 冗余与冲突双检 + 存量校准 + 通道审计 | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs) |
 | **拦截层** | 门禁未过时拒绝改动型工具调用 | [`ai-control/plugin/index.mjs`](../ai-control/plugin/index.mjs) |
 
 **四道基础门禁（累积语义，须按序全部通过）**：
@@ -42,6 +42,8 @@
 node scripts/redundancy_scan.mjs --root .                           # 冗余检测（重复内容）
 node scripts/conflict_scan.mjs --root .                             # 冲突检测（同一事实两种说法）
 node scripts/legacy_align_scan.mjs --root .                         # 存量校准（遇碰即对齐清单）
+node scripts/channel_audit.mjs --root .                             # 通道审计（死通道/说法命中/触发词冲突）
+node scripts/align_version.mjs --dry-run                            # 升版预览：全库受管文档版本归位
 ```
 
 **双检处置分流**：冗余 → 合并为迭代版本，保留单一权威源；
@@ -132,7 +134,9 @@ node scripts/legacy_align_scan.mjs --root .                         # 存量校�
 | **管控机制** | [`scripts/control_gates.sh`](../scripts/control_gates.sh) | 状态层：由磁盘实况推导 G1~G4 并输出量化看板与状态快照 |
 | **管控机制** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs) | 冗余检测：词级相似度识别真复制粘贴（内置自检） |
 | **管控机制** | [`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs) | 冲突检测：五类冲突（版本/计数/指标/标识/死链）识别与裁决建议 |
-| **管控机制** | [`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs) | 存量校准：输出命名/入口/版本/指纹/台账五类待对齐清单 |
+| **管控机制** | [`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs) | 存量校准：输出命名/入口/版本/指纹/台账五类待对齐清单；脚本漏登记可自动检出 |
+| **管控机制** | [`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs) | 通道审计：快速通道死链、说法能否命中、触发词是否冲突（内置正反例自检） |
+| **管控机制** | [`scripts/align_version.mjs`](../scripts/align_version.mjs) | 版本归位：把全库受管文档头部版本统一到台账总版本（支持 --dry-run 预览） |
 
 ---
 

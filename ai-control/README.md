@@ -49,7 +49,8 @@ ai-control/
 | :--- | :--- | :--- |
 | `scripts/redundancy_scan.mjs` | 同一内容写了两遍（真复制粘贴） | 冗余 → 合并为迭代版本，保留单一权威源 |
 | `scripts/conflict_scan.mjs` | 同一事实说了两样（版本/计数/指标/标识/死链五类） | 冲突 → 先出裁决方案，由用户确认后再迭代 |
-| `scripts/legacy_align_scan.mjs` | 存量资产是否跟上新规范（命名/入口/版本/指纹/台账五类） | 待对齐清单必须清零或书面说明原因 |
+| `scripts/legacy_align_scan.mjs` | 存量资产是否跟上新规范（命名/入口/版本/指纹/台账五类）；**脚本漏登记也能自动检出** | 待对齐清单必须清零或书面说明原因 |
+| `scripts/channel_audit.mjs` | 快速通道表是否可用（死通道/说法能否命中/触发词冲突） | 通道表必须无死链；退役通道必须删行 |
 
 **硬要求**：检测器不可用时一律判"未通过"，**不允许以"检测失效"充当通过**。
 
@@ -68,9 +69,11 @@ ai-control/
 node scripts/redundancy_scan.mjs --root .        # 冗余扫描（重复内容）
 node scripts/redundancy_scan.mjs --self-test     # 冗余检测器自检
 node scripts/conflict_scan.mjs --root .          # 冲突扫描（同一事实两种说法）
-node scripts/conflict_scan.mjs --self-test       # 冲突检测器自检（20 项）
-node scripts/legacy_align_scan.mjs --root .      # 存量校准（遇碰即对齐清单）
-node scripts/legacy_align_scan.mjs --self-test   # 存量校准自检（16 项）
+node scripts/conflict_scan.mjs --self-test       # 冲突检测器自检（22 项）
+node scripts/legacy_align_scan.mjs --root .      # 存量校准（遇碰即对齐清单，含脚本漏登记）
+node scripts/legacy_align_scan.mjs --self-test   # 存量校准自检（22 项）
+node scripts/channel_audit.mjs --root .          # 通道审计（死通道/说法命中/触发词冲突）
+node scripts/channel_audit.mjs --self-test       # 通道审计自检（23 项）
 node ai-control/plugin/selftest.mjs              # 拦截层插件自检（33 项）
 ```
 

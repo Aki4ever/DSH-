@@ -82,7 +82,9 @@
 │   ├── control_gates.sh             # 【管控机制·状态层】四项门禁判定与量化看板
 │   ├── redundancy_scan.mjs          # 【管控机制·判定层】冗余检测（词级相似度 + 元数据过滤）
 │   ├── conflict_scan.mjs            # 【管控机制·判定层】冲突检测（版本/计数/指标/标识/死链）
-│   ├── legacy_align_scan.mjs        # 【管控机制·判定层】存量校准（遇碰即对齐清单）
+│   ├── legacy_align_scan.mjs        # 【管控机制·判定层】存量校准（遇碰即对齐清单，脚本漏登记可自动检出）
+│   ├── channel_audit.mjs            # 【管控机制·判定层】快速通道审计（死通道/说法命中/触发词冲突）
+│   ├── align_version.mjs            # 【管控机制·判定层】全库受管文档版本归位（升版时一条命令对齐）
 │   ├── global_scheduler_lock.sh     # 全局调度锁与并发资源防冲突
 │   ├── git_sync_remote.sh           # 远程 Git 强同步与缺地址开页引导
 │   ├── fingerprint_audit.sh         # 资产数字指纹与新鲜度审计
@@ -119,7 +121,8 @@
 ./scripts/control_gates.sh badge                      # 状态层：一行式进度徽标
 node scripts/redundancy_scan.mjs --root .              # 判定层：冗余检测（重复内容 → 合并为迭代版本）
 node scripts/conflict_scan.mjs --root .                # 判定层：冲突检测（同一事实两种说法 → 先裁决再迭代）
-node scripts/legacy_align_scan.mjs --root .            # 判定层：存量校准（遇碰即对齐清单）
+node scripts/legacy_align_scan.mjs --root .            # 判定层：存量校准（遇碰即对齐清单，含脚本漏登记）
+node scripts/channel_audit.mjs --root .                # 判定层：通道审计（死通道/说法命中/触发词冲突）
 ```
 
 | 门禁 | 含义 | 量化指标 |

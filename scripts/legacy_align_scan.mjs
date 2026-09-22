@@ -40,7 +40,11 @@ export const CANONICAL = {
     '管控体系',
     '执行流程管控系统',
   ],
-  /** 必须被入口引用的关键组件（新机制的可执行部分） */
+  /**
+   * 必须被入口引用的"锚点组件"（最小集合，恒定存在）。
+   * 注意：**不要**把这里当成全部待校验清单 —— 写死的清单发现不了"新脚本没登记"，
+   * 那正是 REQ-045 要堵的漏洞。完整清单由 `enumerateScripts()` 从磁盘枚举。
+   */
   requiredRefs: [
     'scripts/control_gates.sh',
     'scripts/conflict_scan.mjs',
@@ -48,8 +52,39 @@ export const CANONICAL = {
     'scripts/legacy_align_scan.mjs',
     'ai-control/config/gates.conf',
   ],
+  /** 脚本目录（自动枚举范围） */
+  scriptDir: 'scripts',
+  /** 脚本扩展名白名单 */
+  scriptExts: ['.sh', '.mjs', '.py', '.swift'],
+  /**
+   * 允许"存在但无需入口引用"的脚本，必须写明理由（不允许无理由豁免）。
+   * 已退役脚本同理登记在此，避免"退役了但还被要求登记"的自相矛盾。
+   */
+  refExempt: {
+    'scripts/svg_rasterize.swift': '由 scripts/svg2png.sh 内部编译调用，入口以 svg2png.sh 为准',
+    'scripts/test_v180_spec.sh': '已退役：面向 v1.8.0 的历史里程碑测试，26 项中 10 项因后续版本演进（元规则条号、工序编号变更）长期失败且无人运行；其能力已被冲突检测器/存量校准/通道审计等全库活体判定取代（退役说明见文件头）',
+  },
   /** 入口文件（相对项目根） */
   entryFiles: ['AGENTS.md', 'README.md', 'indexes/rules_index.md', 'ai-control/README.md'],
+}
+
+/**
+ * 从磁盘枚举全部脚本（REQ-045：把"漏登记"变成可自动检出）。
+ * 返回相对项目根的路径列表；目录不存在时返回空数组（不报错）。
+ */
+export async function enumerateScripts(root, canonical = CANONICAL) {
+  const dir = join(root, canonical.scriptDir)
+  let names = []
+  try {
+    names = await readdir(dir)
+  } catch {
+    return []
+  }
+  return names
+    .filter((n) => canonical.scriptExts.some((e) => n.endsWith(e)))
+    .filter((n) => !canonical.refExempt[`${canonical.scriptDir}/${n}`])
+    .map((n) => `${canonical.scriptDir}/${n}`)
+    .sort()
 }
 
 // ── 参数解析 ─────────────────────────────────────────────────────────────────
@@ -133,21 +168,30 @@ export function checkLayers(fileContents, canonical = CANONICAL) {
   }
 }
 
-/** L2：入口必须引用关键组件 */
-export function checkEntryRefs(entryContents, canonical = CANONICAL) {
+/**
+ * L2：入口必须引用关键组件。
+ * `requiredRefs` 是恒定锚点；`scriptRefs`（来自磁盘枚举）是"每个脚本都要有入口指针"。
+ * 两者合并检查，才能保证**新增脚本漏登记会被自动揪出来**，而不是靠人自觉。
+ * 判定为"片段命中"：入口文本里出现脚本路径或脚本文件名即视为已登记。
+ */
+export function checkEntryRefs(entryContents, canonical = CANONICAL, scriptRefs = []) {
   const out = []
   const joined = Object.values(entryContents).join('\n')
-  for (const ref of canonical.requiredRefs) {
-    if (!joined.includes(ref)) {
-      out.push({
-        type: 'L2-入口覆盖',
-        level: 'medium',
-        subject: '关键组件未被入口引用',
-        a: { file: canonical.entryFiles.join('、'), value: `未引用 ${ref}` },
-        b: { file: ref, value: '该组件存在于磁盘但入口未指向' },
-        advice: '在入口文件补上指针，使该组件可被发现与调用；组件本身不要复制内容，只放指针。',
-      })
-    }
+  const all = [...new Set([...canonical.requiredRefs, ...scriptRefs])]
+  for (const ref of all) {
+    const base = ref.split('/').pop()
+    if (joined.includes(ref) || joined.includes(base)) continue
+    const isAnchor = canonical.requiredRefs.includes(ref)
+    out.push({
+      type: 'L2-入口覆盖',
+      level: isAnchor ? 'medium' : 'low',
+      subject: isAnchor ? '关键组件未被入口引用' : '脚本未登记（流程未固化）',
+      a: { file: canonical.entryFiles.join('、'), value: `未引用 ${ref}` },
+      b: { file: ref, value: '该组件存在于磁盘但入口未指向' },
+      advice: isAnchor
+        ? '在入口文件补上指针，使该组件可被发现与调用；组件本身不要复制内容，只放指针。'
+        : '按“流程入驻四道审计 + 固化四项登记”补登记：在入口（README / 索引 / 任务流程判定命令表）补指针并登记台账；确属本地工具不需登记的，写入 CANONICAL.refExempt 并注明理由。',
+    })
   }
   return out
 }
@@ -280,10 +324,11 @@ async function scan({ root, dirs }) {
   const layerMiss = checkLayers(homeContents)
   if (layerMiss) items.push(layerMiss)
 
-  // L2 入口覆盖
+  // L2 入口覆盖：恒定锚点 + 磁盘枚举的全部脚本（保证"新增脚本漏登记"可自动检出）
   const entryContents = {}
   for (const f of CANONICAL.entryFiles) entryContents[f] = await readOr(join(root, f))
-  items.push(...checkEntryRefs(entryContents))
+  const scriptRefs = await enumerateScripts(root)
+  items.push(...checkEntryRefs(entryContents, CANONICAL, scriptRefs))
 
   // L4 指纹覆盖（只查规则法典与脚本，这两类最容易漂移）
   const managed = []
@@ -367,6 +412,15 @@ function selfTest() {
   // 8) 入口引用齐备不误报
   const full = CANONICAL.requiredRefs.join(' ')
   add('入口引用齐备不误报', checkEntryRefs({ 'README.md': full }).length === 0, (v) => v === true)
+  // 8b) 磁盘枚举的脚本若未登记，必须被检出（REQ-045：漏登记可自动发现）
+  const probeRefs = checkEntryRefs({ 'README.md': full }, CANONICAL, ['scripts/_probe_never_registered.sh'])
+  add('未登记脚本必被检出', probeRefs.length === 1 && probeRefs[0].type === 'L2-入口覆盖', (v) => v === true)
+  // 8c) 已登记脚本不误报（片段命中：入口写文件名即可）
+  const okRefs = checkEntryRefs({ 'README.md': `${full} scripts/channel_audit.mjs` }, CANONICAL, ['scripts/channel_audit.mjs'])
+  add('已登记脚本不误报', okRefs.length === 0, (v) => v === true)
+  // 8d) 豁免清单里的脚本不参与判定（例如由 shell 包装器编译调用的 .swift 源码）
+  const exempted = Object.keys(CANONICAL.refExempt)
+  add('豁免清单有明确理由', exempted.length > 0 && Object.values(CANONICAL.refExempt).every((v) => v.length > 8), (v) => v === true)
 
   // 9) 版本落后必检出
   add('版本落后必检出', !!checkVersionAlign('a.md', '1.0.0', '2.8.0'), (v) => v === true)
