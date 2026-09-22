@@ -34,3 +34,8 @@ node_modules/
 .env
 .env.local
 .env.*.local
+
+# AI 管控运行时生成物（本地快照，每次门禁检查都会重算，不纳入版本库）
+# 理由：快照内既含 HEAD 哈希又含"未提交变更数"，与提交动作自指，
+# 纳入版本库会导致每次提交后必然再产生一条 diff，形成永久噪声。
+ai-control/reports/
