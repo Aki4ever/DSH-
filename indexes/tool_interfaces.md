@@ -1,8 +1,8 @@
 # DSH 宿主工具与插件标准接口矩阵 (Tool & Plugin Interface Registry)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v2.6.0`
-> - **对应实施版本**：`v2.6.0`
+> - **当前文档版本**：`v2.7.0`
+> - **对应实施版本**：`v2.7.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -146,7 +146,7 @@ interface WriteOptions {
 ```typescript
 interface BashOptions {
   command: string;          // 待执行 bash 指令
-  description: string;      // 5-10 词动宾短语描述（呈现在 UI 上）
+  description: string;      // 必须使用纯中文规范动宾短语（呈现在 UI 终端卡片标题，严禁英文）
   workdir?: string;         // 工作目录
   run_in_background?: boolean; // 是否后台运行
   timeoutMs?: number;       // 超时毫秒数
@@ -156,7 +156,7 @@ interface BashOptions {
   ```javascript
   bash({
     command: "./scripts/disk_check_and_cleanup.sh --check",
-    description: "Check host disk space watermark"
+    description: "检测宿主磁盘空间与健康水位"
   });
   ```
 - **前端可视化映射**：激活 **`TerminalCard`**（带退出码绿灯/红灯、ANSI 语法着色流）。

@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v2.6.0`
+> - **当前系统实施总版本**：`v2.7.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -964,6 +964,41 @@
   - [x] 快捷口令索引注入“调度锁”看盘口令；
   - [x] 需求台账、规则总索引与知识库总目录版本强同步推进至 `v2.6.0`；
   - [x] 资产指纹通过校验，变更成功推送到远端 Git 仓库。
+
+---
+
+### REQ-040: DSH 执行全步骤 Assistant 纯中文说明与无死角汉化规约
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v2.7.0`
+- **提出时间**：2026-09-16
+- **最新更新**：2026-09-16
+- **标准需求重构文案 (利于 Agent 执行的标准化任务单)**：
+  - **任务代号**：`DSH-ASSISTANT-FULL-STEP-CHINESE-EXPLANATION`
+  - **背景阐述**：消除智能体在调用系统工具（如 bash description 字段）或执行中间步骤时混杂英文旁白的现象，保障中文用户体验纯粹连贯。
+  - **核心诉求与交付物**：
+    1. **全步骤纯中文说明硬门禁**：在 DSH 执行全生命周期中，智能体的前导交代、工序推进、异常剖析与复盘交付必须 100% 采用纯中文说明；
+    2. **客户端 UI 投射参数 100% 汉化**：向 `bash` 传递的 `description` 参数（投射至 TerminalCard 标题）以及子智能体描述严禁使用英文，必须传规范中文动宾短语；
+    3. **最高元规则与语言标准法典化**：元规则第三条增设“全步骤与 UI 投射参数纯中文说明律”；重构 `rules/system/language_standard.md` 写入《执行全生命周期中文说明细则》；
+    4. **流水线与工具契约规范同步**：更新 `task_execution_flow.md` 与 `tool_interfaces.md` 固化中文参数约束；
+    5. **三位一体版本强同步与 Git 强推**：刷新资产指纹大底册，执行 `scripts/git_sync_remote.sh` 强同步推送到远程仓库。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/system/language_standard.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `indexes/tool_interfaces.md`
+  - `indexes/shortcuts_index.md`
+  - `indexes/rules_index.md`
+  - `indexes/dsh_capabilities.md`
+  - `knowledge/README.md`
+  - `memory/asset_fingerprint_ledger.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 最高元规则第三条固化执行全步骤中文说明约束；
+  - [x] 语言标准法典明确写入 bash description 等 UI 参数 100% 汉化细则；
+  - [x] 工具接口规范与十六步流水线同步更新；
+  - [x] 需求台账、规则总索引与知识库总目录版本强同步推进至 `v2.7.0`；
+  - [x] 资产指纹通过校验，变更成功推送到远端 Git 仓库。
+
 
 
 

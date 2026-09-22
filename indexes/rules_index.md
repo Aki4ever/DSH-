@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v2.6.0`
-> - **对应实施版本**：`v2.6.0`
+> - **当前文档版本**：`v2.7.0`
+> - **对应实施版本**：`v2.7.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -17,7 +17,7 @@
 | :--- | :--- | :--- |
 | [`rules/system/meta_rules.md`](../rules/system/meta_rules.md) | **系统最高全局元规则** | 最高裁决效力：双向同步、智能去重、全中文通俗表达、联动排查、安全自律、双轨分流、知识库前置审查律、事务原子性律。 |
 | [`rules/system/thinking_framework.md`](../rules/system/thinking_framework.md) | **搜索引擎逻辑映射思考框架** | 工业级搜索引擎六步映射（感知➔意图➔去重➔仲裁➔拦截➔闭环），规范 Agent 认知管道。 |
-| [`rules/system/language_standard.md`](../rules/system/language_standard.md) | **全文档中文化与通俗表达标准** | 消除晦涩英文与黑话，坚持大白话与结构化表达，严格落实上下文压缩同语种镜像保真。 |
+| [`rules/system/language_standard.md`](../rules/system/language_standard.md) | **全文档中文化与通俗表达标准** | 消除晦涩英文与黑话，坚持大白话与结构化表达，落实执行全步骤与UI参数纯中文说明及上下文压缩镜像。 |
 | [`rules/system/initialization_protocol.md`](../rules/system/initialization_protocol.md) | **开箱自检与目录一键初始化协议** | 会话开启自检六步法、目录四件套自动化初始化机制。 |
 | [`rules/security/security_baseline.md`](../rules/security/security_baseline.md) | **免审批安全基线与防破坏红线规约** | 绝对阻断的八大红线原语、写后读回校验机制与交付入口规范。 |
 
@@ -69,7 +69,7 @@
 
 | 分类 | 文档/脚本路径 | 说明 |
 | :--- | :--- | :--- |
-| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-039 完整记录，总版本 `v2.6.0`） |
+| **需求台账** | [`docs/requirements.md`](../docs/requirements.md) | 唯一核心需求管理台账（REQ-001 ~ REQ-040 完整记录，总版本 `v2.7.0`） |
 | **图表生成** | [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 全场景流程图、信息图与教学图生成技术指南与标准模板库 |
 | **教学指南** | [`docs/rules_tutorial.md`](../docs/rules_tutorial.md) | 规则体系运转教学图解与实操说明 |
 | **记忆架构** | [`docs/memory_architecture.md`](../docs/memory_architecture.md) | AI 分层长短期记忆体系架构与工程落地规范 |
