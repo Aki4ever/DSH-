@@ -1,6 +1,6 @@
-<svg width="1120" height="1560" viewBox="0 0 1120 1560" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif">
+<svg width="1120" height="1930" viewBox="0 0 1120 1930" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif">
   <defs>
-    <linearGradient id="bgGrad" x1="0" y1="0" x2="1120" y2="1560" gradientUnits="userSpaceOnUse">
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1120" y2="1930" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#080C13"/>
       <stop offset="50%" stop-color="#101725"/>
       <stop offset="100%" stop-color="#06090E"/>
@@ -45,7 +45,7 @@
     </marker>
   </defs>
 
-  <rect width="1120" height="1560" fill="url(#bgGrad)"/>
+  <rect width="1120" height="1930" fill="url(#bgGrad)"/>
   <rect x="0" y="0" width="1120" height="6" fill="url(#glowTop)"/>
 
   <!-- ══════════ 标题 ══════════ -->
@@ -175,5 +175,33 @@
   <text x="754" y="1492" fill="#A8BBD4" font-size="14">确有必要时可临时关闭拦截，</text>
   <text x="754" y="1514" fill="#A8BBD4" font-size="14">但必须在记录里留痕</text>
 
-  <text x="60" y="1552" fill="#5C7192" font-size="13">全局规则工程 · 管控机制（注入层 / 状态层 / 判定层 / 拦截层）· 权威口径见 indexes/rules_index.md</text>
+
+  <!-- ══════════ 第五部分：快速通道（v3.0.0 新增） ══════════ -->
+  <text x="60" y="1632" fill="#7FD8FF" font-size="24" font-weight="700">⑤ 想用它？说一句话就行（快速通道）</text>
+  <text x="60" y="1662" fill="#9FB4CC" font-size="15">常用动作都登记成短句，另有 4 条命令随时查它的真实状态。</text>
+
+  <rect x="60" y="1682" width="326" height="170" rx="10" fill="#0E1622" stroke="#24507A" stroke-width="1.2"/>
+  <text x="80" y="1714" fill="#00D2FF" font-size="17" font-weight="700">通道表有规矩</text>
+  <text x="80" y="1743" fill="#A8BBD4" font-size="14">现有 23 条通道登记在册</text>
+  <text x="80" y="1767" fill="#A8BBD4" font-size="14">触发词 ≤ 12 字、不重名，</text>
+  <text x="80" y="1791" fill="#A8BBD4" font-size="14">必须带可点击的动作目标，</text>
+  <text x="80" y="1815" fill="#A8BBD4" font-size="14">目标文件消失就必须删行</text>
+
+  <rect x="397" y="1682" width="326" height="170" rx="10" fill="#0E1622" stroke="#00D2FF" stroke-width="1.4"/>
+  <text x="417" y="1714" fill="#00D2FF" font-size="17" font-weight="700">两条新通道</text>
+  <text x="417" y="1743" fill="#EAF3FF" font-size="15" font-weight="700">“看看管控机制”</text>
+  <text x="417" y="1767" fill="#A8BBD4" font-size="14">看全貌：门禁 + 双检 + 存量</text>
+  <text x="417" y="1795" fill="#EAF3FF" font-size="15" font-weight="700">“生成信息图 &lt;主题&gt;”</text>
+  <text x="417" y="1819" fill="#A8BBD4" font-size="14">任何主题都能出图</text>
+
+  <rect x="734" y="1682" width="326" height="170" rx="10" fill="#0E1622" stroke="#24507A" stroke-width="1.2"/>
+  <text x="754" y="1714" fill="#00D2FF" font-size="17" font-weight="700">新流程要办“入驻”</text>
+  <text x="754" y="1743" fill="#A8BBD4" font-size="14">一问重不重、二问打不打架、</text>
+  <text x="754" y="1767" fill="#A8BBD4" font-size="14">三定放哪、四定怎么验；</text>
+  <text x="754" y="1791" fill="#A8BBD4" font-size="14">再登记四处才算固化，</text>
+  <text x="754" y="1815" fill="#A8BBD4" font-size="14">漏登记会被自动揪出来</text>
+
+  <text x="60" y="1876" fill="#6F86A6" font-size="13">四条随时可查的命令：门禁看板 · 查啰嗦 · 查打架 · 存量校准（外加通道审计，共五条）</text>
+
+  <text x="60" y="1902" fill="#5C7192" font-size="13">全局规则工程 · 管控机制（注入层 / 状态层 / 判定层 / 拦截层）· 权威口径见 indexes/rules_index.md · 快速通道总表见 indexes/shortcuts_index.md（v3.0.0）</text>
 </svg>
