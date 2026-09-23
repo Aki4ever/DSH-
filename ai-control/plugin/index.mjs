@@ -30,7 +30,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
 import { execFile } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { existsSync, writeFileSync } from 'node:fs'
 import { autoNameOnce, parseTitle as parseNamingTitle } from '../../scripts/lib/auto_naming.mjs'
 
 /** Cordis 插件名（用于诊断与事件来源标注）。 */
@@ -111,6 +111,40 @@ const CACHE_MS = 2000          // 每 2 秒最多读一次盘，避免高频工�
  * 陈旧只代表"扫描结果不是刚出炉的"，不代表"依据不成立"。
  */
 const STALE_MS = 5000
+
+/**
+ * 解析宿主侧模块（如 `@deepseek-ai/dsh-llm`）。
+ *
+ * 为什么需要它（真实缺陷，实测确认）：
+ *   本插件位于 `~/Documents/DSH/全局规则/`，**不在宿主的 node_modules 解析链上**，
+ *   因此 `await import('@deepseek-ai/dsh-llm')` 在真实宿主里必然失败。
+ *   后果是看板注入长期失败（代码注释记载"48 个会话 7668 步注入 0 次"），
+ *   而失败只打一条 console 警告，界面上什么都看不到。
+ *
+ * 解法：插件与宿主**同进程**，因此 `process.argv[1]` 就是宿主的入口脚本
+ *   （…/runtime/harness/node_modules/@deepseek-ai/dsh/lib/bin.js）。
+ *   从中定位 `node_modules` 目录，再按绝对路径导入即可绕开解析链限制。
+ *
+ * @param {string} name 包名，如 '@deepseek-ai/dsh-llm'
+ * @returns {Promise<object|null>} 模块；解析不到返回 null（调用方须兜底）
+ */
+async function resolveHostModule(name) {
+  try {
+    return await import(name)
+  } catch { /* 不在解析链上，继续按宿主路径推导 */ }
+  try {
+    const entry = process.argv[1] ?? ''
+    const idx = entry.lastIndexOf('node_modules')
+    if (idx === -1) return null
+    const root = entry.slice(0, idx + 'node_modules'.length)
+    // 依次尝试常见的入口文件位置，命中即返回
+    for (const rel of ['/lib/index.js', '/index.js', '/dist/index.js']) {
+      const p = `${root}/${name}${rel}`
+      if (existsSync(p)) return await import(`file://${p}`)
+    }
+  } catch { /* 推导失败，交由调用方降级 */ }
+  return null
+}
 
 function resolveStateDir(config) {
   if (config.stateDir) return config.stateDir
@@ -511,14 +545,38 @@ export function apply(ctx, config = {}) {
   const cfg = { ...Config, ...config }
   const stateDir = resolveStateDir(cfg)
 
+  // ── 加载诊断：把"插件确实被宿主激活"变成可查证的事实 ──────────────────────
+  // 为什么要做这件事：本插件出现过"宿主根本没激活它"的情形（inject 未解析），
+  // 表现是看板 0 次注入、自动命名 0 次触发，而自检全绿——**完全静默**。
+  // 没有这行记录，事后只能靠猜。apply 一执行就落盘，含关键环境事实。
+  try {
+    writeFileSync(
+      join(stateDir, 'plugin-status.txt'),
+      [
+        `插件已激活（apply 执行）: ${new Date().toISOString()}`,
+        `pid=${process.pid}`,
+        `tools 服务可用=${typeof ctx?.tools === 'object' && ctx.tools !== null}`,
+        `showCard=${!!cfg.showCard} enforce=${!!cfg.enforce}`,
+        `stateDir=${stateDir}`,
+        `DSH_WEB_URL=${process.env.DSH_WEB_URL ?? '(未设置)'}`,
+        `DSH_HOME=${process.env.DSH_HOME ?? '(未设置)'}`,
+        '',
+      ].join('\n'),
+      'utf8',
+    )
+  } catch { /* 诊断失败绝不影响主流程 */ }
+
   // 上下文可用性防御：宿主调用时机异常时静默降级，绝不抛错拖垮宿主。
   if (!ctx || typeof ctx.on !== 'function') {
     console.warn('[ai-execution-control] 上下文不可用，管控未挂载（宿主不受影响）。')
     return
   }
 
-  // ── 常显看板：每个步骤进入前注入最新进度 ──────────────────────────────────
-  if (cfg.showCard) {
+  // ── 每个步骤进入前：自动命名（始终生效）+ 常显看板（可关闭）────────────────
+  // 注意：自动命名**刻意不放在 showCard 分支内**。历史缺陷：它曾写在
+  // `if (cfg.showCard)` 内部，于是"关掉看板"会连带让自动命名彻底失效——
+  // 两个能力本无依赖，耦合在一起只会让故障难以归因。
+  {
     try {
       ctx.on('agent/pre-step', async (payload, next) => {
       // ── 自动命名：标题不合规就**当场改名**，不再只是告警 ────────────────────
@@ -553,6 +611,7 @@ export function apply(ctx, config = {}) {
       }
       // 只在真正要进入步骤时注入；被拒绝的步骤不打扰
       if (!decision || decision.kind !== 'enter') return decision
+      if (!cfg.showCard) return decision   // 看板可关闭，自动命名不受影响
       try {
         let status = await readStatus(stateDir)
         // 状态缺失或过期：先自举一次，保证"每个步骤都有可信状态"
@@ -561,7 +620,20 @@ export function apply(ctx, config = {}) {
           if (ok) status = await readStatus(stateDir)
         }
         if (!status) return decision
-        const { createUserMessage } = await import('@deepseek-ai/dsh-llm')
+        const llm = await resolveHostModule('@deepseek-ai/dsh-llm')
+        if (!llm?.createUserMessage) {
+          // 解析不到就明确记一笔，避免"看板长期 0 注入而无从得知"
+          if (!warnedCardOnce) {
+            warnedCardOnce = true
+            try {
+              writeFileSync(join(stateDir, 'card-status.txt'),
+                `看板注入失败：解析不到 @deepseek-ai/dsh-llm\n时间: ${new Date().toISOString()}\n入口: ${process.argv[1] ?? '(未知)'}\n`, 'utf8')
+            } catch { /* 记录失败不影响主流程 */ }
+            console.warn('[ai-execution-control] 看板注入失败：解析不到 @deepseek-ai/dsh-llm')
+          }
+          return decision
+        }
+        const { createUserMessage } = llm
         const card = createUserMessage({
           content: [{ type: 'text', text: renderCard(status) }],
           source: { kind: 'plugin', plugin: name, form: 'notice', summary: renderBadge(status) },

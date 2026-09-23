@@ -24,6 +24,7 @@ import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { zstdDecompressSync } from 'node:zlib'
+import { execFile } from 'node:child_process'
 
 /** 会话标题规范：`[分类字母+3位编号][难度分] 概述`。 */
 export const TITLE_RE = /^\[([RFDSOQ])(\d{3})\]\[(\d{1,3})分\]\s+(\S.*)$/
@@ -229,6 +230,75 @@ export async function renameViaRpc(webUrl, sessionId, title, timeoutMs = 5000) {
   }
 }
 
+/** 探测某地址是否是 DSH 宿主的 Web 端点。 */
+async function probeHost(url, timeoutMs = 1200) {
+  try {
+    const res = await fetch(`${url}/api/session.list`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'client-request', rpcId: 'probe', method: 'session.list', payload: {} }),
+      signal: AbortSignal.timeout(timeoutMs),
+    })
+    const j = await res.json().catch(() => null)
+    return j?.type === 'server-response'
+  } catch {
+    return false
+  }
+}
+
+/** 已解析出的宿主地址（进程内缓存，端口在一次进程生命周期内不变）。 */
+let cachedWebUrl
+
+/**
+ * 解析宿主 Web 地址。
+ *
+ * **为什么不能只读环境变量**（实测踩坑，本次自动命名失效的直接原因）：
+ *   桌面端宿主进程的环境里**没有 `DSH_WEB_URL`**——实测只有
+ *   `DSH_HOME` 与 `DSH_TELEMETRY_DISABLED`。Web 端口又是 `--port 0` 动态分配的，
+ *   所以插件在宿主内拿不到地址，改名请求根本发不出去，且**失败是静默的**。
+ *
+ * 解析顺序：
+ *   1. 环境变量 `DSH_WEB_URL`（开发/脚本场景仍然可用）；
+ *   2. 从**本进程的监听端口**反查——插件与宿主同进程，`process.pid` 就是宿主 pid，
+ *      再用 lsof 列出该进程的 LISTEN 端口，逐个探测确认是 DSH 宿主端点。
+ */
+export async function resolveWebUrl({ env = process.env, pid = process.pid } = {}) {
+  if (cachedWebUrl !== undefined) return cachedWebUrl
+  const fromEnv = env?.DSH_WEB_URL
+  if (typeof fromEnv === 'string' && fromEnv) {
+    cachedWebUrl = fromEnv
+    return cachedWebUrl
+  }
+  let ports = []
+  try {
+    const out = await new Promise((resolve) => {
+      execFile('lsof', ['-nP', '-a', '-p', String(pid), '-iTCP', '-sTCP:LISTEN'], { timeout: 3000 }, (err, stdout) =>
+        resolve(err ? '' : String(stdout || '')),
+      )
+    })
+    for (const line of out.split('\n')) {
+      const m = /TCP\s+(?:127\.0\.0\.1|\[::1\]|\*):(\d+)\s+\(LISTEN\)/.exec(line)
+      if (m) ports.push(Number(m[1]))
+    }
+  } catch { /* lsof 不可用则走下面的空结果 */ }
+  ports = [...new Set(ports)].sort((a, b) => a - b)
+  for (const p of ports) {
+    const url = `http://127.0.0.1:${p}`
+    if (await probeHost(url)) {
+      cachedWebUrl = url
+      return cachedWebUrl
+    }
+  }
+  // 解析不出也缓存下来，避免每一步都跑一次 lsof
+  cachedWebUrl = null
+  return cachedWebUrl
+}
+
+/** 只用于测试：清空地址缓存。 */
+export function resetWebUrlCache() {
+  cachedWebUrl = undefined
+}
+
 /**
  * 轮询权威存储，确认改名真的落到盘上。
  *
@@ -253,45 +323,65 @@ export async function waitForTitle(dshHome, sessionId, expect, timeoutMs = 15000
  * @returns {Promise<{status:string, title?:string, current?:string, reason?:string, verified?:boolean}>}
  */
 export async function autoNameOnce(o) {
-  const { dshHome, sessionId, cwd, webUrl, stateDir } = o
+  const { stateDir, sessionId } = o
+  let result
   try {
-    if (!sessionId) return { status: 'skip', reason: '无会话 ID' }
-    // 子代理会话由宿主 subagent routing 托管，改名会被拒（agent-busy），预先跳过
-    if (!String(sessionId).startsWith('session-')) return { status: 'skip', reason: '子会话不可改名' }
-    // 刻意**不**要求"已登记进 workspace.json"：实测存在未登记但确实是主会话的情况
-    // （52 条会话中只有 41 条登记），它们同样需要命名，且 RPC 对它们有效。
-    // 子会话已由上面的前缀判断排除，无需再靠登记表兜底。
-
-    const store = await readSessionStore(dshHome)
-    const current = currentTitle(store, sessionId)
-    if (parseTitle(current)) return { status: 'already-ok', current }
-
-    // 先把 cwd 读出来（分类正确性依赖它），保证"分类错误"不会发生
-    const realCwd = (await sessionCwd(dshHome, sessionId)) ?? cwd
-    const title = await buildTitle({ dshHome, sessionId, cwd: realCwd, store })
-    if (!title) return { status: 'skip', reason: '无法生成合规概述（缺首条消息或无汉字）' }
-
-    if (!webUrl) return { status: 'fail', reason: 'DSH_WEB_URL 不可用', title }
-    const ok = await renameViaRpc(webUrl, sessionId, title)
-    // 关键：以**权威存储**为准，而不是 RPC 的自述
-    const verified = ok ? await waitForTitle(dshHome, sessionId, title, o.verifyTimeoutMs ?? 15000) : false
-
-    if (stateDir) {
-      try {
-        await writeFile(
-          join(stateDir, 'auto-naming.log'),
-          `${new Date().toISOString()} ${verified ? 'OK  ' : 'FAIL'} ${sessionId} 「${String(current ?? '').slice(0, 30)}」 → 「${title}」${ok && !verified ? ' (RPC ok 但存储未确认)' : ''}\n`,
-          { encoding: 'utf8', flag: 'a' },
-        )
-      } catch { /* 记录失败不影响结果 */ }
-    }
-    if (verified) return { status: 'renamed', title, current, verified: true }
-    return {
-      status: 'fail',
-      reason: ok ? 'RPC 报成功但权威存储未确认（可能仍在校验前）' : 'RPC 调用失败',
-      title, current, verified: false,
-    }
+    result = await runAutoName(o)
   } catch (err) {
-    return { status: 'fail', reason: `异常：${err?.message || err}` }
+    result = { status: 'fail', reason: `异常：${err?.message || err}` }
+  }
+  // 每一次判定都留痕（含提前返回）。
+  // 为什么必须这样：早期版本只在真正发起 RPC 之后才写日志，于是"拿不到宿主地址"
+  // 这类提前失败**完全静默**——排查时看不到任何痕迹，只能靠猜。
+  // 可观测性不足本身就是缺陷。
+  if (stateDir) {
+    try {
+      const tag = result.status === 'renamed' ? 'OK  '
+        : (result.status === 'already-ok' || result.status === 'skip') ? 'SKIP'
+        : 'FAIL'
+      const detail = result.title
+        ? `「${String(result.current ?? '').slice(0, 26)}」 → 「${result.title}」`
+        : `现状「${String(result.current ?? '').slice(0, 26)}」`
+      const why = result.reason ? ` · ${result.reason}` : ''
+      await writeFile(
+        join(stateDir, 'auto-naming.log'),
+        `${new Date().toISOString()} ${tag} ${sessionId} ${detail}${why}\n`,
+        { encoding: 'utf8', flag: 'a' },
+      )
+    } catch { /* 记录失败不影响结果 */ }
+  }
+  return result
+}
+
+/** 自动命名的实际逻辑（由 autoNameOnce 包一层，负责留痕与异常兜底）。 */
+async function runAutoName(o) {
+  const { dshHome, sessionId, cwd } = o
+  if (!sessionId) return { status: 'skip', reason: '无会话 ID' }
+  // 子代理会话由宿主 subagent routing 托管，改名会被拒（agent-busy），预先跳过
+  if (!String(sessionId).startsWith('session-')) return { status: 'skip', reason: '子会话不可改名' }
+  // 刻意**不**要求"已登记进 workspace.json"：实测存在未登记但确实是主会话的情况
+  // （52 条会话中只有 41 条登记），它们同样需要命名，且 RPC 对它们有效。
+  // 子会话已由上面的前缀判断排除，无需再靠登记表兜底。
+
+  const store = await readSessionStore(dshHome)
+  const current = currentTitle(store, sessionId)
+  if (parseTitle(current)) return { status: 'already-ok', current }
+
+  // 先把 cwd 读出来（分类正确性依赖它），保证"分类错误"不会发生
+  const realCwd = (await sessionCwd(dshHome, sessionId)) ?? cwd
+  const title = await buildTitle({ dshHome, sessionId, cwd: realCwd, store })
+  if (!title) return { status: 'skip', reason: '无法生成合规概述（缺首条消息或无汉字）' }
+
+  // 地址自解析：环境变量优先，拿不到则从本进程监听端口反查（见 resolveWebUrl 注释）
+  const webUrl = o.webUrl || (await resolveWebUrl())
+  if (!webUrl) return { status: 'fail', reason: '解析不出宿主 Web 地址', title, current }
+  const ok = await renameViaRpc(webUrl, sessionId, title)
+  // 关键：以**权威存储**为准，而不是 RPC 的自述
+  const verified = ok ? await waitForTitle(dshHome, sessionId, title, o.verifyTimeoutMs ?? 15000) : false
+  if (verified) return { status: 'renamed', title, current, verified: true }
+  return {
+    status: 'fail',
+    reason: ok ? 'RPC 报成功但权威存储未确认（可能仍在校验前）' : 'RPC 调用失败',
+    title, current, verified: false,
   }
 }

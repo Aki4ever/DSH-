@@ -14,7 +14,7 @@ import { join } from 'node:path'
 import {
   parseTitle, hanCount, letterFor, summarize, buildTitle,
   firstUserMessage, readSessionStore, currentTitle, isRegisteredSession,
-  autoNameOnce, nextNumber, sessionCwd,
+  autoNameOnce, nextNumber, sessionCwd, resolveWebUrl, resetWebUrlCache,
 } from './lib/auto_naming.mjs'
 
 const HOME = process.env.DSH_HOME
@@ -56,6 +56,17 @@ check('未知路径 → R（保守兜底）', letterFor('/tmp/unknown') === 'R')
 check('提炼 ≤8 汉字', hanCount(summarize('请帮我重构整个知识库的索引体系并补充文档')) <= 8)
 check('跳过代码块', !summarize('```js\nconst a=1\n```\n真正的需求在这里').includes('const'))
 check('取到实义片段', hanCount(summarize('你现在必须知道杨科就是弱智')) > 0)
+
+console.log('\n=== 一·B、宿主地址自解析（本次自动命名失效的直接修复）===')
+// 实测事实：桌面端宿主进程环境里**没有** DSH_WEB_URL，只有 DSH_HOME / DSH_TELEMETRY_DISABLED，
+// 而 Web 端口是 --port 0 动态分配的，所以必须能从本进程监听端口反查。
+resetWebUrlCache()
+const envUrl = await resolveWebUrl({ env: { DSH_WEB_URL: 'http://127.0.0.1:1' }, pid: 999999 })
+check('环境变量优先于端口反查', envUrl === 'http://127.0.0.1:1', `实际：${envUrl}`)
+resetWebUrlCache()
+const badUrl = await resolveWebUrl({ env: {}, pid: 999999 })
+check('查不到时返回 null 而不抛错', badUrl === null, `实际：${badUrl}`)
+resetWebUrlCache()
 
 console.log('\n=== 二、真实数据读取（只读）===')
 const store = await readSessionStore(HOME)
@@ -111,6 +122,25 @@ if (probe) {
   console.log('  ℹ️ 没有未合规样本可测')
 }
 
+// 集成验证：用真实宿主 pid 反查端口（模拟插件在宿主进程内的处境）
+resetWebUrlCache()
+try {
+  const { execFileSync } = await import('node:child_process')
+  // 不用 pgrep：实测本机沙箱里 pgrep 不可用，会让这条测试被静默跳过（假通过）。
+  // 改用 ps 全量列出后自行筛选，结果更可控。
+  const psOut = String(execFileSync('ps', ['-eo', 'pid,command'], { encoding: 'utf8' }))
+  const line = psOut.split('\n').find((l) => l.includes('dsh/lib/bin.js') && l.includes(' web'))
+  const hostPid = line ? Number(line.trim().split(/\s+/)[0]) : 0
+  if (hostPid) {
+    const found = await resolveWebUrl({ env: {}, pid: hostPid })
+    console.log(`  ℹ️ 宿主 pid=${hostPid} → 反查地址：${found}`)
+    check('能从真实宿主端口反查到 Web 地址', typeof found === 'string' && found.startsWith('http://127.0.0.1:'))
+  } else {
+    console.log('  ℹ️ 未找到宿主进程，跳过反查集成测试')
+  }
+} catch { console.log('  ℹ️ pgrep 不可用，跳过反查集成测试') }
+resetWebUrlCache()
+
 console.log('\n=== 三、幂等与边界（不写任何东西）===')
 if (probe) {
   // 用已合规会话验证"不会乱动"
@@ -138,6 +168,19 @@ if (LIVE) {
     console.log(`  改后（以权威存储复查）：「${after}」`)
     check('自动命名真实生效', !!parseTitle(after), `实际：${after}`)
   }
+}
+
+console.log('\n=== 三·B、留痕可观测性（本次静默失败的修复）===')
+{
+  const { mkdtemp, readFile: rf } = await import('node:fs/promises')
+  const { tmpdir } = await import('node:os')
+  const tmp = await mkdtemp(join(tmpdir(), 'autoname-'))
+  const r = await autoNameOnce({ dshHome: HOME, sessionId: 'sub-xyz', cwd: '', stateDir: tmp })
+  check('skip 分支也返回结果', r.status === 'skip', JSON.stringify(r))
+  let logged = ''
+  try { logged = await rf(join(tmp, 'auto-naming.log'), 'utf8') } catch { }
+  check('提前返回也必须写日志（否则失败完全静默）', logged.includes('sub-xyz'), `日志：${JSON.stringify(logged)}`)
+  check('日志含判定标签', /(SKIP|FAIL|OK)/.test(logged), `日志：${JSON.stringify(logged)}`)
 }
 
 console.log(`\n=== 汇总：通过 ${pass} / 失败 ${fail} ===`)

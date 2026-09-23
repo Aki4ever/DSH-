@@ -16,8 +16,10 @@
  * ==============================================================================
  */
 
-import { existsSync } from 'node:fs'
+import { existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+import { join } from 'node:path'
+import { homedir } from 'node:os'
 
 /** 被加载的真实插件路径（与本文件同目录的 index.mjs）。 */
 const PLUGIN_URL = new URL('./index.mjs', import.meta.url)
@@ -49,6 +51,23 @@ async function loadSafely() {
     return noop
   }
 }
+
+/**
+ * 模块导入即落盘的一次性标记。
+ *
+ * 为什么要与"apply 已执行"分开记录：这两种故障的表象相同（什么都没发生），
+ * 但成因完全不同——
+ *   · 只有本标记、没有 plugin-status.txt → 模块加载成功但**宿主未激活插件**
+ *     （典型原因：`inject` 声明的服务未解析，Cordis 只是不激活，不报错）；
+ *   · 两个标记都没有 → 路径失效或模块导入即抛错（会被下面的降级捕获）。
+ * 有了这两个标记，事后就能直接归因，不必再靠猜。
+ */
+try {
+  const dir = join(process.env.DSH_HOME || join(homedir(), '.dsh'), '.dsh-control')
+  mkdirSync(dir, { recursive: true })
+  writeFileSync(join(dir, 'loader-status.txt'),
+    `loader 模块已导入: ${new Date().toISOString()}\npid=${process.pid}\n`, 'utf8')
+} catch { /* 诊断失败绝不影响加载 */ }
 
 const inner = await loadSafely()
 
