@@ -109,10 +109,20 @@ function auditCapabilitiesIndex() {
     };
 
     if (type.includes('脚本') || type.includes('CLI')) {
-      const scriptPath = path.join(root, 'scripts', item.name);
+      const cliMap = {
+        'cli.control.gates': 'control_gates.sh',
+        'cli.task.naming': 'name_me.sh',
+        'cli.scan.redundancy': 'redundancy_scan.mjs',
+        'cli.scan.conflict': 'conflict_scan.mjs',
+        'cli.audit.freshness': 'check_freshness.mjs',
+        'cli.sync.requirements': 'sync_control_requirements.mjs',
+        'cli.route.navigate': 'route_navigate.mjs'
+      };
+      const actualFile = cliMap[item.name] || item.name;
+      const scriptPath = path.join(root, 'scripts', actualFile);
       if (!fs.existsSync(scriptPath)) {
         item.status = 'BROKEN';
-        item.reason = `对应物理脚本不存在: scripts/${item.name}`;
+        item.reason = `对应物理脚本不存在: scripts/${actualFile}`;
       }
     }
     items.push(item);

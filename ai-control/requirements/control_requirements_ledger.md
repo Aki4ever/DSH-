@@ -1,7 +1,7 @@
 # 管控机制专属需求台账 (Control Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前管控机制版本**：`v3.7.0`
+> - **当前管控机制版本**：`v3.8.0`
 > - **最后同步时间**：2026-09-23
 > - **全局主台账对照**：[`docs/requirements.md`](../../docs/requirements.md)
 > - **状态**：`[ACTIVE 生效中]`
@@ -22,6 +22,7 @@
 | **CR-008** | REQ-053 | `v3.5.0` | 任务闭环结构化回溯自进化机制与管控机制全链路 Token 深度压缩 | `[ACTIVE]` |
 | **CR-009** | REQ-054 | `v3.6.0` | 快速通道高频指令扩充(入口/版本号)与地图导航式能力路由层 | `[ACTIVE]` |
 | **CR-010** | REQ-055 | `v3.7.0` | 全局流程调度中枢 Agent Life、原子阶段反馈驱动与 Google 级高信噪比输出架构 | `[ACTIVE]` |
+| **CR-011** | REQ-056 | `v3.8.0` | 能力唯一标识规范重命名、极速文案通道与单例 Agent PP / 短生命周期 Life(N) 并发调度 | `[ACTIVE]` |
 
 ---
 
@@ -138,6 +139,33 @@
   - [x] 阶间原子回执标准确立；
   - [x] 元规则第二十五条生效，重要度过滤规则入册；
   - [x] 全局台账与专项目录版本统一推进至 v3.7.0。
+
+---
+
+### CR-011: 全域能力标识规范重命名、极速文案通道与单例 Agent PP / 短生命周期 Life(N) 并发调度
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v3.8.0`
+- **对应全局台账**：`REQ-056`
+- **提出时间**：2026-09-23
+- **核心诉求与目标**：
+  1. **全域五大能力标识规范化重命名与唯一性检测**：落地 `scripts/check_unique_identifiers.mjs`，在 `indexes/capabilities_index.md` 统一前缀与唯一 ID（`agent.*` / `mcp.*` / `cli.*` / `skill.*` / `plugin.*`）；
+  2. **极速提炼通道“给出文案”**：在 `indexes/shortcuts_index.md` 注册 G0 高速通道，一键将口语想法提炼成便于 AI 执行的标准 PRD；
+  3. **单例并发中枢 Agent PP**：确立全任务唯一并发编排中枢，负责任务树拓扑拆解、生命周期调度与屏障汇聚；
+  4. **短生命周期串行执行体 Agent Life(N)**：支持多实例编号（life1, life2...），单线串行推进，完成出具回执后即刻消亡释放资源；
+  5. **PP 与 Life 分层协同规约与引擎升级**：编制 `rules/workflow/pp_life_orchestration.md` 并升级 `scripts/agent_life.mjs` 支持派生、消亡与全局 teardown 初始化。
+- **关联产出物**：
+  - `indexes/shortcuts_index.md`
+  - `indexes/capabilities_index.md`
+  - `scripts/check_unique_identifiers.mjs`
+  - `rules/workflow/pp_life_orchestration.md`
+  - `scripts/agent_life.mjs`
+  - `docs/requirements.md`（`REQ-056`）
+- **验收标准**：
+  - [x] 快速通道“给出文案”注册生效并通过通道审计；
+  - [x] 能力唯一标识检测器通过，无重名冲突；
+  - [x] PP-Life 调度规约建立并完成脚本引擎自测；
+  - [x] 全局台账与专项目录版本统一推进至 v3.8.0。
+
 
 
 

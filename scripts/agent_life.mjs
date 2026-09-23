@@ -1,40 +1,25 @@
 #!/usr/bin/env node
 /**
  * agent_life.mjs
- * 全局任务流程调度中枢 Agent Life 辅助引擎
- * 负责阶段状态追踪、原子反馈校验、锁状态裁决与下一步工序调度
+ * 全局任务流程调度中枢 Agent PP & Agent Life(N) 辅助引擎
+ * 
+ * 核心设计:
+ * 1. Agent PP: 单例全局唯一并发编排中枢，负责多分支管理与屏障汇聚
+ * 2. Agent Life(N): 短生命周期串行执行体 (life1, life2...)，调用完成并提交回执后即消亡
+ * 3. 初始化: 任务结项后全部 Life 实例与状态清空归零
  * 
  * 用法:
- *   node scripts/agent_life.mjs --status
- *   node scripts/agent_life.mjs --feedback <阶段> <状态:pass/fail> [产出物]
- *   node scripts/agent_life.mjs --next
+ *   node scripts/agent_life.mjs --status                     # 查看 PP 与活跃 Life 状态
+ *   node scripts/agent_life.mjs --spawn <subtask_name>       # 由 PP 动态派生一个 life(N) 实例
+ *   node scripts/agent_life.mjs --done <life_id> [artifact]  # life 提交回执并宣告消亡
+ *   node scripts/agent_life.mjs --teardown                   # 结项初始化，全部清空
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
 
 const WORKSPACE = process.cwd();
-const STATE_FILE = path.join(WORKSPACE, '.dsh-control/agent_life_state.json');
-
-const STAGES = [
-  { id: 'S01', name: '探境与环境检查', lock: false },
-  { id: 'S02', name: '安全与风险评定', lock: false },
-  { id: 'S03', name: '需求对齐与定标', lock: false },
-  { id: 'S04', name: '方案筹策与设计', lock: false },
-  { id: 'S05', name: '首动握手与会话命名', lock: false },
-  { id: 'S06', name: '破土落盘与代码编写', lock: true },
-  { id: 'S07', name: '写后即读回校验', lock: true },
-  { id: 'S08', name: '质量测试与断言通过', lock: true },
-  { id: 'S09', name: '资产指纹与新鲜度刷新', lock: true },
-  { id: 'S10', name: '需求主台账原子同步', lock: true },
-  { id: 'S11', name: '存量校准与双检排查', lock: true },
-  { id: 'S12', name: '版本号全库归位升级', lock: true },
-  { id: 'S13', name: 'Git提交并推送远端', lock: true },
-  { id: 'S14', name: '显式状态结论置顶', lock: false },
-  { id: 'S15', name: '任务流程结构化回溯', lock: false },
-  { id: 'S16', name: '交付收尾与释放调度锁', lock: false }
-];
+const STATE_FILE = path.join(WORKSPACE, '.dsh-control/agent_pp_life_state.json');
 
 function loadState() {
   try {
@@ -43,10 +28,9 @@ function loadState() {
     }
   } catch {}
   return {
-    currentStageIndex: 0,
-    currentStage: STAGES[0].id,
-    lockHeld: false,
-    history: []
+    pp: { status: 'IDLE', totalSpawned: 0 },
+    activeLives: {},
+    completedLives: []
   };
 }
 
@@ -62,50 +46,66 @@ const args = process.argv.slice(2);
 const state = loadState();
 
 if (args.includes('--status') || args.length === 0) {
-  const current = STAGES[state.currentStageIndex] || STAGES[0];
-  console.log('🤖 【Agent Life 全局流程中枢状态】');
-  console.log(`- 📍 当前掌控阶段: [${current.id}] ${current.name}`);
-  console.log(`- 🔒 阶段排他锁要求: ${current.lock ? '🔴 必须独占持锁' : '🟢 共享只读无须锁'}`);
-  console.log(`- 🔄 已完成阶段数: ${state.currentStageIndex} / ${STAGES.length}`);
-  const nextStage = STAGES[state.currentStageIndex + 1];
-  if (nextStage) {
-    console.log(`- ⏩ 下一步调度建议: [${nextStage.id}] ${nextStage.name}`);
-  } else {
-    console.log('- 🏁 流水线状态: 全部工序已达成，可结项');
+  console.log('🤖 【Agent PP 单例并发调度中枢】');
+  console.log(`- PP 状态: ${state.pp.status} (已派生子任务总数: ${state.pp.totalSpawned})`);
+  const activeIds = Object.keys(state.activeLives);
+  console.log(`- 活跃中的串行 Life 实例数: ${activeIds.length}`);
+  if (activeIds.length > 0) {
+    activeIds.forEach(id => {
+      const l = state.activeLives[id];
+      console.log(`  · [${id}] 负责: ${l.name} (启动时间: ${l.startedAt})`);
+    });
   }
+  console.log(`- 已消亡并闭环的 Life 实例数: ${state.completedLives.length}`);
   process.exit(0);
 }
 
-if (args[0] === '--feedback') {
-  const stageId = args[1] || STAGES[state.currentStageIndex].id;
-  const status = args[2] || 'pass';
-  const artifact = args[3] || '无物理产出';
+if (args[0] === '--spawn') {
+  const subtaskName = args[1] || `subtask_${Date.now()}`;
+  state.pp.totalSpawned += 1;
+  const lifeId = `life${state.pp.totalSpawned}`;
+  state.pp.status = 'ORCHESTRATING';
+  state.activeLives[lifeId] = {
+    id: lifeId,
+    name: subtaskName,
+    startedAt: new Date().toISOString()
+  };
+  saveState(state);
+  console.log(`🚀 [Agent PP] 成功派生短生命周期执行体: 【${lifeId}】`);
+  console.log(`- 挂载子任务: ${subtaskName}`);
+  console.log(`- 模式: 严格串行执行，完成出具回执后即刻消亡。`);
+  process.exit(0);
+}
 
-  console.log(`📬 [Agent Life 收到原子阶段回执]`);
-  console.log(`- 阶段编号: ${stageId}`);
-  console.log(`- 阶段结果: ${status === 'pass' ? '🟢 PASSED' : '🔴 FAILED'}`);
+if (args[0] === '--done') {
+  const lifeId = args[1];
+  const artifact = args[2] || '产出物已落盘';
+  if (!state.activeLives[lifeId]) {
+    console.error(`❌ 未找到活跃的 Life 实例: ${lifeId}`);
+    process.exit(1);
+  }
+  const completed = state.activeLives[lifeId];
+  delete state.activeLives[lifeId];
+  state.completedLives.push({
+    id: lifeId,
+    name: completed.name,
+    artifact,
+    completedAt: new Date().toISOString()
+  });
+
+  if (Object.keys(state.activeLives).length === 0) {
+    state.pp.status = 'READY_TO_JOIN';
+  }
+  saveState(state);
+  console.log(`📬 [Stage Receipt 收到] 实例 【${lifeId}】 任务完成: ${completed.name}`);
   console.log(`- 交付物: ${artifact}`);
-
-  if (status === 'pass') {
-    state.history.push({ stage: stageId, status, artifact, at: new Date().toISOString() });
-    if (state.currentStageIndex < STAGES.length - 1) {
-      state.currentStageIndex += 1;
-      state.currentStage = STAGES[state.currentStageIndex].id;
-    }
-    saveState(state);
-    const next = STAGES[state.currentStageIndex];
-    console.log(`✅ 验收通过！Agent Life 调度流转至下一工序: [${next.id}] ${next.name}`);
-    if (next.lock) {
-      console.log(`⚠️ 注意: 该工序涉及写操作，Agent Life 提示自动申领独占锁: ./scripts/global_scheduler_lock.sh --acquire`);
-    }
-  } else {
-    console.log(`❌ 阶段回执异常，Agent Life 触发时序熔断，禁止推进并保持当前工序等待修复。`);
-  }
+  console.log(`💀 依据短生命周期铁律，实例 【${lifeId}】 已成功消亡 (TERMINATED) 并释放所有资源！`);
+  console.log(`- 当前剩余活跃 Life 数: ${Object.keys(state.activeLives).length}`);
   process.exit(0);
 }
 
-if (args[0] === '--reset') {
-  saveState({ currentStageIndex: 0, currentStage: STAGES[0].id, lockHeld: false, history: [] });
-  console.log('🔄 Agent Life 状态机已重置至起点 S01');
+if (args[0] === '--teardown' || args[0] === '--reset') {
+  saveState({ pp: { status: 'IDLE', totalSpawned: 0 }, activeLives: {}, completedLives: [] });
+  console.log('🔄 【全量初始化完成】所有 Life 实例已清空消亡，Agent PP 恢复初始 IDLE 待命态。');
   process.exit(0);
 }

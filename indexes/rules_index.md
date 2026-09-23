@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v3.7.0`
-> - **对应实施版本**：`v3.7.0`
+> - **当前文档版本**：`v3.8.0`
+> - **对应实施版本**：`v3.8.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -83,6 +83,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md) | **实施版本号治理与全生命周期同步规范** | 语义化版本管理（SemVer）、需求-知识库-实施三位一体强同步铁律。 |
 | [`rules/workflow/change_flow.md`](../rules/workflow/change_flow.md) | **规则与需求变更六步工作流** | 接收意图 ➔ 查重拦截 ➔ 登记台账 ➔ 编写规则 ➔ 联动排查 ➔ 提交推送。 |
 | [`rules/workflow/agent_life_spec.md`](../rules/workflow/agent_life_spec.md) | **全局流程管控Agent Life调度规约** | 时序生命周期管控中枢、阶段原子反馈回执驱动、全局冲突锁接管。 |
+| [`rules/workflow/pp_life_orchestration.md`](../rules/workflow/pp_life_orchestration.md) | **单例Agent PP与多Life并发调度规约** | 单例并发中枢Agent PP管控并行、短生命周期Life(N)执行串行并即刻消亡。 |
 | [`rules/workflow/audit_and_cleanup.md`](../rules/workflow/audit_and_cleanup.md) | **规则更新联动排查与存量治理规范** | 消除孤岛规则、过期死链清理、结构去重与版本历史治理细则。 |
 | [`rules/workflow/component_naming.md`](../rules/workflow/component_naming.md) | **标准组件中文指代与命名体系** | 系统组件中文规范、架构统一指代与快速通道指引。 |
 
@@ -142,7 +143,8 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **自动化脚本** | [`scripts/rename_session.sh`](../scripts/rename_session.sh) | 会话一键重命名并锁定 RPC 脚本 |
 | **自动化脚本** | [`scripts/init_dir.sh`](../scripts/init_dir.sh) | 新建目录自动化初始化四件套脚本 |
 | **自动化脚本** | [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) | 地图导航式能力路由器、核心入口提取与版本速查脚本 |
-| **自动化脚本** | [`scripts/agent_life.mjs`](../scripts/agent_life.mjs) | 全局流程调度中枢 Agent Life 辅助引擎（阶段时序追踪与原子回执处理） |
+| **自动化脚本** | [`scripts/agent_life.mjs`](../scripts/agent_life.mjs) | 全局流程调度中枢 Agent PP & Agent Life(N) 辅助引擎（并发管理、生命周期推进与消亡） |
+| **自动化脚本** | [`scripts/check_unique_identifiers.mjs`](../scripts/check_unique_identifiers.mjs) | 全域能力 (Agent/MCP/CLI/Skill/Plugin) 唯一标识符与命名空间规范审计器 |
 | **管控机制** | [`scripts/control_gates.sh`](../scripts/control_gates.sh) | 状态层：由磁盘实况推导 G1~G4 并输出量化看板与状态快照 |
 | **管控机制** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs) | 冗余检测：词级相似度识别真复制粘贴（内置自检） |
 | **管控机制** | [`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs) | 冲突检测：五类冲突（版本/计数/指标/标识/死链）识别与裁决建议 |
