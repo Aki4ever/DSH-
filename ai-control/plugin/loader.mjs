@@ -65,8 +65,12 @@ async function loadSafely() {
 try {
   const dir = join(process.env.DSH_HOME || join(homedir(), '.dsh'), '.dsh-control')
   mkdirSync(dir, { recursive: true })
+  // 必须区分"宿主加载"与"测试脚本加载"：自检脚本也会 import 本文件，
+  // 若不区分，测试留下的标记会被误读成"宿主已加载"（实测踩过这个假阳性）。
+  const argv1 = process.argv[1] ?? ''
+  const isHost = /dsh[\\/]lib[\\/]bin\.js/.test(argv1) || /dsh[\\/]lib[\\/]bin\.js/.test(process.argv.join(' '))
   writeFileSync(join(dir, 'loader-status.txt'),
-    `loader 模块已导入: ${new Date().toISOString()}\npid=${process.pid}\n`, 'utf8')
+    `loader 模块已导入: ${new Date().toISOString()}\npid=${process.pid}\nisHost=${isHost}\nargv1=${argv1}\n`, 'utf8')
 } catch { /* 诊断失败绝不影响加载 */ }
 
 const inner = await loadSafely()

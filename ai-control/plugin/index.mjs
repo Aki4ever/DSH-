@@ -555,6 +555,10 @@ export function apply(ctx, config = {}) {
       [
         `插件已激活（apply 执行）: ${new Date().toISOString()}`,
         `pid=${process.pid}`,
+        // 必须区分"宿主激活"与"测试脚本调用 apply"：自检脚本会用 mock ctx 调 apply，
+        // 若不区分，测试留下的标记会被误读成"宿主已激活"（实测踩过这个假阳性）。
+        `isHost=${/dsh[\\/]lib[\\/]bin\.js/.test(process.argv[1] ?? '') || /dsh[\\/]lib[\\/]bin\.js/.test(process.argv.join(' '))}`,
+        `argv1=${process.argv[1] ?? ''}`,
         `tools 服务可用=${typeof ctx?.tools === 'object' && ctx.tools !== null}`,
         `showCard=${!!cfg.showCard} enforce=${!!cfg.enforce}`,
         `stateDir=${stateDir}`,
