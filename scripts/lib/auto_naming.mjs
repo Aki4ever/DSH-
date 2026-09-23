@@ -24,7 +24,7 @@ import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { zstdDecompressSync } from 'node:zlib'
-import { execFile } from 'node:child_process'
+import { execFile, execFileSync } from 'node:child_process'
 
 /** 会话标题规范：`[分类字母+3位编号][难度分] 概述`。 */
 export const TITLE_RE = /^\[([RFDSOQ])(\d{3})\]\[(\d{1,3})分\]\s+(\S.*)$/
@@ -301,6 +301,34 @@ export async function resolveWebUrl({ env = process.env, pid = process.pid } = {
   // 解析不出也缓存下来，避免每一步都跑一次 lsof
   cachedWebUrl = null
   return cachedWebUrl
+}
+
+/** 找宿主进程 pid（不用 pgrep：实测本机沙箱里 pgrep 不可用）。 */
+export function hostPid() {
+  try {
+    const out = String(execFileSync('ps', ['-eo', 'pid,command'], { encoding: 'utf8' }))
+    const line = out.split('\n').find((l) => l.includes('dsh/lib/bin.js') && l.includes(' web'))
+    return line ? Number(line.trim().split(/\s+/)[0]) : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * 解析当前宿主的 Web 地址（给"进程外"的调用方用：看门狗、命令行改名工具）。
+ *
+ * 与 `resolveWebUrl()` 的区别：后者的默认 pid 是**调用进程自己的** pid，
+ * 只在宿主进程内部（插件）才正确。进程外调用必须先找到宿主的 pid。
+ *
+ * @param {object} [env] 环境变量来源，默认 process.env
+ * @returns {Promise<string|null>}
+ */
+export async function resolveHostWebUrl(env = process.env) {
+  if (env?.DSH_WEB_URL) return env.DSH_WEB_URL
+  const pid = hostPid()
+  if (!pid) return null
+  resetWebUrlCache()
+  return await resolveWebUrl({ env: {}, pid })
 }
 
 /** 只用于测试：清空地址缓存。 */

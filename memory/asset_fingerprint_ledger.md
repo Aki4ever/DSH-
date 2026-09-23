@@ -3,7 +3,7 @@
 > ### 🏷️ **版本信息与实施追踪**
 > - **当前台账版本**：`v3.1.0`
 > - **基线对齐版本**：`v3.1.0`
-> - **最后全盘扫描时间**：2026-09-23 15:52
+> - **最后全盘扫描时间**：2026-09-23 15:56
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)
 
 本文档记录工程全域受管资产（规则、知识库、架构索引、工程模板、自动化脚本与需求台账）的**数字指纹（SHA-256 8位短哈希）**、**最后修改时间**与**新鲜度等级**，为全域资产对齐与防止暗中代码漂移提供唯一客观事实依据。
@@ -109,6 +109,7 @@
 | `scripts/verify_guard_live.sh` | `35e23bfa` | 2026-09-23 14:11 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/verify_auto_naming_e2e.mjs` | `0924ded6` | 2026-09-23 15:40 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/naming_watchdog.mjs` | `c41d21ac` | 2026-09-23 15:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/name_me.sh` | `73379dcc` | 2026-09-23 15:46 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/constraint_mechanism_enhance_2.md` | `7fd56882` | 2026-09-23 09:50 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
 | `docs/constraint_mechanism_optimize_3.md` | `7d8ebbd4` | 2026-09-23 14:12 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
@@ -121,7 +122,7 @@
 | `ai-control/README.md` | `7880d8f3` | 2026-09-23 06:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/config/gates.conf` | `d686ec33` | 2026-09-22 20:11 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/config/legacy_align_exempt.txt` | `4acab986` | 2026-09-23 09:32 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
-| `ai-control/plugin/index.mjs` | `6a9747c2` | 2026-09-23 15:40 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `ai-control/plugin/index.mjs` | `0f6391fc` | 2026-09-23 15:47 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/plugin/loader.mjs` | `d4a903ed` | 2026-09-23 15:40 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/plugin/selftest.mjs` | `d0fdb221` | 2026-09-23 14:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/config/naming_overrides.json` | `bfbbbe56` | 2026-09-23 15:43 | `-` | ⚪ TIER-2 | 指纹监控中 |

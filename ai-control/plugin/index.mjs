@@ -88,6 +88,12 @@ export const Config = {
     // 两者都只做只读检查（源码契约 / 自检 / 门禁实况 / 逃生舱判定），无副作用。
     'scripts/verify_guard_live.sh',
     'scripts/verify_escape_hatch.sh',
+    // 命名入口：宿主级 AGENTS.md 的"零、开工第一动作"要求**任何会话开工就先改名**。
+    // 若门禁未过时把它拦住，就会出现"规则要求先改名，但改名被门禁挡住"的直接冲突，
+    // 且与上面两个诊断脚本同属"自锁"类问题。
+    // 只放行这一个入口（不放行 rename_session.sh）：它只改**当前会话的标题**这一条元数据，
+    // 不触碰工程实质内容；真正的工程改动仍被门禁严格拦住。
+    'scripts/name_me.sh',
   ],
   escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
   /** 是否在拒绝理由中附带看板摘要。 */

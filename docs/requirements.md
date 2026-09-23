@@ -1317,7 +1317,7 @@
   6. **流程门禁可审计化**：`task_execution_flow.md` 的 S05 判定由"首个 bash 调用是某脚本"（无法自证）改为 `check_task_naming.sh --exit` 返回 0（可机械判定）。
 - **关联文件**：
   - `scripts/check_task_naming.sh`、`scripts/session_naming_audit.mjs`、`scripts/generate_naming_plan.mjs`、`scripts/batch_rename_sessions.mjs`、`scripts/lib/workspace_resolve.mjs`
-  - **自动命名**：`scripts/lib/auto_naming.mjs`（核心逻辑，插件/看门狗/测试共用）、`scripts/test_auto_naming.mjs`（30 项测试）、`scripts/naming_watchdog.mjs`（**当前生效机制**，不依赖重启）、`ai-control/plugin/index.mjs`（宿主内触发点，暂缓）、`ai-control/config/naming_overrides.json`（人工指定/豁免）
+  - **自动命名**：`scripts/lib/auto_naming.mjs`（核心逻辑，插件/看门狗/测试共用）、`scripts/test_auto_naming.mjs`（30 项测试）、`scripts/naming_watchdog.mjs`（兜底补齐）、`scripts/name_me.sh`（**开工一键改名入口**）、`ai-control/plugin/index.mjs`（宿主内触发点，暂缓）、`ai-control/config/naming_overrides.json`（人工指定/豁免）
   - `scripts/control_gates.sh`、`scripts/rename_session.sh`
   - `rules/workflow/task_execution_flow.md`、`knowledge/common/task_naming_spec.md`
 - **回滚数据存放位置**（**刻意不入库**：文件含 41 条对话旧标题，属会话隐私内容）：
@@ -1394,6 +1394,25 @@
   与 `showCard` 解耦）已完成并提交，但**在宿主内的实际效果未经重启验证**，
   故不作为当前生效机制；`scripts/verify_auto_naming_e2e.mjs` 保留，
   待将来有机会重启时一次性验收。
+- **最终采用的机制：宿主级「开工第一动作」指令 + 一键改名入口（无需重启）**：
+  - **需求原话**：「每次发起任务都对当前任务马上进行修改」。轮询式看门狗
+    （每 N 秒巡一遍）不满足"马上"，故不作为主机制；
+  - **机制一 · 指令注入**：把「零、开工第一动作：立刻给当前任务改名」
+    写入 `$DSH_HOME/AGENTS.md`。该文件由 DSH 在**每个会话的首次请求**注入，
+    因此**改完即刻对新会话生效，无需重启桌面端**——
+    这一点已实测确认：文件修改后宿主当场重读并把新内容注入本会话；
+  - **机制二 · 一键入口**：新增 `scripts/name_me.sh`，把"解析会话身份 → 解析宿主地址 →
+    规范校验 → 改名 → 回读确认"压成一条命令，任何目录可用：
+    `name_me.sh "[R012][60分] 概述"` 指定标题、`--auto` 机器生成、`--check` 只查不改；
+  - **实测**：从 `/tmp` 调用 `--check` 正确输出当前会话合规状态；
+    对不合规标题退出码 1、对合规标题退出码 0、指定同名标题走通了完整 RPC 链路
+    并经权威存储确认；
+  - **顺带消除一处真实冲突**：门禁放行白名单里没有命名入口，而新规则要求
+    "任何会话开工先改名"——若门禁未过就会变成"规则要求先改名、改名却被门禁挡住"的自锁。
+    已将 `scripts/name_me.sh` 加入 `escapeScriptPrefixes`（只放行这一个入口，
+    不放行 `rename_session.sh`）：它只改当前会话标题这一条元数据，不触碰工程实质。
+- **看门狗定位调整**：`scripts/naming_watchdog.mjs` 从"主机制"降为**兜底**——
+  当某个会话的执行者漏掉改名时，可手动或按需跑一遍补齐；不再要求常驻轮询。
 - **未验证项声明**：
   - 自动命名**尚未在真实宿主中跑过**：逻辑已离线测通并实弹验证过 RPC 通路，但"插件在宿主内
     被 `agent/pre-step` 调起"这一步要重启后才能确认；在此之前不能声称它已在生产路径生效；

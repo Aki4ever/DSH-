@@ -28,10 +28,9 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { execFileSync } from 'node:child_process'
 import {
   parseTitle, readSessionStore, currentTitle, buildTitle,
-  renameViaRpc, waitForTitle, resolveWebUrl, resetWebUrlCache, sessionCwd, letterFor,
+  renameViaRpc, waitForTitle, resolveHostWebUrl, sessionCwd, letterFor,
 } from './lib/auto_naming.mjs'
 
 const HOME = process.env.DSH_HOME
@@ -77,25 +76,9 @@ async function log(line) {
   } catch { /* 忽略 */ }
 }
 
-/** 找宿主进程（不用 pgrep：本机沙箱里 pgrep 不可用）。 */
-function hostPid() {
-  try {
-    const out = String(execFileSync('ps', ['-eo', 'pid,command'], { encoding: 'utf8' }))
-    const line = out.split('\n').find((l) => l.includes('dsh/lib/bin.js') && l.includes(' web'))
-    return line ? Number(line.trim().split(/\s+/)[0]) : null
-  } catch {
-    return null
-  }
-}
-
-/** 解析当前可用的宿主 Web 地址。 */
+/** 解析当前可用的宿主 Web 地址（共享实现，见 auto_naming.mjs）。 */
 async function currentWebUrl() {
-  const fromEnv = process.env.DSH_WEB_URL
-  if (fromEnv) return fromEnv
-  const pid = hostPid()
-  if (!pid) return null
-  resetWebUrlCache()
-  return await resolveWebUrl({ env: {}, pid })
+  return await resolveHostWebUrl()
 }
 
 /**
