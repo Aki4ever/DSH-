@@ -1317,7 +1317,7 @@
   6. **流程门禁可审计化**：`task_execution_flow.md` 的 S05 判定由"首个 bash 调用是某脚本"（无法自证）改为 `check_task_naming.sh --exit` 返回 0（可机械判定）。
 - **关联文件**：
   - `scripts/check_task_naming.sh`、`scripts/session_naming_audit.mjs`、`scripts/generate_naming_plan.mjs`、`scripts/batch_rename_sessions.mjs`、`scripts/lib/workspace_resolve.mjs`
-  - **自动命名**：`scripts/lib/auto_naming.mjs`（核心逻辑，插件与测试共用）、`scripts/test_auto_naming.mjs`（24 项测试）、`ai-control/plugin/index.mjs`（宿主内触发点）
+  - **自动命名**：`scripts/lib/auto_naming.mjs`（核心逻辑，插件/看门狗/测试共用）、`scripts/test_auto_naming.mjs`（30 项测试）、`scripts/naming_watchdog.mjs`（**当前生效机制**，不依赖重启）、`ai-control/plugin/index.mjs`（宿主内触发点，暂缓）、`ai-control/config/naming_overrides.json`（人工指定/豁免）
   - `scripts/control_gates.sh`、`scripts/rename_session.sh`
   - `rules/workflow/task_execution_flow.md`、`knowledge/common/task_naming_spec.md`
 - **回滚数据存放位置**（**刻意不入库**：文件含 41 条对话旧标题，属会话隐私内容）：
@@ -1370,6 +1370,30 @@
   - **新增可查证性**：loader 与 apply 各落一个标记文件，用于区分
     "模块未加载" / "已加载但宿主未激活" / "已激活但逻辑失败"三种状态——
     此前这三者表象完全相同，只能靠猜。
+- **路线调整：改用不依赖重启的看门狗（用户明确不再重启桌面端）**：
+  - **为什么改路线**：插件方案逻辑虽已修好，但**插件改动必须重启桌面端才会加载**。
+    而改名所需的两样东西其实都在宿主进程之外——标题在磁盘
+    （`session_projcache.json`）、改名通道是宿主 Web RPC（可用端口反查定位），
+    因此可以完全绕开插件完成同一件事；
+  - **实现**：`scripts/naming_watchdog.mjs`，与插件**共用同一份**
+    `scripts/lib/auto_naming.mjs`，避免两套实现各自演化；
+  - **实测结果**：对真实会话执行成功，并经权威存储确认——
+    `session-0175e700` →「[R001][50分] 请用一句话说明缠」；
+    `session-a28c4f73` →「[R002][10分] 闲聊内容归档」；
+  - **顺带修掉一个真实缺陷**：改名后存储有 3~9 秒回写延迟，导致同一轮巡更里
+    连续改两条会话时**序号会撞车**（实测 dry-run 两条都取到 `R001`）。
+    → `nextNumber()` 新增"本轮已占用序号"集合，不再依赖存储即时可见；
+  - **新增人工清单** `ai-control/config/naming_overrides.json`：
+    个别会话首条消息是闲聊或不当言论，机器照抄会把那句话搬进侧边栏标题，
+    **比不改更糟**，此时应人工指定中性标题或显式豁免（改完即生效，无需重启）；
+  - **空会话规则**：零步空会话（无标题、无首条消息）**不命名**——
+    无内容可概括，硬起名等于编造。当前 5 条未合规会话全部属于此类。
+- **当前命名状态（实测）**：凡有实际内容的会话，命名**100% 合规**；
+  未合规的 5 条全部是零步空会话，属上述规则的预期结果。
+- **插件路线暂缓**：插件相关修复（地址自解析、全程留痕、看板模块解析、
+  与 `showCard` 解耦）已完成并提交，但**在宿主内的实际效果未经重启验证**，
+  故不作为当前生效机制；`scripts/verify_auto_naming_e2e.mjs` 保留，
+  待将来有机会重启时一次性验收。
 - **未验证项声明**：
   - 自动命名**尚未在真实宿主中跑过**：逻辑已离线测通并实弹验证过 RPC 通路，但"插件在宿主内
     被 `agent/pre-step` 调起"这一步要重启后才能确认；在此之前不能声称它已在生产路径生效；

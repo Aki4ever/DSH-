@@ -179,9 +179,18 @@ export async function firstUserMessage(dshHome, sessionId, maxFrames = 60) {
   return null
 }
 
-/** 在同类字母下选一个未被占用的序号，避免侧边栏撞号。 */
-export function nextNumber(store, letter) {
-  const used = new Set()
+/** 在同类字母下选一个未被占用的序号，避免侧边栏撞号。
+ *
+ * @param {object} store 标题存储
+ * @param {string} letter 分类字母
+ * @param {Set<number>} [reserved] 本轮额外已占用的序号。
+ *   为什么需要它：改名后权威存储**有 3~9 秒回写延迟**（实测），
+ *   同一轮批量巡更里连续改两条会话时，后一条读到的存储还没包含前一条的新标题，
+ *   于是两条都拿到同一个序号——实测 dry-run 里两条都取到 R001。
+ *   调用方应把本轮已分配的序号放进 reserved，跨进程无需依赖存储即时可见。
+ */
+export function nextNumber(store, letter, reserved) {
+  const used = new Set(reserved ?? [])
   for (const [, e] of Object.entries(store?.tables?.sessions ?? {})) {
     const p = parseTitle(e?.rows?.title?.val)
     if (p && p.letter === letter) used.add(p.num)
@@ -195,7 +204,7 @@ export function nextNumber(store, letter) {
  * 生成合规底稿标题。
  * @returns {Promise<string|null>} 缺首条消息或无汉字时返回 null
  */
-export async function buildTitle({ dshHome, sessionId, cwd, store }) {
+export async function buildTitle({ dshHome, sessionId, cwd, store, reserved }) {
   const msg = await firstUserMessage(dshHome, sessionId)
   const summary = summarize(msg)
   if (hanCount(summary) < 1) return null
@@ -203,7 +212,7 @@ export async function buildTitle({ dshHome, sessionId, cwd, store }) {
   // 理由见 sessionCwd() 注释：信任调用方曾导致 DSH股票 的会话被分成 R 类。
   const realCwd = (await sessionCwd(dshHome, sessionId)) ?? cwd
   const letter = letterFor(realCwd)
-  const n = nextNumber(store, letter)
+  const n = nextNumber(store, letter, reserved)
   const title = `[${letter}${String(n).padStart(3, '0')}][${DEFAULT_SCORE}分] ${summary}`
   // 自校验：生成的标题必须自身合规，否则宁可不改
   return parseTitle(title) ? title : null

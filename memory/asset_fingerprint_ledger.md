@@ -3,7 +3,7 @@
 > ### 🏷️ **版本信息与实施追踪**
 > - **当前台账版本**：`v3.1.0`
 > - **基线对齐版本**：`v3.1.0`
-> - **最后全盘扫描时间**：2026-09-23 15:44
+> - **最后全盘扫描时间**：2026-09-23 15:52
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)
 
 本文档记录工程全域受管资产（规则、知识库、架构索引、工程模板、自动化脚本与需求台账）的**数字指纹（SHA-256 8位短哈希）**、**最后修改时间**与**新鲜度等级**，为全域资产对齐与防止暗中代码漂移提供唯一客观事实依据。
@@ -93,7 +93,7 @@
 | `scripts/global_scheduler_lock.sh` | `b51f5deb` | 2026-09-23 09:50 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
 | `scripts/init_dir.sh` | `9bc60177` | 2026-09-16 14:56 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/legacy_align_scan.mjs` | `cc755ad0` | 2026-09-23 07:57 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/lib/auto_naming.mjs` | `7e7175ea` | 2026-09-23 15:38 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/lib/auto_naming.mjs` | `b39c3f91` | 2026-09-23 15:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/lib/workspace_resolve.mjs` | `4e118a67` | 2026-09-23 14:59 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/probe_long_output.mjs` | `52c32d04` | 2026-09-23 15:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/probe_long_output_stream.mjs` | `34445721` | 2026-09-23 15:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
@@ -108,6 +108,7 @@
 | `scripts/verify_escape_hatch.sh` | `da05a50f` | 2026-09-23 14:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/verify_guard_live.sh` | `35e23bfa` | 2026-09-23 14:11 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/verify_auto_naming_e2e.mjs` | `0924ded6` | 2026-09-23 15:40 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/naming_watchdog.mjs` | `c41d21ac` | 2026-09-23 15:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/constraint_mechanism_enhance_2.md` | `7fd56882` | 2026-09-23 09:50 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
 | `docs/constraint_mechanism_optimize_3.md` | `7d8ebbd4` | 2026-09-23 14:12 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
@@ -123,6 +124,7 @@
 | `ai-control/plugin/index.mjs` | `6a9747c2` | 2026-09-23 15:40 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/plugin/loader.mjs` | `d4a903ed` | 2026-09-23 15:40 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/plugin/selftest.mjs` | `d0fdb221` | 2026-09-23 14:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `ai-control/config/naming_overrides.json` | `bfbbbe56` | 2026-09-23 15:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `memory/.gitkeep` | `e3b0c442` | 2026-09-16 15:37 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `memory/README.md` | `2778de38` | 2026-09-16 15:37 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `memory/asset_fingerprint_ledger.md` | `fd513a57` | 2026-09-23 14:13 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
