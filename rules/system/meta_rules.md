@@ -1,8 +1,8 @@
 # 系统级全局元规则 (System Meta-Rules)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v3.3.0`
-> - **对应实施版本**：`v3.3.0`
+> - **当前文档版本**：`v3.4.0`
+> - **对应实施版本**：`v3.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **生效状态**：`[Release 稳定生效]`
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 🏛️ 全局元规则二十一条 (Core Meta-Laws)
+## 🏛️ 全局元规则二十三条 (Core Meta-Laws)
 
 ### 第一条：规则需求双向同步律 (Requirement-Rule Sync)
 - **溯源铁律**：严禁存在无需求依据的孤立规则。新增/修改/废弃规则必须同步更新 [`docs/requirements.md`](../../docs/requirements.md)。
@@ -92,9 +92,17 @@
 - **自动化冲突编排**：筹策阶段前置嗅探资源依赖，冲突时自动按“时序串行”或“避让排队”编排，杜绝进程打架与脏写悬空；通过 [`scripts/global_scheduler_lock.sh`](../../scripts/global_scheduler_lock.sh) 实现微秒级无感原子锁。
 - **超时自愈熔断**：排他锁默认持有超时为 180 秒（TTL），超时后自动判定为孤儿锁并自愈释放，绝对禁止永久死锁。
 
+### 第二十二条：显式结论置顶与执行透明度律 (Explicit State & Conclusion Law)
+- **首屏最显眼处定性**：任何对话回复必须在首行最醒目位置出具标准化物理执行状态徽标：明确声明当前是 🟡【方案规划态 · PLAN ONLY】（纯分析无文件改动）、🟢【实施完成态 · DELIVERED】（已写入、已通过门禁并推送）、🔵【正在执行态 · IN PROGRESS】（复合长任务推进中）还是 🔴【阻断受阻态 · BLOCKED】（遇不可抗力暂停）。
+- **杜绝虚假与模糊宣称**：未落地任何代码或规则文件前，严禁宣称已完成；禁止通篇长篇大论却不给明确执行定性，必须让用户一眼看清真实进展。
+
+### 第二十三条：本地运算优先与结构性 Token 降耗律 (Local-Compute First & Token Frugality Law)
+- **本地轻量运算优先**：日志清洗、文本过滤、语法探活、版本比对、哈希校验等确定性计算，坚决通过本地脚本（Bash / Node / Python）执行，仅向上下文输入高度浓缩的结构化结果，严禁海量原始字符全盘往返消耗 Token。
+- **上下文按需精准提取**：禁止大文件全量盲读，优先使用 `grep -n` 定位关键锚点并配合 `offset`/`limit` 局部切片读取；优先查阅轻量级索引卡，避免无节制膨胀提示词。
+
 ---
 
 ## ⚖️ 规则裁决优先级顺序 (Precedence Order)
 
 发生冲突时按以下层级自上而下绝对裁决：
-$$\text{元规则} \succ \text{安全红线与风险揭示} \succ \text{事务原子性} \succ \text{全局调度锁} \succ \text{知识库业务法典} \succ \text{质量测试门禁} \succ \text{远程Git强同步} \succ \text{流程双轨分流} \succ \text{编码规范}$$
+$$\text{元规则} \succ \text{安全红线与风险揭示} \succ \text{显式结论与Token降耗} \succ \text{事务原子性} \succ \text{全局调度锁} \succ \text{知识库业务法典} \succ \text{质量测试门禁} \succ \text{远程Git强同步} \succ \text{流程双轨分流} \succ \text{编码规范}$$

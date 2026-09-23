@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v3.3.0`
+> - **当前系统实施总版本**：`v3.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1494,6 +1494,29 @@
   - [x] 新鲜度与可用性检测探针实跑 100% 通过；
   - [x] 管控机制双向生效铁律落地，存量对齐扫描通过；
   - [x] 需求双向同步脚本校验通过。
+
+---
+
+### REQ-052: 显式结论置顶铁律与本地运算降耗规约
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v3.4.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-007`）
+- **核心诉求与交付物**：
+  1. **首屏最显眼处显式结论**：在 [`rules/system/meta_rules.md`](../rules/system/meta_rules.md) 与 [`AGENTS.md`](../AGENTS.md) 确立置顶结论铁律，首行必须显式输出物理执行状态徽标（🟡【仅方案规划态】vs 🟢【真实实施完成态】），杜绝计划与实施混淆；
+  2. **本地运算优先 (Local-Compute First)**：在 [`rules/coding/token_and_local_compute_optimization.md`](../rules/coding/token_and_local_compute_optimization.md) 落地工程规约，凡规则明确、计算密集的排查与过滤必须在本地用命令执行，禁止海量原始字符往返；
+  3. **结构性降低 Token 消耗**：大文件禁用无脑全盘读取，强制使用 `grep -n` 定位后带 `offset`/`limit` 切片，轻量索引卡优先，状态缓存复用。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/coding/token_and_local_compute_optimization.md`
+  - `AGENTS.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 元规则第二十二条（显式结论律）与第二十三条（Token降耗律）生效；
+  - [x] 项目级约束收尾规范加入首行显式结论卡；
+  - [x] 本地运算优先规约建立并包含反模式正向重构对照表；
+  - [x] 管控专属台账与全局主台账版本双向对齐 v3.4.0。
 
 ---
 
