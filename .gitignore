@@ -42,3 +42,4 @@ ai-control/reports/
 
 # 本地编译缓存（SVG 渲染器等工具按需编译产出，属机器产物不入库）
 .cache/
+.dsh-control/

@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v3.6.0`
+> - **当前系统实施总版本**：`v3.7.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1562,6 +1562,30 @@
   - [x] 快速通道表注册“给我入口”、“版本号”、“地图导航”且通道审计通过；
   - [x] 导航脚本完成并实测三种模式输出正常；
   - [x] 全局台账与专项目录版本统一推进至 v3.6.0。
+
+---
+
+### REQ-055: 全局流程调度 Agent Life 与 Google 级高信噪比输出架构
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v3.7.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-010`）
+- **核心诉求与交付物**：
+  1. **全局流程管控 Agent Life**：确立专门负责时序掌控、执行裁决与全局调度锁申领/释放的生命周期调度器规约 [`rules/workflow/agent_life_spec.md`](../rules/workflow/agent_life_spec.md)；
+  2. **阶段原子性完成反馈**：执行工人完成每道工序后出具标准的原子回执 (Stage Feedback Receipt) 驱动 Agent Life 推进下一步；
+  3. **Google 级意图理解与输出呈现**：借鉴搜索精选摘要 (Featured Snippet) 与知识面板，首屏零击直达核心答案；
+  4. **P0~P2 重要度三级过滤**：在 [`rules/system/meta_rules.md`](../rules/system/meta_rules.md) 确立第二十五条，🔴 P0 置顶，🟡 P1 精炼单行，⚪ P2 无关修饰套话 100% 彻底静默剔除。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/agent_life_spec.md`
+  - `scripts/agent_life.mjs`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] Agent Life 规约与调度引擎脚本落地；
+  - [x] 阶间原子回执标准确立；
+  - [x] 元规则第二十五条生效，重要度过滤规则入册；
+  - [x] 全局台账与专项目录版本统一推进至 v3.7.0。
 
 ---
 

@@ -1,8 +1,8 @@
 # 免审批安全基线与防破坏红线规约 (Security Baseline & Redlines)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v3.6.0`
-> - **对应实施版本**：`v3.6.0`
+> - **当前文档版本**：`v3.7.0`
+> - **对应实施版本**：`v3.7.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
