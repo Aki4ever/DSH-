@@ -1,8 +1,8 @@
 # 系统分层知识库总索引与前置核验协议 (Knowledge Base Hub)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.5.0`
-> - **对应实施版本**：`v4.5.0`
+> - **当前文档版本**：`v4.6.0`
+> - **对应实施版本**：`v4.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -27,6 +27,7 @@ knowledge/
 │   ├── README.md                      # 通用规范导航总览
 │   ├── interaction_specification.md   # 通用交互与体验规范 (格式塔六大定律 / Don't Make Me Think 零思考)
 │   ├── readability_specification.md   # 全端可读性与无障碍排版设计法典 (字号阶梯 / 最小文字红线 / 对比度)
+│   ├── component_asset_reference.md   # 多官网精美组件与图控法典 (Shadcn/Apple HIG/AntD/Material 3)
 │   ├── unity_specification.md         # 通用 Unity 工程规范 (页面Scene / 弹窗Prefab / 按钮Drop Shadow与下沉动效)
 │   ├── web_specification.md           # 通用 Web 工程规范 (页面路由懒加载 / Modal Portal挂载 / box-shadow)
 │   ├── miniprogram_specification.md   # 通用小程序规范 (主包≤1.5MB / 弹窗Component防穿透 / setData差量更新)

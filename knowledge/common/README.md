@@ -1,8 +1,8 @@
 # 通用规范知识库总览 (Common Specifications Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.5.0`
-> - **对应实施版本**：`v4.5.0`
+> - **当前文档版本**：`v4.6.0`
+> - **对应实施版本**：`v4.6.0`
 > - **规范层级**：`【知识库总纲 · 通用公共规范】`
 > - **生效状态**：`[Release 稳定生效]`
 
@@ -16,6 +16,7 @@
 | :--- | :--- | :---: | :--- |
 | [`interaction_specification.md`](interaction_specification.md) | **通用交互与体验设计规范** | 全平台通用 | • **格式塔六大心理学定律**落地（接近/相似/闭合/主体背景分离）；<br>• **Don't Make Me Think** 零思考直觉、防呆与三秒法则。 |
 | [`readability_specification.md`](readability_specification.md) | **全端可读性与无障碍排版设计法典** | Web/DMG/App/小程序 | • **跨端排版字号阶梯**（标题/卡片/导航/正文/辅助）；<br>• **绝对可读底线**（Web 12px/移动 12pt/小程序 22rpx 严禁低于）；<br>• **WCAG 2.1 AA 级对比度**（正文 ≥ 4.5:1）与加粗面积 ≤ 10% 铁律。 |
+| [`component_asset_reference.md`](component_asset_reference.md) | **多官网精美组件与图控法典** | 全平台可视化与UI | • **权威官网设计系统白名单**（Shadcn UI/Tailwind/Apple HIG/AntD/Material 3/WeUI）；<br>• **四大经典微组件版式**（发光终端卡/数据栅格/时间轴/模态抽屉）。 |
 | [`unity_specification.md`](unity_specification.md) | **通用 Unity 客户端工程规范** | Unity 游戏与客户端 | • **页面做成 Scene**（主视景独立异步加载）；<br>• **弹窗做成 Prefab**（动态实例化与暗色蒙层）；<br>• **按钮必带 Drop Shadow 投影**与按压下沉位移；<br>• 动静分离双 Canvas 与 `.meta` 同生共死。 |
 | [`web_specification.md`](web_specification.md) | **通用 Web 前端工程规范** | Web / SPA / 后台 | • **页面做成路由懒加载**，**弹窗通过 Portal** 挂载至根 DOM；<br>• `box-shadow` 立体悬浮与 `:active` 物理下沉；<br>• 骨架屏防白屏与移动端 44px 最小热区。 |
 | [`miniprogram_specification.md`](miniprogram_specification.md) | **通用小程序研发规范** | 微信/多端小程序 | • **主包 ≤ 1.5MB** 极速首屏，业务模块独立分包；<br>• **弹窗组件化**且必须加 `catchtouchmove` 防滚动穿透；<br>• `hover-class` 原生按压反馈，`setData` 路径差量更新。 |

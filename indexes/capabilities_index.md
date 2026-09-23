@@ -1,8 +1,8 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.5.0`
-> - **对应实施版本**：`v4.5.0`
+> - **当前文档版本**：`v4.6.0`
+> - **对应实施版本**：`v4.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
 > - **生效状态**：`[Release 稳定生效]`
@@ -104,6 +104,29 @@
 
 ---
 
-## 📊 三、维护与扩展准则
-1. 任何新增 Plugin / Agent / CLI / MCP / Skill 必须在本文件中登记外层索引卡，明确**大致怎么用**与**负面案例**；
-2. 保持与新鲜度检测探针 `scripts/check_freshness.mjs` 联动，确保全量能力持续可用。
+## 📊 三、新能力标准化命名与双层接口生命周期全规约 (Capability Lifecycle & Interface Specification)
+
+任何新获取或新构建的能力（无论是外部工具引入、自研脚本还是智能体派生），必须走完标准化“命名-契约-索引-调度”四步生命周期闭环：
+
+### 1. 新能力唯一命名规范 (Naming Standard)
+新能力标识符必须严格遵循分层点分语义命名法，严禁使用非语义缩写：
+- **🔌 插件**：`plugin.<domain>.<name>`（例：`plugin.ui.core_card`）；
+- **🤖 代理**：`agent.<domain>.<name>`（例：`agent.research.web_asset`）；
+- **💻 脚本**：`cli.<domain>.<name>`（例：`cli.asset.fetch_component`）；
+- **🌐 协议工具**：`mcp.<provider>.<tool>` 或 `tool.<name>`；
+- **🧠 专属技能**：`skill.<domain>.<name>`。
+
+### 2. 标准化双层接口声明契约 (Dual-Layer Interface Contract)
+新能力接入必须同时定义两层接口规范：
+- **外层：速查索引接口 (Quick Index Interface)**：
+  - 必须提供：【标识符】+【大致怎么用（正向推荐场景）】+【负面反例/踩坑红线】；
+- **内层：执行交互契约 (Execution Contract)**：
+  - **输入契约 (Inputs)**：明确各参数名、类型、必填性、默认值及合法值域；
+  - **输出契约 (Outputs)**：明确返回数据结构（如 JSON 结构体、Markdown 卡片或标准化 Exit Code）；
+  - **容错与降级保护**：当依赖项不可达或外部环境失效时，必须具备明确的非阻塞降级逻辑。
+
+### 3. 索引入库与通道路由强绑定 (Registration & Route Binding)
+1. **能力总表编目**：新能力必须在本文件第一章《五大能力层统一索引接口总表》登记对应条目；
+2. **高速通道挂接**：若新能力属于高频核心操作（高频前 20%），必须同步在 [`indexes/shortcuts_index.md`](shortcuts_index.md) 注册 G0/G1 快速通道口令，确保“生成即可被索引、张口即可被调度”；
+3. **时效性探针纳管**：新能力接入后必须纳入 `scripts/check_freshness.mjs` 监控范畴，确保时效性与版本健康。
+

@@ -1,7 +1,7 @@
 # 管控机制专属需求台账 (Control Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前管控机制版本**：`v4.5.0`
+> - **当前管控机制版本**：`v4.6.0`
 > - **最后同步时间**：2026-09-23
 > - **全局主台账对照**：[`docs/requirements.md`](../../docs/requirements.md)
 > - **状态**：`[ACTIVE 生效中]`
@@ -30,6 +30,7 @@
 | **CR-016** | REQ-061 | `v4.3.0` | 文本精细排版法典扩充与系统交互动效组件规范化 | `[ACTIVE]` |
 | **CR-017** | REQ-062 | `v4.4.0` | 格式塔交互映射深化与全域字体选型工程标准法典化 | `[ACTIVE]` |
 | **CR-018** | REQ-063 | `v4.5.0` | 任务级版本强制递增律与全域交付输出物版本强同步闭环 | `[ACTIVE]` |
+| **CR-019** | REQ-064 | `v4.6.0` | 交互式核心信息卡片增强、多官网精美组件检索图库与新能力标准化接口生命周期 | `[ACTIVE]` |
 
 ---
 
@@ -319,6 +320,31 @@
   - [x] 第三十条元规则写入生效；
   - [x] 执行流与版本规范固化每动必升版与输出物强同步三大靶点；
   - [x] 全局台账与专项目录版本统一推进至 v4.5.0。
+
+---
+
+### CR-019: 交互式核心信息卡片增强、多官网精美组件检索图库与新能力标准化接口生命周期
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.6.0`
+- **对应全局台账**：`REQ-064`
+- **提出时间**：2026-09-23
+- **核心诉求与目标**：
+  1. **核心交付信息交互式卡片化**：在 `rules/workflow/task_execution_flow.md` 与 `knowledge/common/interaction_specification.md` 落地核心成果交互卡片标准（包含卡片闭合、状态/版本胶囊、一句话成果点透、指标栅格与直达入口）；
+  2. **多官网精美组件检索与图控法典**：编制 `knowledge/common/component_asset_reference.md`，建立 Shadcn UI、Tailwind UI、Apple HIG、AntD、Material 3 与 WeUI 权威检索源白名单，并抽象四大可复用微组件版式；
+  3. **新能力命名与双层接口生命周期全规约**：在 `indexes/capabilities_index.md` 确立五大类分层点分命名法、内外双层接口契约（输入/输出/正负案例/降级策略）与快速通道路由强绑定闭环；
+  4. **版本强同步跃迁**：全库实施总版本推进至 v4.6.0。
+- **关联产出物**：
+  - `rules/workflow/task_execution_flow.md`
+  - `knowledge/common/interaction_specification.md`
+  - `knowledge/common/component_asset_reference.md`
+  - `indexes/capabilities_index.md`
+  - `docs/requirements.md`（`REQ-064`）
+- **验收标准**：
+  - [x] 执行流收尾框架落地交互式核心信息卡片标准；
+  - [x] 多官网精美组件检索图控法典建立并统合进知识库；
+  - [x] 新能力标准化命名与双层接口生命周期法典化；
+  - [x] 全局台账与专项目录版本统一推进至 v4.6.0。
+
 
 
 
