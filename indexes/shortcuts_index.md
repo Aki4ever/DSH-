@@ -1,8 +1,8 @@
 # 快速通道指令路由与地图式高速干道导航索引 (Arterial Routing & Quick Shortcuts Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v3.5.0`
-> - **对应实施版本**：`v3.5.0`
+> - **当前文档版本**：`v3.6.0`
+> - **对应实施版本**：`v3.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -74,6 +74,9 @@
 | **“通道审计”**<br>*(或“通道体检/快速通道检查”)* | **G1 干线** | 检查快速通道表是否有死通道、说法是否还能命中 | 执行 [`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs) `--root .` | 输出通道数、死链清单、命中自检结果与触发词冲突清单 |
 | **“手写图上屏”**<br>*(或“SVG 出图/精确栅格化”)* | **G1 干线** | 把手写 SVG 精确渲染为 PNG | 执行 [`scripts/generate_image.py`](../scripts/generate_image.py)（`--svg <文件.svg>`，内部走 [`scripts/svg2png.sh`](../scripts/svg2png.sh)） | 输出与设计尺寸一致的 PNG，保留原始排版与配色 |
 | **“生成信息图 <主题>”**<br>*(或“出信息图/画信息图/画机制图”)* | **G1 干线** | **任何主题**的信息图或教学图：按教学图生成机制产出图片 | 读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) 选型 → 取料 → 绘 SVG → 执行 [`scripts/generate_image.py`](../scripts/generate_image.py) `--svg` 栅格化 → 登记指针 | 输出 SVG + PNG 两个文件路径与可点击入口；机制类信息图复用 [`assets/generated_images/gcm_gate_control_infographic.svg`](../assets/generated_images/gcm_gate_control_infographic.svg) 版式并更新为实测数据 |
+| **“给我入口”**<br>*(或“入口/交付入口/产出入口”)* | **G0 高速** | 秒级输出当前任务交付入口或全域核心入口 | 执行 [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) `--entry` | 提取当前改动资产与系统核心中枢，输出 Markdown 结构化直达链接卡 |
+| **“版本号”**<br>*(或“查看版本号/当前版本/查版本”)* | **G0 高速** | 秒级获取系统与管控机制当前实施总版本 | 读取 [`docs/requirements.md`](../docs/requirements.md) 与 [`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md) | 单行秒回当前系统实施总版本号、Git HEAD 与最新需求生效编号 |
+| **“地图导航 <能力/目标>”**<br>*(或“能力导航/路线规划”)* | **G1 干线** | 索引命中后生成起点至终点的地图式导航路线 | 执行 [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) `<目标>` | 输出起点、途径门禁/配置、终点执行落地点与避坑路况提示卡 |
 
 ---
 

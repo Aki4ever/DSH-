@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v3.5.0`
+> - **当前系统实施总版本**：`v3.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1540,6 +1540,28 @@
   - [x] 任务结项强制要求流程结构化回溯；
   - [x] 看板全绿态紧凑压缩实测生效且字符缩减超 60%；
   - [x] 管控版本统一推进至 v3.5.0。
+
+---
+
+### REQ-054: 快速通道高频指令扩充与地图导航式能力路由层
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v3.6.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-009`）
+- **核心诉求与交付物**：
+  1. **快速高频指令扩充**：在 [`indexes/shortcuts_index.md`](../indexes/shortcuts_index.md) 注册“给我入口”（秒取交付物与中枢地址）与“版本号”（单行秒取系统最新实施版本）；
+  2. **地图导航式能力路由层**：设计三级导航模型（起点意图 → 规划匹配 → 逐级途径点指引 → 终点落地点 → 避坑路况），建立规约 [`indexes/navigation_router.md`](../indexes/navigation_router.md)；
+  3. **自动化轻量路由工具**：落地 [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs)，支持本地秒级生成地图导航路线与入口直达卡，免模型长上下文规划开销。
+- **关联文件**：
+  - `indexes/shortcuts_index.md`
+  - `indexes/navigation_router.md`
+  - `scripts/route_navigate.mjs`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 快速通道表注册“给我入口”、“版本号”、“地图导航”且通道审计通过；
+  - [x] 导航脚本完成并实测三种模式输出正常；
+  - [x] 全局台账与专项目录版本统一推进至 v3.6.0。
 
 ---
 

@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v3.5.0`
-> - **对应实施版本**：`v3.5.0`
+> - **当前文档版本**：`v3.6.0`
+> - **对应实施版本**：`v3.6.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -140,6 +140,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **自动化脚本** | [`scripts/generate_image.py`](../scripts/generate_image.py) | 图形生成、自动保存与图显渲染脚本 |
 | **自动化脚本** | [`scripts/rename_session.sh`](../scripts/rename_session.sh) | 会话一键重命名并锁定 RPC 脚本 |
 | **自动化脚本** | [`scripts/init_dir.sh`](../scripts/init_dir.sh) | 新建目录自动化初始化四件套脚本 |
+| **自动化脚本** | [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) | 地图导航式能力路由器、核心入口提取与版本速查脚本 |
 | **管控机制** | [`scripts/control_gates.sh`](../scripts/control_gates.sh) | 状态层：由磁盘实况推导 G1~G4 并输出量化看板与状态快照 |
 | **管控机制** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs) | 冗余检测：词级相似度识别真复制粘贴（内置自检） |
 | **管控机制** | [`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs) | 冲突检测：五类冲突（版本/计数/指标/标识/死链）识别与裁决建议 |
@@ -173,6 +174,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **快速通道** | [`indexes/shortcuts_index.md`](shortcuts_index.md) | 地图式高速干道路由导航与快速口令矩阵（G0~G3 四级权重） |
 | **能力体系** | [`indexes/dsh_capabilities.md`](dsh_capabilities.md) | DSH 宿主基座全景能力架构图与运行机制 |
 | **全能力层** | [`indexes/capabilities_index.md`](capabilities_index.md) | 五大能力层（插件/Agent/CLI/MCP/Skill）全景索引与正负案例接口法典 |
+| **导航路由** | [`indexes/navigation_router.md`](navigation_router.md) | 地图导航式能力路由层：起点意图到终点落地的三级路由指引与避坑路况模型 |
 | **工具接口** | [`indexes/tool_interfaces.md`](tool_interfaces.md) | 全量系统工具与插件标准接口矩阵封装 |
 | **长期记忆** | [`memory/context_memory.md`](../memory/context_memory.md) | 用户偏好、长期环境约定与核心参数沉淀 |
 | **经验知识** | [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 实战排查出的避坑指南与底层机制认知 |
