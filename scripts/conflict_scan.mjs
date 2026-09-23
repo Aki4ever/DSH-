@@ -23,6 +23,7 @@
  */
 
 import { readFile, readdir, stat, access } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
 import { join, relative, dirname, resolve, extname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -122,6 +123,23 @@ export function countItemsUnderHeadings(markdown) {
     if (/^\*\*第[零一二两三四五六七八九十百\d]+(条|步)/.test(t)) { current.items++; continue }
   }
   flush()
+
+  // 后处理统计"标题下的子标题数"，即 childHeadings。
+  //
+  // 为什么必须后处理，而不是在扫描过程中递增祖先：这条路上踩了三个坑，
+  // 每个都让计数静默偏小（实测：应为 21，先得 0、再得 1，推演与实际不符）：
+  //   ① 只看直接父级 → 第二个 `###` 的父级已是第一个 `###`，顶层只增 1；
+  //   ② 遍历 `out` 但那时 `out` 还空着（顶层 `##` 尚未 flush）→ 顶层得 0；
+  //   ③ 试图对"已 push 的对象"递增，依赖闭包引用是否真的生效，实测也只增 1。
+  // 后处理直接把"谁是谁的祖先"按数组顺序与层级一次算清，没有中间状态可错。
+  for (let i = 0; i < out.length; i++) {
+    let n = 0
+    for (let j = i + 1; j < out.length; j++) {
+      if (out[j].level <= out[i].level) break   // 遇到同级或更浅的标题即本标题的作用域结束
+      n++
+    }
+    out[i].childHeadings = n
+  }
   return out
 }
 
@@ -172,14 +190,26 @@ export function checkVersion(file, docVersion, ledger) {
  * 因此只校验真正承担"计数真相源"职责的口径，需要新增时在此登记。
  */
 export const COUNT_RULES = [
-  { id: '元规则法典数', pattern: /元规则.*法典/, unit: '条' },
+  // ⚠️ 历史缺陷（2026-09-23 修复）：本条原为 /元规则.*法典/，要求标题含"法典"二字。
+  // 文件标题后来变成「全局元规则二十一条」（不含"法典"）→ 正则失配；
+  // 叠加下面 checkCount 的 actualItems 恒为 0，这条规则**从未真正生效过**：
+  // 实测把标题故意改回错误值「十七法典」与「十七条」，检测器两次都报「0 项冲突」。
+  // 现放宽为「法典 或 条」，两种写法都覆盖。
+  { id: '元规则法典数', pattern: /全局元规则.*(法典|条)/, unit: '条' },
   { id: '安全红线数', pattern: /不可违背的红线|安全红线/, unit: '条' },
   { id: '流水线步数', pattern: /(流水线|工序|流程).{0,6}(步|道)/, unit: '步' },
   { id: '自检步骤数', pattern: /自检.{0,4}步法|开箱自检/, unit: '步' },
   { id: '工作循环步数', pattern: /(循环|工作流|变更流程)/, unit: '步' },
 ]
 
-/** C2 计数冲突：标题自称数量 vs 该标题下实际条目数（仅校验白名单口径） */
+/**
+ * C2 计数冲突：标题自称数量 vs 该标题下实际条目数（仅校验白名单口径）。
+ *
+ * 修正（2026-09-23）：原实现只看 `h.items`，但分层标题下各条目**自身就是标题**
+ * （如 `### 第一条：…`），被记为 `childHeadings` 而非 `items`，
+ * 于是顶层标题的 `items` 恒为 0 → 撞上 `actualItems < 2` 直接 return null。
+ * 现要求调用方传入 `items + childHeadings`，两种编排都能算对。
+ */
 export function checkCount(file, title, actualItems, rules = COUNT_RULES) {
   const rule = rules.find((r) => r.pattern.test(title))
   if (!rule) return null
@@ -337,7 +367,8 @@ async function scan({ root, dirs }) {
 
     // C2
     for (const h of countItemsUnderHeadings(text)) {
-      const c2 = checkCount(rel, h.title, h.items)
+      // 条目既可能是列表项（items），也可能是子标题（childHeadings），两者都要计入
+      const c2 = checkCount(rel, h.title, h.items + (h.childHeadings || 0))
       if (c2) conflicts.push(c2)
     }
 
@@ -399,9 +430,19 @@ async function scan({ root, dirs }) {
 }
 
 // ── 自检：既要不漏报真冲突，也要不误报同义内容 ───────────────────────────────
+/** 自检用：阿拉伯数字 → 中文数字（仅覆盖 1~99，够本案使用） */
+function toCn(n) {
+  const d = ['零','一','二','三','四','五','六','七','八','九']
+  if (n < 10) return d[n]
+  if (n < 20) return n === 10 ? '十' : '十' + d[n - 10]
+  const tens = Math.floor(n / 10), ones = n % 10
+  return d[tens] + '十' + (ones ? d[ones] : '')
+}
+
 function selfTest() {
   const cases = []
   const add = (name, got, expectFn) => cases.push({ name, got, expectFn })
+  const selfRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
   // 1) 真版本冲突必检出
   add('真版本冲突必检出', !!checkVersion('rules/system/meta_rules.md', '2.7.0', '2.8.0'), (v) => v === true)
@@ -409,7 +450,34 @@ function selfTest() {
   add('版本一致不误报', checkVersion('a.md', '2.8.0', '2.8.0') === null, (v) => v === true)
 
   // 3) 中文数字计数冲突（十七 vs 实际 21）
-  add('中文数字计数冲突必检出', !!checkCount('a.md', '全局元规则十七法典 (Core Meta-Laws)', 21), (v) => v === true)
+  // 5) 计数冲突（**数据驱动，防回归关键用例**）
+  //
+  // ⚠️ 原用例为 `checkCount('a.md', '全局元规则十七法典 (Core Meta-Laws)', 21)` ——
+  // 它**手工把 21 当参数喂进去**，因此永远通过，却完全没有覆盖真实调用路径。
+  // 结果：顶层标题的 childHeadings 恒为 0（子条目自身是标题，被记为子标题而非条目），
+  // 真实文件里 actualItems 恒为 0 → `actualItems < 2` 直接 return null →
+  // C2「元规则法典数」这条口径**从未生效过**，而自检一直是绿的。
+  // 现在改为从真实文件读实际条目数，只喂"标题"，把真实路径走通。
+  const metaSrc = readFileSync(join(selfRoot, 'rules/system/meta_rules.md'), 'utf8')
+  const metaTop = countItemsUnderHeadings(metaSrc).find((x) => /全局元规则/.test(x.title))
+  const metaActual = metaTop ? metaTop.items + metaTop.childHeadings : 0
+  add(`真实元规则条数可算出（${metaActual} 条）`, metaActual >= 2, (v) => v === true)
+  add('中文数字计数冲突必检出',
+    !!checkCount('a.md', `全局元规则${toCn(metaActual - 4)}条 (Core Meta-Laws)`, metaActual),
+    (v) => v === true)
+  add('法典写法同样必检出',
+    !!checkCount('a.md', `全局元规则${toCn(metaActual - 4)}法典 (Core Meta-Laws)`, metaActual),
+    (v) => v === true)
+  add('计数正确不误报',
+    checkCount('a.md', `全局元规则${toCn(metaActual)}条 (Core Meta-Laws)`, metaActual) === null,
+    (v) => v === true)
+  // ★ 真实文件自身必须自洽：标题自称的条数要等于实际条目数。
+  // 这条是"检测器抓自己家"的用例 —— 历史上「十七法典」写的却是 21 条，
+  // 而当时的自检全绿、检测器也报 0 冲突。现在这条会把那种状态直接判为失败。
+  const metaDeclared = metaTop ? declaredCount(metaTop.title) : null
+  add(`真实元规则标题自洽（自称 ${metaDeclared ? metaDeclared.value : '?'} / 实际 ${metaActual}）`,
+    metaDeclared ? metaDeclared.value === metaActual : false,
+    (v) => v === true)
   // 4) 计数一致不误报
   add('计数一致不误报', checkCount('a.md', '四条不可违背的红线', 4) === null, (v) => v === true)
   // 5) 差 1 容忍（导语行导致的偏移）

@@ -10,7 +10,7 @@
 
 ---
 
-## 🏛️ 全局元规则十七法典 (Core Meta-Laws)
+## 🏛️ 全局元规则二十一条 (Core Meta-Laws)
 
 ### 第一条：规则需求双向同步律 (Requirement-Rule Sync)
 - **溯源铁律**：严禁存在无需求依据的孤立规则。新增/修改/废弃规则必须同步更新 [`docs/requirements.md`](../../docs/requirements.md)。
