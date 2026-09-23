@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.6.0`
+> - **当前系统实施总版本**：`v4.7.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1792,6 +1792,27 @@
   - [x] 多官网精美组件检索图控法典建立并统合进知识库；
   - [x] 新能力标准化命名与双层接口生命周期法典化；
   - [x] 全局台账与专项目录版本统一推进至 v4.6.0。
+
+---
+
+### REQ-065: 管控机制实况巡检与信息图二期实测重绘 (v4.7.0)
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.7.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-020`）
+- **核心诉求与交付物**：
+  1. **管控机制全景实测巡检**：执行 G1~G4 四道门禁、骨架齐备率、防丢覆盖、孤儿目录、未提交代码与双检查重全面探活；
+  2. **信息图二期实测数据重绘**：将实测数据（65需求条目、70文件/494实质块、单行最高51/限65、v4.7.0）重绘进 `assets/generated_images/control_mechanism_infographic_v2.svg` 并同步生成 PNG；
+  3. **版本全生命周期强同步**：受管文档与主台账版本统一跃迁至 v4.7.0。
+- **关联文件**：
+  - `assets/generated_images/control_mechanism_infographic_v2.svg`
+  - `assets/generated_images/control_mechanism_infographic_v2.png`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 管控机制全要素物理探针巡检完成；
+  - [x] 信息图 SVG/PNG 完成实测数据重绘；
+  - [x] 全局台账与专项目录版本统一推进至 v4.7.0。
 
 ---
 
