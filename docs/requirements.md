@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.0.0`
+> - **当前系统实施总版本**：`v4.1.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1656,6 +1656,29 @@
   - [x] 第二十七条元规则写入生效；
   - [x] 任务执行流固化六大可见实体交付物契约；
   - [x] 全局台账与专项目录版本统一跃迁至里程碑 v4.0.0。
+
+---
+
+### REQ-059: 报错反思防复发闭环、流程刚柔分级矩阵与交付输出框架刚性化
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.1.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-014`）
+- **核心诉求与交付物**：
+  1. **元规则第二十八条与报错防复发长期台账**：在 [`rules/system/meta_rules.md`](../rules/system/meta_rules.md) 确立《报错归因记录与防复发优化律》，落地 [`memory/error_ledger.md`](../memory/error_ledger.md)，非零退出与断言失败强制三段式解构并反哺前置探针自检；
+  2. **流程刚柔分级实施准则**：在 [`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) 明确划分“绝对刚性实施（安全红线/真实性/状态/标准输出框架）”与“弹性自适应实施（并发调度/深度上下文遍历/独立PRD）”边界；
+  3. **交付收尾刚性输出框架**：在元规则第二十九条与执行流中固化交付收尾五大刚性模块（状态徽标、核心成果、实体入口、量化门禁/未验证声明、流程回溯卡），缺一不可。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `memory/error_ledger.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 第二十八条、第二十九条元规则写入生效；
+  - [x] 任务执行流固化流程刚柔分级矩阵与交付五大模块；
+  - [x] 长期报错台账模板与规范建立；
+  - [x] 全局台账与专项目录版本统一推进至 v4.1.0。
 
 ---
 

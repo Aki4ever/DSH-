@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.0.0`
-> - **对应实施版本**：`v4.0.0`
+> - **当前文档版本**：`v4.1.0`
+> - **对应实施版本**：`v4.1.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -184,3 +184,4 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **长期记忆** | [`memory/context_memory.md`](../memory/context_memory.md) | 用户偏好、长期环境约定与核心参数沉淀 |
 | **经验知识** | [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 实战排查出的避坑指南与底层机制认知 |
 | **效率审计** | [`memory/efficiency_audit_log.md`](../memory/efficiency_audit_log.md) | 思考决策与执行效率全景量化审计台账 (M1~M6六维指标) |
+| **错误台账** | [`memory/error_ledger.md`](../memory/error_ledger.md) | 任务报错归因与防复发长期台账，典型失误指纹与防复发探针 |
