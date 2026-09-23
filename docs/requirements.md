@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v3.9.0`
+> - **当前系统实施总版本**：`v4.0.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1635,6 +1635,27 @@
   - [x] 第二十六条元规则写入生效；
   - [x] 第一性原理与实证调查五步法规约落地；
   - [x] 全局台账与专项目录版本统一推进至 v3.9.0。
+
+---
+
+### REQ-058: 显式交付状态、六大可见即用实体产物与极端任务聚焦
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.0.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-013`）
+- **核心诉求与交付物**：
+  1. **显式交付状态置顶**：首屏第一行必须严格以 🟢【真实实施完成态】或 🟡【仅方案规划态】等标准化徽标定性，彻底消灭模糊交付；
+  2. **六大实体产物可见即用铁律**：交付收尾中必须具备实体入口（文案、DMG安装包、Web服务URL、App/脚本、物理文件路径、可视化图片），真实存在且开箱即用；
+  3. **极端任务聚焦与无关问题静默**：严格只围绕本次任务直接目标答复，客套寒暄、发散思考彻底 100% 静默过滤。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 第二十七条元规则写入生效；
+  - [x] 任务执行流固化六大可见实体交付物契约；
+  - [x] 全局台账与专项目录版本统一跃迁至里程碑 v4.0.0。
 
 ---
 
