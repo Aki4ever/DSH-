@@ -1,9 +1,9 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v3.1.0`
+> - **当前系统实施总版本**：`v3.2.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
-> - **最后同步时间**：2026-09-22
+> - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
 
 本文档是本项目唯一的**独立核心需求管理台账**。按照系统元规则，所有规则的提出、变动与注销都必须在此记录，杜绝没有需求依据的规则变更。
@@ -1420,3 +1420,46 @@
     与人工按规范打分的质量有差距，模型仍应在首轮调用 `rename_session.sh` 优化；
   - 存量改名的**跨重启持久性已验证**（重启后复查 41 条合规标题仍在），但自动命名对
     "重启后新建会话"的覆盖情况，同样要等插件加载后才能验证。
+
+---
+
+### REQ-050：任务看板进度同步、界面中文化与精简输出（GCM-LEAN）
+- **实施版本**：`v3.2.0`
+- **需求状态**：`[Release 稳定生效]`
+- **需求文案**：[`docs/constraint_mechanism_optimize_4.md`](constraint_mechanism_optimize_4.md)
+- **背景阐述**：用户对管控机制提出五条优化——① 每次任务自约束输入/输出，杜绝废话；
+  ② 任务看板每行后跟实时进度、首栏给整体进度；③ `bash`/`think` 等全部中文；
+  ④ 输出精简到一屏内、废话用小字；⑤ 能不重启就不重启。用户就改动范围 / 进度口径 /
+  中文化深度三项已拍板（见需求文案第一章）。
+- **技术核实（实测复现）**：
+  1. 看板即 `TodoPanel`（`conversation.input.dock` order=0），仅空清单不渲染；
+  2. `todos` 投影只有 `content` + `status` 三态，**没有数字进度字段** → 进度只能由状态派生；
+  3. 英文标签是**硬编码设计字面量**（`Think`、`VARIANT_TITLES`），不在语言包里；
+  4. 宿主 boot 图每个插件带 `?rev=哈希` → 改文件后**刷新页面即生效，无需重启 App**；
+  5. **本机 App 运行在只读 DMG 上**（`/dev/disk17s1 … read-only`，实测写入报 `EROFS`）
+     → 必须先把 App 复制到可写位置才能打补丁，这正是本次唯一一次重启的物理原因；
+  6. 原包为 Developer ID 签名（`H8MSV8BL2G`）且无特殊 entitlements，改动后需 ad-hoc 重签。
+- **核心诉求与交付物**：
+  1. **看板进度**：`client.js` 新增 `todoDone/todoPercent/itemPercent/itemStateText`，
+     标题栏加总进度条 + `N%（已完成/总数）`，每行加「状态字 + 迷你进度条」；
+  2. **界面中文化**：`Think`→`思考中`；`Search/Read/Bash/Write/Edit/Code/Tool call`
+     → `搜索/读取/执行命令/写入/编辑/代码/工具调用`；
+  3. **可重放补丁器**：新增 [`scripts/patch_dsh_todo_progress.cjs`](../scripts/patch_dsh_todo_progress.cjs)
+     ——幂等（锚点唯一性校验 + 已打则跳过）、自动备份、回读六项校验、只读卷拒绝、
+     优先选可写安装位；`--check` 退出码即补丁在位与否（供门禁/收尾使用）；
+  4. **安装位迁移**：`ditto` 复制到 `/Applications/DSH Desktop.app` 并 ad-hoc 重签。
+- **关联文件**：
+  - `scripts/patch_dsh_todo_progress.cjs`
+  - `docs/constraint_mechanism_optimize_4.md`
+  - 补丁目标（App 内置，非本仓）：`@deepseek-ai/dsh-client-ui-conversation/lib/client.js`、
+    `@deepseek-ai/dsh-client-ui-tool/lib/client.js`
+- **验收标准**：
+  - [x] 补丁器 `--check` 六项回读全绿（看板总进度条 / 每行进度 / 进度样式 / 思考中 / 执行命令 / 搜索）；
+  - [x] **补丁可从原始包完整重放**：对 DMG 原始 `client.js` 副本跑 `--apply` 得到的产物与落地副本逐字节一致；
+  - [x] 补丁后 `node --check` 语法通过（会话包 + 工具包）；
+  - [x] **补丁幂等实测**：重复 `--apply` 不产生二次插入、不重复追加 CSS；
+  - [x] 只读卷保护实测：对 DMG 内路径 `--apply` 被拒绝并给出迁移指引（退出码 3）；
+  - [x] 进度口径可复算：2 完成 + 1 进行中 / 7 项 = 36%；
+  - [ ] ⬜ **视觉效果未验证**：我无法截取浏览器画面，需用户重启后肉眼确认；
+  - [ ] ⬜ 重启后需确认新安装位（`/Applications`）能正常启动并加载已打补丁的插件；
+  - [ ] ⬜ App 升级会覆盖补丁，需重跑补丁器——目前**没有自动守护**，属已知缺口。
