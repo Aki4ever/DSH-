@@ -1,5 +1,10 @@
 # 项目页面资产与视觉台账模板 (Page Ledger Template)
 
+> ### 🏷️ **版本信息与实施追踪**
+> - **当前模板版本**：`v3.1.0`（对齐台账总版本）
+> - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
+> - **对齐时间**：2026-09-23（REQ-047）
+
 > 规范遵循：[`rules/workflow/page_ledger_specification.md`](../rules/workflow/page_ledger_specification.md)  
 > 使用时机：所有前端、客户端、小程序或 GUI 类项目，在 `docs/page_ledger.md` 或项目目录下维护。
 
