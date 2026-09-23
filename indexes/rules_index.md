@@ -1,10 +1,10 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v3.2.0`
-> - **对应实施版本**：`v3.2.0`
+> - **当前文档版本**：`v3.3.0`
+> - **对应实施版本**：`v3.3.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
-> - **最后更新日期**：2026-09-22
+> - **最后更新日期**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
 
 本文档是全局规则工程所有规则、流程、协议、知识库、外部生态与资产的**全局索引地图**。按层级与业务领域编目，方便快速定位与召回。
@@ -49,8 +49,14 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 **双检处置分流**：冗余 → 合并为迭代版本，保留单一权威源；
 冲突 → 先出裁决方案，由用户确认后再迭代，**禁止自行取舍**。
 
-机制面向普通读者的图文说明见 [`docs/constraint_mechanism_spec.md`](../docs/constraint_mechanism_spec.md) 与
-[`assets/generated_images/gcm_gate_control_infographic.svg`](../assets/generated_images/gcm_gate_control_infographic.svg)。
+机制面向普通读者的图文说明见 [`docs/constraint_mechanism_spec.md`](../docs/constraint_mechanism_spec.md)。
+
+**机制信息图（版本分工，唯一权威出处即本节）**：
+
+| 版本 | 载体 | 数据口径与用法 |
+| :--- | :--- | :--- |
+| **基线版式** | [`assets/generated_images/gcm_gate_control_infographic.svg`](../assets/generated_images/gcm_gate_control_infographic.svg) + `.png` | REQ-044 原始产出，固化版式基准；**内含写死数字（如"23 条通道"）已非当前实况，不得当作现状引用** |
+| **现行实况版** | [`assets/generated_images/control_mechanism_infographic_v2.svg`](../assets/generated_images/control_mechanism_infographic_v2.svg) + `.png` | 复用基线版式、按实跑数据重绘；数字对应快照 2026-09-23 16:02（门禁 4/4 · 通道 24 条 · 双检与校准全 0）。**资产已落盘，台账条目尚未登记**，引用前先核对当轮实跑 |
 
 ---
 
@@ -165,6 +171,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **外部生态** | [`indexes/extension_ecosystem.md`](extension_ecosystem.md) | DSH 外部可扩展能力生态与协议全景矩阵（MCP / Skill / CLI / API / Browser） |
 | **快速通道** | [`indexes/shortcuts_index.md`](shortcuts_index.md) | 地图式高速干道路由导航与快速口令矩阵（G0~G3 四级权重） |
 | **能力体系** | [`indexes/dsh_capabilities.md`](dsh_capabilities.md) | DSH 宿主基座全景能力架构图与运行机制 |
+| **全能力层** | [`indexes/capabilities_index.md`](capabilities_index.md) | 五大能力层（插件/Agent/CLI/MCP/Skill）全景索引与正负案例接口法典 |
 | **工具接口** | [`indexes/tool_interfaces.md`](tool_interfaces.md) | 全量系统工具与插件标准接口矩阵封装 |
 | **长期记忆** | [`memory/context_memory.md`](../memory/context_memory.md) | 用户偏好、长期环境约定与核心参数沉淀 |
 | **经验知识** | [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 实战排查出的避坑指南与底层机制认知 |

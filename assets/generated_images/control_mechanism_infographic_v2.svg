@@ -1,0 +1,268 @@
+<svg width="1120" height="2000" viewBox="0 0 1120 2000" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1120" y2="2000" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#070B12"/>
+      <stop offset="50%" stop-color="#0F1624"/>
+      <stop offset="100%" stop-color="#05080D"/>
+    </linearGradient>
+    <linearGradient id="barGrad" x1="0" y1="0" x2="1120" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D2FF"/>
+      <stop offset="50%" stop-color="#2EC4B6"/>
+      <stop offset="100%" stop-color="#8A2BE2"/>
+    </linearGradient>
+    <linearGradient id="panelBg" x1="0" y1="0" x2="1040" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#131C2B"/>
+      <stop offset="100%" stop-color="#0B1220"/>
+    </linearGradient>
+    <linearGradient id="gateBar" x1="0" y1="0" x2="205" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2EC4B6" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#00D2FF" stop-opacity="0.10"/>
+    </linearGradient>
+    <linearGradient id="flowGrad" x1="0" y1="0" x2="990" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D2FF"/>
+      <stop offset="50%" stop-color="#2EC4B6"/>
+      <stop offset="100%" stop-color="#8A2BE2"/>
+    </linearGradient>
+    <filter id="soft" x="-30" y="-30" width="1180" height="2060" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+    <marker id="arrowCyan" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0 1 L11 6 L0 11 z" fill="#2EC4B6"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0 1 L11 6 L0 11 z" fill="#FF6B6B"/>
+    </marker>
+  </defs>
+
+  <!-- ══ 底板 ══ -->
+  <rect width="1120" height="2000" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1120" height="7" fill="url(#barGrad)"/>
+
+  <!-- ══ 抬头 ══ -->
+  <rect x="60" y="46" width="34" height="4" rx="2" fill="#2EC4B6"/>
+  <text x="60" y="86" fill="#FFFFFF" font-size="36" font-weight="700">管控机制 · 运作机制全景图</text>
+  <text x="60" y="120" fill="#93A9C4" font-size="16">它不负责"干活"，只回答两件事：现在能不能动手？凭什么下这个结论？</text>
+  <text x="882" y="86" fill="#7FD8FF" font-size="15" font-weight="600">实测快照</text>
+  <text x="882" y="110" fill="#DCE6F5" font-size="14">2026-09-23 16:02</text>
+  <text x="882" y="130" fill="#6F86A6" font-size="12">v3.3.0 · 本次实跑</text>
+
+  <!-- ══ ① 一句话定义 ══ -->
+  <rect x="60" y="150" width="1000" height="128" rx="14" fill="url(#panelBg)" stroke="#1F3A57" stroke-width="1.5"/>
+  <rect x="60" y="150" width="5" height="128" rx="2.5" fill="#00D2FF"/>
+  <text x="88" y="186" fill="#00D2FF" font-size="14" font-weight="700">一句话定义</text>
+  <text x="88" y="218" fill="#EAF3FF" font-size="19" font-weight="600">它不听"我做完了"这句话，只用硬盘上真实存在的东西下判断。</text>
+  <text x="88" y="248" fill="#A8BBD4" font-size="14.5">四道判定全部由脚本实算 → 写进一份状态文件 → 拦截层读这份文件决定放行还是拒绝。</text>
+  <text x="88" y="268" fill="#7C93B0" font-size="13.5">结论与"谁在说"无关：换一个会话、换一个模型，读到的都是同一份磁盘实况。</text>
+
+  <!-- ══ ② 四道门禁 ══ -->
+  <rect x="60" y="304" width="5" height="20" rx="2.5" fill="#2EC4B6"/>
+  <text x="76" y="321" fill="#7FD8FF" font-size="24" font-weight="700">① 四道门禁：一次放行要过的四关</text>
+  <text x="490" y="321" fill="#9FB4CC" font-size="15">累积语义 · 必须 G1→G4 全部通过，才允许改动工程</text>
+  <line x1="60" y1="345" x2="1060" y2="345" stroke="#1C2A40" stroke-width="1.5"/>
+
+  <!-- G1 -->
+  <rect x="60" y="364" width="205" height="216" rx="12" fill="url(#panelBg)" stroke="#2EC4B6" stroke-width="1.5"/>
+  <rect x="60" y="364" width="205" height="38" rx="12" fill="url(#gateBar)"/>
+  <text x="78" y="390" fill="#EAFFF9" font-size="15" font-weight="700">G1 项目初始化</text>
+  <text x="247" y="390" fill="#2EC4B6" font-size="16" font-weight="700" text-anchor="end">✅</text>
+  <text x="78" y="434" fill="#FFFFFF" font-size="27" font-weight="700">11/11</text>
+  <text x="78" y="454" fill="#93A9C4" font-size="12.5">骨架齐备率</text>
+  <text x="78" y="482" fill="#FFFFFF" font-size="27" font-weight="700">8/8</text>
+  <text x="78" y="502" fill="#93A9C4" font-size="12.5">防丢覆盖率</text>
+  <line x1="78" y1="520" x2="247" y2="520" stroke="#1E2C40" stroke-width="1"/>
+  <text x="78" y="542" fill="#8FA6C0" font-size="12.5">仓库在不在</text>
+  <text x="78" y="562" fill="#8FA6C0" font-size="12.5">目录骨架是否完整</text>
+
+  <!-- G2 -->
+  <rect x="325" y="364" width="205" height="216" rx="12" fill="url(#panelBg)" stroke="#2EC4B6" stroke-width="1.5"/>
+  <rect x="325" y="364" width="205" height="38" rx="12" fill="url(#gateBar)"/>
+  <text x="343" y="390" fill="#EAFFF9" font-size="15" font-weight="700">G2 工程结构化</text>
+  <text x="512" y="390" fill="#2EC4B6" font-size="16" font-weight="700" text-anchor="end">✅</text>
+  <text x="343" y="434" fill="#FFFFFF" font-size="27" font-weight="700">5/5</text>
+  <text x="343" y="454" fill="#93A9C4" font-size="12.5">合规项</text>
+  <text x="343" y="482" fill="#FFFFFF" font-size="27" font-weight="700">0</text>
+  <text x="343" y="502" fill="#93A9C4" font-size="12.5">孤儿目录</text>
+  <line x1="343" y1="520" x2="512" y2="520" stroke="#1E2C40" stroke-width="1"/>
+  <text x="343" y="542" fill="#8FA6C0" font-size="12.5">目录有主 8/8</text>
+  <text x="343" y="562" fill="#8FA6C0" font-size="12.5">散落垃圾 0 · 无标题 0/67</text>
+
+  <!-- G3 -->
+  <rect x="590" y="364" width="205" height="216" rx="12" fill="url(#panelBg)" stroke="#2EC4B6" stroke-width="1.5"/>
+  <rect x="590" y="364" width="205" height="38" rx="12" fill="url(#gateBar)"/>
+  <text x="608" y="390" fill="#EAFFF9" font-size="15" font-weight="700">G3 需求文档同步</text>
+  <text x="777" y="390" fill="#2EC4B6" font-size="16" font-weight="700" text-anchor="end">✅</text>
+  <text x="608" y="434" fill="#FFFFFF" font-size="27" font-weight="700">50</text>
+  <text x="608" y="454" fill="#93A9C4" font-size="12.5">需求条目</text>
+  <text x="608" y="482" fill="#FFFFFF" font-size="27" font-weight="700">0</text>
+  <text x="608" y="502" fill="#93A9C4" font-size="12.5">未提交变更</text>
+  <line x1="608" y1="520" x2="777" y2="520" stroke="#1E2C40" stroke-width="1"/>
+  <text x="608" y="542" fill="#8FA6C0" font-size="12.5">台账版本 v3.3.0</text>
+  <text x="608" y="562" fill="#8FA6C0" font-size="12.5">缺号 0 · 工作树干净</text>
+
+  <!-- G4 -->
+  <rect x="855" y="364" width="205" height="216" rx="12" fill="url(#panelBg)" stroke="#2EC4B6" stroke-width="1.5"/>
+  <rect x="855" y="364" width="205" height="38" rx="12" fill="url(#gateBar)"/>
+  <text x="873" y="390" fill="#EAFFF9" font-size="15" font-weight="700">G4 冗余检测</text>
+  <text x="1042" y="390" fill="#2EC4B6" font-size="16" font-weight="700" text-anchor="end">✅</text>
+  <text x="873" y="434" fill="#FFFFFF" font-size="27" font-weight="700">0</text>
+  <text x="873" y="454" fill="#93A9C4" font-size="12.5">高相似块对</text>
+  <text x="873" y="482" fill="#FFFFFF" font-size="27" font-weight="700">10</text>
+  <text x="873" y="502" fill="#93A9C4" font-size="12.5">重复标题</text>
+  <line x1="873" y1="520" x2="1042" y2="520" stroke="#1E2C40" stroke-width="1"/>
+  <text x="873" y="542" fill="#8FA6C0" font-size="12.5">扫描 61 文件 / 416 块</text>
+  <text x="873" y="562" fill="#8FA6C0" font-size="12.5">单行最高 42（限 45）</text>
+
+  <!-- 门禁结论条 -->
+  <rect x="60" y="602" width="490" height="62" rx="12" fill="#0C201E" stroke="#2EC4B6" stroke-width="1.5"/>
+  <text x="84" y="630" fill="#2EC4B6" font-size="16" font-weight="700">四道全过 → 放行</text>
+  <text x="84" y="651" fill="#9FC6BE" font-size="13">允许写文件、跑命令、提交推送；每步顶部常显进度卡</text>
+  <rect x="570" y="602" width="490" height="62" rx="12" fill="#20100F" stroke="#FF6B6B" stroke-width="1.5"/>
+  <text x="594" y="630" fill="#FF6B6B" font-size="16" font-weight="700">任意一道没过 → 拦下</text>
+  <text x="594" y="651" fill="#D6A9A6" font-size="13">拒绝改动型调用并指出卡点；只读与列计划永不被拦</text>
+
+  <!-- ══ ③ 三种状态机 ══ -->
+  <rect x="60" y="700" width="5" height="20" rx="2.5" fill="#FFB454"/>
+  <text x="76" y="717" fill="#7FD8FF" font-size="24" font-weight="700">② 拦截层只认三种状态</text>
+  <text x="500" y="717" fill="#9FB4CC" font-size="15">两种失败语义刻意分开，避免"抽签式"随机拒绝</text>
+  <line x1="60" y1="741" x2="1060" y2="741" stroke="#1C2A40" stroke-width="1.5"/>
+
+  <rect x="60" y="760" width="320" height="172" rx="12" fill="#0C201E" stroke="#2EC4B6" stroke-width="1.5"/>
+  <text x="84" y="794" fill="#2EC4B6" font-size="16" font-weight="700">状态一 · 全绿</text>
+  <text x="84" y="822" fill="#EAFFF9" font-size="14.5">依据成立 → 放行</text>
+  <text x="84" y="850" fill="#8FA6C0" font-size="13">判定当场只做一次内存查询，</text>
+  <text x="84" y="872" fill="#8FA6C0" font-size="13">不阻塞、不重复扫盘。</text>
+  <text x="84" y="902" fill="#7C93B0" font-size="12.5">本次实跑即为该状态</text>
+
+  <rect x="400" y="760" width="320" height="172" rx="12" fill="#20100F" stroke="#FF6B6B" stroke-width="1.5"/>
+  <text x="424" y="794" fill="#FF6B6B" font-size="16" font-weight="700">状态二 · 卡点</text>
+  <text x="424" y="822" fill="#EAFFF9" font-size="14.5">依据成立但不合格 → 拒绝</text>
+  <text x="424" y="850" fill="#8FA6C0" font-size="13">拒绝消息必须带上：卡在哪道门、</text>
+  <text x="424" y="872" fill="#8FA6C0" font-size="13">怎么修、以及只读工具仍可用。</text>
+  <text x="424" y="902" fill="#D6A9A6" font-size="12.5">硬阻断级别不可忽略，须实际修复</text>
+
+  <rect x="740" y="760" width="320" height="172" rx="12" fill="#241A0C" stroke="#FFB454" stroke-width="1.5"/>
+  <text x="764" y="794" fill="#FFB454" font-size="16" font-weight="700">状态三 · 不可证实</text>
+  <text x="764" y="822" fill="#EAFFF9" font-size="14.5">读不到、损坏、形状非法 → 拒绝</text>
+  <text x="764" y="850" fill="#8FA6C0" font-size="13">失败关闭：宁可要求重算一次，</text>
+  <text x="764" y="872" fill="#8FA6C0" font-size="13">也不静默放行。</text>
+  <text x="764" y="902" fill="#D8BE93" font-size="12.5">状态陈旧（&gt;5 秒）反而放行并后台刷新</text>
+
+  <!-- ══ ④ 四层架构 ══ -->
+  <rect x="60" y="966" width="5" height="20" rx="2.5" fill="#8A2BE2"/>
+  <text x="76" y="983" fill="#7FD8FF" font-size="24" font-weight="700">③ 四层分工：从"贴红线"到"真拦住"</text>
+  <text x="640" y="983" fill="#9FB4CC" font-size="15">数据单向流动，谁说真话只有一处</text>
+  <line x1="60" y1="1007" x2="1060" y2="1007" stroke="#1C2A40" stroke-width="1.5"/>
+
+  <rect x="60" y="1026" width="1000" height="72" rx="12" fill="url(#panelBg)" stroke="#2B4A6B" stroke-width="1.5"/>
+  <rect x="60" y="1026" width="5" height="72" rx="2.5" fill="#00D2FF"/>
+  <text x="86" y="1054" fill="#00D2FF" font-size="16" font-weight="700">第一层 · 注入层</text>
+  <text x="236" y="1054" fill="#C3D4E8" font-size="14">开工就把"不可违背的几条红线 + 该走哪条路"贴到眼前，细则按需再读</text>
+  <text x="86" y="1080" fill="#7C93B0" font-size="12.5">载体：AGENTS.md（宿主级 / 项目级）+ indexes/shortcuts_index.md</text>
+  <text x="820" y="1054" fill="#6F86A6" font-size="12.5">越长的会话越需要它</text>
+
+  <rect x="60" y="1110" width="1000" height="72" rx="12" fill="url(#panelBg)" stroke="#1F5E58" stroke-width="1.5"/>
+  <rect x="60" y="1110" width="5" height="72" rx="2.5" fill="#2EC4B6"/>
+  <text x="86" y="1138" fill="#2EC4B6" font-size="16" font-weight="700">第二层 · 状态层</text>
+  <text x="236" y="1138" fill="#C3D4E8" font-size="14">真的去数硬盘，算出四道门各自过没过，写进一份状态文件</text>
+  <text x="86" y="1164" fill="#7C93B0" font-size="12.5">载体：scripts/control_gates.sh（真相源）+ ai-control/config/gates.conf（唯一调参入口）</text>
+  <text x="820" y="1138" fill="#6F86A6" font-size="12.5">产出 status.json</text>
+
+  <rect x="60" y="1194" width="490" height="152" rx="12" fill="url(#panelBg)" stroke="#4B3A75" stroke-width="1.5"/>
+  <rect x="60" y="1194" width="5" height="152" rx="2.5" fill="#8A2BE2"/>
+  <text x="86" y="1224" fill="#B98BFF" font-size="16" font-weight="700">第三层 · 判定层</text>
+  <text x="86" y="1252" fill="#A8BBD4" font-size="13.5">门禁回答"能不能动手"；双检回答"改得对不对"</text>
+  <text x="86" y="1278" fill="#C3D4E8" font-size="13">· 查啰嗦　冗余检测　→ 合并为单一权威源</text>
+  <text x="86" y="1300" fill="#C3D4E8" font-size="13">· 查打架　冲突检测　→ 先出裁决方案再改</text>
+  <text x="86" y="1322" fill="#C3D4E8" font-size="13">· 存量校准 / 通道审计　→ 清零或书面说明</text>
+
+  <rect x="570" y="1194" width="490" height="152" rx="12" fill="url(#panelBg)" stroke="#6B2A3C" stroke-width="1.5"/>
+  <rect x="570" y="1194" width="5" height="152" rx="2.5" fill="#FF6B6B"/>
+  <text x="596" y="1224" fill="#FF8E8E" font-size="16" font-weight="700">第四层 · 拦截层</text>
+  <text x="596" y="1252" fill="#A8BBD4" font-size="13.5">插件住在宿主进程里，每个步骤前刷看板，每次调用前判放行</text>
+  <text x="596" y="1278" fill="#C3D4E8" font-size="13">· 看板：agent/pre-step 注入最新进度卡</text>
+  <text x="596" y="1300" fill="#C3D4E8" font-size="13">· 门禁：ctx.tools.guard 单调否决，拒绝不可翻回</text>
+  <text x="596" y="1322" fill="#C3D4E8" font-size="13">· 只读工具与列计划永远放行</text>
+
+  <!-- 数据流 -->
+  <rect x="60" y="1372" width="1000" height="86" rx="12" fill="#0A1220" stroke="#1C2A40" stroke-width="1.5"/>
+  <text x="86" y="1400" fill="#7FD8FF" font-size="13" font-weight="700">数据流（单向）</text>
+  <text x="86" y="1432" fill="#DCE6F5" font-size="15" font-weight="600">硬盘实况</text>
+  <line x1="186" y1="1427" x2="272" y2="1427" stroke="#2EC4B6" stroke-width="2" marker-end="url(#arrowCyan)"/>
+  <text x="284" y="1432" fill="#DCE6F5" font-size="15" font-weight="600">control_gates.sh 实算</text>
+  <line x1="500" y1="1427" x2="586" y2="1427" stroke="#2EC4B6" stroke-width="2" marker-end="url(#arrowCyan)"/>
+  <text x="598" y="1432" fill="#DCE6F5" font-size="15" font-weight="600">status.json</text>
+  <line x1="742" y1="1427" x2="828" y2="1427" stroke="#2EC4B6" stroke-width="2" marker-end="url(#arrowCyan)"/>
+  <text x="840" y="1432" fill="#DCE6F5" font-size="15" font-weight="600">拦截层否决</text>
+  <text x="86" y="1452" fill="#6F86A6" font-size="12">插件不自己算门禁，只消费状态文件 —— 判定权集中在脚本一处</text>
+
+  <!-- ══ ⑤ 自证清白 ══ -->
+  <rect x="60" y="1488" width="5" height="20" rx="2.5" fill="#2EC4B6"/>
+  <text x="76" y="1505" fill="#7FD8FF" font-size="24" font-weight="700">④ 凭什么信它：四个防退化设计</text>
+  <text x="600" y="1505" fill="#9FB4CC" font-size="15">把"口头承诺"换成可核对的事实</text>
+  <line x1="60" y1="1529" x2="1060" y2="1529" stroke="#1C2A40" stroke-width="1.5"/>
+
+  <rect x="60" y="1548" width="238" height="152" rx="12" fill="url(#panelBg)" stroke="#1F3A57" stroke-width="1.5"/>
+  <text x="82" y="1580" fill="#00D2FF" font-size="16" font-weight="700">只认硬盘不认嘴</text>
+  <text x="82" y="1610" fill="#A8BBD4" font-size="13">结论由脚本实算得出，</text>
+  <text x="82" y="1632" fill="#A8BBD4" font-size="13">自述的"已完成"不计入，</text>
+  <text x="82" y="1654" fill="#A8BBD4" font-size="13">进度无法靠口头推进。</text>
+  <text x="82" y="1682" fill="#6F86A6" font-size="12">退出码与阈值自检兜底</text>
+
+  <rect x="314" y="1548" width="238" height="152" rx="12" fill="url(#panelBg)" stroke="#1F3A57" stroke-width="1.5"/>
+  <text x="336" y="1580" fill="#00D2FF" font-size="16" font-weight="700">查不出来就算不过</text>
+  <text x="336" y="1610" fill="#A8BBD4" font-size="13">检测工具失效时判"未通过"，</text>
+  <text x="336" y="1632" fill="#A8BBD4" font-size="13">不允许拿"查不了"</text>
+  <text x="336" y="1654" fill="#A8BBD4" font-size="13">冒充"没问题"。</text>
+  <text x="336" y="1682" fill="#6F86A6" font-size="12">状态缺失即失败关闭</text>
+
+  <rect x="568" y="1548" width="238" height="152" rx="12" fill="url(#panelBg)" stroke="#1F3A57" stroke-width="1.5"/>
+  <text x="590" y="1580" fill="#FFB454" font-size="16" font-weight="700">逃生舱必须常开</text>
+  <text x="590" y="1610" fill="#A8BBD4" font-size="13">改门禁、修脚本、给任务改名的</text>
+  <text x="590" y="1632" fill="#A8BBD4" font-size="13">入口始终放行，否则会出现</text>
+  <text x="590" y="1654" fill="#A8BBD4" font-size="13">"修门禁须先过门禁"的死锁。</text>
+  <text x="590" y="1682" fill="#6F86A6" font-size="12">按结构化路径判定，非文本匹配</text>
+
+  <rect x="822" y="1548" width="238" height="152" rx="12" fill="url(#panelBg)" stroke="#1F3A57" stroke-width="1.5"/>
+  <text x="844" y="1580" fill="#FF6B6B" font-size="16" font-weight="700">故障不拖垮用户</text>
+  <text x="844" y="1610" fill="#A8BBD4" font-size="13">插件读盘失败、解析异常、</text>
+  <text x="844" y="1632" fill="#A8BBD4" font-size="13">宿主接口没就绪，一律降级，</text>
+  <text x="844" y="1654" fill="#A8BBD4" font-size="13">绝不把会话锁死。</text>
+  <text x="844" y="1682" fill="#6F86A6" font-size="12">加载器失败即降为空插件</text>
+
+  <!-- ══ ⑥ 随时可查 ══ -->
+  <rect x="60" y="1736" width="5" height="20" rx="2.5" fill="#00D2FF"/>
+  <text x="76" y="1753" fill="#7FD8FF" font-size="24" font-weight="700">⑤ 本轮实跑数字（都可复现）</text>
+  <text x="620" y="1753" fill="#9FB4CC" font-size="15">数字全部来自本次实跑，非文档复述</text>
+  <line x1="60" y1="1777" x2="1060" y2="1777" stroke="#1C2A40" stroke-width="1.5"/>
+
+  <rect x="60" y="1796" width="192" height="106" rx="12" fill="url(#panelBg)" stroke="#1F3A57" stroke-width="1.5"/>
+  <text x="80" y="1828" fill="#FFFFFF" font-size="28" font-weight="700">4/4</text>
+  <text x="80" y="1852" fill="#93A9C4" font-size="13">门禁通过</text>
+  <text x="80" y="1880" fill="#6F86A6" font-size="12">进度 100% · 可执行</text>
+
+  <rect x="264" y="1796" width="192" height="106" rx="12" fill="url(#panelBg)" stroke="#1F3A57" stroke-width="1.5"/>
+  <text x="284" y="1828" fill="#FFFFFF" font-size="28" font-weight="700">0</text>
+  <text x="284" y="1852" fill="#93A9C4" font-size="13">冗余 / 冲突 / 待对齐</text>
+  <text x="284" y="1880" fill="#6F86A6" font-size="12">另有 3 项书面豁免</text>
+
+  <rect x="468" y="1796" width="192" height="106" rx="12" fill="url(#panelBg)" stroke="#1F3A57" stroke-width="1.5"/>
+  <text x="488" y="1828" fill="#FFFFFF" font-size="28" font-weight="700">24</text>
+  <text x="488" y="1852" fill="#93A9C4" font-size="13">快速通道登记在册</text>
+  <text x="488" y="1880" fill="#6F86A6" font-size="12">死链 0 · 触发词无冲突</text>
+
+  <rect x="672" y="1796" width="192" height="106" rx="12" fill="url(#panelBg)" stroke="#1F3A57" stroke-width="1.5"/>
+  <text x="692" y="1828" fill="#FFFFFF" font-size="28" font-weight="700">11 / 5</text>
+  <text x="692" y="1852" fill="#93A9C4" font-size="13">十六步强制 / 建议</text>
+  <text x="692" y="1880" fill="#6F86A6" font-size="12">有判定手段者才强制</text>
+
+  <rect x="876" y="1796" width="184" height="106" rx="12" fill="#0C201E" stroke="#2EC4B6" stroke-width="1.5"/>
+  <text x="896" y="1825" fill="#2EC4B6" font-size="14" font-weight="700">拦截层在宿主内</text>
+  <text x="896" y="1850" fill="#9FC6BE" font-size="12.5">插件已激活 · 看板开</text>
+  <text x="896" y="1870" fill="#9FC6BE" font-size="12.5">硬门禁开 · 同进程</text>
+  <text x="896" y="1890" fill="#6F86A6" font-size="11.5">已落盘 plugin-status.txt</text>
+
+  <!-- ══ 页脚 ══ -->
+  <line x1="60" y1="1930" x2="1060" y2="1930" stroke="#16233A" stroke-width="1"/>
+  <text x="60" y="1958" fill="#6F86A6" font-size="13">想看细节就说一句话：管控机制全貌 / 门禁看板 / 查啰嗦 / 查打架 / 存量校准 / 通道审计 / 看图学管控</text>
+  <text x="60" y="1982" fill="#5C7192" font-size="12">全局规则工程 · 管控机制（注入层 / 状态层 / 判定层 / 拦截层）· 数据源 status.json（2026-09-23 16:02 实跑）· 权威口径见 indexes/rules_index.md</text>
+</svg>

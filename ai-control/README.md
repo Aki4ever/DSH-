@@ -17,9 +17,12 @@ ai-control/
 │   ├── index.mjs           拦截层：常显看板 + 工具调用否决
 │   ├── loader.mjs          故障安全加载器（加载失败降级为空插件）
 │   └── selftest.mjs        插件自检（33 项，禁止凭语法通过上线）
-└── reports/
-    ├── latest_status.md    最近一次管控快照（人类可读）
-    └── redundancy.json     最近一次冗余检测结果
+├── reports/
+│   ├── latest_status.md    最近一次管控快照（人类可读）
+│   └── redundancy.json     最近一次冗余检测结果
+└── requirements/
+    ├── README.md           管控机制专项需求同步归档仓
+    └── control_requirements_ledger.md 管控专属需求台账 (CR-xxx)
 ```
 
 运行时状态落在 `$DSH_HOME/.dsh-control/`：
@@ -51,6 +54,8 @@ ai-control/
 | `scripts/conflict_scan.mjs` | 同一事实说了两样（版本/计数/指标/标识/死链五类） | 冲突 → 先出裁决方案，由用户确认后再迭代 |
 | `scripts/legacy_align_scan.mjs` | 存量资产是否跟上新规范（命名/入口/版本/指纹/台账五类）；**脚本漏登记也能自动检出** | 待对齐清单必须清零或书面说明原因 |
 | `scripts/channel_audit.mjs` | 快速通道表是否可用（死通道/说法能否命中/触发词冲突） | 通道表必须无死链；退役通道必须删行 |
+| `scripts/check_freshness.mjs` | 全量存量与新增能力健康探活与时效新鲜度检测 | 确保所有能力 100% 最新可用 |
+| `scripts/sync_control_requirements.mjs` | 管控专属需求与全局需求台账双向同步校验 | 双向台账与版本必须完全一致 |
 
 **硬要求**：检测器不可用时一律判"未通过"，**不允许以"检测失效"充当通过**。
 

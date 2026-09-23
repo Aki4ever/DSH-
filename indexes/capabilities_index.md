@@ -1,0 +1,106 @@
+# 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
+
+> ### 🏷️ **版本信息与实施追踪**
+> - **当前文档版本**：`v3.3.0`
+> - **对应实施版本**：`v3.3.0`
+> - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
+> - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
+> - **生效状态**：`[Release 稳定生效]`
+
+本文档是系统内**五大核心能力层（Plugins / Agents / CLI / MCP / Skills）**的统一全景索引与标准化接口法典。
+采用**双层架构**设计：
+- **外层：能力索引接口表**：提供名称、定位、核心正向用法、负面反例/踩坑红线；
+- **内层：能力实操与集成详情**：提供详细参数、执行指令、调用契约与容错防护。
+
+---
+
+## 🧭 一、五大能力层统一索引接口总表 (外层速查矩阵)
+
+| 类别 | 能力名称 (Identifier) | 大致怎么用 (正向推荐场景) | 负面反例 / 踩坑红线 (When NOT to use) | 详情指引 |
+| :--- | :--- | :--- | :--- | :---: |
+| **🔌 插件 (Plugin)** | `dsh-client-ui-conversation` | 用于渲染会话流面板、对话输入框、气泡流与折叠卡片 | **严禁**直接脱离 DSH 打包运行环境使用；不可篡改非幂等 DOM 锚点 | [§二.1](#1-插件层-plugins-实操详情) |
+| **🔌 插件 (Plugin)** | `dsh-client-ui-tool` | 负责渲染文件读写、Bash 执行、进度卡与折叠状态 | **严禁**在前端覆写工具返回数据格式；不可拦截非只读工具卡片 | [§二.1](#1-插件层-plugins-实操详情) |
+| **🔌 插件 (Plugin)** | `dsh-control-gates` | 实时计算与常显 G1~G4 四项管控门禁看板 | **严禁**手动篡改缓存报告伪造通过；必须基于磁盘实况推导 | [§二.1](#1-插件层-plugins-实操详情) |
+| **🤖 代理 (Agent)** | `subagent` | **独立子任务**：无上下文继承，用于独立的审计、搜索、并行调研 | **严禁**在需要继承前文大量对话历史时使用（会导致上下文断流） | [§二.2](#2-智能体与代理层-agents-实操详情) |
+| **🤖 代理 (Agent)** | `subagent_fork` | **继承式子任务**：完整继承当前上下文，用于后续方案细化与分支评审 | **严禁**用于完全无关的并发耗时查询，避免上下文累赘消耗 Token | [§二.2](#2-智能体与代理层-agents-实操详情) |
+| **🤖 代理 (Agent)** | `workflow` | **多代理 JS 编排**：利用 pipeline/parallel 对海量文件进行批量巡检与重构 | **严禁**写 TypeScript 代码；严禁在代码中写 `export`；禁止简单单点任务滥用 | [§二.2](#2-智能体与代理层-agents-实操详情) |
+| **🤖 代理 (Agent)** | `ralph` | **全新迭代循环**：长时间长程目标，各轮次全新进程只以工作区文件为记忆 | **严禁**在普通即时会话中未经用户明确要求擅自调用；禁止无退出条件空转 | [§二.2](#2-智能体与代理层-agents-实操详情) |
+| **💻 脚本 (CLI)** | `control_gates.sh` | 执行四项门禁检查（`check` 输出面板、`badge` 输出单行徽标） | **严禁**在有未提交代码且超阈值时强行绕过；不可修改判定基线逃避检查 | [§二.3](#3-命令行与脚本工具-cli-实操详情) |
+| **💻 脚本 (CLI)** | `name_me.sh` | 开工首个动作自动/手动规范会话命名：`[分类编号][难度分] 概述` | **严禁**概述超过 8 个汉字；严禁分类字母不在白名单（限 R/F/D/S/O/Q） | [§二.3](#3-命令行与脚本工具-cli-实操详情) |
+| **💻 脚本 (CLI)** | `redundancy_scan.mjs` | 规则与文档相似度查重，防止重复造轮子 | **严禁**在扫描出高相似块后置之不理强行新增文件；必须合并为演进版本 | [§二.3](#3-命令行与脚本工具-cli-实操详情) |
+| **💻 脚本 (CLI)** | `conflict_scan.mjs` | 冲突检测，排查同一事实出现两种说法或与元规则矛盾 | **严禁**在检测到冲突时自行取舍；必须出具裁决方案由用户判定 | [§二.3](#3-命令行与脚本工具-cli-实操详情) |
+| **💻 脚本 (CLI)** | `check_freshness.mjs` | 自动检测存量与新增能力的新鲜度、时效性、版本与依赖健康度 | **严禁**忽视失效（BROKEN）警告直接投入生产；禁止跳过探活检查 | [§二.3](#3-命令行与脚本工具-cli-实操详情) |
+| **💻 脚本 (CLI)** | `sync_control_requirements.mjs` | 同步主台账与 `ai-control/requirements/` 管控需求与版本 | **严禁**单边修改主台账或专项目录而遗漏另一侧；必须联动同步 | [§二.3](#3-命令行与脚本工具-cli-实操详情) |
+| **🔌 协议 (MCP)** | `server-filesystem` | 规范受控物理路径读写，沙箱化安全操作指定资产目录 | **严禁**挂载根目录 `/` 或 `~` 用户家目录；禁止绕过沙箱执行全盘扫描 | [§二.4](#4-协议服务层-mcp-servers-实操详情) |
+| **🔌 协议 (MCP)** | `server-git` | 深度分析 Git 提交图谱、生成精确 Release Notes、追溯 blame | **严禁**利用 MCP 下发危险破坏性 reset/rebase；严禁无理由强推 | [§二.4](#4-协议服务层-mcp-servers-实操详情) |
+| **🔌 协议 (MCP)** | `server-memory` | 基于知识图谱沉淀跨会话实体关系与业务实体上下文 | **严禁**写入临时性变量或敏感密钥 Token；避免图谱节点无限膨胀 | [§二.4](#4-协议服务层-mcp-servers-实操详情) |
+| **🔌 协议 (MCP)** | `server-fetch` | 抓取外部网页/API 技术文档并自动提取 Markdown 纯文本 | **严禁**用于高频爬取未经授权的受保护站点；不可用于内网嗅探 | [§二.4](#4-协议服务层-mcp-servers-实操详情) |
+| **🧠 技能 (Skill)** | `frontend-expert` | 专注前端现代框架 (React/Vue/Vite/Tailwind) 架构与组件设计 | **严禁**在无 Web 相关需求的后端或脚本项目中盲目载入 | [§二.5](#5-专属技能层-skills-实操详情) |
+| **🧠 技能 (Skill)** | `unity-shader-lab` | Unity 渲染管线、HLSL/ShaderLab 编写与材质优化 | **严禁**在非游戏/非 Unity 任务中载入（违反知识库防冲突红线） | [§二.5](#5-专属技能层-skills-实操详情) |
+| **🧠 技能 (Skill)** | `api-designer` | 遵循 RESTful/OpenAPI 规范设计工程化微服务契约与接口 | **严禁**仅给草稿不给字段类型定义；禁止不给错误码和边界约束 | [§二.5](#5-专属技能层-skills-实操详情) |
+
+---
+
+## 🛠️ 二、各能力层实操与集成规格详情 (内层详细手册)
+
+### 1. 插件层 (Plugins) 实操详情
+- **核心定位**：深度集成于 DSH 桌面端 Electron/Web 前端渲染管道，直接增强界面交互体验。
+- **机制与生效**：
+  - 插件通常位于宿主打包资源目录或由 Vite 动态载入；
+  - 生产环境下修改前端 bundle 需要遵循非侵入补丁器规范（如 `scripts/patch_dsh_todo_progress.cjs`），确保具备幂等备份、语法自检与回读校验；
+  - **刷新生效**：宿主 boot 携带资源哈希，普通前端改动仅需刷新 Web 页面即可生效，无需频繁重启客户端进程。
+
+---
+
+### 2. 智能体与代理层 (Agents) 实操详情
+- **`subagent` (独立并发子任务)**：
+  - **入参**：`{ description: string, prompt: string, run_in_background?: boolean }`
+  - **实操范式**：适用于耗时调研、文档多路检索等。默认后台运行，可同时发起多个。
+- **`subagent_fork` (上下文分支继承)**：
+  - **入参**：`{ description: string, prompt: string, run_in_background?: boolean }`
+  - **实操范式**：适用于基于当前会话事实进行方案深度推演、交叉质检。
+- **`workflow` (多代理自动化编排)**：
+  - **代码格式**：纯 JavaScript 脚本，通过 `await agent(prompt, opts)` 调度，严禁使用 TS 语法或 Node.js 原生 API。
+  - **流水线语法**：`await pipeline(items, async (prev, item) => ...)`。
+
+---
+
+### 3. 命令行与脚本工具 (CLI) 实操详情
+- **管控看板运行规范**：
+  ```bash
+  ./scripts/control_gates.sh check     # 详细量化看板输出
+  ./scripts/control_gates.sh badge     # 紧凑型单行进度徽标
+  ```
+- **自动化命名规范**：
+  ```bash
+  ./scripts/name_me.sh "[R051][40分] 管控优化文案精简"
+  ./scripts/name_me.sh --auto          # 自动推断三段式命名
+  ```
+- **双检与质量扫描规范**：
+  ```bash
+  export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+  node scripts/redundancy_scan.mjs --root .     # 冗余扫描
+  node scripts/conflict_scan.mjs --root .       # 冲突扫描
+  node scripts/legacy_align_scan.mjs --root .   # 存量对齐扫描
+  node scripts/check_freshness.mjs             # 新鲜度自检
+  node scripts/sync_control_requirements.mjs   # 需求双向同步
+  ```
+
+---
+
+### 4. 协议服务层 (MCP Servers) 实操详情
+- **配置文件路径**：用户或项目目录下的 `settings.yaml` 或 MCP 客户端配置中挂载。
+- **调用范例**：由 DSH 核心引擎自动反射为可用 Tool，以 `mcp__<server>__<tool>` 形式呈现。
+- **治理原则**：遵循“最小权限与沙箱隔离”，涉及数据库查询一律采用 Read-Only 账号。
+
+---
+
+### 5. 专属技能层 (Skills) 实操详情
+- **加载机制**：在收到特定领域（如 Unity、前端、算法设计）任务时，通过 `skill({ name: "..." })` 载入完整规范与实战案例。
+- **隔离原则**：非目标领域技能绝对不主动载入，严格避免跨领域知识冲突污染。
+
+---
+
+## 📊 三、维护与扩展准则
+1. 任何新增 Plugin / Agent / CLI / MCP / Skill 必须在本文件中登记外层索引卡，明确**大致怎么用**与**负面案例**；
+2. 保持与新鲜度检测探针 `scripts/check_freshness.mjs` 联动，确保全量能力持续可用。

@@ -1,7 +1,7 @@
 # 全局规则工程 (Global Rules Project)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v3.2.0`
+> - **当前系统实施总版本**：`v3.3.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-22
 > - **版本状态**：`[Release 稳定生效]`
@@ -90,6 +90,8 @@
 │   ├── legacy_align_scan.mjs        # 【管控机制·判定层】存量校准（遇碰即对齐清单，脚本漏登记可自动检出）
 │   ├── channel_audit.mjs            # 【管控机制·判定层】快速通道审计（死通道/说法命中/触发词冲突）
 │   ├── align_version.mjs            # 【管控机制·判定层】全库受管文档版本归位（升版时一条命令对齐）
+│   ├── check_freshness.mjs          # 【管控机制·判定层】存量与新增能力新鲜度与时效检测探针
+│   ├── sync_control_requirements.mjs # 【管控机制·判定层】管控专项需求与全局台账双向同步校验
 │   ├── global_scheduler_lock.sh     # 全局调度锁与并发资源防冲突
 │   ├── git_sync_remote.sh           # 远程 Git 强同步与缺地址开页引导
 │   ├── fingerprint_audit.sh         # 资产数字指纹与新鲜度审计
@@ -128,6 +130,8 @@ node scripts/redundancy_scan.mjs --root .              # 判定层：冗余检�
 node scripts/conflict_scan.mjs --root .                # 判定层：冲突检测（同一事实两种说法 → 先裁决再迭代）
 node scripts/legacy_align_scan.mjs --root .            # 判定层：存量校准（遇碰即对齐清单，含脚本漏登记）
 node scripts/channel_audit.mjs --root .                # 判定层：通道审计（死通道/说法命中/触发词冲突）
+node scripts/check_freshness.mjs                      # 判定层：新鲜度与可用性审计（能力与规则健康探活）
+node scripts/sync_control_requirements.mjs            # 判定层：管控专属需求双向同步校验（CR与REQ对齐）
 ./scripts/check_task_naming.sh                         # 判定层：当前任务命名是否合规（看板已自动常显此行）
 node scripts/session_naming_audit.mjs                  # 命名层：存量会话命名审计（只读，含合规率与待改名清单）
 node scripts/session_naming_audit.mjs --json           # 命名层：导出审计数据供生成改名方案
@@ -147,7 +151,7 @@ node scripts/test_auto_naming.mjs --live              # 命名层：对真实未
 - **双检处置分流**：冗余 → 合并为迭代版本（保留单一权威源）；冲突 → 先出裁决方案，由用户确认后迭代，**禁止自行取舍**；
 - **调参入口**：`ai-control/config/gates.conf`（改完即时生效，无需重启）；
 - **临时绕过**：环境变量 `DSH_CONTROL_GUARD=off`；
-- **机制说明与信息图**：[`docs/constraint_mechanism_spec.md`](docs/constraint_mechanism_spec.md) · [`assets/generated_images/gcm_gate_control_infographic.svg`](assets/generated_images/gcm_gate_control_infographic.svg)；
+- **机制说明与信息图**：[`docs/constraint_mechanism_spec.md`](docs/constraint_mechanism_spec.md) · [`assets/generated_images/gcm_gate_control_infographic.svg`](assets/generated_images/gcm_gate_control_infographic.svg)（基线版式，数据已过时）· [`assets/generated_images/control_mechanism_infographic_v2.svg`](assets/generated_images/control_mechanism_infographic_v2.svg)（现行实况版，版本分工见 [`indexes/rules_index.md`](indexes/rules_index.md) 第〇章）；
 - **完整说明**：见 [`ai-control/README.md`](ai-control/README.md)。
 
 ---

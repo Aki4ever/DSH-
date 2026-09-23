@@ -100,3 +100,26 @@ node scripts/channel_audit.mjs --root .       # 通道表死链、说法能否�
 > **一次真实教训**：`scripts/test_v180_spec.sh` 是 v1.8.0 的质量门禁，因断言写死元规则条号与工序编号，
 > 随版本演进 26 项中 10 项长期失败，却因无人运行而无人知晓。它已退役，能力由全库活体判定取代。
 > 结论：**判定要查活体事实，不要查写死的编号**；否则判定本身会成为下一个存量债。
+
+---
+
+## ⚡ 五、管控机制更新之双向全量生效铁律 (Retroactive & Prospective Rule)
+
+根据系统管控机制最新准则（`REQ-051` / `CR-006`）：
+
+1. **新增与存量同权，绝无历史豁免特权**：
+   - 任何管控机制、门禁规则、安全基线、命名规约的更新，必须对**存量工程资产与未来新增资产同等生效**；
+   - 严禁出现“新规只约束新提交、历史存量违规文件视而不见”的放任行为。
+
+2. **升级闭环必带存量校准 (Legacy Alignment)**：
+   - 规则或管控脚本修改后，必须立即运行全量存量检测与新鲜度探针：
+     ```bash
+     export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+     node scripts/legacy_align_scan.mjs --root .
+     node scripts/check_freshness.mjs --root .
+     ```
+   - 若新增管控逻辑导致存量文件报错（如接口未声明负面案例、脚本未入驻索引、版本滞后），**必须在当前任务内完成对存量资产的批量对齐与平滑迁移**，未清零存量违规禁止关闭任务。
+
+3. **双向同步与独立归档同步触发**：
+   - 涉及管控机制本身的变更，必须同步触发 `scripts/sync_control_requirements.mjs`，确保 `docs/requirements.md` 与 `ai-control/requirements/control_requirements_ledger.md` 同步落地。
+

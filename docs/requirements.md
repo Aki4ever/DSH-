@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v3.2.0`
+> - **当前系统实施总版本**：`v3.3.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1463,3 +1463,55 @@
   - [ ] ⬜ **视觉效果未验证**：我无法截取浏览器画面，需用户重启后肉眼确认；
   - [ ] ⬜ 重启后需确认新安装位（`/Applications`）能正常启动并加载已打补丁的插件；
   - [ ] ⬜ App 升级会覆盖补丁，需重跑补丁器——目前**没有自动守护**，属已知缺口。
+
+---
+
+### REQ-051: 管控机制六项综合优化与能力全景治理
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v3.3.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-006`）
+- **核心诉求与交付物**：
+  1. **低风险任务免密直通**：常规读写与工程内开发操作全面静默放行，杜绝频发输入机器密码或阻断确认；更新 [`rules/security/security_baseline.md`](../rules/security/security_baseline.md)；
+  2. **五大能力层统一索引**：编目插件 (Plugin)、智能体 (Agent)、命令行 (CLI)、协议工具 (MCP)、技能 (Skill)；
+  3. **双层能力接口与正负案例**：在 [`indexes/capabilities_index.md`](../indexes/capabilities_index.md) 建立外层索引卡（含大致用法与负面反例/踩坑红线）与内层实操指南；
+  4. **存量与新增新鲜度检测机制**：产出 [`scripts/check_freshness.mjs`](../scripts/check_freshness.mjs)，支持全量健康度探活与看板输出；
+  5. **管控更新全量双向生效**：在 [`rules/workflow/change_flow.md`](../rules/workflow/change_flow.md) 确立新增与存量同权铁律，存量校准脚本闭环；
+  6. **独立文件夹归档与版本同步**：设立 [`ai-control/requirements/`](../ai-control/requirements/) 专属需求归档仓，并通过 [`scripts/sync_control_requirements.mjs`](../scripts/sync_control_requirements.mjs) 校验双向同步。
+- **关联文件**：
+  - `ai-control/requirements/README.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+  - `indexes/capabilities_index.md`
+  - `scripts/check_freshness.mjs`
+  - `scripts/sync_control_requirements.mjs`
+  - `rules/security/security_baseline.md`
+  - `rules/workflow/change_flow.md`
+- **验收标准**：
+  - [x] 独立需求仓目录建立且版本 SemVer 标记规范；
+  - [x] 免打扰低风险静默放行白名单固化进安全基线；
+  - [x] 五大能力层全景索引建立且正反案例标注完整；
+  - [x] 新鲜度与可用性检测探针实跑 100% 通过；
+  - [x] 管控机制双向生效铁律落地，存量对齐扫描通过；
+  - [x] 需求双向同步脚本校验通过。
+
+---
+
+## 📎 附：不计入条目数的资产变更留痕
+
+> 本节只是**资产与指针变更留痕**，不构成 `REQ-###` 需求条目、不新增规则、不改判定逻辑。
+> 本节标题刻意不使用 `### REQ-N` 形式，故不影响 G3 门禁的条目计数口径
+> （计数正则见 `scripts/control_gates.sh` 的 `check_sync()`）。
+
+### 信息图重绘（2026-09-23 · 通道"生成信息图"）
+
+- **触发**：用户口令"看看管控机制 + 生成信息图"，命中 [`indexes/shortcuts_index.md`](../indexes/shortcuts_index.md) 两条已登记通道；
+- **新增资产**：`assets/generated_images/control_mechanism_infographic_v2.svg` + `.png`（1120×2000，复用基线版式、按实跑数据重绘）；
+- **版本分工**：原 `assets/generated_images/gcm_gate_control_infographic.svg` 保留为**基线版式**（其内数字为写死值，已非现状）；
+  分工口径的唯一权威出处为 [`indexes/rules_index.md`](../indexes/rules_index.md) 第〇章"机制信息图"表，
+  [`README.md`](../README.md) 与 [`docs/constraint_mechanism_spec.md`](constraint_mechanism_spec.md) 只放指针；
+- **本次实跑数据**（信息图数据源，均可复现）：门禁 4/4 · 骨架 11/11 · 防丢 8/8 · 合规 5/5 · 需求条目 50 ·
+  未提交 0/30 · 冗余高相似对 0 · 冲突 0 · 待对齐 0（另 3 项书面豁免）· 通道 24 条 0 问题 · 十六步强制 11 / 建议 5；
+- **改动后复跑**：冗余 0 · 冲突 0 · 待对齐 0 · 通道 0 问题；
+- **未验证项**：`README.md`、`indexes/rules_index.md`、`docs/constraint_mechanism_spec.md` 中的新指针**尚未推送远程**；
+  信息图 PNG 未在 Web GUI 页面内实点打开验证（仅以文件工具读回与目视校验）。

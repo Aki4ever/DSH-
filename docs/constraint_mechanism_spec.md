@@ -1,7 +1,7 @@
 # 管控机制 · 精简与迭代需求文案（可执行版）
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v3.2.0`（对齐台账总版本；**正文内容**仍为其原始版本，未随对齐改动）
+> - **当前文档版本**：`v3.3.0`（对齐台账总版本；**正文内容**仍为其原始版本，未随对齐改动）
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **对齐时间**：2026-09-23（REQ-047：补齐受管文档头部版本声明，消除假漂移）
 > **任务代号**：`GCM-REFORM`（GCM = Global Constraint Mechanism，全局约束机制）
@@ -163,6 +163,11 @@
 | 机制信息图 | `assets/generated_images/gcm_gate_control_infographic.svg` + `.png` | 新增 |
 | 流程有效执行对照表 | `rules/workflow/task_execution_flow.md`（新增判定手段对照） | 修改 |
 | 存量校准记录 | `docs/requirements.md`（`REQ-044`）+ `memory/lessons_learned.md` | 修改 |
+
+> **信息图版本分工**（上表是 REQ-044 当时的历史产出记录，不改；当前用法以此注为准）：
+> 上表的 `gcm_gate_control_infographic.svg` 为**基线版式**，其中数字为写死值、已非当前实况；
+> **现行实况版**为 `control_mechanism_infographic_v2.svg`（含 PNG），按实跑数据重绘。
+> 唯一权威出处见 [`indexes/rules_index.md`](../indexes/rules_index.md) 第〇章"机制信息图"表。
 
 ---
 
