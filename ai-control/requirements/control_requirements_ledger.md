@@ -1,7 +1,7 @@
 # 管控机制专属需求台账 (Control Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前管控机制版本**：`v4.1.0`
+> - **当前管控机制版本**：`v4.2.0`
 > - **最后同步时间**：2026-09-23
 > - **全局主台账对照**：[`docs/requirements.md`](../../docs/requirements.md)
 > - **状态**：`[ACTIVE 生效中]`
@@ -26,6 +26,7 @@
 | **CR-012** | REQ-057 | `v3.9.0` | 第一性原理与物理实证律、三不采信原则、实证调查五步法与三级证据定级 | `[ACTIVE]` |
 | **CR-013** | REQ-058 | `v4.0.0` | 显式交付状态首行置顶、六大可见即用实体交付物与极端任务聚焦铁律 | `[ACTIVE]` |
 | **CR-014** | REQ-059 | `v4.1.0` | 报错反思防复发闭环、流程刚柔分级矩阵与交付输出框架刚性化 | `[ACTIVE]` |
+| **CR-015** | REQ-060 | `v4.2.0` | 全端统一可读性排版设计法典与检索路由质量评估自进化机制 | `[ACTIVE]` |
 
 ---
 
@@ -231,6 +232,30 @@
   - [x] 任务执行流固化刚柔分级矩阵与交付收尾五大模块；
   - [x] 长期报错台账建立并完成初始高频模式登记；
   - [x] 全局台账与专项目录版本统一推进至 v4.1.0。
+
+---
+
+### CR-015: 全端统一可读性排版设计法典与检索路由质量评估自进化机制
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.2.0`
+- **对应全局台账**：`REQ-060`
+- **提出时间**：2026-09-23
+- **核心诉求与目标**：
+  1. **全端可读性与无障碍排版设计法典落地**：编制 `knowledge/common/readability_specification.md`，确立 Web、DMG、App、小程序字体族、字号比例、导航大小、正文行高、绝对最小文字红线、WCAG 2.1 对比度与加粗节制规范，并统合至 `knowledge/common/interaction_specification.md` 与知识库总纲；
+  2. **检索与路由质量统计评估与高速通道扩充**：建立 RQI 指标评估模型，在 `indexes/shortcuts_index.md` 增补“可读性规范”高速通道并扩充“给出文案”自然语言触发词，通道通过 `scripts/channel_audit.mjs` 审计保持 0 冲突与 0 死链。
+- **关联产出物**：
+  - `knowledge/common/readability_specification.md`
+  - `knowledge/common/interaction_specification.md`
+  - `knowledge/common/README.md`
+  - `knowledge/README.md`
+  - `indexes/shortcuts_index.md`
+  - `docs/requirements.md`（`REQ-060`）
+- **验收标准**：
+  - [x] 全端排版设计法典建立并统合进公共知识库；
+  - [x] 交互规范完成《Don't Make Me Think》排版章节指针统合；
+  - [x] 快速通道表完成可读性通道注册并全量审计通过（29 条通道 0 问题）；
+  - [x] 全局台账与专项目录版本统一推进至 v4.2.0。
+
 
 
 

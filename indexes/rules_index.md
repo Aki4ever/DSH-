@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.1.0`
-> - **对应实施版本**：`v4.1.0`
+> - **当前文档版本**：`v4.2.0`
+> - **对应实施版本**：`v4.2.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -107,6 +107,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | :--- | :--- | :--- |
 | [`knowledge/README.md`](../knowledge/README.md) | **系统分层知识库总索引与教学图** | 知识库总览、分层架构教学图、前置防冲突阻断卡点与项目隔离导航。 |
 | [`knowledge/common/interaction_specification.md`](../knowledge/common/interaction_specification.md) | **通用交互与体验设计规范** | 格式塔六大定律实操、Don't Make Me Think 零思考设计与防呆机制。 |
+| [`knowledge/common/readability_specification.md`](../knowledge/common/readability_specification.md) | **全端可读性与无障碍排版设计法典** | 跨端（Web/DMG/App/小程序）字号阶梯、绝对最小文字红线、WCAG 2.1 对比度与加粗节制规范。 |
 | [`knowledge/common/unity_specification.md`](../knowledge/common/unity_specification.md) | **通用 Unity 客户端工程规范** | 页面做成 Scene、弹窗做成 Prefab、按钮必配 Drop Shadow 阴影与微动效。 |
 | [`knowledge/common/web_specification.md`](../knowledge/common/web_specification.md) | **通用 Web 前端工程规范** | 路由懒加载、Modal Portal 根挂载防层叠污染、box-shadow 与骨架屏。 |
 | [`knowledge/common/miniprogram_specification.md`](../knowledge/common/miniprogram_specification.md) | **通用小程序研发工程规范** | 主包≤1.5MB、组件化弹窗防滚动穿透、hover-class、setData 路径差量。 |

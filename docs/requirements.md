@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.1.0`
+> - **当前系统实施总版本**：`v4.2.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1679,6 +1679,30 @@
   - [x] 任务执行流固化流程刚柔分级矩阵与交付五大模块；
   - [x] 长期报错台账模板与规范建立；
   - [x] 全局台账与专项目录版本统一推进至 v4.1.0。
+
+---
+
+### REQ-060: 全端统一可读性排版设计法典与检索路由质量评估自进化机制
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.2.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-015`）
+- **核心诉求与交付物**：
+  1. **全端可读性与无障碍排版设计法典落地**：编制 [`knowledge/common/readability_specification.md`](../knowledge/common/readability_specification.md)，统一 Web、DMG、App、小程序字体族、字号阶梯比例、导航大小、正文行高、绝对最小文字红线、WCAG 2.1 对比度与加粗节制规范，并统合至 [`knowledge/common/interaction_specification.md`](../knowledge/common/interaction_specification.md) 与知识库总纲；
+  2. **检索与路由质量统计评估与高速通道扩充**：建立 RQI 指标评估模型，在 [`indexes/shortcuts_index.md`](../indexes/shortcuts_index.md) 增补“可读性规范”高速通道并扩充“给出文案”自然语言触发词，通道通过 `scripts/channel_audit.mjs` 审计保持 0 冲突与 0 死链。
+- **关联文件**：
+  - `knowledge/common/readability_specification.md`
+  - `knowledge/common/interaction_specification.md`
+  - `knowledge/common/README.md`
+  - `knowledge/README.md`
+  - `indexes/shortcuts_index.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 全端排版设计法典建立并统合进公共知识库；
+  - [x] 交互规范完成《Don't Make Me Think》排版章节指针统合；
+  - [x] 快速通道表完成可读性通道注册并全量审计通过（29 条通道 0 问题）；
+  - [x] 全局台账与专项目录版本统一推进至 v4.2.0。
 
 ---
 
