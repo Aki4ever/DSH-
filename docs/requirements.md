@@ -1278,6 +1278,52 @@
   - [ ] ⏳ 宿主 `settings.yaml` 改动**需重启桌面端方生效**，重启后应实测一次长回复的真实输出长度；
   - [ ] ⬜ 待决项：单次输出上限 131072 与上下文窗口 262144 同处一个预算池，长回复可能挤压历史而更频繁触发上下文压缩，需重启后观察实际触发频率再决定是否回调；
   - [ ] ⬜ 顺手发现（非本次范围，未处理）：① `settings.yaml` 各模型的 `output: [text, image]` 字段不在适配器 schema 允许键内，被 zod 静默剥离（**不影响加载**，实测 success=true），属既有冗余声明；② `memory/context_memory.md` 记录的 `DSH Web URL` 与「主要模型」两项已与实况不符（本会话实测 `DSH_WEB_URL=http://127.0.0.1:54617`、主要模型为 `DS/DeepSeek V4.1 Flash`）。
+- **后续演进**：本条目落地后用户追加「以后存量任务和新增任务都必须自动命名」，已立 `REQ-049` 承接执行闭环与存量回溯。
+
+---
+
+### REQ-049：任务命名全自动化（新增即时命名 · 存量回溯 · 常显判定）
+- **实施版本**：`v3.1.0`
+- **需求状态**：`[Release 稳定生效]`
+- **背景阐述**：用户在 `REQ-048` 建立命名规范后追加要求——「以后存量任务和新增任务都必须自动命名；实施」。这要求把命名从"规范 + 靠自觉执行"升级为**有强制写入、有客观判定、有常显可见**的闭环，并回溯历史存量会话。
+- **技术核实（已完成，均为实测复现）**：
+  1. **标题权威存储位置**：`$DSH_HOME/storages/session_projcache.json` → `tables.sessions.<sessionId>.rows.title.val`（49 条会话）；
+  2. **会话正文是多帧 zstd**：`session.jsonl.zstd` 为 1623 帧拼接（每帧一次追加写入），单帧解压只能得到会话头（906KB 文件仅解出 0KB 内容），必须逐帧解压才能读到真实对话——实测逐帧解压得 1783KB / 2934 行；
+  3. **`user/message` 不全是用户输入**：宿主注入的工作区约束提醒同样以 `user/message` 落盘，必须用 `data.source.kind === 'user'` 区分，否则会把系统提醒当用户需求；
+  4. **RPC 可对非当前会话改名且能持久化**：实测对历史会话调用 `POST /api/session.rename` 返回 `ok:true` 并写入权威存储（首次复查因缓存竞态误判为"假成功"，二次复查证实已持久化）；
+  5. **直接改存储文件会被覆盖**：写 `session_projcache.json` 后运行时会将内存状态回写覆盖，故**必须走 RPC**；
+  6. **子代理会话不可改名**：5 条未挂 `session-` 前缀的会话由宿主 subagent routing 托管，改名返回 `agent-busy`（"owned by subagent routing"），属宿主限制；
+  7. **存量合规率实测 18.4%**：49 条中 41 条（主会话）标题不符合规范（含标题为空、被抓成首句、旧式 `[PROJ]`/`[P001]`/`[REQ-007]` 等）。
+- **核心诉求与交付物**：
+  1. **强制写入**：`scripts/rename_session.sh` 已有 R1~R7 硬校验（`REQ-048` 交付）；
+  2. **客观判定**：新增 [`scripts/check_task_naming.sh`](../scripts/check_task_naming.sh)——一条命令判定当前会话命名是否合规，`--exit` 供流程门禁使用；
+  3. **常显可见**：`scripts/control_gates.sh` 各子命令收口处附加命名状态，不合规即显式告警（`json` 分支除外，保证 stdout 纯 JSON）；
+  4. **存量回溯**：新增只读审计器 [`scripts/session_naming_audit.mjs`](../scripts/session_naming_audit.mjs)、方案生成器 [`scripts/generate_naming_plan.mjs`](../scripts/generate_naming_plan.mjs)、批量改名器 [`scripts/batch_rename_sessions.mjs`](../scripts/batch_rename_sessions.mjs)；
+  5. **归位口径统一**：新增共享模块 [`scripts/lib/workspace_resolve.mjs`](../scripts/lib/workspace_resolve.mjs)，让生成器与批量器用同一套工作区归位逻辑；
+  6. **流程门禁可审计化**：`task_execution_flow.md` 的 S05 判定由"首个 bash 调用是某脚本"（无法自证）改为 `check_task_naming.sh --exit` 返回 0（可机械判定）。
+- **关联文件**：
+  - `scripts/check_task_naming.sh`、`scripts/session_naming_audit.mjs`、`scripts/generate_naming_plan.mjs`、`scripts/batch_rename_sessions.mjs`、`scripts/lib/workspace_resolve.mjs`
+  - `scripts/control_gates.sh`、`scripts/rename_session.sh`
+  - `rules/workflow/task_execution_flow.md`、`knowledge/common/task_naming_spec.md`
+- **回滚数据存放位置**（**刻意不入库**：文件含 41 条对话旧标题，属会话隐私内容）：
+  - 回滚方案：`ai-control/reports/task_naming_rollback_20260923.json`（该目录在 `.gitignore` 内，已用 `git check-ignore` 确认会被忽略）；
+  - 原始存储备份：`$DSH_HOME/storages/session_projcache.json.bak.2026-09-23T06-59-42-873Z`（改名**之前**的完整快照，是最终兜底）；
+  - 回滚命令：`node scripts/batch_rename_sessions.mjs --plan ai-control/reports/task_naming_rollback_20260923.json --rollback --apply`。
+  - **踩坑记录**：批量工具自动生成的"最新回滚文件"记录的是**改名之后**的状态，拿它回滚等于没回滚；真实初始标题必须取自**首次**备份快照。
+- **验收标准**：
+  - [x] **存量回溯**：46 条纳入规划范围，其中 **41 条（主会话）** 生成规范方案并通过预校验（含编号唯一性、概述 ≤8 汉字）；余 5 条经识别为子代理会话，由生成器自动剔除（改了也执行不了）；
+  - [x] **主会话合规率由 18.4% 提升至 93.2%**（41/44）；未达 100% 的原因见下方"未验证项"；
+  - [x] 批量改名实测两轮收敛：首轮权威存储生效 29 条，次轮 41 条已合规；全程自动备份存储文件并自动生成回滚方案；
+  - [x] **判定可执行**：`check_task_naming.sh` 正向（合规会话返回 0）与反例（非规范标题 `--exit` 返回 1、空标题会话正确识别）实测通过；
+  - [x] **常显生效**：`control_gates.sh check` / `badge` 末尾实测显示命名状态；不合规会话实测显示"⚠️ 任务命名不合规"；
+  - [x] **纯 JSON 未被污染**：`control_gates.sh json` 实测仍可 `JSON.parse`，门禁 4 项完整；
+  - [x] 施工中修复 1 个隐蔽缺陷：perl 文本定位 `title` 时因该字段位于 `sessionId` **之前**而取到**下一个会话**的标题（静默取错值），改为用 Node 做结构化 JSON 解析；
+  - [ ] ⬜ 剩余 3 条主会话未合规：2 条为**零步空会话**（无首条消息，无法生成有意义的概述）、1 条内容为不当言论（不宜写入正式台账）；
+  - [ ] ⬜ 5 条子代理会话受宿主 `agent-busy` 限制无法改名，已在审计报告中单列说明；
+  - [ ] ⬜ 存量编号为**按工作区独立编排**（各项目 `R001`/`F001` 各自从 1 起），跨工作区同号属设计预期，批量器据此按工作区判重。
+- **未验证项声明**：
+  - 「新增任务自动命名」的**强制力依赖智能体主动执行**：`check_task_naming.sh` 提供了客观判据、看板提供了常显告警，但**未接入运行时硬拦截**（宿主插件层强制改名为本次未实施范围），故仍存在"看板告警但未改名"的可能，此时告警即为可追责依据；
+  - 存量改名的**长期持久性未跨重启验证**：已确认写入权威存储，但未重启桌面端复验。
 - **未验证项声明**：
   - 服务端**真实生成长度上限**未验证。本次仅验证「服务端接受该 `max_tokens` 参数值至 262144」，未做长输出触顶实验，故 131072 是「确定高于原默认、且落在服务端接受区间内」的取值，**不是经实测触顶得到的真实上限**；
   - 「每秒 token 输出速率」本身**未被提速，也无法由客户端提速**——推理速度由服务端决定。本次交付的是「解除客户端的输出长度上限」，效果为单次回复更不易被截断，从而减少往返次数。

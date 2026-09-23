@@ -51,7 +51,7 @@
 | | **S02** | 干道路由与业务基线检索 | 🟡 建议（**判定**：`indexes/shortcuts_index.md` 是否命中） |
 | **二、定标** | **S03** | 需求意图提炼与查重 | 🟢 强制（**判定**：`node scripts/redundancy_scan.mjs --root .` 无高相似对） |
 | | **S04** | 双螺旋决策打分与轨道判定 | 🟢 强制（**判定**：出分过程必须可见，轨道判定与后续动作一致） |
-| | **S05** | 首动握手重命名门禁 | 🟢 强制（**判定**：首个 bash 调用为 `./scripts/rename_session.sh`，实测返回成功） |
+| | **S05** | 首动握手重命名门禁 | 🟢 强制（**判定**：`./scripts/check_task_naming.sh --exit` 返回 0，即当前会话标题已合规；不合规时看板常显告警。命名格式见知识库权威源） |
 | | **S06** | 核心工单与立项赋能确立 | 🟡 建议（新项目立项时以 `templates/project_dsh_bootstrap_template.md` 为准） |
 | **三、筹策** | **S07** | 任务分解与 Todo 初始化 | 🟢 强制（**判定**：存在 `todo_write` 调用且状态可查） |
 | | **S08** | 风险揭示与全局资源防冲突锁定 | 🟢 强制（**判定**：`./scripts/global_scheduler_lock.sh` 申领成功） |
@@ -174,12 +174,24 @@ $$\text{难度总分} = \text{影响范围}(0\sim30) + \text{依赖深度}(0\sim
 - **[35~100分]**：自动进入 **Hard Line** 强制完备流；
 - **[0~34分]**：自动进入 **Fast Track** 敏捷捷径通道。
 
-### 2. 会话命名格式
+### 2. 会话命名格式与自动命名
 
 命名格式（三要素构成、逐条硬性规则、正反示例、字数口径）**唯一权威源**：
 [`knowledge/common/task_naming_spec.md`](../../knowledge/common/task_naming_spec.md)。
 
-本节只定义**执行时机**：定标打分完成后，首发调用 [`scripts/rename_session.sh`](../../scripts/rename_session.sh) 按上述规范锁定标题（对应 §二 的 S05 首动握手门禁）。
+**执行时机（本节职权）**：定标打分完成后、任何实质动作之前，首发调用
+[`scripts/rename_session.sh`](../../scripts/rename_session.sh) 按上述规范锁定标题（对应 §二 的 S05 首动握手门禁）。
+
+**自动命名闭环（三层，缺一层就会退化成口号）**：
+
+| 层 | 载体 | 作用 |
+| :--- | :--- | :--- |
+| **强制写入** | `scripts/rename_session.sh` | 提交标题前按 R1~R7 硬校验，不合规直接拒绝，杜绝"随手起名" |
+| **可判定** | `scripts/check_task_naming.sh` | 一条命令判定当前会话命名是否合规（`--exit` 供流程门禁使用） |
+| **常显可见** | `scripts/control_gates.sh`（各子命令收口处） | 每次看板输出都附带当前命名状态；不合规即显式告警，不必等人工追问 |
+
+**存量回溯**：历史会话用 [`scripts/session_naming_audit.mjs`](../../scripts/session_naming_audit.mjs)（只读审计）
+配合 [`scripts/batch_rename_sessions.mjs`](../../scripts/batch_rename_sessions.mjs)（批量改名，自带备份与回滚）统一规范化。
 
 ---
 

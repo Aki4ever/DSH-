@@ -790,6 +790,14 @@ fatal() {
 # 调用方（CI、外部流水线）只能看到"命令成功"，无法分辨门禁是否真的通过，
 # 与"判定要能拦住人"的目标相反。现统一按真实门禁结论返回。
 finish() {
+  # 任务命名常显：命名是"必须自动执行"的流程动作，但必须能被看见才有约束力。
+  # 各子命令都经此函数收口，因此挂在这里即可"常显"。
+  # 例外：json 分支要保证 stdout 是纯 JSON，不能掺入其他文字。
+  # 注意：不要在此引用 $1 —— 多数调用点是零参调用，set -u 下会直接报错。
+  if [ "${CMD:-check}" != "json" ]; then
+    _naming_line="$(bash "$SCRIPT_DIR/check_task_naming.sh" 2>/dev/null | head -1 || true)"
+    [ -n "$_naming_line" ] && printf '\n%s\n' "$_naming_line"
+  fi
   [ "${EXEC_ALLOWED:-false}" = "true" ] && exit 0
   exit 1
 }
@@ -800,6 +808,9 @@ for _k in G4_DUP_PAIRS G4_TOP_DUP_LIMIT G4_HEADING_LIMIT G4_MIN_LINE_LEN \
   [ -n "${!_k:-}" ] || fatal "阈值 $_k 未定义（seed 或 gates.conf 缺失该键）"
 done
 unset _k
+
+# 记录子命令名，供 finish() 判断是否需要附加"任务命名常显"行
+CMD="${1:-check}"
 
 case "${1:-check}" in
   reset)

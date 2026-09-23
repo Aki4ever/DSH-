@@ -9,7 +9,7 @@
 | 约定领域 | 核心规则 | 执行细节与约束 |
 | :--- | :--- | :--- |
 | **交互语言** | **全中文通俗表达** | 所有输出、问答、汇报与工程文档必须使用规范中文，语言通俗直白、结构简单，坚决杜绝生僻字和黑话。 |
-| **任务命名** | **三要素强制齐备** | 格式为 `[任务名][任务难度] 任务概述`，首轮定标后必须立即调用 [`scripts/rename_session.sh`](../scripts/rename_session.sh) 锁定。格式细则唯一权威源：[`knowledge/common/task_naming_spec.md`](../knowledge/common/task_naming_spec.md)。 |
+| **任务命名** | **三要素强制齐备 · 自动命名闭环** | 格式为 `[任务名][任务难度] 任务概述`，首轮定标后必须立即调用 [`scripts/rename_session.sh`](../scripts/rename_session.sh) 锁定。格式细则唯一权威源：[`knowledge/common/task_naming_spec.md`](../knowledge/common/task_naming_spec.md)。③ 闭环三层：**强制写入**（`rename_session.sh` 硬校验）→ **可判定**（[`scripts/check_task_naming.sh`](../scripts/check_task_naming.sh) 返回码）→ **常显可见**（门禁看板末行自动附带命名状态）。存量回溯用 `session_naming_audit.mjs` + `batch_rename_sessions.mjs`。**注意**：子代理会话由宿主托管，改不了名。 |
 | **难度打分** | **100分制量化打分** | 四维模型（范围0~30 + 依赖0~30 + 风险0~20 + 复杂度0~20）。≤35分走快速轻量流，>35分走标准完备六步流。 |
 | **图形组件** | **原生图形化区块卡片** | 启动（▶ 🚀）、阶段（● 进度条）、完成（■ 🏁）；严禁输出裸 HTML 标签（如 details/div），统一使用 Markdown 引用色条卡片。 |
 | **安全与权限** | **免审批完全自律** | `Approval: never` + `danger-full-access` 环境下，禁止暴力清理根目录与宿主外部目录；敏感文件先读后改。 |

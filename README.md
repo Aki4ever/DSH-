@@ -78,7 +78,11 @@
 │   ├── generate_image.py            # 图形生成、自动保存与图显渲染脚本（含手写 SVG 精确出图模式）
 │   ├── svg2png.sh                   # 手写 SVG 精确栅格化（WebKit 渲染，保留原始排版）
 │   ├── svg_rasterize.swift          # 上述渲染器的源码（首次调用自动编译并缓存）
-│   ├── rename_session.sh            # 会话一键重命名并锁定 RPC 脚本
+│   ├── rename_session.sh            # 会话一键重命名并锁定 RPC 脚本（含命名规范 R1~R7 硬校验）
+│   ├── check_task_naming.sh         # 判定当前会话命名是否合规（看板常显 + 流程门禁判据）
+│   ├── session_naming_audit.mjs     # 存量会话命名审计（只读：合规率、主/子会话、首条用户消息）
+│   ├── generate_naming_plan.mjs     # 变更方案生成（工作区独立编号 + 难度分量化推导）
+│   ├── batch_rename_sessions.mjs    # 批量规范改名（预校验 + 自动备份 + 自动回滚方案）
 │   ├── init_dir.sh                  # 目录一键自动化初始化脚本
 │   ├── control_gates.sh             # 【管控机制·状态层】四项门禁判定与量化看板
 │   ├── redundancy_scan.mjs          # 【管控机制·判定层】冗余检测（词级相似度 + 元数据过滤）
@@ -124,6 +128,11 @@ node scripts/redundancy_scan.mjs --root .              # 判定层：冗余检�
 node scripts/conflict_scan.mjs --root .                # 判定层：冲突检测（同一事实两种说法 → 先裁决再迭代）
 node scripts/legacy_align_scan.mjs --root .            # 判定层：存量校准（遇碰即对齐清单，含脚本漏登记）
 node scripts/channel_audit.mjs --root .                # 判定层：通道审计（死通道/说法命中/触发词冲突）
+./scripts/check_task_naming.sh                         # 判定层：当前任务命名是否合规（看板已自动常显此行）
+node scripts/session_naming_audit.mjs                  # 命名层：存量会话命名审计（只读，含合规率与待改名清单）
+node scripts/session_naming_audit.mjs --json           # 命名层：导出审计数据供生成改名方案
+node scripts/batch_rename_sessions.mjs --plan p.json --dry-run   # 命名层：批量改名预览（--apply 才真正执行）
+node scripts/batch_rename_sessions.mjs --plan p.json --rollback --apply   # 命名层：应急回滚（豁免规范校验）
 ```
 
 | 门禁 | 含义 | 量化指标 |
@@ -151,7 +160,7 @@ node scripts/channel_audit.mjs --root .                # 判定层：通道审�
 4. **核知识库**：检阅 `knowledge/README.md`，执行前置防冲突核查，确保新任务与世界观/美术/工程设定绝不冲突（非游戏坚决不载入游戏设定）；
 5. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v3.1.0`）；
 6. **读记忆**：读取 `memory/` 目录继承跨会话偏好与避坑经验（指纹单次读，写后才重读）；
-7. **定轨道与首动命名**：依据六维价值打分(60分)与四维难度打分(100分)双螺旋决策，复杂任务**首个工具调用必须执行 `./scripts/rename_session.sh` 锁定会话**；十六步流水线中带判定脚本的工序严格执行，未配判定手段的工序按建议执行（见 `rules/workflow/task_execution_flow.md`）；收尾必给结构化交付入口、管控进度徽标与六维量化审计指标卡片。
+7. **定轨道与首动命名**：依据六维价值打分(60分)与四维难度打分(100分)双螺旋决策，复杂任务**定标后立即执行 `./scripts/rename_session.sh` 按命名规范锁定会话**（格式权威源见 `knowledge/common/task_naming_spec.md`）；十六步流水线中带判定脚本的工序严格执行，未配判定手段的工序按建议执行（见 `rules/workflow/task_execution_flow.md`）；收尾必给结构化交付入口、管控进度徽标与六维量化审计指标卡片。
 
 ### 2. 快速通道指令直达
 常用操作无需长句问答，输入口令直达目标：
@@ -168,8 +177,8 @@ node scripts/channel_audit.mjs --root .                # 判定层：通道审�
 ### 3. 快慢双轨分流与会话重命名
 依据 `rules/workflow/task_execution_flow.md` 执行任务：
 - **快速轻量流 (≤35分)**：单点文字微调、查阅问答走轻量三步（【探】➔【攻】➔【归】），快速交付；
-- **标准完备流 (>35分)**：复杂重构与规则研发严格走标准六步闭环，首轮定标立即调用 `./scripts/rename_session.sh "[分类编号][难度分] 8字概述"` 锁死标题，并开启视口吸顶组件；
-- **任务分类与 8 字概述**：`[R/F/D/S/O/Q 编号][100分制打分] 概述(≤8字)`。
+- **标准完备流 (>35分)**：复杂重构与规则研发严格走标准六步闭环，首轮定标立即调用 `./scripts/rename_session.sh` 按命名规范锁死标题（格式权威源见 `knowledge/common/task_naming_spec.md`），并开启视口吸顶组件；
+- **任务命名与判定**：格式权威源见 [`knowledge/common/task_naming_spec.md`](knowledge/common/task_naming_spec.md)；合规性由 `./scripts/check_task_naming.sh` 判定，并已常显于门禁看板。
 
 ### 4. 规则变动六步循环与去重
 遵循 `rules/workflow/change_flow.md` 开展任何规则操作：

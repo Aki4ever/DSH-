@@ -141,6 +141,11 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **管控机制** | [`scripts/align_version.mjs`](../scripts/align_version.mjs) | 版本归位：把全库受管文档头部版本统一到台账总版本（支持 --dry-run 预览） |
 | **管控机制** | [`scripts/verify_guard_live.sh`](../scripts/verify_guard_live.sh) | 拦截层上线验证：**重启桌面端后**检查守卫/看板是否真实生效（源码契约 + 插件自检 + 门禁实况 + 人工观察清单） |
 | **管控机制** | [`scripts/verify_escape_hatch.sh`](../scripts/verify_escape_hatch.sh) | 逃生舱重启后验证：**宿主是否已加载最新代码**（进程启动时间 vs 插件改动时间）+ 逃生舱判定逻辑 7 项 + 宿主级实弹步骤；只读，不制造门禁未过状态 |
+| **命名自动化** | [`scripts/check_task_naming.sh`](../scripts/check_task_naming.sh) | 命名判定：一条命令判定当前会话标题是否合规（`--exit` 供流程门禁使用），看板借它常显命名状态 |
+| **命名自动化** | [`scripts/session_naming_audit.mjs`](../scripts/session_naming_audit.mjs) | 存量审计（只读）：枚举全部会话、判定合规率、区分主/子会话，并抽取首条真用户消息供生成概述 |
+| **命名自动化** | [`scripts/generate_naming_plan.mjs`](../scripts/generate_naming_plan.mjs) | 方案生成：按「工作区 + 分类字母」编排编号，难度分由会话规模量化推导（步数 60% + 输出 token 40%） |
+| **命名自动化** | [`scripts/batch_rename_sessions.mjs`](../scripts/batch_rename_sessions.mjs) | 批量改名：预校验 → 自动备份 → 自动回滚方案 → 以权威存储复查真实生效数（`--dry-run` 预览；回滚用 `--rollback`，该模式豁免命名规范校验，否则回滚方案会被自己拦死） |
+| **命名自动化** | [`scripts/lib/workspace_resolve.mjs`](../scripts/lib/workspace_resolve.mjs) | 归位共享模块：方案生成器与批量器共用同一套工作区归位口径，避免两处判断错位 |
 
 ---
 
