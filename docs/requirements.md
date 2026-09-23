@@ -1242,3 +1242,42 @@
   - [x] 四项检测器与门禁复跑：冗余 0 高相似对、冲突 0 项、待对齐 0 项（另 2 项已书面说明）、通道 24 条 0 问题、门禁 **4/4**；
   - [ ] ⏳ 重启桌面端后验证看板真实注入与守卫真实拦截（插件改动必须重启才生效）；
   - [ ] ⬜ 3 张空壳 SVG 已退役（已完成，SHA-256 留痕）；两张 `v1.6.0` 图的版本语义待重绘时一并处置（已书面登记豁免理由）。
+
+---
+
+### REQ-048：管控机制双优化（客户端吞吐上限解除 · 任务命名规范统一）
+- **实施版本**：`v3.1.0`
+- **需求状态**：`[Release 稳定生效]`
+- **背景阐述**：用户在 `REQ-047` 收口后追加两条需求——「把每秒 token 输出提到最高（能给多高就给多高）」与「每次执行任务时立刻修改任务名，任务名规范从知识库中获取，确保改名规格统一，要包括任务名、任务难度、任务概述」。需求经简化后于本轮拍板两项口径：① token 提速按「客户端不设限」落地；② 「任务名」即分类编号那一段，现有三段式格式已满足三要素，只需强化「必须按规范改名且格式零偏差」。
+- **技术核实（已完成，均为实测而非推测）**：
+  1. **客户端输出上限当时为 32768**：`dsh-llm-pi-ai/lib/index.js:851` `const DEFAULT_MAX_TOKENS = 32768`，而全局 `settings.yaml` **未配置任何 token 字段**，故全部模型走该默认值；
+  2. **模型级上限无最大值约束**：`modelFields.maxTokens = z.number().step(1).min(1)`（源码 `dsh-llm-pi-ai/lib/index.js:921`），`profile.defaultMaxTokens` 同样只有下限（`:941`）；
+  3. **参数链路确认可达服务端**：`dsh-agent-loop/lib/index.js:702,706` 把 `maxTokens` 写进 request seedConfig，`dsh-llm-pi-ai/lib/index.js:1741` 再透传进模型调用；
+  4. **前端无渲染节流**：`dsh-client-ui-conversation/lib/client.js:7823-7825` 对 `assistant/chunk` 采用 `animation-frame` 合批，属帧级最优，不存在人为降速；
+  5. **服务端上限实测探测**：对 `http://192.168.1.200:8080/v1/chat/completions` 依次发送 `max_tokens` = 32768 / 65536 / 131072 / 262144，**四档全部被接受**（未触发拒绝阈值）；
+  6. **知识库确无命名规范**：`knowledge/` 全目录检索「命名规范 / 命名标准 / 任务名」**零命中**，规范当时散落于 `rules/workflow/task_execution_flow.md` 第五章、`rules/system/meta_rules.md:43`、`memory/context_memory.md:12` 三处；
+  7. **改名脚本不校验格式**：原 `scripts/rename_session.sh` 仅判空标题，`[R048] 随便写` 之类不合规标题同样会被成功提交。
+- **核心诉求与交付物**：
+  1. **客户端吞吐不设限（需求一）**：建 `knowledge/common/task_naming_spec.md` 之外，于全局宿主 `settings.yaml` 的 `llm-pi-ai.providers.midpro` 显式声明 `defaultMaxTokens: 131072`，并在主用模型 `DS/DeepSeek V4.1 Flash` 上同样声明 `maxTokens: 131072`；
+  2. **命名规范唯一权威源（需求二）**：新建 [`knowledge/common/task_naming_spec.md`](../knowledge/common/task_naming_spec.md)，定义三要素（任务名 / 任务难度 / 任务概述）、七条硬性规则（R1~R7）、六类业务管道字母表、100 分制四维打分与轨道联动、正反示例对照；
+  3. **规则层指针化**：`rules/workflow/task_execution_flow.md` 第五章、`rules/system/meta_rules.md` 第七条、`memory/context_memory.md` 命名行一律改为指针，只保留「执行时机」与「上层约束」，格式定义不再复制；
+  4. **改名脚本硬校验**：`scripts/rename_session.sh` 内置 R1~R7 逐条校验（含真实 Unicode 汉字计数），不合规直接拒绝并打印正确示例；
+  5. **知识库登记**：`knowledge/common/README.md` 通用规范矩阵新增该文件条目，避免孤儿文件。
+- **关联文件**：
+  - `knowledge/common/task_naming_spec.md`、`knowledge/common/README.md`
+  - `scripts/rename_session.sh`
+  - `rules/workflow/task_execution_flow.md`、`rules/system/meta_rules.md`、`memory/context_memory.md`
+  - 宿主配置：`$DSH_HOME/settings.yaml`（备份 `settings.yaml.bak.20260923145116`）
+- **验收标准**：
+  - [x] **需求一** `defaultMaxTokens` 由 32768 提升至 **131072（×4）**；用 zod 按适配器源码等价 schema 对整份 `llm-pi-ai` 段做 safeParse，**success=true**，回读生效值 131072，模型条目 6 条完整无损；
+  - [x] 服务端上限实测：262144 仍被接受，故 131072 在其接受区间内（**真实生成长度上限未经长输出触顶验证**，已在下方「未验证项」显式声明）；
+  - [x] **需求二** 命名规范唯一权威源落地：`knowledge/common/task_naming_spec.md`（142 行），三要素定义、R1~R7、六类字母、四维打分、正反示例齐备；
+  - [x] 改名脚本硬校验实测 **19 例全通过**：12 条反例全部拒绝（含顺序错误、编号非三位、字母越界、难度分越界/缺「分」字、概述 9 字、概述为空、组件间多余空格、纯英文概述），7 条正例全部放行（含 8 字边界、难度分下限 1、含英数概述、`008分` 前导零）；
+  - [x] 修复施工中发现的 2 个隐藏缺陷：① `wc -m` 在命令替换环境退化为字节计数导致误判「不含汉字」，改用 `perl \p{Han}` 真实 Unicode 计数；② `[R048][008分]` 会被 bash 当八进制解析而报错，改用 `10#$SCORE_NUM` 强制十进制；
+  - [x] 规则层三处重复定义已指针化，格式定义仅存于知识库一处；
+  - [ ] ⏳ 宿主 `settings.yaml` 改动**需重启桌面端方生效**，重启后应实测一次长回复的真实输出长度；
+  - [ ] ⬜ 待决项：单次输出上限 131072 与上下文窗口 262144 同处一个预算池，长回复可能挤压历史而更频繁触发上下文压缩，需重启后观察实际触发频率再决定是否回调；
+  - [ ] ⬜ 顺手发现（非本次范围，未处理）：① `settings.yaml` 各模型的 `output: [text, image]` 字段不在适配器 schema 允许键内，被 zod 静默剥离（**不影响加载**，实测 success=true），属既有冗余声明；② `memory/context_memory.md` 记录的 `DSH Web URL` 与「主要模型」两项已与实况不符（本会话实测 `DSH_WEB_URL=http://127.0.0.1:54617`、主要模型为 `DS/DeepSeek V4.1 Flash`）。
+- **未验证项声明**：
+  - 服务端**真实生成长度上限**未验证。本次仅验证「服务端接受该 `max_tokens` 参数值至 262144」，未做长输出触顶实验，故 131072 是「确定高于原默认、且落在服务端接受区间内」的取值，**不是经实测触顶得到的真实上限**；
+  - 「每秒 token 输出速率」本身**未被提速，也无法由客户端提速**——推理速度由服务端决定。本次交付的是「解除客户端的输出长度上限」，效果为单次回复更不易被截断，从而减少往返次数。

@@ -40,7 +40,7 @@
 
 ### 第七条：任务双轨分流与流程硬约束律 (Workflow Dual-Track)
 - **快慢分流**：复杂/高危任务（$>35$分）强制走 **Hard Line**（标准十六步流水线）；轻量任务（$\le35$分）走 **Fast Track**（极简三步）。
-- **首动重命名门禁**：Hard Line 任务定标后首个 bash 调用必为 `./scripts/rename_session.sh`，锁定 $\le 8$ 字标题。
+- **首动重命名门禁**：Hard Line 任务定标后首个 bash 调用必为 `./scripts/rename_session.sh`，按命名规范锁定标题；命名格式（三要素与硬性规则）唯一权威源见 [`knowledge/common/task_naming_spec.md`](../../knowledge/common/task_naming_spec.md)。
 
 ### 第八条：知识库权威与前置防冲突律 (Knowledge Base Precedence)
 - **最高业务基线**：[`knowledge/`](../../knowledge/README.md) 中世界观、美术与工程标准为产品开发最高法定基线。

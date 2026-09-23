@@ -20,6 +20,7 @@
 | [`miniprogram_specification.md`](miniprogram_specification.md) | **通用小程序研发规范** | 微信/多端小程序 | • **主包 ≤ 1.5MB** 极速首屏，业务模块独立分包；<br>• **弹窗组件化**且必须加 `catchtouchmove` 防滚动穿透；<br>• `hover-class` 原生按压反馈，`setData` 路径差量更新。 |
 | [`engineering_specification.md`](engineering_specification.md) | **通用技术架构与工程规范** | 全工程架构 | • 模块强解耦、无回环依赖；<br>• 状态机流转原子性、零 GC 法则与异常三段式捕获。 |
 | [`art_specification.md`](art_specification.md) | **通用视觉与色彩设计规范** | 全平台美术与视觉 | • 60-30-10 色彩平衡法、WCAG 4.5:1 对比度标准、立体视觉层级。 |
+| [`task_naming_spec.md`](task_naming_spec.md) | **通用任务命名规范** | 全任务通用 | • 三要素强制齐备（任务名 / 任务难度 / 任务概述）；<br>• 格式 `[分类编号][难度分] 概述` 逐条硬校验；<br>• 命名格式唯一权威源，其余文件只放指针。 |
 
 ---
 

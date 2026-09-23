@@ -21,7 +21,7 @@
 │   │   ├── language_standard.md     # 全文档中文化与通俗直白表达规范
 │   │   └── initialization_protocol.md # 会话开箱自检与目录一键初始化协议
 │   ├── workflow/                    # 【流程协同规范】
-│   │   ├── task_execution_flow.md   # 快慢双轨分流、100分制打分、8字标题、风险揭示、自动化测试与自迭代十六步流水线
+│   │   ├── task_execution_flow.md   # 快慢双轨分流、100分制打分、首动命名门禁（格式见知识库）、风险揭示、自动化测试与自迭代十六步流水线
 │   │   ├── risk_disclosure.md       # 事前四维风险雷达揭示、评估卡与高危阻断预案规范
 │   │   ├── page_ledger_specification.md # 交付页面视觉台账、四段式截图命名与跨会话精准指代规范
 │   │   ├── post_mortem_and_evolution.md # 事后三维 AAR 任务复盘与双向自迭代进化规范
@@ -44,7 +44,8 @@
 │   │   ├── web_specification.md     # Web规范（路由懒加载 / Modal Portal挂载 / box-shadow / 骨架屏）
 │   │   ├── miniprogram_specification.md # 小程序规范（主包≤1.5MB / 弹窗Component / setData差量）
 │   │   ├── engineering_specification.md # 技术架构规范（模块单向解耦 / 零GC / 状态机原子性）
-│   │   └── art_specification.md     # 视觉规范（60-30-10配比 / WCAG 4.5:1对比度 / 阴影阶梯）
+│   │   ├── art_specification.md     # 视觉规范（60-30-10配比 / WCAG 4.5:1对比度 / 阴影阶梯）
+│   │   └── task_naming_spec.md      # 任务命名规范【唯一权威源】（三要素 / R1~R7硬校验 / 六类业务管道 / 四维打分）
 │   └── projects/                    # 【项目专属知识库 · 物理隔离防污染】
 │       ├── README.md                # 项目隔离规约与清单
 │       └── aether_echo/             # 源能回响项目（专属世界观/美术/Unity URP工程参数）
