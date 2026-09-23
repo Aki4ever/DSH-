@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.4.0`
+> - **当前系统实施总版本**：`v4.5.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1745,6 +1745,28 @@
   - [x] 交互规范完成格式塔七大定律交互映射行为法典化；
   - [x] 可读性规范完成全域系统字体族与四大字体红线固化；
   - [x] 全局台账与专项目录版本统一推进至 v4.4.0。
+
+---
+
+### REQ-063: 任务级版本强制递增律与全域交付输出物版本强同步闭环
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.5.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-018`）
+- **核心诉求与交付物**：
+  1. **第三十条元规则落地**：在 [`rules/system/meta_rules.md`](../rules/system/meta_rules.md) 写入《任务级版本强制递增与双向闭环律》，确立“每动必升版”与“无台账无版本”刚性红线；
+  2. **交付收尾输出物强同步三大靶点**：在 [`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) 与 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md) 固化交付物自身元数据、需求管理主台账、最终答复与收尾卡片的三级版本 100% 同步约束；
+  3. **版本全局推进**：全库实施总版本与受管文档头部版本一致推进至 v4.5.0。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `rules/workflow/versioning_standard.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 第三十条元规则写入生效；
+  - [x] 执行流与版本规范固化每动必升版与输出物强同步三大靶点；
+  - [x] 全局台账与专项目录版本统一推进至 v4.5.0。
 
 ---
 

@@ -1,8 +1,8 @@
 # 第一性原理与物理实证规范 (First-Principles & Empirical Verification Standard)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.4.0`
-> - **对应实施版本**：`v4.4.0`
+> - **当前文档版本**：`v4.5.0`
+> - **对应实施版本**：`v4.5.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **需求依据**：`REQ-057` / `CR-012`（第一性原理与事实/已证实推论实证铁律）
 > - **生效状态**：`[Release 稳定生效]`

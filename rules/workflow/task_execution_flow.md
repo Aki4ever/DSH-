@@ -1,8 +1,8 @@
 # 任务执行结构化流程与双轨分流法典 (Task Execution Flow)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.4.0`
-> - **对应实施版本**：`v4.4.0`
+> - **当前文档版本**：`v4.5.0`
+> - **对应实施版本**：`v4.5.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](versioning_standard.md)
 > - **生效状态**：`[Release 稳定生效]`
 
@@ -243,3 +243,5 @@ $$\text{难度总分} = \text{影响范围}(0\sim30) + \text{依赖深度}(0\sim
 2. **绝对白名单保护**：执行任何清理或批量修改时，`knowledge/`、`memory/`、`rules/`、`indexes/`、`docs/` 核心资产绝对禁止删除；
 3. **GFM 原生组件规范**：禁止输出裸 HTML 标签，一律使用标准 Markdown 引用块（`>`）与表格呈现视觉卡片；
 4. **报错归因与防复发闭环 (Error Ledger Sync)**：遇到工具调用报错，严禁静默吞没或无归因盲试，必须在思维链中执行三段式解构（中文释义+物理根因+修复路径），并将具复发特征的共性错误登记至 [`memory/error_ledger.md`](../../memory/error_ledger.md)，反哺前置自检探针。
+5. **每动必升版与输出物强同步 (Per-Task Version Bump & Deliverable Sync)**：每次实质物理变更任务，必须将系统实施总版本号显式递增；产出的实体交付物（文档头部元数据、代码注释、图形快照）与需求管理主台账 [`docs/requirements.md`](../../docs/requirements.md) 必须 100% 同步更新最新版本号，绝不允许版本悬空或交付物旧版残留。
+
