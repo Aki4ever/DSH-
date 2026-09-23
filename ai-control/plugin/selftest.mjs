@@ -67,6 +67,25 @@ check('逃生舱 · 运行冗余检测放行', evaluate({ name: 'bash', ...args(
 check('逃生舱 · 写管控配置放行', evaluate({ name: 'write', ...args({ path: 'ai-control/config/gates.conf' }) }, statusBlocked, Config, FRESH), undefined)
 check('逃生舱 · 写检测器脚本放行', evaluate({ name: 'edit', ...args({ path: 'scripts/conflict_scan.mjs' }) }, statusBlocked, Config, FRESH), undefined)
 
+// 3a) 逃生舱 · 命令包裹形式（2026-09-23 修复的真实死锁回归用例）
+//     实测背景：门禁未过时，被拒消息推荐的 `./scripts/control_gates.sh check`
+//     一旦写成 `cd "<工程>" && ./scripts/...` 就被拒 —— 而"先 cd 进工程再跑脚本"
+//     是最自然的写法。旧实现只看脚本 token 的前一个 token（`&&`），故逃生舱失效，
+//     与消息推荐的另一条路（设 DSH_CONTROL_GUARD=off，同样需要 bash）叠加成完全死锁。
+//     下面这些用例当时全都会失败，补上后该类回归无法再次逃过自检。
+check('逃生舱 · cd 连接符后调用脚本放行', evaluate({ name: 'bash', ...args({ command: 'cd "/Users/x/全局规则" && ./scripts/control_gates.sh check' }) }, statusBlocked, Config, FRESH), undefined)
+check('逃生舱 · 分号连接后调用脚本放行', evaluate({ name: 'bash', ...args({ command: 'cd /tmp; ./scripts/control_gates.sh check' }) }, statusBlocked, Config, FRESH), undefined)
+check('逃生舱 · 管道后调用脚本放行', evaluate({ name: 'bash', ...args({ command: 'echo x | ./scripts/redundancy_scan.mjs' }) }, statusBlocked, Config, FRESH), undefined)
+check('逃生舱 · 裸 bash 调用脚本放行', evaluate({ name: 'bash', ...args({ command: 'bash scripts/control_gates.sh check' }) }, statusBlocked, Config, FRESH), undefined)
+// 含空格的绝对 node 路径（本机 node 不在 PATH，只有这条真实可用），必须带引号才是一个 token
+check('逃生舱 · 带引号绝对 node 路径放行', evaluate({ name: 'bash', ...args({ command: '"/Volumes/DSH Desktop/DSH Desktop.app/Contents/Resources/runtime/node" scripts/redundancy_scan.mjs --root .' }) }, statusBlocked, Config, FRESH), undefined)
+check('逃生舱 · cd 后带引号绝对 node 放行', evaluate({ name: 'bash', ...args({ command: 'cd "/Users/x/全局规则" && "/Volumes/DSH Desktop/DSH Desktop.app/Contents/Resources/runtime/node" scripts/redundancy_scan.mjs --root .' }) }, statusBlocked, Config, FRESH), undefined)
+
+// 3a-反例：包裹形式**不能**变成放行任意命令的后门
+check('逃生舱反例 · && 后接非脚本命令被拒', evaluate({ name: 'bash', ...args({ command: 'cd /tmp && echo scripts/control_gates.sh' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+check('逃生舱反例 · cat 脚本内容被拒', evaluate({ name: 'bash', ...args({ command: 'cat scripts/control_gates.sh' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+check('逃生舱反例 · node 跑非白名单脚本被拒', evaluate({ name: 'bash', ...args({ command: 'node scripts/conflict_scan.mjs --root .' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+
 // 3b) 逃生舱反例（关键补充）：以下调用**不属于**修复管控自身，必须被拒。
 //     这些用例正是旧实现（参数含 `control_` 即放行）的漏网之鱼，
 //     补齐后该类回归无法再次逃过自检。

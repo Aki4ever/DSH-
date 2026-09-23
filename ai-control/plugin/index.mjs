@@ -210,17 +210,94 @@ function isEscape(execution, config) {
   const escScripts = config.escapeScriptPrefixes || []
   const escWrites = config.escapeWritePrefixes || []
 
-  // 1) bash / pwsh：命令里必须真正出现某个管控脚本路径
+  // 1) bash / pwsh：命令里必须真正"调用"了某个管控脚本
   if (toolName === 'bash' || toolName === 'pwsh') {
     const cmd = String(execution?.arguments?.command ?? '')
-    const tokens = cmd.split(/\s+/).map((t) => t.replace(/^['"]|['"]$/g, ''))
-    for (let i = 0; i < tokens.length; i++) {
-      const tok = normalizePath(tokens[i])
-      const hit = escScripts.find((s) => tok === s || tok.endsWith('/' + s))
-      if (!hit) continue
-      // 要求该 token 恰好是一个路径（前一个 token 不能让它变成 "echo scripts/x" 的普通参数）
-      const prev = i > 0 ? tokens[i - 1] : ''
-      if (i === 0 || /^(bash|sh|zsh|node|npx|\.\/|\/)/.test(prev) || prev.endsWith('/')) return true
+
+    // 按 shell 控制符切分命令段。
+    // 为什么必须切分（2026-09-23 修复的真实死锁）：
+    // 旧实现只看脚本 token 的**前一个 token**，而 `cd "<工程>" && ./scripts/control_gates.sh check`
+    // 里脚本前面是 `&&` —— 不在允许列表 → 逃生舱失效。而这条命令正是被拒消息里
+    // **自己推荐的**自救命令；消息推荐的另一条路（设 DSH_CONTROL_GUARD=off）同样需要 bash。
+    // 于是门禁一旦未过就彻底死锁：改不动、也修不了。实测复现：门禁未过时
+    // `cd x && ./scripts/control_gates.sh check` 被拒，而纯绝对路径形式可以通过。
+    const segments = []
+    let cur = ''
+    let quote = ''
+    for (let i = 0; i < cmd.length; i++) {
+      const ch = cmd[i]
+      if (quote) {
+        // 引号内的一切（含 && ; |）都是普通字符，不能当分隔符
+        if (ch === quote) quote = ''
+        cur += ch
+        continue
+      }
+      if (ch === "'" || ch === '"') { quote = ch; cur += ch; continue }
+      const two = cmd.slice(i, i + 2)
+      if (two === '&&' || two === '||') { segments.push(cur); cur = ''; i++; continue }
+      if (ch === ';' || ch === '|' || ch === '\n') { segments.push(cur); cur = ''; continue }
+      cur += ch
+    }
+    segments.push(cur)
+
+    // 解释器判定要取 basename：实测本机 node 不在 PATH 上，
+    // 调用形式是绝对路径（如 `/Volumes/DSH Desktop/DSH Desktop.app/.../runtime/node`），
+    // 只比裸命令名会漏掉这种**真实且唯一可用**的调用方式。
+    // 词法切分：引号内的内容（含空格）算作**一个** token。
+    // 为什么必须这样：本机 node 在 `/Volumes/DSH Desktop/DSH Desktop.app/...`（**路径含空格**），
+    // 直接按空白切分会把绝对路径切碎，导致 `node /Volumes/.../runtime/node scripts/x.mjs`
+    // 这类**真实且唯一可用**的调用被判为非逃生舱。
+    const tokenize = (s) => {
+      const out = []
+      let b = ''
+      let q = ''
+      for (let i = 0; i < s.length; i++) {
+        const ch = s[i]
+        if (q) {
+          if (ch === q) q = ''
+          else b += ch
+          continue
+        }
+        if (ch === "'" || ch === '"') { q = ch; continue }
+        if (/\s/.test(ch)) { if (b) { out.push(b); b = '' } continue }
+        b += ch
+      }
+      if (b) out.push(b)
+      return out
+    }
+
+    // 解释器判定要取 basename：实测本机 node 不在 PATH 上，
+    // 调用形式是绝对路径（如 `/Volumes/DSH Desktop/DSH Desktop.app/.../runtime/node`），
+    // 只比裸命令名会漏掉这种**真实且唯一可用**的调用方式。
+    const isInterpreter = (t) => /^(bash|sh|zsh|node|npx)$/.test(String(t).split('/').pop())
+
+    /**
+     * 该 token 是否指向逃生脚本。
+     * @param {string} rawTok
+     * @param {boolean} bareOk 是否接受裸相对路径（`scripts/x`）—— 仅当段首是解释器时放开，
+     *        因为 `cat scripts/x` / `echo scripts/x` 这类**非执行**用法必须被排除。
+     */
+    const pointsToEscapeScript = (rawTok, bareOk = false) => {
+      const tok = normalizePath(rawTok)
+      return escScripts.some((s) => {
+        if (!(tok === s || tok.endsWith('/' + s))) return false
+        if (tok === s) return true
+        // 路径形态即可：`./scripts/x`、`/abs/.../scripts/x`；
+        // 裸 `scripts/x` 仅在解释器后放行
+        return tok.startsWith('./') || tok.startsWith('/') || bareOk
+      })
+    }
+
+    for (const seg of segments) {
+      const toks = tokenize(seg).map((t) => t.replace(/&+$/, ''))
+      if (toks.length === 0) continue
+      // (a) 段首 token 就是逃生脚本路径（如 `./scripts/control_gates.sh check`）
+      if (pointsToEscapeScript(toks[0])) return true
+      // (b) 段首是解释器，其参数里出现逃生脚本
+      //     （`bash scripts/control_gates.sh check`、`node scripts/redundancy_scan.mjs ...`）
+      //     此处放开裸相对路径：`node scripts/x.mjs` 是标准写法；
+      //     而 `cat scripts/x` 段首不是解释器，仍会被拒。
+      if (isInterpreter(toks[0]) && toks.slice(1).some((t) => pointsToEscapeScript(t, true))) return true
     }
     return false
   }

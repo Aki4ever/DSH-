@@ -3,7 +3,7 @@
 > ### 🏷️ **版本信息与实施追踪**
 > - **当前台账版本**：`v3.1.0`
 > - **基线对齐版本**：`v3.1.0`
-> - **最后全盘扫描时间**：2026-09-23 09:51
+> - **最后全盘扫描时间**：2026-09-23 14:05
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)
 
 本文档记录工程全域受管资产（规则、知识库、架构索引、工程模板、自动化脚本与需求台账）的**数字指纹（SHA-256 8位短哈希）**、**最后修改时间**与**新鲜度等级**，为全域资产对齐与防止暗中代码漂移提供唯一客观事实依据。
@@ -98,7 +98,7 @@
 | `scripts/verify_guard_live.sh` | `a88950fc` | 2026-09-23 08:10 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/constraint_mechanism_enhance_2.md` | `7fd56882` | 2026-09-23 09:50 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
-| `docs/constraint_mechanism_optimize_3.md` | `edb80360` | 2026-09-23 09:51 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
+| `docs/constraint_mechanism_optimize_3.md` | `00a729af` | 2026-09-23 14:05 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
 | `docs/constraint_mechanism_spec.md` | `7b87ec98` | 2026-09-23 09:50 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
 | `docs/diagram_generation_guide.md` | `7b345269` | 2026-09-23 08:09 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
 | `docs/memory_architecture.md` | `a35e10e8` | 2026-09-16 16:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
@@ -108,12 +108,12 @@
 | `ai-control/README.md` | `7880d8f3` | 2026-09-23 06:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/config/gates.conf` | `d686ec33` | 2026-09-22 20:11 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/config/legacy_align_exempt.txt` | `4acab986` | 2026-09-23 09:32 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
-| `ai-control/plugin/index.mjs` | `f51ac4bd` | 2026-09-23 07:49 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `ai-control/plugin/index.mjs` | `d8f35326` | 2026-09-23 14:04 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/plugin/loader.mjs` | `13ef6615` | 2026-09-23 07:47 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `ai-control/plugin/selftest.mjs` | `3f913ad2` | 2026-09-23 07:48 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `ai-control/plugin/selftest.mjs` | `354e6b4d` | 2026-09-23 14:05 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `memory/.gitkeep` | `e3b0c442` | 2026-09-16 15:37 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `memory/README.md` | `2778de38` | 2026-09-16 15:37 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `memory/asset_fingerprint_ledger.md` | `39044149` | 2026-09-23 09:51 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
+| `memory/asset_fingerprint_ledger.md` | `089eaa70` | 2026-09-23 14:05 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
 | `memory/context_memory.md` | `4abba659` | 2026-09-16 16:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `memory/efficiency_audit_log.md` | `0ead8330` | 2026-09-23 08:09 | `v3.1.0` | 🟢 TIER-0 | 最新基线 |
 | `memory/lessons_learned.md` | `91c66693` | 2026-09-22 21:15 | `-` | ⚪ TIER-2 | 指纹监控中 |
