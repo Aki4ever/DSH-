@@ -1,8 +1,8 @@
 # 系统操作与工程设计原子性事务边界规范 (Atomicity Specification)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.3.0`
-> - **对应实施版本**：`v4.3.0`
+> - **当前文档版本**：`v4.4.0`
+> - **对应实施版本**：`v4.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-22
 > - **版本状态**：`[Release 稳定生效]`

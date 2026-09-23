@@ -1,8 +1,8 @@
 # 全端可读性与无障碍排版设计法典 (Universal Readability & Typography Specification)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.3.0`
-> - **对应实施版本**：`v4.3.0`
+> - **当前文档版本**：`v4.4.0`
+> - **对应实施版本**：`v4.4.0`
 > - **规范层级**：`【知识库总纲 · 通用公共规范】`（所有工程 100% 共享继承）
 > - **生效状态**：`[Release 稳定生效]`
 
@@ -29,23 +29,36 @@
 
 ---
 
-## 🔤 二、跨端系统级字体族配置 (Font Family Matrix)
+## 🔤 二、全域字体族与字体使用标准规范 (Typography & Font Standards)
 
-全局统一采用现代无衬线系统字体，兼顾高清视网膜屏抗锯齿与极速原生加载：
+全局统一采用现代无衬线系统字体，兼顾高清视网膜屏抗锯齿、原生极速加载与零外部字体网络依赖：
 
+### 1. 跨端系统级字体栈 (System Font Stack Matrix)
 ```css
-/* 1. Web 桌面端 & DMG 桌面客户端推荐栈 */
+/* 1. Web 桌面端 & DMG 桌面客户端推荐栈 (优先 macOS/Windows 系统级渲染) */
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 
-/* 2. App 移动端 (iOS / Android 原生及跨端) */
+/* 2. App 移动端 (iOS / Android 原生及 Flutter/React Native 跨端) */
 font-family: -apple-system, "PingFang SC", "Helvetica Neue", STHeiti, "Microsoft YaHei", sans-serif;
 
-/* 3. 微信小程序与跨平台小程序 (rpx 像素体系) */
+/* 3. 微信小程序与跨平台小程序 (兼顾 iOS PingFang 与 Android 默认无衬线) */
 font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
 
-/* 4. 代码块、终端输出、数据指标与时间戳 (等宽字体) */
+/* 4. 代码块、终端输出、数据指标、哈希值与时间戳 (等宽字体栈) */
 font-family: "SF Mono", Monaco, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
 ```
+
+### 2. 字体选型与引入红线 (Font Selection Principles)
+- **零网络字体依赖 (Zero Webfont Blocking)**：业务系统主界面严禁通过 `@import` 或 `<link>` 异步加载未授权的几十兆中文字体包，杜绝 FOUT（无样式文字闪烁）与 FOIT（隐形文字闪烁）；
+- **禁用艺术花体与手写体**：在数据呈现、后台管理、表单操作及正文场景，**严禁引入楷体、圆体、书法体等异构花体**，杜绝增加用户辨识认知负担；
+- **英文西文混排规范 (CJK & Latin Pairing)**：字体声明中西文字体（`-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto`）必须前置于中文字体（`"PingFang SC", "Microsoft YaHei"`），确保中英混排时英文字符与数字采用专用西文字形；
+- **数字等宽渲染 (Tabular Numerals)**：金融、审计、库存、工单、倒计时等涉及数值比对的场景，必须强制声明：
+  ```css
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  ```
+  保证所有数字具有完全相同的物理宽度，彻底消除跳动与参差。
+
 
 ---
 

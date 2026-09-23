@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.3.0`
+> - **当前系统实施总版本**：`v4.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1724,6 +1724,27 @@
   - [x] 文字精细排版四项铁律完成扩充；
   - [x] 按钮规格、页面过渡与点击反馈动效法典落地；
   - [x] 全局台账与专项目录版本统一推进至 v4.3.0。
+
+---
+
+### REQ-062: 格式塔交互映射深化与全域字体选型工程标准法典化
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.4.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-017`）
+- **核心诉求与交付物**：
+  1. **格式塔交互行为映射规范法典化**：在 [`knowledge/common/interaction_specification.md`](../knowledge/common/interaction_specification.md) 扩充格式塔第七定律（共同命运律），并将接近/相似/闭合/主体背景分离/秩序/连续/共同命运七大定律深度绑定至具体交互映射行为（焦点流转、组件继承、蒙层交互、手势反馈、协同折叠动效）；
+  2. **全域字体使用工程规范落地**：在 [`knowledge/common/readability_specification.md`](../knowledge/common/readability_specification.md) 落地四大跨端系统级字体栈，明确零网络字体依赖、艺术花体禁用红线、西文优先混排策略及 `tabular-nums` 数字等宽渲染铁律；
+  3. **版本全局推进**：全局需求台账与管控专项目录版本统一跃迁至 v4.4.0。
+- **关联文件**：
+  - `knowledge/common/interaction_specification.md`
+  - `knowledge/common/readability_specification.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 交互规范完成格式塔七大定律交互映射行为法典化；
+  - [x] 可读性规范完成全域系统字体族与四大字体红线固化；
+  - [x] 全局台账与专项目录版本统一推进至 v4.4.0。
 
 ---
 

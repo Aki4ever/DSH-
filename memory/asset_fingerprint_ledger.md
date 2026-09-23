@@ -1,7 +1,7 @@
 # 全域资产数字指纹与新鲜度审计台账 (Asset Fingerprint Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前台账版本**：`v4.3.0`
+> - **当前台账版本**：`v4.4.0`
 > - **基线对齐版本**：`v4.0.0`
 > - **最后全盘扫描时间**：2026-09-23 19:15
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)

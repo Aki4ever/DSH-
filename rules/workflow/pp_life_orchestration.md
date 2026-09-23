@@ -1,8 +1,8 @@
 # 单例并发中枢 Agent PP 与短生命周期 Agent Life(N) 协同调度规约 (PP-Life Orchestration Specification)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.3.0`
-> - **对应实施版本**：`v4.3.0`
+> - **当前文档版本**：`v4.4.0`
+> - **对应实施版本**：`v4.4.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](versioning_standard.md)
 > - **需求依据**：`REQ-056` / `CR-011`（单例并发中枢 Agent PP 与多 Life 短生命周期消亡架构）
 > - **生效状态**：`[Release 稳定生效]`
