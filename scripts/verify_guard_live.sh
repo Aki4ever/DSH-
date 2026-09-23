@@ -90,6 +90,46 @@ else
 fi
 echo
 
+# ── 2b. 逃生舱判定（静态可判：不需制造门禁未过的状态）──────────────────────────
+#  为什么这一项能自动化：`isEscape` 是纯函数，把"门禁未过"的状态喂进去，
+#  直接看它对各种命令形式的判定即可。这样"门禁未过时还能不能自救"就不再依赖人肉观察。
+#  历史缺陷：`cd "<工程>" && ./scripts/control_gates.sh check` 被判为非逃生舱而被拒 ——
+#  而被拒消息推荐的恰好就是这条命令，另一条（设 DSH_CONTROL_GUARD=off）同样需要 bash，
+#  于是完全死锁。下面这些用例就是那次缺陷的回归防线。
+echo "【2b】逃生舱判定（门禁未过时，自救命令必须放行）"
+if [ -n "$NODE_BIN" ] && [ -f "$ROOT/ai-control/plugin/index.mjs" ]; then
+  OUT=$("$NODE_BIN" --input-type=module -e "
+import { evaluate, Config } from '$ROOT/ai-control/plugin/index.mjs'
+const st = { gatePassed: 2, gateTotal: 4, percent: 50, execAllowed: false,
+             gates: [{ id: 'sync', name: '需求文档同步', status: 'pending', hint: 'x' }] }
+const bash = (command) => ({ name: 'bash', arguments: { command } })
+const cases = [
+  ['cd && 脚本 check',          'cd \"$ROOT\" && ./scripts/control_gates.sh check', true],
+  ['分号连接',                   'cd /tmp; ./scripts/control_gates.sh check', true],
+  ['管道后',                     'echo x | ./scripts/redundancy_scan.mjs', true],
+  ['裸 bash 调用',               'bash scripts/control_gates.sh check', true],
+  ['绝对路径调用验证脚本',        '$ROOT/scripts/verify_guard_live.sh', true],
+  ['反例:普通写入(应拒)',         'echo probe > probe_outside.txt', false],
+  ['反例:cat 脚本(应拒)',         'cat scripts/control_gates.sh', false],
+]
+let pass = 0, fail = 0
+for (const [n, c, want] of cases) {
+  const allowed = evaluate(bash(c), st, Config, 0) === undefined
+  if (allowed === want) { pass++ } else { fail++; console.log('  ✗ ' + n + ' → ' + (allowed ? '放行' : '拒绝') + '（期望' + (want ? '放行' : '拒绝') + '）') }
+}
+console.log(pass + '/' + (pass + fail) + ' ' + (fail === 0 ? 'OK' : 'FAIL'))
+" 2>&1)
+  if printf '%s' "$OUT" | grep -q "OK$"; then
+    ok "逃生舱判定正确（$(printf '%s' "$OUT" | tail -1 | cut -d' ' -f1)）"
+  else
+    bad "逃生舱判定有误 —— 门禁未过时可能无法自救"
+    printf '%s\n' "$OUT" | sed 's/^/     /'
+  fi
+else
+  bad "无法运行逃生舱判定（缺 Node 或插件文件）"
+fi
+echo
+
 # ── 3. 门禁当前实况（守卫放行/拦截的判据来源）────────────────────────────────────
 echo "【3】门禁实况（守卫据此决定放行还是拦截）"
 if [ -x "$ROOT/scripts/control_gates.sh" ]; then

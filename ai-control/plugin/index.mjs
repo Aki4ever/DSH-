@@ -78,7 +78,15 @@ export const Config = {
    *
    * 逃生舱必须常开：否则"修门禁须先过门禁"会死锁。
    */
-  escapeScriptPrefixes: ['scripts/control_gates.sh', 'scripts/redundancy_scan.mjs', 'scripts/node.sh'],
+  escapeScriptPrefixes: [
+    'scripts/control_gates.sh',
+    'scripts/redundancy_scan.mjs',
+    'scripts/node.sh',
+    // 拦截层自身的诊断工具：门禁未过时**正是最需要它**的时刻。
+    // 若不列入，就会出现"门禁没过 → 想排查 → 排查脚本被门禁拦住"的自锁。
+    // 它只做只读检查（源码契约 / 自检 / 门禁实况 / 逃生舱判定），无副作用。
+    'scripts/verify_guard_live.sh',
+  ],
   escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
   /** 是否在拒绝理由中附带看板摘要。 */
   verbose: false,

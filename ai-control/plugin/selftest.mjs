@@ -86,6 +86,16 @@ check('逃生舱反例 · && 后接非脚本命令被拒', evaluate({ name: 'bas
 check('逃生舱反例 · cat 脚本内容被拒', evaluate({ name: 'bash', ...args({ command: 'cat scripts/control_gates.sh' }) }, statusBlocked, Config, FRESH) !== undefined, true)
 check('逃生舱反例 · node 跑非白名单脚本被拒', evaluate({ name: 'bash', ...args({ command: 'node scripts/conflict_scan.mjs --root .' }) }, statusBlocked, Config, FRESH) !== undefined, true)
 
+// 3a-2) 逃生舱白名单必须包含"拦截层自身的诊断工具"。
+//       理由：门禁未过时正是最需要排查的时刻；若诊断脚本不在白名单，
+//       就会出现"门禁没过 → 想排查 → 排查脚本被门禁拦住"的自锁。
+check('逃生舱 · 拦截层诊断脚本在逃生舱白名单内',
+  Config.escapeScriptPrefixes.includes('scripts/verify_guard_live.sh'), true)
+check('逃生舱 · 绝对路径调用诊断脚本放行',
+  evaluate({ name: 'bash', ...args({ command: '/Users/x/全局规则/scripts/verify_guard_live.sh' }) }, statusBlocked, Config, FRESH), undefined)
+check('逃生舱 · cd 后调用诊断脚本放行',
+  evaluate({ name: 'bash', ...args({ command: 'cd "/Users/x/全局规则" && ./scripts/verify_guard_live.sh' }) }, statusBlocked, Config, FRESH), undefined)
+
 // 3b) 逃生舱反例（关键补充）：以下调用**不属于**修复管控自身，必须被拒。
 //     这些用例正是旧实现（参数含 `control_` 即放行）的漏网之鱼，
 //     补齐后该类回归无法再次逃过自检。
