@@ -1,8 +1,8 @@
 # 快速通道指令路由与地图式高速干道导航索引 (Arterial Routing & Quick Shortcuts Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v3.0.0`
-> - **对应实施版本**：`v3.0.0`
+> - **当前文档版本**：`v3.1.0`
+> - **对应实施版本**：`v3.1.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -67,6 +67,7 @@
 | **“调度锁”**<br>*(或“资源锁/防冲突/排队看盘”)* | **G1 干线** | 查看当前全局资源锁占用大盘与自愈清理 | 执行 [`scripts/global_scheduler_lock.sh`](../scripts/global_scheduler_lock.sh) `--status` | 输出活跃排他锁清单、持有任务、超时判定与防打架调度策略 |
 | **“门禁看板”**<br>*(或“闸门状态/门禁状态”)* | **G1 干线** | **只看门禁**：四道门禁当前是否全过 | 执行 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `check` | 输出量化看板（G1~G4 状态 + 指标 + 卡点） |
 | **“看看管控机制”**<br>*(或“管控机制全貌/管控机制/机制全貌”)* | **G1 干线** | **看机制全貌**：门禁 + 双检 + 存量校准 + 通道清单 | 依次执行 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `check`、[`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs) | 输出机制全貌卡：四道门各查什么与当前状态、双检与存量校准实测数字、十六步强制/建议统计、当前通道清单、四层分工与载体路径。**数字必须来自本次实跑** |
+| **“看图学管控”**<br>*(或“管控出图/一图看懂管控/出管控图”)* | **G1 干线** | **用一张图**看懂四道门禁现在什么状态、每道门在查什么 | 执行 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `graph`（默认输出 `ai-control/reports/gate_graph.svg`） | 输出状态驱动 SVG：四道门一行一道（状态色 + 指标 + 大白话说明 + 卡点），数据来自本次实跑；自 2026-09-23 起可用。**图不落版本库**（该目录已被忽略），需长期保存时用 `DSH_CONTROL_GRAPH_OUT=<路径>` 指定 |
 | **“查啰嗦”**<br>*(或“冗余检测/重复内容”)* | **G1 干线** | 检出同一内容被写两遍 | 执行 [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs) `--root .` | 输出高相似块对清单；有重复则合并为迭代版本 |
 | **“查打架”**<br>*(或“冲突检测/自相矛盾”)* | **G1 干线** | 检出同一事实两种说法（版本/计数/指标/标识/死链） | 执行 [`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs) `--root .` | 输出冲突清单与裁决建议；**先裁决再改，禁止自行取舍** |
 | **“存量校准”**<br>*(或“遇碰即对齐/对齐清单”)* | **G1 干线** | 检查存量资产是否跟上新规范 | 执行 [`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs) `--root .` | 输出待对齐清单；须清零或书面说明原因 |

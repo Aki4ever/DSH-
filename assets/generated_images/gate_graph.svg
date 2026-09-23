@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="572" viewBox="0 0 900 572" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="572" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#141821"/><stop offset="100%" stop-color="#0D1117"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="640" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2EC4B6"/><stop offset="100%" stop-color="#2EC4B6" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="572" rx="16" fill="url(#bg)"/>
+  <text x="50" y="62" font-size="27" font-weight="700" fill="#FFFFFF">管控机制 · 一图看懂</text>
+  <text x="50" y="92" font-size="15" fill="#9AA7B4">四道门全过 —— 可以动手改工程</text>
+  <text x="50" y="118" font-size="13" fill="#6B7684">门禁状态由磁盘实况推导，不是自我声明</text>
+  <text x="850" y="62" font-size="15" font-weight="600" fill="#E6EDF3" text-anchor="end">100% · 4/4</text>
+  <rect x="50" y="150" width="640" height="16" rx="8" fill="#232A35"/>
+  <rect x="50" y="150" width="640" height="16" rx="8" fill="url(#bar)"/>
+  <text x="850" y="164" font-size="13" fill="#8B98A5" text-anchor="end">图由磁盘实况生成</text>
+  <line x1="50" y1="206" x2="850" y2="206" stroke="#232A35"/>
+    <text x="50" y="270" font-size="19" font-weight="700" fill="#2EC4B6">●</text>    <text x="78" y="270" font-size="17" font-weight="600" fill="#E6EDF3">第1道门 · 项目初始化</text>    <text x="444" y="270" font-size="14" fill="#8B98A5">仓库、目录、防丢文件都在不在</text>    <text x="680" y="270" font-size="15" font-weight="600" fill="#2EC4B6">已通过</text>    <text x="78" y="292" font-size="13" fill="#7D8896">11/11 骨架齐备 · 8/8 防丢覆盖</text>    <text x="444" y="292" font-size="13" fill="#6B7684">骨架与防丢文件齐备</text>
+    <text x="50" y="336" font-size="19" font-weight="700" fill="#2EC4B6">●</text>    <text x="78" y="336" font-size="17" font-weight="600" fill="#E6EDF3">第2道门 · 工程结构化</text>    <text x="444" y="336" font-size="14" fill="#8B98A5">每个目录有没有人管、有没有垃圾</text>    <text x="680" y="336" font-size="15" font-weight="600" fill="#2EC4B6">已通过</text>    <text x="78" y="358" font-size="13" fill="#7D8896">5/5 合规项 · 0 孤儿目录</text>    <text x="444" y="358" font-size="13" fill="#6B7684">结构合规、无孤儿目录与散落垃圾</text>
+    <text x="50" y="402" font-size="19" font-weight="700" fill="#2EC4B6">●</text>    <text x="78" y="402" font-size="17" font-weight="600" fill="#E6EDF3">第3道门 · 需求文档同步</text>    <text x="478" y="402" font-size="14" fill="#8B98A5">需求台账记没记、改动提交了吗</text>    <text x="680" y="402" font-size="15" font-weight="600" fill="#2EC4B6">已通过</text>    <text x="78" y="424" font-size="13" fill="#7D8896">46 需求条目 · 9 未提交变更</text>    <text x="478" y="424" font-size="13" fill="#6B7684">台账与工作树已对齐</text>
+    <text x="50" y="468" font-size="19" font-weight="700" fill="#2EC4B6">●</text>    <text x="78" y="468" font-size="17" font-weight="600" fill="#E6EDF3">第4道门 · 冗余检测</text>    <text x="410" y="468" font-size="14" fill="#8B98A5">同一件事有没有写两遍</text>    <text x="680" y="468" font-size="15" font-weight="600" fill="#2EC4B6">已通过</text>    <text x="78" y="490" font-size="13" fill="#7D8896">0 高相似块对 · 7 重复标题</text>    <text x="410" y="490" font-size="13" fill="#6B7684">无实质冗余（已排除模板型台账与…</text>
+  <line x1="50" y1="524" x2="850" y2="524" stroke="#232A35"/>
+  <text x="50" y="550" font-size="13" fill="#7D8896">快照时间 2026-09-23 07:53:38 · 工程 /Users/linqiyu/Documents/DSH/全局规则</text>
+  <text x="850" y="550" font-size="13" fill="#7D8896" text-anchor="end">改完工程跑一次 check，这张图会自己更新</text>
+</svg>

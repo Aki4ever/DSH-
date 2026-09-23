@@ -56,10 +56,22 @@ const inner = await loadSafely()
 export const name = inner.name || 'ai-execution-control'
 
 /**
- * 依赖声明：即使降级为空插件也保持为空，避免"依赖缺失"反过来让宿主报错。
- * 真实插件内部自行声明其所需服务。
+ * 依赖声明：**必须在这里声明，不能只写在 index.mjs 里**。
+ *
+ * 原因（真实缺陷，2026-09-23 修复）：宿主只读取「被加载模块自己导出」的 inject
+ * （依据：cordis `new Fiber(..., Inject.resolve(plugin.inject), ...)` 与
+ * cordis-plugin-loader `Inject.resolve(entry.options.inject, fiber.inject)`）。
+ * 本文件是 patch 条目实际加载的模块，index.mjs 只是被它 import 的内部模块，
+ * 因此 index.mjs 里的 `inject = ['tools']` 永远不会被宿主读到。
+ *
+ * 后果：宿主不等待 tools 服务就激活插件 → apply 时 `ctx.tools` 为 undefined
+ * → 命中"服务未就绪"分支静默 return → **守卫永不注册、看板永不注入**，
+ * 而自检仍全绿（历史事实：5160 次受控调用 0 次否决、0 次注入）。
+ *
+ * 降级说明：声明依赖不会让宿主启动失败——依赖缺失时 Cordis 只是不激活本插件，
+ * 桌面端照常启动，与"故障安全加载器"的设计目标一致。
  */
-export const inject = []
+export const inject = ['tools']
 
 /**
  * 转交入口。真实插件自己的 `apply` 内部已对每个挂载点做了 try/catch 兜底。

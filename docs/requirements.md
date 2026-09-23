@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v3.0.0`
+> - **当前系统实施总版本**：`v3.1.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-22
 > - **版本状态**：`[Release 稳定生效]`
@@ -1205,3 +1205,40 @@
   - [x] 给出可执行的可见性检查方式（清单非空自查 + `get_goal` 返回 active + 空态归因流程）；
   - [x] 明确"**清单为空 = 不可见**"这一唯一失效条件，并说明 `todo_write` 的 content 非空约束使清单只会被替换、不会被清空；
   - [x] 全部完成态清单也常显（完成项为勾选态，标题栏仍显示"已完成 N"）。
+
+---
+
+### REQ-047：管控机制优化（拦截层复活 · 检测器能力 · 状态驱动出图）
+- **实施版本**：`v3.1.0`
+- **需求状态**：`[Release 稳定生效]`
+- **背景阐述**：用户提出两条需求——「审计看看当下的管控机制，看看有什么优缺点，看看优化方案」与「看看公开的一些官网，看有什么可以让我快速的从图形学习一个新的流程，图形必须要非常平易近人且易学」。审计采用四路并行（判定层 / 拦截层 / 流程规则层 / 图形资产），全部结论均实测复现；优化范围经用户拍板限定为「高危问题 + 检测器能力」。需求文案见 `docs/constraint_mechanism_optimize_3.md`。
+- **技术核实（已完成，均为实测复现而非推测）**：
+  1. **拦截层装了但没通**：`loader.mjs` 导出 `inject = []`，而宿主只读「被加载模块自己导出」的 inject，`index.mjs` 里的 `inject = ['tools']` 永不被读到 → `ctx.tools` 未就绪 → 守卫静默不注册；看板因 `@deepseek-ai/dsh-llm` 解析失败而静默失活。历史实测：**5160 次受控调用 0 次否决、0 次看板注入**，而自检 33/33 全绿；
+  2. **逃生舱可被穿透**：旧实现「参数含 `control_` 即放行」，实测 `write src/my_control_logic.js`、`bash: echo x > /tmp/run_control_log.txt` 均被放行（占受控调用 5.9%）；
+  3. **冗余检测分桶召回失效**：桶键为「词元排序后前 3 个」，任何文本边缘改动都改变桶键 → 两块落入不同桶 → 永不被比较。实测 4 块（3 份相同 + 1 份前置 7 字）只报 3 对，那份副本**一对都没配上**；
+  4. **`assets/` 是结构性检测盲区**：`legacy_align_scan` 只扫 `rules/` + `scripts/`，9 张 SVG 全在盲区，恒报「待对齐 0 项」；
+  5. **版本提取漏检**：`headerVersion()` 不认 `**当前系统实施总版本**`，而 README 与台账都用这个写法 → C1 直接跳过 README，实测返回 `null`；
+  6. **本 GUI 不渲染 Mermaid**：前端 4 个 bundle 检索 `mermaid` 命中 0（只有 shiki + katex），故图形必须产出 SVG/PNG。
+- **核心诉求与交付物**：
+  1. **拦截层复活（Q1）**：`loader.mjs` 更正依赖声明；看板注入失败由静默改为告警一次；新增 Loader 契约自检；
+  2. **逃生舱结构化（Q2）**：由「参数子串匹配」改为结构化路径白名单（bash 须真正指向管控脚本；write/edit 目标须落在 `ai-control/` `scripts/` `.dsh-control/`）；
+  3. **检测器能力（Q3）**：补 `assets/` 扫描；修版本提取并限定采纳范围为文档头部；修分桶召回为**内容决定型采样**；补「空虚下限」（0 实质块判不可判定）；打通 `block`（⛔）状态；
+  4. **状态驱动出图（Q4）**：新增 `./scripts/control_gates.sh graph`，读实跑结果产出 SVG，数据不手工维护；
+  5. **规范要求的对齐与豁免机制**：README 版本对齐；新增「书面说明」豁免登记 `ai-control/config/legacy_align_exempt.txt`。
+- **关联文件**：
+  - `docs/constraint_mechanism_optimize_3.md`
+  - `docs/visual_learning_research.md`、`docs/diagram_generation_guide.md`
+  - `ai-control/plugin/loader.mjs`、`ai-control/plugin/index.mjs`、`ai-control/plugin/selftest.mjs`
+  - `ai-control/config/legacy_align_exempt.txt`
+  - `scripts/control_gates.sh`、`scripts/redundancy_scan.mjs`、`scripts/conflict_scan.mjs`、`scripts/legacy_align_scan.mjs`
+  - `indexes/shortcuts_index.md`、`assets/generated_images/gate_graph.svg`
+- **验收标准**：
+  - [x] **Q1** `loader.mjs` 导出 `inject = ['tools']`；桩件实测守卫已注册、看板 pre-step 已注册、空状态时 `rm -rf build` 被拒、`control_gates.sh check` 经逃生舱放行（可自救不死锁）；
+  - [x] **Q2** 逃生舱改结构化白名单；自检新增 **6 条反例**全部通过（含 `src/my_control_logic.js`、重定向到 `/tmp/run_control_log.txt`、`rm -rf build # ai-control` 等）；
+  - [x] **Q3** `assets/` 扫描生效：**能报出** 2 张 `v1.6.0` 陈旧图；版本提取**能报出** README `v2.9.0` vs 台账 `v3.0.0`；分桶召回由 3 对提升至 **6 对全检出**（共同桶键 0 → 23）；空虚下限生效（`exit 2`）；`block` 实测可达（虚构工程显示 `⛔ 硬阻断`）；
+  - [x] **Q4** `graph` 子命令实测两种状态（本工程 4/4 青绿、虚构工程 0/4 琥珀并显示"卡在第 1 道门"）；数据 100% 来自本次实跑；
+  - [x] **附加** 修复「陈旧状态即拒绝」（实测真实调用派发延迟中位 3.93s、p90 16.90s，38.8% 超 5s 窗口）、「畸形状态反而放行」、「退出码恒为 0」、「缺 gates.conf 崩溃仍返回 0」、「表格结构行造成结构性假阳性」；
+  - [x] 全部自检通过：冗余 9 项 · 存量校准 22 项 · 冲突 22 项 · 通道审计 23 项 · 插件 **47 项**（原 33 项）；
+  - [x] 四项检测器与门禁复跑：冗余 0 高相似对、冲突 0 项、待对齐 0 项（另 2 项已书面说明）、通道 24 条 0 问题、门禁 **4/4**；
+  - [ ] ⏳ 重启桌面端后验证看板真实注入与守卫真实拦截（插件改动必须重启才生效）；
+  - [ ] ⬜ 3 张空壳 SVG 已退役（已完成，SHA-256 留痕）；两张 `v1.6.0` 图的版本语义待重绘时一并处置（已书面登记豁免理由）。

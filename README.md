@@ -1,7 +1,7 @@
 # 全局规则工程 (Global Rules Project)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v2.9.0`
+> - **当前系统实施总版本**：`v3.1.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-22
 > - **版本状态**：`[Release 稳定生效]`
@@ -61,7 +61,7 @@
 │   ├── efficiency_audit_log.md      # 思考决策与执行效率全景量化审计台账 (M1~M6指标)
 │   └── README.md                    # 记忆层专属说明文档
 ├── docs/                            # 【说明、指南与核心台账】
-│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-044，总版本 v2.9.0）
+│   ├── requirements.md              # 独立核心需求管理台账（REQ-001 ~ REQ-047，总版本 v3.1.0）
 │   ├── constraint_mechanism_spec.md # 【管控机制】正式命名、四层分工、双检处置与存量校准要求
 │   ├── diagram_generation_guide.md  # 全场景流程图、信息图与教学图生成技术指南与标准模板库
 │   ├── memory_architecture.md       # AI 分层长短期记忆体系架构与工程落地规范
@@ -148,7 +148,7 @@ node scripts/channel_audit.mjs --root .                # 判定层：通道审�
 2. **查权限与红线**：查阅 `rules/security/security_baseline.md` 守住安全红线；
 3. **看元规与干道**：阅读 `rules/system/meta_rules.md` 明确最高准则，通过 `indexes/shortcuts_index.md` 优先命中 G0/G1 高速干道路由；
 4. **核知识库**：检阅 `knowledge/README.md`，执行前置防冲突核查，确保新任务与世界观/美术/工程设定绝不冲突（非游戏坚决不载入游戏设定）；
-5. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v2.9.0`）；
+5. **查台账**：检索 `docs/requirements.md` 了解需求当前进展、边界与当前实施总版本号（`v3.1.0`）；
 6. **读记忆**：读取 `memory/` 目录继承跨会话偏好与避坑经验（指纹单次读，写后才重读）；
 7. **定轨道与首动命名**：依据六维价值打分(60分)与四维难度打分(100分)双螺旋决策，复杂任务**首个工具调用必须执行 `./scripts/rename_session.sh` 锁定会话**；十六步流水线中带判定脚本的工序严格执行，未配判定手段的工序按建议执行（见 `rules/workflow/task_execution_flow.md`）；收尾必给结构化交付入口、管控进度徽标与六维量化审计指标卡片。
 

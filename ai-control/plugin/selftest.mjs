@@ -61,15 +61,36 @@ check('门禁未过 · glob 放行', evaluate({ name: 'glob' }, statusBlocked, C
 check('门禁未过 · todo_write 放行', evaluate({ name: 'todo_write' }, statusBlocked, Config, FRESH), undefined)
 check('门禁未过 · ask_user_question 放行', evaluate({ name: 'ask_user_question' }, statusBlocked, Config, FRESH), undefined)
 
-// 3) 逃生舱：触碰管控自身路径必须放行，否则"修门禁须先过门禁"死锁
+// 3) 逃生舱：只有"真正修复管控自身"的调用才放行，否则会掩盖真实门禁
 check('逃生舱 · 运行管控脚本放行', evaluate({ name: 'bash', ...args({ command: './scripts/control_gates.sh check' }) }, statusBlocked, Config, FRESH), undefined)
 check('逃生舱 · 运行冗余检测放行', evaluate({ name: 'bash', ...args({ command: 'node scripts/redundancy_scan.mjs' }) }, statusBlocked, Config, FRESH), undefined)
-check('逃生舱 · 读写 ai-control 放行', evaluate({ name: 'write', ...args({ path: 'ai-control/config/gates.conf' }) }, statusBlocked, Config, FRESH), undefined)
+check('逃生舱 · 写管控配置放行', evaluate({ name: 'write', ...args({ path: 'ai-control/config/gates.conf' }) }, statusBlocked, Config, FRESH), undefined)
+check('逃生舱 · 写检测器脚本放行', evaluate({ name: 'edit', ...args({ path: 'scripts/conflict_scan.mjs' }) }, statusBlocked, Config, FRESH), undefined)
 
-// 4) 状态不可证实 → 失败关闭（不得静默放行）
-check('状态过期 · write 失败关闭', evaluate({ name: 'write', ...args({ path: 'note.md' }) }, statusBlocked, Config, STALE) !== undefined, true)
+// 3b) 逃生舱反例（关键补充）：以下调用**不属于**修复管控自身，必须被拒。
+//     这些用例正是旧实现（参数含 `control_` 即放行）的漏网之鱼，
+//     补齐后该类回归无法再次逃过自检。
+check('逃生舱反例 · 名字含 control_ 的普通写入被拒', evaluate({ name: 'write', ...args({ path: 'src/my_control_logic.js', content: 'x' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+check('逃生舱反例 · 重定向到含 control_ 的临时文件被拒', evaluate({ name: 'bash', ...args({ command: 'echo hi > /tmp/run_control_log.txt' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+check('逃生舱反例 · 命令尾部注释含 ai-control 被拒', evaluate({ name: 'bash', ...args({ command: 'rm -rf build  # ai-control' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+check('逃生舱反例 · 提及管控但非执行被拒', evaluate({ name: 'bash', ...args({ command: 'echo scripts/control_gates.sh' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+check('逃生舱反例 · 写普通项目文件被拒', evaluate({ name: 'write', ...args({ path: 'src/app.ts', content: 'x' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+check('逃生舱反例 · 内容里提 .dsh-control 不再放行', evaluate({ name: 'edit', ...args({ path: '/tmp/other/main.ts', new_string: '// .dsh-control' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+
+// 4) 依据不可证实 → 失败关闭；状态陈旧 → 放行（语义边界见 index.mjs 的 STALE_MS 注释）
+//    为什么陈旧要放行：实测真实调用派发延迟中位 3.93s、p90 16.90s，38.8% 超过 5s 窗口。
+//    若陈旧也拒绝，会出现"门禁全绿却随机拒绝执行"——那是抽签，不是管控。
 check('无状态 · write 失败关闭', evaluate({ name: 'write', ...args({ path: 'note.md' }) }, null, Config, FRESH) !== undefined, true)
-check('状态过期 · read 仍放行', evaluate({ name: 'read' }, statusBlocked, Config, STALE), undefined)
+//   注意区分两件事：陈旧只影响"要不要因新鲜度而拒"，**不改变门禁本身的结论**。
+//   门禁确实未过时，陈旧状态下照样要拒（陈旧不是免死金牌）。
+check('状态陈旧 · 门禁未过时仍被拒', evaluate({ name: 'write', ...args({ path: 'note.md' }) }, statusBlocked, Config, STALE) !== undefined, true)
+check('状态陈旧 · 门禁全过时放行', evaluate({ name: 'write', ...args({ path: 'note.md' }) }, statusClear, Config, STALE), undefined)
+check('无状态 · read 仍放行', evaluate({ name: 'read' }, null, Config, STALE), undefined)
+
+// 4b) 形状非法的状态不得放行（历史缺陷：`g.status` 抛错被外层 catch 吞掉 → 畸形状态反而放行）
+const statusMalformed = { gatePassed: 1, gateTotal: 4, execAllowed: false, gates: [null] }
+check('形状非法 · write 失败关闭', evaluate({ name: 'write', ...args({ path: 'note.md' }) }, statusMalformed, Config, FRESH) !== undefined, true)
+check('形状非法 · gates 缺失也失败关闭', evaluate({ name: 'write', ...args({ path: 'note.md' }) }, { gateTotal: 4, execAllowed: false }, Config, FRESH) !== undefined, true)
 
 // 5) 全部门禁通过 → 完全放行
 check('门禁全过 · write 放行', evaluate({ name: 'write', ...args({ path: 'a.md' }) }, statusClear, Config, FRESH), undefined)
@@ -150,6 +171,21 @@ check('极端参数 · 不抛出异常', threw, false)
   safe('故障安全 · tools 为 null 不抛错', { on() {}, tools: null })
   // on 缺失也必须降级
   safe('故障安全 · on 缺失不抛错', { tools: { guard() {} } })
+}
+
+// 11) Loader 契约：宿主只读「被加载模块」导出的 inject。
+//     真实缺陷（2026-09-23 修复）：loader.mjs 曾导出 `inject = []`，而把
+//     `inject = ['tools']` 写在 index.mjs 里 —— 宿主永远读不到，
+//     于是 apply 时 ctx.tools 为 undefined，守卫永不注册。
+//     历史后果：5160 次受控调用 0 次否决、看板 0 次注入，而自检仍全绿。
+//     本组用例即为该缺陷的防回归闸门。
+{
+  const loader = await import('./loader.mjs')
+  const inner = await import('./index.mjs')
+  check('Loader 契约 · 导出 inject 数组', Array.isArray(loader.inject), true)
+  check('Loader 契约 · inject 声明 tools 依赖', loader.inject.includes('tools'), true)
+  check('Loader 契约 · 导出 apply 函数', typeof loader.apply === 'function', true)
+  check('Loader 契约 · inject 与内层插件一致', inner.inject.includes('tools'), true)
 }
 
 // ── 汇总 ─────────────────────────────────────────────────────────────────────

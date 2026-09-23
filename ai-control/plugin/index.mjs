@@ -65,11 +65,21 @@ export const Config = {
    */
   alwaysAllowed: ['todo_write', 'read', 'grep', 'glob', 'ask_user_question'],
   /**
-   * 参数中出现以下任一子串时放行（大小写不敏感）。
-   * 这是"引导逃生舱"：让模型能够运行门禁脚本、读取规则、修复缺失文件，
-   * 否则会形成"要修门禁必须先过门禁"的死锁。
+   * 逃生舱「结构化白名单」。
+   *
+   * 为什么要结构性判定：旧实现是"参数 JSON 里含某个子串就放行"，
+   * 实测可被 `echo x > /tmp/run_control_log.txt`、写 `src/my_control_logic.js`
+   * 等形式轻易穿透（凡名字里带 `control_` 的都算），实测放行过 5.9% 的受控调用。
+   * 且 `dsh-control` 这类含连字符的写法反而命不中，该放行的没放行、不该放行的放行了。
+   *
+   * 现在改为两条明确规则（见 `isEscape`）：
+   *   1) bash 命令真正指向管控脚本文件时才放行；
+   *   2) write/edit 目标落在管控自身目录内才放行。
+   *
+   * 逃生舱必须常开：否则"修门禁须先过门禁"会死锁。
    */
-  allowSubstrings: ['control_gates', 'redundancy_scan', 'ai-control', '.dsh-control', 'control_'],
+  escapeScriptPrefixes: ['scripts/control_gates.sh', 'scripts/redundancy_scan.mjs', 'scripts/node.sh'],
+  escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
   /** 是否在拒绝理由中附带看板摘要。 */
   verbose: false,
 }
@@ -78,9 +88,17 @@ export const Config = {
 let cached = { at: 0, data: null }
 const CACHE_MS = 2000          // 每 2 秒最多读一次盘，避免高频工具调用反复 IO
 /**
- * 缓存可接受的"陈旧上限"。守卫是同步的，无法在判定时读盘，只能消费缓存。
- * 若缓存过期（例如 status.json 被删除），按"门禁失效"处理：
- * 宁可拦住并要求重新校验，也不放行一个无法证实的状态。
+ * 缓存可接受的"陈旧上限"。
+ *
+ * ⚠️ 语义边界（2026-09-23 修正）：本常量只用于区分
+ *   - **无状态**（`status` 为 null：文件缺失、损坏、形状非法）→ **失败关闭**，
+ *     因为此时无可证实的依据，必须要求重新校验；
+ *   - **状态陈旧**（有状态、只是读盘时间早于 STALE_MS）→ **放行 + 后台刷新**。
+ *
+ * 为什么陈旧必须放行：实测 4855 次真实受控调用的派发延迟中位 3.93s、p90 16.90s，
+ * **38.8% 超过 5 秒**。若陈旧也拒绝，会出现"四项门禁全绿却随机拒绝执行"的行为，
+ * 且按 pre-step 刷新缓存的设计，模型思考越久越容易被拒——这不叫管控，叫抽签。
+ * 陈旧只代表"扫描结果不是刚出炉的"，不代表"依据不成立"。
  */
 const STALE_MS = 5000
 
@@ -96,10 +114,14 @@ function resolveStateDir(config) {
   return join(home, '.dsh-control')
 }
 
-/** 读取并解析 status.json；任何失败都返回 null（绝不抛出）。 */
-async function readStatus(stateDir) {
+/**
+ * 读取并解析 status.json；任何失败都返回 null（绝不抛出）。
+ * @param {string} stateDir
+ * @param {boolean} [force] 跳过 CACHE_MS 读盘缓存，强制重读（供后台刷新使用）
+ */
+async function readStatus(stateDir, force = false) {
   const now = Date.now()
-  if (cached.data && now - cached.at < CACHE_MS) return cached.data
+  if (!force && cached.data && now - cached.at < CACHE_MS) return cached.data
   try {
     const raw = await readFile(join(stateDir, 'status.json'), 'utf8')
     const data = JSON.parse(raw)
@@ -136,6 +158,83 @@ function existsSyncSafe(p) {
 function needsBootstrap() {
   if (!cached.data) return true
   return (Date.now() - cached.at) >= STALE_MS
+}
+
+/**
+ * 后台刷新缓存（fire-and-forget，带节流）。
+ *
+ * 用途：守卫判定为"状态陈旧但存在"时调用。守卫本身是同步的、不能等待读盘，
+ * 因此这里只负责"顺手把最新状态捞回来"，判定当场仍然放行——
+ * 详见 STALE_MS 处的语义边界说明。
+ *
+ * 节流：同一秒内最多触发一次，避免一批并行工具调用把读盘打成风暴。
+ */
+let lastRefreshAt = 0
+const REFRESH_THROTTLE_MS = 1000
+function fireRefresh(stateDir) {
+  const now = Date.now()
+  if (now - lastRefreshAt < REFRESH_THROTTLE_MS) return
+  lastRefreshAt = now
+  readStatus(stateDir, true).catch(() => {})
+}
+
+/** 看板注入失败只告警一次，避免每步刷屏。 */
+let warnedCardOnce = false
+
+/** 从工具参数中取出候选路径字符串（不依赖具体工具的参数名）。 */
+function pathsFromArgs(execution) {
+  const a = execution?.arguments
+  if (!a || typeof a !== 'object') return []
+  const out = []
+  for (const v of Object.values(a)) {
+    if (typeof v === 'string' && v) out.push(v)
+  }
+  return out
+}
+
+/**
+ * 规范化路径：去掉首尾空白、统一反斜杠、折叠 `./` 前缀。
+ * 这里不做 realpath（同步守卫内不能碰磁盘），只做字符串层面的归一，
+ * 足以防止 `./scripts/x` 与 `scripts/x` 被判成两个目标。
+ */
+function normalizePath(p) {
+  return String(p).trim().replace(/\\/g, '/').replace(/^\.\//, '')
+}
+
+/**
+ * 逃生舱判定（结构化，非文本子串）。
+ * @returns {boolean} true = 本次调用属于"修复管控自身"，必须放行
+ */
+function isEscape(execution, config) {
+  const toolName = String(execution?.name || '')
+  const escScripts = config.escapeScriptPrefixes || []
+  const escWrites = config.escapeWritePrefixes || []
+
+  // 1) bash / pwsh：命令里必须真正出现某个管控脚本路径
+  if (toolName === 'bash' || toolName === 'pwsh') {
+    const cmd = String(execution?.arguments?.command ?? '')
+    const tokens = cmd.split(/\s+/).map((t) => t.replace(/^['"]|['"]$/g, ''))
+    for (let i = 0; i < tokens.length; i++) {
+      const tok = normalizePath(tokens[i])
+      const hit = escScripts.find((s) => tok === s || tok.endsWith('/' + s))
+      if (!hit) continue
+      // 要求该 token 恰好是一个路径（前一个 token 不能让它变成 "echo scripts/x" 的普通参数）
+      const prev = i > 0 ? tokens[i - 1] : ''
+      if (i === 0 || /^(bash|sh|zsh|node|npx|\.\/|\/)/.test(prev) || prev.endsWith('/')) return true
+    }
+    return false
+  }
+
+  // 2) write / edit / 其它改动型工具：目标必须落在管控自身目录内
+  for (const raw of pathsFromArgs(execution)) {
+    const p = normalizePath(raw)
+    for (const pre of escWrites) {
+      if (p.startsWith(pre)) return true
+      // 允许绝对路径中包含该前缀（如 /Users/x/.../ai-control/plugin/index.mjs）
+      if (p.includes('/' + pre)) return true
+    }
+  }
+  return false
 }
 
 /**
@@ -218,18 +317,6 @@ function renderBadge(s) {
   return `🎛️ ${progressBar(s.gatePassed, s.gateTotal, 10)} ${s.percent}% (${s.gatePassed}/${s.gateTotal}) ${marks} 卡点:${s.currentGateName}`
 }
 
-/** 提取工具调用的参数文本（用于逃生舱子串匹配）。 */
-function argsText(execution) {
-  try {
-    const a = execution?.arguments
-    if (a === undefined || a === null) return ''
-    if (typeof a === 'string') return a
-    return JSON.stringify(a)
-  } catch {
-    return ''
-  }
-}
-
 /**
  * 判定是否应拦截该工具调用。
  * 导出以便自检脚本在不启动 DSH 的情况下验证判定逻辑。
@@ -245,23 +332,32 @@ export function evaluate(execution, status, config, cacheAgeMs = 0) {
   // 2) 非受控工具（只读类、子代理、计划、目标等）放行
   if (!config.guardedTools.includes(toolName)) return undefined
 
-  // 3) 逃生舱：参数触及管控自身路径时放行，避免"修门禁须先过门禁"的死锁
+  // 3) 逃生舱：本次调用用于"修复管控自身"时放行，避免死锁。
   //    注意：顺序刻意放在"门禁状态判定"之前——修复动作本身必须永远可用。
-  const text = argsText(execution)
-  const lower = text.toLowerCase()
-  for (const sub of config.allowSubstrings) {
-    if (lower.includes(String(sub).toLowerCase())) return undefined
-  }
+  //    判定依据是**结构化路径**，不再对参数全文做子串匹配（旧实现可被
+  //    `echo x > /tmp/run_control_log.txt` 这类普通命令穿透）。
+  if (isEscape(execution, config)) return undefined
 
-  // 4) 状态不可证实（缓存过期 / 从未生成）：失败关闭，要求重新校验
-  const fresh = status && cacheAgeMs < STALE_MS
-  if (!fresh) {
+  // 4) 依据不可证实 → 失败关闭；状态陈旧 → 放行（详见 STALE_MS 处的语义边界）
+  if (!status) {
     return [
       `⛔ 流程管控硬门禁：拒绝本次 \`${toolName}\` 调用 —— 门禁状态不可证实。`,
-      '原因：status.json 缺失、损坏或已过期（超过 5 秒未刷新）。',
+      '原因：status.json 缺失、损坏或形状非法，尚未取到任何可用依据。',
       '允许的动作：运行 `./scripts/control_gates.sh check` 重新生成状态。',
       '只读工具（read/grep/glob）与 todo_write 始终可用。',
       '若确需绕过：设置环境变量 DSH_CONTROL_GUARD=off（全局）或 DSH_CONTROL_BYPASS=all（单次）。',
+    ].join('\n')
+  }
+
+  // 4b) 状态存在但形状非法（例如 gates 里混入 null）：同样不可证实，必须失败关闭。
+  //     历史缺陷：此处曾因 `g.status` 抛 TypeError 被外层 catch 吞掉 → 畸形状态反而放行，
+  //     与"状态不可证实即失败关闭"直接矛盾。
+  const usableGates = Array.isArray(status.gates) && status.gates.every((g) => g && typeof g === 'object')
+  if (!usableGates) {
+    return [
+      `⛔ 流程管控硬门禁：拒绝本次 \`${toolName}\` 调用 —— 门禁状态形状非法。`,
+      '原因：status.json 的 gates 字段缺失或含有非法条目，无法据此判定。',
+      '允许的动作：运行 `./scripts/control_gates.sh check` 重新生成状态。',
     ].join('\n')
   }
 
@@ -324,8 +420,18 @@ export function apply(ctx, config = {}) {
           source: { kind: 'plugin', plugin: name, form: 'notice', summary: renderBadge(status) },
         })
         return { kind: 'enter', messages: [...decision.messages, card] }
-      } catch {
-        // 注入失败绝不影响正常流程
+      } catch (err) {
+        // 注入失败绝不影响正常流程，但**必须留下可见信号**。
+        // 历史缺陷：这里静默 return，导致看板在真实宿主中长期 0 次注入而无人知晓
+        // （实测 48 个会话 7668 步注入 0 次）。只告警一次，避免刷屏。
+        if (!warnedCardOnce) {
+          warnedCardOnce = true
+          console.warn(
+            '[ai-execution-control] 看板注入失败（管控降级，宿主不受影响）：',
+            err?.message || err,
+            '｜若为模块解析失败，说明插件不在宿主 node_modules 解析链上。',
+          )
+        }
         return decision
       }
       })
@@ -348,12 +454,22 @@ export function apply(ctx, config = {}) {
 
     try {
       ctx.tools.guard((execution) => {
-        // 守卫必须是同步的；用缓存值判定，未就绪则失败关闭
+        // 守卫必须是同步的；用缓存值判定。
         const status = cached.data
+        const age = Date.now() - cached.at
+        // 状态陈旧（有依据、只是不是刚出炉的）→ 顺手把最新状态捞回来，判定当场照常进行。
+        if (status && age >= STALE_MS) fireRefresh(stateDir)
         try {
-          return evaluate(execution, status, cfg, Date.now() - cached.at)
-        } catch {
-          return undefined      // 判定异常 → 放行，绝不锁死会话
+          return evaluate(execution, status, cfg, age)
+        } catch (err) {
+          // 判定自身抛错 → 依据不可证实，失败关闭并留下可见原因。
+          // 历史行为是 `return undefined`（静默放行），与"状态不可证实即失败关闭"矛盾。
+          console.warn('[ai-execution-control] 判定异常，本次调用按失败关闭处理：', err?.message || err)
+          return [
+            `⛔ 流程管控硬门禁：拒绝本次 \`${execution?.name ?? '未知'}\` 调用 —— 判定过程异常。`,
+            '允许的动作：运行 `./scripts/control_gates.sh check` 复查状态，并查看宿主日志中的告警。',
+            '若确需绕过：设置环境变量 DSH_CONTROL_GUARD=off（全局）或 DSH_CONTROL_BYPASS=all（单次）。',
+          ].join('\n')
         }
       })
     } catch (err) {

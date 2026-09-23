@@ -32,6 +32,10 @@ REPORT_DIR="$PROJECT_ROOT/ai-control/reports"
 mkdir -p "$STATE_DIR" "$REPORT_DIR"
 
 # ── 可编辑阈值（seed 默认值）──────────────────────────────────────────────────
+# 注意：seed 必须覆盖"实现真正用到的每一个键"。历史缺陷：G4_DUP_PAIRS 与
+# G4_TOP_DUP_LIMIT 只在 gates.conf 里定义，seed 里没有；一旦 gates.conf 缺失，
+# 脚本会在 `set -u` 下报 "unbound variable"，stdout 为空、不写 status.json，
+# **但退出码仍为 0** —— 调用方（CI / 门禁守卫）无法察觉失败，等于静默失守。
 G3_LEDGER="docs/requirements.md"
 G3_DIRTY_LIMIT=30
 G4_SCAN_DIRS="rules knowledge indexes docs templates memory"
@@ -41,9 +45,12 @@ G4_DUP_BLOCK=15
 G4_HEADING_LIMIT=12
 G4_BLOCK_LIMIT=5
 G4_MIN_LINE_LEN=12
+G4_DUP_PAIRS=0
+G4_TOP_DUP_LIMIT=45
 G2_ORPHAN_MAX=0
 G2_UNTITLED_MAX=2
 G1_SKIP_DIRS=".git .dsh_locks ai-control"
+DSH_CONTROL_TTL=30
 if [ -f "$CONFIG_FILE" ]; then
   # shellcheck disable=SC1090
   source "$CONFIG_FILE"
@@ -109,12 +116,28 @@ collect_files() {
 
 # 提取实质内容行：去空白、剔纯符号/围栏、限定最小长度
 substantive_lines() {
+  # 统计"实质行"用于单行重复度检测。必须排除两类**不含内容语义**的行：
+  #   1) 纯符号行（列表符、标题符、引用符、分隔线等）—— 既有过滤；
+  #   2) **Markdown 表格结构行**（`:---` 分隔行及其与 `|` 的组合）—— 本轮新增，
+  #      并新增"去掉所有表格线与空白后是否还有字"的判据，比逐字符枚举更稳。
+  # 为什么必须排除第 2 类：实测 `| :--- | :--- | :--- |` 全库出现 47 次，
+  # 把"单行最高重复"顶到 47（限 45），而它只是表格格式、零内容语义。
+  # 这类重复随文档数量线性增长——文档越多越必然误报，属**结构性假阳性**，
+  # 会让门禁在健康工程上随机失败（实测：本工程 4/4 通过 → 3/4）。
   local f
   for f in "${FILES[@]}"; do
     grep -E '\S' "$f" 2>/dev/null \
       | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
       | grep -vE '^[-=*#`>+|_[:space:]]+$' \
-      | awk -v n="$G4_MIN_LINE_LEN" 'length($0)>=n'
+      | awk -v n="$G4_MIN_LINE_LEN" '
+          {
+            # 去掉所有表格竖线与横线、以及常见标记符号后，看看还剩不剩"字"
+            t = $0
+            gsub(/[|:+\-─═]/, "", t)
+            gsub(/[[:space:]]/, "", t)
+            if (t == "") next          # 纯表格结构行 → 不是实质行
+            if (length($0) >= n) print $0
+          }'
   done
 }
 
@@ -336,7 +359,14 @@ check_redundancy() {
       blocks=$(grep -m1 '"blocksScanned"' "$DUP_PAIRS_JSON" | grep -oE '[0-9]+')
       dup_pairs=${dup_pairs:-0}; blocks=${blocks:-0}
     else
-      detector="检测器执行失败"; dup_pairs=-1
+      # 退出码 2 = 检测器明确报告"不可判定"（有文件却零实质块），
+      # 与"脚本崩了"必须区分开：前者提示阈值/范围问题，后者提示环境问题。
+      if [ -f "$DUP_PAIRS_JSON" ] && grep -q '"unknowable": true' "$DUP_PAIRS_JSON"; then
+        detector="不可判定：有文件但零实质块"
+      else
+        detector="检测器执行失败"
+      fi
+      dup_pairs=-1
     fi
   else
     detector="未找到 Node 运行时"; dup_pairs=-1
@@ -376,7 +406,12 @@ check_redundancy() {
 
   if (( dup_pairs < 0 )); then
     HINT="冗余检测器不可用：${detector}（不允许以'检测失效'充当通过）"
-    return 1
+    # 返回 2 = **硬阻断**（⛔），不是 1（⏸️ 待前序）。
+    # 为什么必须区分：`compute_all` 里 rc=2 → block、rc=1 → pending。
+    # 旧实现一律 return 1，于是"检测器崩了/不可判定"在看板上显示成"待前序"，
+    # 把**故障**伪装成"还没轮到这一关"。前者要立刻修工具，后者只需继续做前序门禁，
+    # 处置动作完全不同 —— 状态语义错了，人就会按错的剧本走。
+    return 2
   fi
   (( pct < 100 )) && {
     HINT="冗余超标: 相似对${dup_pairs}(限${G4_DUP_PAIRS}) 重复标题${dup_headings}(限${G4_HEADING_LIMIT}) 单行最高${top_dup}(限${G4_TOP_DUP_LIMIT})"
@@ -559,6 +594,213 @@ render_badge() {
     "$bar" "$PCT" "$PASSED" "$TOTAL_GATES" "$marks" "$CURRENT_NAME"
 }
 
+# ══════════════════════════════════════════════════════════════════════════════
+# 状态驱动 SVG 图（"一图看懂"）
+# ══════════════════════════════════════════════════════════════════════════════
+# 设计约束（均来自实测，不可违背）：
+#   1) DSH GUI 不渲染 Mermaid（前端 4 个 bundle 检索命中 0，只有 shiki+katex），
+#      因此必须产出 SVG/PNG 这类"真图形"；
+#   2) 数据必须来自本次实跑，禁止写死 —— 写死的图会随门禁状态变化而过时；
+#   3) 文案沿用"家底齐不齐 / 东西乱不乱 / 账记没记 / 是否啰嗦"这类大白话，
+#      让第一次接触的人也能看懂（现有信息图已验证该风格最易懂）；
+#   4) 用系统字体族，不引外部字体、不引 JS，保证离线可渲染。
+# 状态色：通过=青绿 / 待前序=琥珀 / 硬阻断=红
+graph_color_of() { # $1=status
+  case "$1" in
+    pass) printf '#2EC4B6' ;;
+    block) printf '#FF5C5C' ;;
+    *) printf '#FFB900' ;;
+  esac
+}
+graph_dot_of() { # $1=status
+  case "$1" in
+    pass) printf '●' ;;
+    block) printf '✕' ;;
+    *) printf '○' ;;
+  esac
+}
+# 把大白话解释画进图里，避免读者需要先读规则才会看图
+graph_plain_of() { # $1=门禁序号(0起)
+  case "$1" in
+    0) printf '仓库、目录、防丢文件都在不在' ;;
+    1) printf '每个目录有没有人管、有没有垃圾' ;;
+    2) printf '需求台账记没记、改动提交了吗' ;;
+    3) printf '同一件事有没有写两遍' ;;
+    *) printf '' ;;
+  esac
+}
+
+# 计算字符串的**显示宽度**并支持按宽度截断（中文/全角按 2 列，ASCII 按 1 列）。
+#
+# 为什么必须算：SVG 的 x 坐标是显示列，不是字符个数。中文标题比 ASCII 宽一倍，
+# 按字符数估算会让"第3道门 · 需求文档同步"这类较长名称压到右侧说明列上（实测出现重叠）。
+#
+# ⚠️ 实现注意（踩过两次坑）：
+#   1) macOS 自带 awk **没有 ord()**，用它取字节序必然失败，且失败会被 `||` 兜底静默吞掉，
+#      结果算出的是字节长度——比真实显示宽度还宽，反而把说明列推得更远；
+#   2) bash 的 `${#var}` 与 `${var:i:1}` 在不同 locale 下按"字符"而非"字节"工作，
+#      逐字节拆分中文会被拆坏。
+#   因此这里交给 Python：它对该文件而言是既有依赖（脚本已用 Python 解析 status.json），
+#   且 UTF-8 行为确定。
+#
+# 每个待渲染文本必须落在自己的可用列宽内，否则会与相邻列**文字重叠**（实测发生过）：
+#   - 标题列：起点 78，可用到 420（实测"第3道门 · 需求文档同步"显示宽度 22 列，
+#     按 17px 字号约占 374px，78+374=452，故上限取 26 列）
+#   - 说明列：起点 340，可用到 670（状态列在 680），宽度 330px。
+#     说明文字用 13px，故上限 24 列；大于该值必须截断。
+graph_widths() { # 从 stdin 依次读入「文本」；输出「类型<TAB>显示宽度<TAB>裁剪后文本」
+  python3 -c '
+import sys
+
+LIMITS = {"title": 26, "note": 32}
+
+def dw(s):
+    return sum(2 if ord(c) > 0x1100 else 1 for c in s)
+
+kind = "title"          # 交替出现：标题、说明、标题、说明……
+for line in sys.stdin:
+    text = line.rstrip("\n")
+    limit = LIMITS[kind]
+    w = dw(text)
+    if w <= limit:
+        clipped = text
+    else:
+        acc = ""
+        for c in text:
+            if dw(acc + c) > limit - 1:
+                break
+            acc += c
+        clipped = acc + "…"
+    print(kind + "\t" + str(w) + "\t" + clipped)
+    kind = "note" if kind == "title" else "title"
+'
+}
+
+render_graph() {
+  local out="${1:-$REPORT_DIR/gate_graph.svg}"
+  local bar_w=640 filled i
+  filled=$(( PASSED * bar_w / TOTAL_GATES ))
+  local bar_color='#2EC4B6'
+  [ "$EXEC_ALLOWED" != "true" ] && bar_color='#FFB900'
+
+  # 整体状态一句话（用户最需要先看到的东西）
+  local headline subline
+  if [ "$EXEC_ALLOWED" = "true" ]; then
+    headline='四道门全过 —— 可以动手改工程'
+    subline='门禁状态由磁盘实况推导，不是自我声明'
+  else
+    headline="卡在第 ${GATE_INDEX} 道门：${CURRENT_NAME}"
+    subline='修好这道门再运行 control_gates.sh check，图会自动更新'
+  fi
+
+  # 预计算每个待渲染文本的显示宽度与裁剪结果（一次 Python 调用，避免逐行 fork）。
+  local _cw_arr=() _ct_arr=() _hi_arr=() _hh_arr=() _kind _cw _ct
+  while IFS=$'\t' read -r _kind _cw _ct; do
+    if [ "$_kind" = "title" ]; then
+      _cw_arr+=("$_cw"); _ct_arr+=("$_ct")
+    else
+      _hi_arr+=("$_cw"); _hh_arr+=("$_ct")
+    fi
+  done < <(
+    for i in "${!GATE_IDS[@]}"; do
+      printf '第%d道门 · %s\n' "$(( i + 1 ))" "${GATE_NAMES[$i]}"
+      printf '%s\n' "${HINTS[$i]}"
+    done | graph_widths
+  )
+
+  # 生成四行门禁（纯字符串拼接，数据全部取自本次实跑）
+  local rows="" color dot idx gname status plain metrics hint y
+  local title title_w title_show note_x
+  for i in "${!GATE_IDS[@]}"; do
+    idx=$(( i + 1 ))
+    gname="${GATE_NAMES[$i]}"
+    status="${RESULTS[$i]}"
+    case "$status" in
+      pass) status_cn='已通过' ;;
+      block) status_cn='硬阻断' ;;
+      *) status_cn='待前序' ;;
+    esac
+    color=$(graph_color_of "$status")
+    dot=$(graph_dot_of "$status")
+    plain=$(graph_plain_of "$i")
+    metrics="${MA[$i]} ${MAL[$i]} · ${MB[$i]} ${MBL[$i]}"
+    title_w="${_cw_arr[$i]:-0}"
+    title_show="${_ct_arr[$i]:-$gname}"
+    hint="${_hh_arr[$i]:-}"
+    # 说明列位置：标题短则统一对齐到 340（整齐好读）；标题宽则右推，避免压字。
+    # 上限 24 列——超过就说明这张图的标题太长，宁可放宽间距也不重叠。
+    if (( title_w <= 15 )); then
+      note_x=340
+    else
+      note_x=$(( 78 + title_w * 17 + 26 ))
+    fi
+
+    title="$title_show"
+    y=$(( 246 + i * 66 ))
+    rows+="    <text x=\"50\" y=\"$(( y + 24 ))\" font-size=\"19\" font-weight=\"700\" fill=\"$color\">$dot</text>"
+    rows+="    <text x=\"78\" y=\"$(( y + 24 ))\" font-size=\"17\" font-weight=\"600\" fill=\"#E6EDF3\">${title}</text>"
+    rows+="    <text x=\"${note_x}\" y=\"$(( y + 24 ))\" font-size=\"14\" fill=\"#8B98A5\">${plain}</text>"
+    rows+="    <text x=\"680\" y=\"$(( y + 24 ))\" font-size=\"15\" font-weight=\"600\" fill=\"$color\">${status_cn}</text>"
+    rows+="    <text x=\"78\" y=\"$(( y + 46 ))\" font-size=\"13\" fill=\"#7D8896\">${metrics}</text>"
+    rows+="    <text x=\"${note_x}\" y=\"$(( y + 46 ))\" font-size=\"13\" fill=\"#6B7684\">${hint}</text>"
+    rows+=$'\n'
+  done
+
+  {
+    printf '<svg xmlns="http://www.w3.org/2000/svg" width="900" height="572" viewBox="0 0 900 572" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif">\n'
+    printf '  <defs>\n'
+    printf '    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="572" gradientUnits="userSpaceOnUse">\n'
+    printf '      <stop offset="0%%" stop-color="#141821"/><stop offset="100%%" stop-color="#0D1117"/>\n'
+    printf '    </linearGradient>\n'
+    printf '    <linearGradient id="bar" x1="0" y1="0" x2="640" y2="0" gradientUnits="userSpaceOnUse">\n'
+    printf '      <stop offset="0%%" stop-color="%s"/><stop offset="100%%" stop-color="%s" stop-opacity="0.55"/>\n' "$bar_color" "$bar_color"
+    printf '    </linearGradient>\n'
+    printf '  </defs>\n'
+    printf '  <rect width="900" height="572" rx="16" fill="url(#bg)"/>\n'
+    printf '  <text x="50" y="62" font-size="27" font-weight="700" fill="#FFFFFF">管控机制 · 一图看懂</text>\n'
+    printf '  <text x="50" y="92" font-size="15" fill="#9AA7B4">%s</text>\n' "$headline"
+    printf '  <text x="50" y="118" font-size="13" fill="#6B7684">%s</text>\n' "$subline"
+    printf '  <text x="850" y="62" font-size="15" font-weight="600" fill="#E6EDF3" text-anchor="end">%s%% · %s/%s</text>\n' "$PCT" "$PASSED" "$TOTAL_GATES"
+    printf '  <rect x="50" y="150" width="640" height="16" rx="8" fill="#232A35"/>\n'
+    printf '  <rect x="50" y="150" width="%s" height="16" rx="8" fill="url(#bar)"/>\n' "$filled"
+    printf '  <text x="850" y="164" font-size="13" fill="#8B98A5" text-anchor="end">图由磁盘实况生成</text>\n'
+    printf '  <line x1="50" y1="206" x2="850" y2="206" stroke="#232A35"/>\n'
+    printf '%s' "$rows"
+    printf '  <line x1="50" y1="524" x2="850" y2="524" stroke="#232A35"/>\n'
+    printf '  <text x="50" y="550" font-size="13" fill="#7D8896">快照时间 %s · 工程 %s</text>\n' "${GENERATED_AT:-未知}" "$PROJECT_ROOT"
+    printf '  <text x="850" y="550" font-size="13" fill="#7D8896" text-anchor="end">改完工程跑一次 check，这张图会自己更新</text>\n'
+    printf '</svg>\n'
+  } > "$out"
+}
+
+# ── 致命失败：显式非零退出，绝不静默 ────────────────────────────────────────
+# 历史缺陷：缺 gates.conf 时 `set -u` 报 unbound variable，stdout 为空、
+# 不写 status.json，但**退出码仍为 0** —— 调用方无法察觉，等于静默失守。
+fatal() {
+  printf '❌ 管控判定层致命错误：%s\n' "$1" >&2
+  printf '   处置：检查 ai-control/config/gates.conf 是否存在且语法正确；\n' >&2
+  printf '   本次不产出状态文件，也不得被视为"通过"。\n' >&2
+  exit 1
+}
+
+# ── 退出码约定（与"不采信自我宣称"配套）──────────────────────────────────────
+#   0 = 门禁全过（可进入实质执行）
+#   1 = 门禁未过，或脚本自身失败
+# 历史缺陷：check / card / badge 等分支一律 exit 0，即使四道门都没过也返回 0。
+# 调用方（CI、外部流水线）只能看到"命令成功"，无法分辨门禁是否真的通过，
+# 与"判定要能拦住人"的目标相反。现统一按真实门禁结论返回。
+finish() {
+  [ "${EXEC_ALLOWED:-false}" = "true" ] && exit 0
+  exit 1
+}
+
+# ── 关键阈值自检：任一缺失即显式失败，杜绝"静默失守 + 退出码 0" ──────────────
+for _k in G4_DUP_PAIRS G4_TOP_DUP_LIMIT G4_HEADING_LIMIT G4_MIN_LINE_LEN \
+          G3_DIRTY_LIMIT G2_ORPHAN_MAX G2_UNTITLED_MAX DSH_CONTROL_TTL; do
+  [ -n "${!_k:-}" ] || fatal "阈值 $_k 未定义（seed 或 gates.conf 缺失该键）"
+done
+unset _k
+
 case "${1:-check}" in
   reset)
     rm -f "$CACHE_FILE" "$STATUS_JSON"
@@ -587,19 +829,37 @@ case "${1:-check}" in
   card)
     if cache_fresh && load_from_status; then
       render_card
-      exit 0
+      finish
     fi
     compute_all; write_status; touch "$CACHE_FILE"; render_card
-    exit 0
+    finish
     ;;
   badge)
-    if cache_fresh && load_from_status; then render_badge; exit 0; fi
+    if cache_fresh && load_from_status; then render_badge; finish; fi
     compute_all; write_status; touch "$CACHE_FILE"; render_badge
-    exit 0
+    finish
     ;;
   json)
     if [ -f "$STATUS_JSON" ]; then cat "$STATUS_JSON"; else compute_all; write_status; cat "$STATUS_JSON"; fi
     exit 0
+    ;;
+  graph)
+    # 状态驱动出图：刻意**不**复用缓存 —— 图必须与本次实况一致，
+    # 若复用 30 秒缓存，刚修完门禁却画出一张旧图，比没有图更误导。
+    compute_all; write_status; touch "$CACHE_FILE"
+    GENERATED_AT="$(date '+%Y-%m-%d %H:%M:%S')"
+    GRAPH_OUT="${DSH_CONTROL_GRAPH_OUT:-$REPORT_DIR/gate_graph.svg}"
+    render_graph "$GRAPH_OUT"
+    if [ -s "$GRAPH_OUT" ]; then
+      printf '🖼️  已生成状态驱动图：%s\n' "$GRAPH_OUT"
+      printf '   %s%% · %s/%s 门禁 · 卡点:%s\n' "$PCT" "$PASSED" "$TOTAL_GATES" "$CURRENT_NAME"
+      printf '   数据来自本次实跑，门禁状态变化后重跑本命令即可刷新。\n'
+    else
+      printf '❌ 出图失败：%s 未生成或为空。\n' "$GRAPH_OUT"
+      exit 1
+    fi
+    # 图已产出，但退出码仍按真实门禁结论：门禁未过则非零，调用方能据此发现。
+    finish
     ;;
   check|*)
     compute_all; write_status; touch "$CACHE_FILE"; render_card
@@ -624,6 +884,6 @@ case "${1:-check}" in
       done
     } > "$REPORT_DIR/latest_status.md" 2>/dev/null
     rm -f "$REPORT_DIR/.substantive.tmp"
-    exit 0
+    finish
     ;;
 esac

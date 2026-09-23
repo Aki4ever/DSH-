@@ -129,6 +129,39 @@ async function collectMarkdown(dir) {
 }
 
 // ── 主检测 ───────────────────────────────────────────────────────────────────
+/**
+ * 为一个块生成倒排桶键。**采样必须只由内容决定，不能由位置决定。**
+ *
+ * 踩过的坑（两次实测失败，务必不要改回位置采样）：
+ *   ① 等步长采样：前置 8 个字 ⇒ 采样点整体错位，两块 trigram 交集为 0；
+ *   ② 固定互质步长遍历：实测仍全不同 —— 步长与文本长度耦合，偏移照样错开。
+ * 正解：对全部 trigram 求哈希后**排序取前 N**。哈希分布不随位置平移而变，
+ * 因此"一个块是另一个块的超集"时（加前缀/后缀、改名、换目录），两者必然共享大量采样点。
+ */
+export function bucketKeysOf(text) {
+  const s = String(text)
+  const n = s.length
+  if (n < 3) return []
+  const hash = (g) => {
+    let hv = 2166136261
+    for (let i = 0; i < g.length; i++) {
+      hv ^= g.charCodeAt(i)
+      hv = Math.imul(hv, 16777619)
+    }
+    return (hv >>> 0).toString(36)
+  }
+  const seenGram = new Set()
+  const pool = []
+  for (let i = 0; i + 3 <= n; i++) {
+    const g = s.slice(i, i + 3)
+    if (seenGram.has(g)) continue
+    seenGram.add(g)
+    pool.push([hash(g), g])
+  }
+  pool.sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0))
+  return pool.slice(0, 24).map(([h]) => 'g:' + h)
+}
+
 async function scan({ root, scanDirs, excludeGlobs, threshold, minChars }) {
   const files = []
   for (const d of scanDirs) {
@@ -153,16 +186,17 @@ async function scan({ root, scanDirs, excludeGlobs, threshold, minChars }) {
     }
   }
 
-  // 相似块配对（倒排：先按少量词元分桶，避免 O(n²) 全量比较）
-  const pairs = []
-  const bucketOf = (tokens) => tokens.slice().sort().slice(0, 3).join('|')
+  // 相似块配对（倒排分桶，避免 O(n²) 全量比较）
+  // 分桶键生成见模块级 bucketKeysOf（那里记录了"位置采样导致漏检"的两次踩坑）
   const buckets = new Map()
   blocks.forEach((b, i) => {
-    const key = bucketOf(b.tokens)
-    if (!buckets.has(key)) buckets.set(key, [])
-    buckets.get(key).push(i)
+    for (const key of bucketKeysOf(b.normalized)) {
+      if (!buckets.has(key)) buckets.set(key, [])
+      buckets.get(key).push(i)
+    }
   })
 
+  const pairs = []
   const seen = new Set()
   for (const idxs of buckets.values()) {
     for (let i = 0; i < idxs.length; i++) {
@@ -184,7 +218,21 @@ async function scan({ root, scanDirs, excludeGlobs, threshold, minChars }) {
     }
   }
   pairs.sort((x, y) => y.similarity - x.similarity)
-  return { filesScanned: kept.length, blocksScanned: blocks.length, duplicatePairs: pairs.length, pairs }
+
+  // "空虚下限"：有文件却零实质块 = **不可判定**，不是"健康"。
+  // 历史缺陷：清空全库正文后仍判 4/4 通过 —— 只看"配对数为 0"，
+  // 而"什么都没扫到"与"扫到且都不重复"给出了同一个 0。二者必须分开。
+  const unknowable = kept.length > 0 && blocks.length === 0
+  return {
+    filesScanned: kept.length,
+    blocksScanned: blocks.length,
+    duplicatePairs: pairs.length,
+    pairs,
+    unknowable,
+    unknowableReason: unknowable
+      ? `扫描到 ${kept.length} 个 Markdown 文件，但零实质块（全部低于 minChars=${minChars} 或被判为元数据块）——无依据判定冗余是否健康`
+      : null,
+  }
 }
 
 // ── 自检：确保检测器真能识别冗余、且不误报模板 ───────────────────────────────
@@ -245,6 +293,25 @@ function selfTest() {
     expect: (v) => v >= 0.95,
   })
 
+  // 7) 分桶召回：**前置若干字不得导致漏检**（防回归关键用例）
+  //    历史缺陷：桶键取「词元排序后前 3 个」，前置 7 个字即改变桶键 →
+  //    同一内容落入不同桶 → 永不被比较。实测 4 块场景漏检 1 块（漏检率 100%）。
+  //    本用例锁死该行为：加前缀后必须仍共享桶键，且相似度仍超阈值。
+  const prefixKey = '注意这里前面多出七个字'
+  const keysBase = bucketKeysOf(normalize(proseBlock))
+  const keysPrefixed = bucketKeysOf(normalize(prefixKey + proseBlock))
+  const shared = keysBase.filter((k) => keysPrefixed.includes(k)).length
+  cases.push({
+    name: '分桶召回：前置文字后仍共享桶键',
+    value: shared,
+    expect: (v) => v > 0,
+  })
+  cases.push({
+    name: '分桶召回：前置文字后相似度仍超阈值',
+    value: e2e(prefixKey + proseBlock, proseBlock),
+    expect: (v) => v >= 0.85,
+  })
+
   let pass = true
   console.log('=== 冗余检测器自检 ===')
   for (const c of cases) {
@@ -281,4 +348,14 @@ if (args.json) {
     console.log(`   A: ${p.a.heading}`)
     console.log(`   B: ${p.b.heading}`)
   }
+  if (result.unknowable) {
+    console.log(`\n⚠️ 不可判定：${result.unknowableReason}`)
+    console.log('   处置：确认扫描范围是否正确、minChars 阈值是否过高。')
+    console.log('   ⚠️ 本结果**不得**被视为"冗余健康"。')
+  }
 }
+
+// 退出码约定：0 = 已判定且健康；2 = 不可判定（有文件但零实质块）；
+//             1 = 检出高相似对（超过 G4_DUP_PAIRS 由门禁内核判定）
+if (result.unknowable) process.exit(2)
+process.exit(0)

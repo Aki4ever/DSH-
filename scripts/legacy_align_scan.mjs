@@ -265,14 +265,85 @@ async function readOr(path) {
   try { return await readFile(path, 'utf8') } catch { return '' }
 }
 
+/**
+ * 从文本抽出文档声明的版本文档号。
+ * 与 conflict_scan.mjs 的 headerVersion **保持同口径**（两处结论必须一致）：
+ * 先认 `**当前…版本**` 标签行，再兼容行内代码形式。历史缺陷同 C1：
+ * README 用的正是 `**当前系统实施总版本**：`vX.Y.Z``，旧正则漏认 → 版本漂移不可见。
+ */
+/**
+ * 从文本抽出文档头部声明的版本文档号。
+ * 与 conflict_scan.mjs 的 headerVersion **保持同口径**（两处结论必须一致）：
+ *   · 采纳范围限定在**文档头部**（前 25 行）——版本声明是元数据，不是叙述内容；
+ *     全文匹配会把"正文里引用历史版本"误判成"本文档版本落后"（实测发生过）；
+ *   · 兼容 `**当前文档版本**` 与 `**当前系统实施总版本**` 两种写法
+ *     （README 用的正是后者，旧实现漏认 → 版本漂移长期不可见）。
+ */
 function headerVersion(text) {
-  const m = String(text).match(/\*\*当前(?:文档|模板|台账)版本\*\*[^\n]*?`v?(\d+\.\d+\.\d+)`/)
+  const head = String(text).split(/\r?\n/).slice(0, 25).join('\n')
+  const m = head.match(/\*\*当前(?:文档|模板|台账|系统实施总)版本\*\*[^\n]*?`v?(\d+\.\d+\.\d+)`/)
   return m ? m[1] : null
 }
 
 function ledgerVersion(text) {
   const m = String(text).match(/当前系统实施总版本[^\n]*?`v?(\d+\.\d+\.\d+)`/)
   return m ? m[1] : null
+}
+
+/**
+ * 从 SVG 文本中提取内嵌的版本号。
+ * 图形资产没有"头部元数据区"，版本号写在注释或 <text> 里（例如 `v1.6.0`）。
+ * 取**第一个**命中即可：同一张图内多处标同一版本属正常，不应由此产生噪声。
+ */
+function svgVersion(text) {
+  const m = String(text).match(/\bv(\d+\.\d+\.\d+)\b/)
+  return m ? m[1] : null
+}
+
+/**
+ * 读取"书面说明"豁免登记。
+ *
+ * 规范依据：`rules/workflow/versioning_standard.md` 要求待对齐项"须清零**或书面说明原因**"。
+ * 没有这个入口时只有两种坏结果：要么改检测器放水（灵敏度下降），要么门禁永久失败
+ * （机制不可用）。因此把"书面说明"做成**可审计的结构化登记**：
+ *   - 文件：`ai-control/config/legacy_align_exempt.txt`
+ *   - 格式：`相对路径 | 书面说明原因`（`#` 开头为注释）
+ * 输出与门禁一律以"未豁免项"为准，且豁免数量会被显式打印，不隐藏。
+ */
+async function loadExempt(root) {
+  const text = await readOr(join(root, 'ai-control/config/legacy_align_exempt.txt'))
+  const map = new Map()
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim()
+    if (!line || line.startsWith('#')) continue
+    const [p, ...rest] = line.split('|')
+    const key = String(p).trim()
+    if (!key) continue
+    map.set(key, rest.join('|').trim() || '（未填写原因）')
+  }
+  return map
+}
+
+/**
+ * 应用豁免：按 a.file 精确匹配（也兼容登记父目录）。
+ * @returns {{kept: Array, exempted: Array}}
+ */
+function applyExempt(items, exemptMap) {
+  if (!exemptMap || exemptMap.size === 0) return { kept: items, exempted: [] }
+  const kept = []
+  const exempted = []
+  for (const it of items) {
+    const file = it.a?.file ?? ''
+    let reason = exemptMap.get(file)
+    if (reason === undefined) {
+      for (const [k, v] of exemptMap) {
+        if (file.startsWith(k)) { reason = v; break }
+      }
+    }
+    if (reason === undefined) kept.push(it)
+    else exempted.push({ ...it, exemptReason: reason })
+  }
+  return { kept, exempted }
 }
 
 // ── 主扫描 ───────────────────────────────────────────────────────────────────
@@ -314,6 +385,22 @@ async function scan({ root, dirs }) {
     // L3 版本对齐
     const c = checkVersionAlign(rel, headerVersion(text), ledger)
     if (c) items.push(c)
+  }
+
+  // ── 图形资产版本对齐（2026-09-23 新增）────────────────────────────────────
+  // 为什么必须单独扫：SVG 不是 Markdown，没有"头部元数据区"，
+  // 旧实现只扫 `rules/` + `scripts/`，于是 `assets/` 成了**结构性的检测盲区** ——
+  // 实测磁盘上有 9 张 SVG（其中两张仍写着 v1.6.0 而总版本已到 v3.0.0），
+  // 指纹台账里 `assets/` 条目数为 0，检测器却报"待对齐 0 项"。
+  const assetFiles = await collectFiles(join(root, 'assets'), '.svg')
+  for (const full of assetFiles) {
+    const rel = relative(root, full)
+    const text = await readOr(full)
+    const v = svgVersion(text)
+    if (v) {
+      const c = checkVersionAlign(rel, v, ledger)
+      if (c) items.push(c)
+    }
   }
 
   // L1 名称权威出处与分层
@@ -363,10 +450,24 @@ async function scan({ root, dirs }) {
   const order = { high: 0, medium: 1, low: 2 }
   unique.sort((x, y) => (order[x.level] - order[y.level]) || x.type.localeCompare(y.type))
 
-  const summary = {}
-  for (const i of unique) summary[i.type] = (summary[i.type] || 0) + 1
+  // 书面说明豁免：规范允许"清零或书面说明原因"，这里把后者做成可审计登记。
+  // 注意：门禁与输出一律以"未豁免项"（kept）为准，豁免数量单独打印，不隐藏。
+  const exemptMap = await loadExempt(root)
+  const { kept, exempted } = applyExempt(unique, exemptMap)
 
-  return { filesScanned: files.length, ledgerVersion: ledger, itemCount: unique.length, summary, items: unique }
+  const summary = {}
+  for (const i of kept) summary[i.type] = (summary[i.type] || 0) + 1
+
+  return {
+    filesScanned: files.length,
+    ledgerVersion: ledger,
+    itemCount: kept.length,
+    rawItemCount: unique.length,
+    exemptCount: exempted.length,
+    summary,
+    items: kept,
+    exemptedItems: exempted,
+  }
 }
 
 // ── 自检 ─────────────────────────────────────────────────────────────────────
@@ -459,7 +560,10 @@ if (args.json) {
   console.log(JSON.stringify(result, null, 2))
 } else {
   console.log('=== 管控机制 · 存量待对齐清单 ===')
-  console.log(`基准总版本：${result.ledgerVersion ? `v${result.ledgerVersion}` : '未识别'} · 扫描文件 ${result.filesScanned} · 待对齐 ${result.itemCount} 项`)
+  const exemptNote = result.exemptCount > 0
+    ? `（另有 ${result.exemptCount} 项已书面说明豁免，见 ai-control/config/legacy_align_exempt.txt）`
+    : ''
+  console.log(`基准总版本：${result.ledgerVersion ? `v${result.ledgerVersion}` : '未识别'} · 扫描文件 ${result.filesScanned} · 待对齐 ${result.itemCount} 项${exemptNote}`)
   for (const [k, v] of Object.entries(result.summary)) console.log(`  · ${k}：${v} 项`)
   const high = result.items.filter((i) => i.level === 'high').length
   console.log(`高危 ${high} 项 · 其余 ${result.itemCount - high} 项`)
