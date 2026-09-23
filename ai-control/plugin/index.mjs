@@ -26,7 +26,7 @@
  * ==============================================================================
  */
 
-import { readFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
 import { execFile } from 'node:child_process'
@@ -189,6 +189,9 @@ function fireRefresh(stateDir) {
 
 /** 看板注入失败只告警一次，避免每步刷屏。 */
 let warnedCardOnce = false
+
+/** 诊断探针是否已执行（只跑一次，避免每步写文件）。 */
+let probedAgent = false
 
 /** 从工具参数中取出候选路径字符串（不依赖具体工具的参数名）。 */
 function pathsFromArgs(execution) {
@@ -483,7 +486,38 @@ export function apply(ctx, config = {}) {
   // ── 常显看板：每个步骤进入前注入最新进度 ──────────────────────────────────
   if (cfg.showCard) {
     try {
-      ctx.on('agent/pre-step', async (_payload, next) => {
+      ctx.on('agent/pre-step', async (payload, next) => {
+      // ── 一次性诊断探针：为"自动命名"确认能否拿到当前会话 ID ──────────────
+      // 背景：看板只能"告警"命名不合规，无法自动改名；要真正自动命名，
+      // 必须先从 pre-step 的 payload 中拿到会话身份。
+      // 本探针只写一次事实记录，不做任何干预，确认后再据此实现自动改名。
+      try {
+        if (!probedAgent) {
+          probedAgent = true
+          const a = payload?.agent
+          const desc = (v) => {
+            if (v === null) return 'null'
+            if (Array.isArray(v)) return `array(${v.length})`
+            const t = typeof v
+            if (t === 'string') return `string(${v.length})`
+            if (t === 'object') return `object{${Object.keys(v).slice(0, 25).join(',')}}`
+            return t
+          }
+          const lines = ['# pre-step payload.agent 结构探针', `时间: ${new Date().toISOString()}`]
+          lines.push(`payload 顶层键: ${Object.keys(payload ?? {}).join(', ')}`)
+          if (a && typeof a === 'object') {
+            for (const k of Object.keys(a)) lines.push(`  agent.${k} = ${desc(a[k])}`)
+            for (const cand of ['id', 'sessionId', 'session', 'key', 'name']) {
+              const v = a[cand]
+              if (typeof v === 'string') lines.push(`  ★ agent.${cand} 字符串值: ${v}`)
+              else if (v && typeof v === 'object' && typeof v.id === 'string') lines.push(`  ★ agent.${cand}.id = ${v.id}`)
+            }
+          } else {
+            lines.push(`agent 不可用或非对象: ${desc(a)}`)
+          }
+          await writeFile(join(stateDir, 'agent-probe.txt'), lines.join('\n'), 'utf8')
+        }
+      } catch { /* 探针失败绝不影响主流程 */ }
       let decision
       try {
         decision = await next()
