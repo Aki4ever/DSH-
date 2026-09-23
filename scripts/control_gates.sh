@@ -570,18 +570,18 @@ render_card() {
       "$((i+1))" "${GATE_NAMES[$i]}" "$(mark_of "${RESULTS[$i]}")" "$(label_of "${RESULTS[$i]}")" \
       "${MA[$i]}" "${MAL[$i]}" "${MB[$i]}" "${MBL[$i]}"
   done
-  printf '\n<details><summary>逐项明细</summary>\n\n'
-  for i in "${!GATE_IDS[@]}"; do
-    printf -- '- **G%d %s** — %s\n' "$((i+1))" "${GATE_NAMES[$i]}" "$(label_of "${RESULTS[$i]}")"
-    printf -- '  - 目标：%s\n' "${GATE_DESC[$i]}"
-    printf -- '  - 实况：%s\n' "${DETAILS[$i]}"
-    printf -- '  - 结论：%s\n' "${HINTS[$i]}"
-  done
-  printf '\n</details>\n\n'
   if [ "$EXEC_ALLOWED" != "true" ]; then
+    printf '\n<details><summary>逐项明细</summary>\n\n'
+    for i in "${!GATE_IDS[@]}"; do
+      printf -- '- **G%d %s** — %s\n' "$((i+1))" "${GATE_NAMES[$i]}" "$(label_of "${RESULTS[$i]}")"
+      printf -- '  - 目标：%s\n' "${GATE_DESC[$i]}"
+      printf -- '  - 实况：%s\n' "${DETAILS[$i]}"
+      printf -- '  - 结论：%s\n' "${HINTS[$i]}"
+    done
+    printf '\n</details>\n\n'
     printf '▶ **下一步**：完成【%s】，再运行 `./scripts/control_gates.sh check`\n' "$CURRENT_NAME"
   else
-    printf '▶ 全部门禁通过，可进入实质执行。\n'
+    printf '\n▶ 全部门禁通过，可进入实质执行。\n'
   fi
 }
 

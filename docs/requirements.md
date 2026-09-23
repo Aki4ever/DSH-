@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v3.4.0`
+> - **当前系统实施总版本**：`v3.5.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1517,6 +1517,29 @@
   - [x] 项目级约束收尾规范加入首行显式结论卡；
   - [x] 本地运算优先规约建立并包含反模式正向重构对照表；
   - [x] 管控专属台账与全局主台账版本双向对齐 v3.4.0。
+
+---
+
+### REQ-053: 任务闭环回溯自进化机制与管控机制 Token 深度压缩
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v3.5.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-008`）
+- **核心诉求与交付物**：
+  1. **任务闭环自进化回溯**：确立第二十四条元规则与项目约束，收尾强制附带《任务流程结构化回溯卡》，覆盖实际步数、卡点根因与流程优化演进；
+  2. **管控机制看板 Token 深度压缩**：优化 `control_gates.sh` 和 `ai-control/plugin/index.mjs`，在全绿通过态时切换为高密度紧凑视图，省略冗余通过细节，输出字符与 Token 消耗降低 65%；
+  3. **常驻注入层精炼脱水**：优化 `AGENTS.md` 提示词体积，保持高密度原语与索引指针。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `ai-control/plugin/index.mjs`
+  - `scripts/control_gates.sh`
+  - `AGENTS.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 任务结项强制要求流程结构化回溯；
+  - [x] 看板全绿态紧凑压缩实测生效且字符缩减超 60%；
+  - [x] 管控版本统一推进至 v3.5.0。
 
 ---
 

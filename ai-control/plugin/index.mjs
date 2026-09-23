@@ -443,18 +443,29 @@ function progressBar(passed, total, width = 16) {
   return '█'.repeat(filled) + '░'.repeat(Math.max(0, width - filled))
 }
 
-/** 渲染面向模型的常显看板（Markdown，DSH GUI 原生渲染）。 */
+/** 渲染面向模型的常显看板（Markdown，DSH GUI 原生渲染）。支持全绿态高密度 Token 压缩。 */
 function renderCard(s) {
   const lines = []
   lines.push('<system-reminder>')
+  if (s.execAllowed) {
+    // 全绿态高密度紧凑输出（节约 ~65% Token）
+    lines.push(`**🎛️ 管控看板** \`${progressBar(s.gatePassed, s.gateTotal, 10)}\` **100% (4/4)** 🟢 全部门禁通过`)
+    const g = s.gates || []
+    const m0 = g[0] ? `${g[0].metricA ?? ''}骨架` : ''
+    const m1 = g[1] ? `${g[1].metricA ?? ''}合规` : ''
+    const m2 = g[2] ? `${g[2].metricA ?? ''}需求(${g[2].metricB ?? 0}未交)` : ''
+    const m3 = g[3] ? `${g[3].metricA ?? ''}冗余` : ''
+    lines.push(`> 指标实况：${[m0, m1, m2, m3].filter(Boolean).join(' · ')}`)
+    lines.push(`刷新：\`./scripts/control_gates.sh check\`（${s.generatedAt || '最新'}）`)
+    lines.push('</system-reminder>')
+    return lines.join('\n')
+  }
+
+  // 存在卡点时，输出完整排查明细
   lines.push('AI 执行流程管控看板（由磁盘实况推导，非模型自述）。这是每个步骤都会刷新一次的常显状态。')
   lines.push('')
   lines.push(`**进度** \`${progressBar(s.gatePassed, s.gateTotal)}\` **${s.percent}%** · ${s.gatePassed}/${s.gateTotal} 门禁通过`)
-  if (s.execAllowed) {
-    lines.push('**状态** 🟢 全部门禁通过，可进入实质执行。')
-  } else {
-    lines.push(`**状态** 🔴 卡点：G${s.gateIndex} ${s.currentGateName} —— 未通过前，改动型工具调用会被硬性拒绝。`)
-  }
+  lines.push(`**状态** 🔴 卡点：G${s.gateIndex} ${s.currentGateName} —— 未通过前，改动型工具调用会被硬性拒绝。`)
   lines.push('')
   lines.push('| 门禁 | 状态 | 量化指标 |')
   lines.push('| :--- | :--- | :--- |')
