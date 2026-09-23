@@ -21,6 +21,9 @@ import {
 const HOME = process.env.DSH_HOME
 const STATE = join(HOME, '.dsh-control')
 const STATUS_ONLY = process.argv.includes('--status')
+// --sid <会话ID>：复用已有会话做实弹，避免每次验收都在侧边栏新增一个会话
+const sidIdx = process.argv.indexOf('--sid')
+const REUSE_SID = sidIdx !== -1 ? process.argv[sidIdx + 1] : null
 
 let pass = 0, fail = 0
 const check = (name, cond, extra = '') => {
@@ -118,15 +121,20 @@ console.log('\n=== 五、实弹：造一个不合规会话来撞它 ===')
 if (!webUrl) {
   console.log('  ⚠️ 没有可用地址，跳过实弹')
 } else {
-  // 新建会话
+  // 复用已有会话（默认新建）
+  let sid = REUSE_SID
+  if (sid) {
+    console.log(`  复用已有会话：${sid}`)
+  } else {
   const mk = await fetch(`${webUrl}/api/session.create`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ type: 'client-request', rpcId: `e2e-create-${Date.now()}`, method: 'session.create', payload: {} }),
     signal: AbortSignal.timeout(8000),
   }).then((r) => r.json()).catch(() => null)
-  const sid = mk?.result?.value?.sessionId
+  sid = mk?.result?.value?.sessionId
   console.log(`  新建会话：${sid ?? '(失败)'}`)
   check('能新建会话', !!sid)
+  }
 
   if (sid) {
     const before = currentTitle(await readSessionStore(HOME), sid)
