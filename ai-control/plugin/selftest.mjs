@@ -91,6 +91,10 @@ check('逃生舱反例 · node 跑非白名单脚本被拒', evaluate({ name: 'b
 //       就会出现"门禁没过 → 想排查 → 排查脚本被门禁拦住"的自锁。
 check('逃生舱 · 拦截层诊断脚本在逃生舱白名单内',
   Config.escapeScriptPrefixes.includes('scripts/verify_guard_live.sh'), true)
+check('逃生舱 · 重启判据脚本也在白名单内',
+  Config.escapeScriptPrefixes.includes('scripts/verify_escape_hatch.sh'), true)
+check('逃生舱 · 绝对路径调用重启判据脚本放行',
+  evaluate({ name: 'bash', ...args({ command: '/Users/x/全局规则/scripts/verify_escape_hatch.sh' }) }, statusBlocked, Config, FRESH), undefined)
 check('逃生舱 · 绝对路径调用诊断脚本放行',
   evaluate({ name: 'bash', ...args({ command: '/Users/x/全局规则/scripts/verify_guard_live.sh' }) }, statusBlocked, Config, FRESH), undefined)
 check('逃生舱 · cd 后调用诊断脚本放行',

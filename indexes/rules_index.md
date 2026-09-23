@@ -140,6 +140,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **管控机制** | [`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs) | 通道审计：快速通道死链、说法能否命中、触发词是否冲突（内置正反例自检） |
 | **管控机制** | [`scripts/align_version.mjs`](../scripts/align_version.mjs) | 版本归位：把全库受管文档头部版本统一到台账总版本（支持 --dry-run 预览） |
 | **管控机制** | [`scripts/verify_guard_live.sh`](../scripts/verify_guard_live.sh) | 拦截层上线验证：**重启桌面端后**检查守卫/看板是否真实生效（源码契约 + 插件自检 + 门禁实况 + 人工观察清单） |
+| **管控机制** | [`scripts/verify_escape_hatch.sh`](../scripts/verify_escape_hatch.sh) | 逃生舱重启后验证：**宿主是否已加载最新代码**（进程启动时间 vs 插件改动时间）+ 逃生舱判定逻辑 7 项 + 宿主级实弹步骤；只读，不制造门禁未过状态 |
 
 ---
 

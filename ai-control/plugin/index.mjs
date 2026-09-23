@@ -84,8 +84,9 @@ export const Config = {
     'scripts/node.sh',
     // 拦截层自身的诊断工具：门禁未过时**正是最需要它**的时刻。
     // 若不列入，就会出现"门禁没过 → 想排查 → 排查脚本被门禁拦住"的自锁。
-    // 它只做只读检查（源码契约 / 自检 / 门禁实况 / 逃生舱判定），无副作用。
+    // 两者都只做只读检查（源码契约 / 自检 / 门禁实况 / 逃生舱判定），无副作用。
     'scripts/verify_guard_live.sh',
+    'scripts/verify_escape_hatch.sh',
   ],
   escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
   /** 是否在拒绝理由中附带看板摘要。 */
