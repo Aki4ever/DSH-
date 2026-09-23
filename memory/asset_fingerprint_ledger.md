@@ -1,9 +1,9 @@
 # 全域资产数字指纹与新鲜度审计台账 (Asset Fingerprint Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前台账版本**：`v3.8.0`
-> - **基线对齐版本**：`v3.8.0`
-> - **最后全盘扫描时间**：2026-09-23 18:37
+> - **当前台账版本**：`v3.9.0`
+> - **基线对齐版本**：`v3.9.0`
+> - **最后全盘扫描时间**：2026-09-23 19:06
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)
 
 本文档记录工程全域受管资产（规则、知识库、架构索引、工程模板、自动化脚本与需求台账）的**数字指纹（SHA-256 8位短哈希）**、**最后修改时间**与**新鲜度等级**，为全域资产对齐与防止暗中代码漂移提供唯一客观事实依据。
@@ -14,7 +14,7 @@
 
 | 新鲜度评级 | 标识 | 判定准则 | 处置与对齐策略 |
 | :--- | :---: | :--- | :--- |
-| **完全新鲜 (Fresh)** | 🟢 `TIER-0` | 声明版本与系统最新总基线完全一致 (`v3.8.0`) | 资产处于最优生效态，免修改直接运行 |
+| **完全新鲜 (Fresh)** | 🟢 `TIER-0` | 声明版本与系统最新总基线完全一致 (`v3.9.0`) | 资产处于最优生效态，免修改直接运行 |
 | **存量落后 (Stale)** | 🟡 `TIER-1` | 属于正常受管资产，但版本落后于最新基线 | **遇碰即对齐 (Touch-and-Align)**，涉及该模块时顺带升级 |
 | **未版本化 (None)** | ⚪ `TIER-2` | 无头部版本元数据区，或属于纯代码/脚本辅助文件 | 保持指纹追踪，必要时补充标准版本头部 |
 
@@ -26,62 +26,63 @@
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | `rules/README.md` | `fb0cb9f8` | 2026-09-22 20:12 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `rules/coding/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `rules/coding/atomicity_specification.md` | `d12e80b0` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `rules/coding/testing_and_quality_gate.md` | `8e2e41e4` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `rules/coding/token_and_local_compute_optimization.md` | `324194d6` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `rules/coding/unity_project_standard.md` | `aaf14e5c` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/coding/atomicity_specification.md` | `67e85bf7` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/coding/first_principles_verification.md` | `c655a489` | 2026-09-23 19:04 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/coding/testing_and_quality_gate.md` | `6f9b3b4b` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/coding/token_and_local_compute_optimization.md` | `50f9bb20` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/coding/unity_project_standard.md` | `6a9a8cc2` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `rules/security/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `rules/security/security_baseline.md` | `87dccc0f` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/security/security_baseline.md` | `4e3a697a` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `rules/system/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `rules/system/initialization_protocol.md` | `64877a23` | 2026-09-16 15:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `rules/system/language_standard.md` | `9401131e` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `rules/system/meta_rules.md` | `34fc4f97` | 2026-09-23 18:37 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `rules/system/language_standard.md` | `d0b5d64d` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/system/meta_rules.md` | `04cfe1b5` | 2026-09-23 19:05 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `rules/system/thinking_framework.md` | `497b379b` | 2026-09-16 14:47 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `rules/workflow/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `rules/workflow/agent_life_spec.md` | `ea0500af` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/workflow/agent_life_spec.md` | `2cdb51bf` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `rules/workflow/audit_and_cleanup.md` | `49fb5fe2` | 2026-09-16 19:03 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `rules/workflow/change_flow.md` | `a92d6317` | 2026-09-23 16:56 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `rules/workflow/component_naming.md` | `035d767e` | 2026-09-16 16:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `rules/workflow/page_ledger_specification.md` | `507b57a5` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `rules/workflow/post_mortem_and_evolution.md` | `a09b94f1` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `rules/workflow/pp_life_orchestration.md` | `35b63f87` | 2026-09-23 18:35 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `rules/workflow/risk_disclosure.md` | `72e00b6d` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `rules/workflow/task_execution_flow.md` | `a3a6160c` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `rules/workflow/versioning_standard.md` | `f164cdfb` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/workflow/page_ledger_specification.md` | `3b07e008` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/workflow/post_mortem_and_evolution.md` | `b739e3af` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/workflow/pp_life_orchestration.md` | `bab225a7` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/workflow/risk_disclosure.md` | `44d2e930` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/workflow/task_execution_flow.md` | `78d9308c` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `rules/workflow/versioning_standard.md` | `74878411` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `knowledge/.gitkeep` | `e3b0c442` | 2026-09-16 16:35 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `knowledge/README.md` | `30eb93c9` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/README.md` | `5648e12d` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `knowledge/art_specification.md` | `b82cd885` | 2026-09-16 18:01 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `knowledge/common/README.md` | `5dc75981` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/common/art_specification.md` | `8a7bdf42` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/common/dsh_native_ui_components.md` | `7186e960` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/common/engineering_specification.md` | `4d9701a2` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/common/interaction_specification.md` | `4aa6e5fd` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/common/miniprogram_specification.md` | `ed10440d` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/common/task_naming_spec.md` | `e637d173` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/common/unity_specification.md` | `c13a069e` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/common/web_specification.md` | `fa2c0e1e` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/common/README.md` | `20061ca6` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/common/art_specification.md` | `b32c9067` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/common/dsh_native_ui_components.md` | `19514930` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/common/engineering_specification.md` | `84bbe24e` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/common/interaction_specification.md` | `6d33eb67` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/common/miniprogram_specification.md` | `02ff9ce7` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/common/task_naming_spec.md` | `6a076e4b` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/common/unity_specification.md` | `22bd7bd2` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/common/web_specification.md` | `b0d28121` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `knowledge/engineering_specification.md` | `20cc65f0` | 2026-09-16 18:02 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `knowledge/projects/README.md` | `e9e3d9c2` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/projects/aether_echo/README.md` | `828c637c` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/projects/aether_echo/project_art_spec.md` | `ad9f864c` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/projects/aether_echo/project_engineering_spec.md` | `55cffee8` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `knowledge/projects/aether_echo/worldview.md` | `444ded28` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/projects/README.md` | `42d40a55` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/projects/aether_echo/README.md` | `98ada0af` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/projects/aether_echo/project_art_spec.md` | `ac4a117d` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/projects/aether_echo/project_engineering_spec.md` | `f7ff92a3` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `knowledge/projects/aether_echo/worldview.md` | `ddc3b732` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `knowledge/worldview_background.md` | `075b4ce3` | 2026-09-16 18:01 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `indexes/.gitkeep` | `e3b0c442` | 2026-09-16 15:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `indexes/README.md` | `fdcd7814` | 2026-09-16 15:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `indexes/capabilities_index.md` | `8f004198` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `indexes/dsh_capabilities.md` | `45d46fcd` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `indexes/extension_ecosystem.md` | `bcaf212e` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `indexes/navigation_router.md` | `8eb5e772` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `indexes/rules_index.md` | `e4e5794c` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `indexes/shortcuts_index.md` | `320fdc64` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `indexes/tool_interfaces.md` | `1c568c5d` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/capabilities_index.md` | `8bdb805f` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/dsh_capabilities.md` | `9b096eb5` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/extension_ecosystem.md` | `e189e855` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/navigation_router.md` | `f25b0a29` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/rules_index.md` | `afba1c13` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/shortcuts_index.md` | `1710eb5e` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/tool_interfaces.md` | `3e75c11a` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `templates/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `templates/directory_readme_template.md` | `1778c755` | 2026-09-16 14:56 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `templates/graphical_block_template.md` | `58acfcfe` | 2026-09-16 15:45 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `templates/page_ledger_template.md` | `389305ad` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `templates/page_ledger_template.md` | `5737f200` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `templates/post_mortem_template.md` | `e82b0e43` | 2026-09-16 18:22 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `templates/project_dsh_bootstrap_template.md` | `3261f586` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `templates/project_dsh_bootstrap_template.md` | `a2a6179e` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `templates/requirement_template.md` | `a7b212cf` | 2026-09-16 16:35 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `templates/risk_assessment_template.md` | `84777cc3` | 2026-09-16 18:22 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
@@ -89,7 +90,7 @@
 | `scripts/align_version.mjs` | `6410c6c5` | 2026-09-23 15:56 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/batch_rename_sessions.mjs` | `280a7bff` | 2026-09-23 15:04 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/channel_audit.mjs` | `eaf40879` | 2026-09-22 22:33 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/check_freshness.mjs` | `9161d15f` | 2026-09-23 16:55 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/check_freshness.mjs` | `ceb7eab0` | 2026-09-23 18:38 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/check_task_naming.sh` | `c7c493b9` | 2026-09-23 15:01 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/check_unique_identifiers.mjs` | `debfb819` | 2026-09-23 18:34 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/conflict_scan.mjs` | `cfc907bd` | 2026-09-23 09:30 | `-` | ⚪ TIER-2 | 指纹监控中 |
@@ -123,33 +124,33 @@
 | `scripts/verify_escape_hatch.sh` | `da05a50f` | 2026-09-23 14:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/verify_guard_live.sh` | `35e23bfa` | 2026-09-23 14:11 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `docs/constraint_mechanism_enhance_2.md` | `03d39e65` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `docs/constraint_mechanism_optimize_3.md` | `69d0df4a` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `docs/constraint_mechanism_optimize_4.md` | `f43c6034` | 2026-09-23 18:37 | `v3.8.0
+| `docs/constraint_mechanism_enhance_2.md` | `6c86bfd3` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `docs/constraint_mechanism_optimize_3.md` | `1531c915` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `docs/constraint_mechanism_optimize_4.md` | `6bdd0a44` | 2026-09-23 19:05 | `v3.9.0
 v3.2.0` | 🟡 TIER-1 | 待升级对齐 |
-| `docs/constraint_mechanism_spec.md` | `28a40c5c` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
-| `docs/diagram_generation_guide.md` | `f820d923` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `docs/constraint_mechanism_spec.md` | `395e4632` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
+| `docs/diagram_generation_guide.md` | `69e5dc83` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `docs/memory_architecture.md` | `a35e10e8` | 2026-09-16 16:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `docs/requirements.md` | `ea1d6221` | 2026-09-23 18:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `docs/requirements.md` | `2d7689fe` | 2026-09-23 19:05 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/rules_tutorial.md` | `f71ad4d9` | 2026-09-16 14:41 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `docs/visual_learning_research.md` | `4d9bfd00` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `docs/visual_learning_research.md` | `cd1277c9` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `ai-control/README.md` | `1fa3f7fa` | 2026-09-23 16:58 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `ai-control/config/gates.conf` | `2bdf7605` | 2026-09-23 18:37 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `ai-control/config/gates.conf` | `2bdf7605` | 2026-09-23 19:05 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/config/legacy_align_exempt.txt` | `4acab986` | 2026-09-23 09:32 | `v3.1.0` | 🟡 TIER-1 | 待升级对齐 |
 | `ai-control/config/naming_overrides.json` | `bfbbbe56` | 2026-09-23 15:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/plugin/index.mjs` | `e622d25f` | 2026-09-23 17:44 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/plugin/loader.mjs` | `d4a903ed` | 2026-09-23 15:40 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/plugin/selftest.mjs` | `d0fdb221` | 2026-09-23 14:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/requirements/README.md` | `e7f88307` | 2026-09-23 16:52 | `v3.3.0` | 🟡 TIER-1 | 待升级对齐 |
-| `ai-control/requirements/control_requirements_ledger.md` | `01e45f7a` | 2026-09-23 18:35 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `ai-control/requirements/control_requirements_ledger.md` | `d42b6d26` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `memory/.gitkeep` | `e3b0c442` | 2026-09-16 15:37 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `memory/README.md` | `2778de38` | 2026-09-16 15:37 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `memory/asset_fingerprint_ledger.md` | `e82a48bd` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `memory/asset_fingerprint_ledger.md` | `e8d93ade` | 2026-09-23 19:06 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `memory/context_memory.md` | `9a54428f` | 2026-09-23 15:04 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `memory/efficiency_audit_log.md` | `a0e73114` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `memory/efficiency_audit_log.md` | `273936c8` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 | `memory/lessons_learned.md` | `b5776898` | 2026-09-23 15:47 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `AGENTS.md` | `9b12d80a` | 2026-09-23 17:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `README.md` | `1e617613` | 2026-09-23 18:37 | `v3.8.0` | 🟢 TIER-0 | 最新基线 |
+| `README.md` | `a77b18f8` | 2026-09-23 19:05 | `v3.9.0` | 🟢 TIER-0 | 最新基线 |
 
 ---
 

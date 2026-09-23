@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v3.8.0`
+> - **当前系统实施总版本**：`v3.9.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1613,6 +1613,28 @@
   - [x] 能力唯一标识检测器通过，无重名冲突；
   - [x] PP-Life 调度规约建立并完成脚本引擎自测；
   - [x] 全局台账与专项目录版本统一推进至 v3.8.0。
+
+---
+
+### REQ-057: 第一性原理与物理实证律
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v3.9.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-012`）
+- **核心诉求与交付物**：
+  1. **元规则第二十六条**：在 [`rules/system/meta_rules.md`](../rules/system/meta_rules.md) 正式确立《第一性原理与物理实证律》，严禁人云亦云与盲目采信二手转述；
+  2. **第一性原理调查与实证五步法**：编制 [`rules/coding/first_principles_verification.md`](../rules/coding/first_principles_verification.md)，确立本质还原、剥离假设、最小探针、采集实况与实证闭环的标准化调查路径；
+  3. **L1~L3 论据证据分级法典**：明确 L1 物理实证（退出码0/真实日志/读回）完全采信，L2 严密推论附推导链采信，L3 外部转述绝不采信必须探针化验。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/coding/first_principles_verification.md`
+  - `indexes/rules_index.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 第二十六条元规则写入生效；
+  - [x] 第一性原理与实证调查五步法规约落地；
+  - [x] 全局台账与专项目录版本统一推进至 v3.9.0。
 
 ---
 

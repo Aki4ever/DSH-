@@ -1,8 +1,8 @@
 # DSH 宿主工具与插件标准接口矩阵 (Tool & Plugin Interface Registry)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v3.8.0`
-> - **对应实施版本**：`v3.8.0`
+> - **当前文档版本**：`v3.9.0`
+> - **对应实施版本**：`v3.9.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`

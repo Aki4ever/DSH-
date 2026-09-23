@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v3.8.0`
-> - **对应实施版本**：`v3.8.0`
+> - **当前文档版本**：`v3.9.0`
+> - **对应实施版本**：`v3.9.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -97,6 +97,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | [`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) | **Unity 结构化工程目录与文件形式规范** | `_Project/` 根目录隔离、.meta 同生共死铁律、asmdef 模块解耦、C# 生命周期守则。 |
 | [`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) | **系统操作与工程设计原子性事务规范** | 明确操作级原子性（双向同步/目录四件套/.meta）与设计级原子性（存档/交易/状态机）。 |
 | [`rules/coding/token_and_local_compute_optimization.md`](../rules/coding/token_and_local_compute_optimization.md) | **本地运算优先与Token降耗规范** | 确定性计算本地先行、精准切片读取、拒绝全盘盲读、TTL缓存秒回。 |
+| [`rules/coding/first_principles_verification.md`](../rules/coding/first_principles_verification.md) | **第一性原理与物理实证规范** | 三不采信原则、实证调查五步法、L1~L3 证据等级与物理穿透法则。 |
 
 ---
 
