@@ -146,6 +146,8 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **命名自动化** | [`scripts/generate_naming_plan.mjs`](../scripts/generate_naming_plan.mjs) | 方案生成：按「工作区 + 分类字母」编排编号，难度分由会话规模量化推导（步数 60% + 输出 token 40%） |
 | **命名自动化** | [`scripts/batch_rename_sessions.mjs`](../scripts/batch_rename_sessions.mjs) | 批量改名：预校验 → 自动备份 → 自动回滚方案 → 以权威存储复查真实生效数（`--dry-run` 预览；回滚用 `--rollback`，该模式豁免命名规范校验，否则回滚方案会被自己拦死） |
 | **命名自动化** | [`scripts/lib/workspace_resolve.mjs`](../scripts/lib/workspace_resolve.mjs) | 归位共享模块：方案生成器与批量器共用同一套工作区归位口径，避免两处判断错位 |
+| **命名自动化** | [`scripts/lib/auto_naming.mjs`](../scripts/lib/auto_naming.mjs) | 自动命名核心逻辑：插件在宿主内调用，测试脚本导入同一份代码（保证"测过的就是跑的"） |
+| **命名自动化** | [`scripts/test_auto_naming.mjs`](../scripts/test_auto_naming.mjs) | 自动命名测试（24 项）：纯逻辑 + 真实数据读取 + 幂等 + 分类正确性；`--live` 可做实弹改名 |
 | **模型配置** | [`scripts/probe_max_tokens.mjs`](../scripts/probe_max_tokens.mjs) | 探测服务端接受的 `max_tokens` 区间（边界逐点实测，密钥从 `.credentials.yaml` 内部读取、不打印） |
 | **模型配置** | [`scripts/probe_long_output.mjs`](../scripts/probe_long_output.mjs) | 长输出触顶实测（非流式）：验证提高上限后单次回复能否突破旧上限，并给出真实生成速率 |
 | **模型配置** | [`scripts/probe_long_output_stream.mjs`](../scripts/probe_long_output_stream.mjs) | 长输出触顶实测（流式）：贴近 DSH 真实调用形态，带进度输出，是判定上限是否生效的决定性口径 |

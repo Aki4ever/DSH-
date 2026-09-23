@@ -26,11 +26,12 @@
  * ==============================================================================
  */
 
-import { readFile, writeFile } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
 import { execFile } from 'node:child_process'
 import { existsSync } from 'node:fs'
+import { autoNameOnce, parseTitle as parseNamingTitle } from '../../scripts/lib/auto_naming.mjs'
 
 /** Cordis 插件名（用于诊断与事件来源标注）。 */
 export const name = 'ai-execution-control'
@@ -190,8 +191,41 @@ function fireRefresh(stateDir) {
 /** 看板注入失败只告警一次，避免每步刷屏。 */
 let warnedCardOnce = false
 
-/** 诊断探针是否已执行（只跑一次，避免每步写文件）。 */
-let probedAgent = false
+/**
+ * 自动命名：已尝试过的会话（幂等，避免每步重复读盘改名）。
+ * 为什么要有这层：`agent/pre-step` 每一步都会触发，若不记状态，
+ * 一个长任务会把改名请求打成风暴。
+ */
+const autoNamedTried = new Set()
+
+/** 自动命名结果留档（供诊断；内容很短，不占内存）。 */
+const lastAutoName = new Map()
+
+/**
+ * 会话标题缓存：用于在每一步快速判断"标题是否已合规"。
+ * 独立于看板状态缓存（后者是门禁状态，生命周期与用途都不同）。
+ * 故意只在本次进程内有效——重启后重新读取，不会用到陈旧数据。
+ */
+const titleCache = new Map()
+let titleCacheAt = 0
+const TITLE_CACHE_TTL_MS = 10_000
+
+/** 读取某会话的当前标题（带短 TTL 缓存）。 */
+async function cachedTitle(dshHome, sessionId) {
+  const now = Date.now()
+  if (now - titleCacheAt > TITLE_CACHE_TTL_MS) {
+    titleCache.clear()
+    titleCacheAt = now
+    try {
+      const raw = await readFile(join(dshHome, 'storages', 'session_projcache.json'), 'utf8')
+      const d = JSON.parse(raw)
+      for (const [sid, e] of Object.entries(d?.tables?.sessions ?? {})) {
+        titleCache.set(sid, e?.rows?.title?.val)
+      }
+    } catch { /* 读不到就当作"未知"，下次再试 */ }
+  }
+  return titleCache.get(sessionId)
+}
 
 /** 从工具参数中取出候选路径字符串（不依赖具体工具的参数名）。 */
 function pathsFromArgs(execution) {
@@ -487,37 +521,30 @@ export function apply(ctx, config = {}) {
   if (cfg.showCard) {
     try {
       ctx.on('agent/pre-step', async (payload, next) => {
-      // ── 一次性诊断探针：为"自动命名"确认能否拿到当前会话 ID ──────────────
-      // 背景：看板只能"告警"命名不合规，无法自动改名；要真正自动命名，
-      // 必须先从 pre-step 的 payload 中拿到会话身份。
-      // 本探针只写一次事实记录，不做任何干预，确认后再据此实现自动改名。
+      // ── 自动命名：标题不合规就**当场改名**，不再只是告警 ────────────────────
+      // 实现依据：实测探针确认 payload.agent.id 就是精确的 44 字符会话 ID。
+      // 此处刻意放在 next() 之前：改名不依赖步骤决策结果，越早生效越好。
+      // 幂等由本地的 autoNamedTried 集合保证（每个会话只尝试一次，避免重复写盘）。
+      // 真正的命名逻辑在 scripts/lib/auto_naming.mjs —— 与测试脚本共用同一份代码，
+      // 保证"测过的就是跑的"。
       try {
-        if (!probedAgent) {
-          probedAgent = true
-          const a = payload?.agent
-          const desc = (v) => {
-            if (v === null) return 'null'
-            if (Array.isArray(v)) return `array(${v.length})`
-            const t = typeof v
-            if (t === 'string') return `string(${v.length})`
-            if (t === 'object') return `object{${Object.keys(v).slice(0, 25).join(',')}}`
-            return t
+        const agent = payload?.agent
+        const sid = typeof agent?.id === 'string' ? agent.id : agent?.session?.id
+        if (typeof sid === 'string' && sid && !autoNamedTried.has(sid)) {
+          autoNamedTried.add(sid)
+          const dshHome = cfg.dshHome || process.env.DSH_HOME || join(homedir(), '.dsh')
+          const cwd = agent?.session?.header?.cwd ?? agent?.cwd ?? ''
+          // 先看当前标题是否已合规：合规就什么都不做（绝不与模型起的好名字打架）。
+          // 标题缓存有 10 秒 TTL，所以每步的额外开销只是一次内存查询。
+          const t = await cachedTitle(dshHome, sid).catch(() => undefined)
+          if (!parseNamingTitle(t)) {
+            // 不 await：改名是旁路动作，绝不阻塞步骤进入
+            autoNameOnce({ dshHome, sessionId: sid, cwd, webUrl: process.env.DSH_WEB_URL, stateDir })
+              .then((r) => lastAutoName.set(sid, r))
+              .catch(() => {})
           }
-          const lines = ['# pre-step payload.agent 结构探针', `时间: ${new Date().toISOString()}`]
-          lines.push(`payload 顶层键: ${Object.keys(payload ?? {}).join(', ')}`)
-          if (a && typeof a === 'object') {
-            for (const k of Object.keys(a)) lines.push(`  agent.${k} = ${desc(a[k])}`)
-            for (const cand of ['id', 'sessionId', 'session', 'key', 'name']) {
-              const v = a[cand]
-              if (typeof v === 'string') lines.push(`  ★ agent.${cand} 字符串值: ${v}`)
-              else if (v && typeof v === 'object' && typeof v.id === 'string') lines.push(`  ★ agent.${cand}.id = ${v.id}`)
-            }
-          } else {
-            lines.push(`agent 不可用或非对象: ${desc(a)}`)
-          }
-          await writeFile(join(stateDir, 'agent-probe.txt'), lines.join('\n'), 'utf8')
         }
-      } catch { /* 探针失败绝不影响主流程 */ }
+      } catch { /* 自动命名失败绝不影响主流程 */ }
       let decision
       try {
         decision = await next()

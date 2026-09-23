@@ -133,6 +133,8 @@ node scripts/session_naming_audit.mjs                  # 命名层：存量会�
 node scripts/session_naming_audit.mjs --json           # 命名层：导出审计数据供生成改名方案
 node scripts/batch_rename_sessions.mjs --plan p.json --dry-run   # 命名层：批量改名预览（--apply 才真正执行）
 node scripts/batch_rename_sessions.mjs --plan p.json --rollback --apply   # 命名层：应急回滚（豁免规范校验）
+node scripts/test_auto_naming.mjs                     # 命名层：自动命名逻辑测试（24 项，不改动任何数据）
+node scripts/test_auto_naming.mjs --live              # 命名层：对真实未命名会话做实弹自动命名
 ```
 
 | 门禁 | 含义 | 量化指标 |
