@@ -95,6 +95,7 @@
 | `scripts/svg2png.sh` | `28127071` | 2026-09-22 21:06 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/svg_rasterize.swift` | `3e0357f9` | 2026-09-22 21:06 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/test_v180_spec.sh` | `e33884a7` | 2026-09-23 06:42 | `v1.8.0` | 🟡 TIER-1 | 待升级对齐 |
+| `scripts/verify_guard_live.sh` | `a88950fc` | 2026-09-23 08:10 | `v3.1.0` | 🟢 TIER-0 | 拦截层上线验证（重启后检查守卫/看板是否真实生效） |
 | `docs/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/constraint_mechanism_enhance_2.md` | `7a637ce5` | 2026-09-23 06:44 | `v2.9.0` | 🟡 TIER-1 | 待升级对齐 |
 | `docs/constraint_mechanism_spec.md` | `bc4179b9` | 2026-09-22 21:46 | `v2.9.0` | 🟡 TIER-1 | 待升级对齐 |
