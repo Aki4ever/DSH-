@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.2.0`
+> - **当前系统实施总版本**：`v4.3.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-23
 > - **版本状态**：`[Release 稳定生效]`
@@ -1703,6 +1703,27 @@
   - [x] 交互规范完成《Don't Make Me Think》排版章节指针统合；
   - [x] 快速通道表完成可读性通道注册并全量审计通过（29 条通道 0 问题）；
   - [x] 全局台账与专项目录版本统一推进至 v4.2.0。
+
+---
+
+### REQ-061: 文本精细排版法典扩充与系统交互动效组件规范化
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.3.0`
+- **提出时间**：2026-09-23
+- **最新更新**：2026-09-23
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-016`）
+- **核心诉求与交付物**：
+  1. **文字微观排版铁律落地**：在 [`knowledge/common/readability_specification.md`](../knowledge/common/readability_specification.md) 扩充文字布局（桌面 45~75 字/移动 20~35 字）、中文左对齐/数据右对齐、1.5~1.6行高、避头尾法则与孤字防范；
+  2. **交互按钮系统与页面动效组件规范**：在 [`knowledge/common/interaction_specification.md`](../knowledge/common/interaction_specification.md) 落地 Large/Medium/Small 跨端按钮尺寸、圆角 Token、推进/淡入/抽屉页面过渡形式、250ms动效曲线及按压下沉反馈；
+  3. **全域版本同步跃迁**：全局台账与管控专项目录版本统一推进至 v4.3.0。
+- **关联文件**：
+  - `knowledge/common/readability_specification.md`
+  - `knowledge/common/interaction_specification.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 文字精细排版四项铁律完成扩充；
+  - [x] 按钮规格、页面过渡与点击反馈动效法典落地；
+  - [x] 全局台账与专项目录版本统一推进至 v4.3.0。
 
 ---
 
