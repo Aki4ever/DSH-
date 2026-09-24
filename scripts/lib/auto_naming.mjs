@@ -26,16 +26,16 @@ import { join } from 'node:path'
 import { zstdDecompressSync } from 'node:zlib'
 import { execFile, execFileSync } from 'node:child_process'
 
-/** 会话标题规范：`[分类字母+3位编号][难度分] 概述`。 */
-export const TITLE_RE = /^\[([RFDSOQ])(\d{3})\]\[(\d{1,3})分\]\s+(\S.*)$/
+/** 会话标题规范：`[分类中文/字母+3位编号][难度分?] 概述`。兼容存量字母与新中文语义分类 */
+export const TITLE_RE = /^\[(新需|调研|优规|修漏|重构|巡检|测验|[RFDSOQ])(\d{3})\]\[(\d{1,3})(?:分)?\]\s+(\S.*)$/
 
-/** 工作区路径 → 分类字母（按业务管道语义，顺序即优先级）。 */
+/** 工作区路径 → 中文分类标识（按业务管道语义，顺序即优先级）。 */
 const WORKSPACE_LETTER = [
-  [/全局规则|规则/, 'R'],
-  [/股票|量化|交易/, 'F'],
-  [/注入器|key|密钥|账号|凭证/i, 'F'],
-  [/健康/, 'O'],
-  [/日常/, 'O'],
+  [/全局规则|规则/, '优规'],
+  [/股票|量化|交易/, '新需'],
+  [/注入器|key|密钥|账号|凭证/i, '新需'],
+  [/健康/, '巡检'],
+  [/日常/, '巡检'],
 ]
 
 /** 默认难度分：机器无法可靠判定难度，取规范区间中位值，由模型后续优化。 */
@@ -53,11 +53,11 @@ export function hanCount(s) {
   return m ? m.length : 0
 }
 
-/** 按 cwd 推断分类字母，推断不出时用 R。 */
+/** 按 cwd 推断分类，推断不出时用 '优规'。 */
 export function letterFor(cwd) {
   const c = String(cwd ?? '')
   for (const [re, letter] of WORKSPACE_LETTER) if (re.test(c)) return letter
-  return 'R'
+  return '优规'
 }
 
 /** 从首条用户消息提炼 ≤8 个汉字的概述；提不出实义片段时返回空串。 */

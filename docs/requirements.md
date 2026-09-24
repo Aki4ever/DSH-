@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.10.0`
+> - **当前系统实施总版本**：`v4.11.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -1885,6 +1885,32 @@
   - [x] 第三十条元规则与版本标准完成零容忍版本锚定与同权法典化；
   - [x] 变更流规约固化存量全量回扫与当轮清零闭环；
   - [x] 全局台账与专项目录版本统一推进至 v4.10.0。
+
+---
+
+### REQ-069: 全任务强命名门禁与语义化分类编号难度打分模型扩充规范 (v4.11.0)
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.11.0`
+- **提出时间**：2026-09-24
+- **最新更新**：2026-09-24
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-024`）
+- **核心诉求与交付物**：
+  1. **任务启动即命名法定硬门禁**：确立每次执行任务首动在 S05 工序对当前会话完成合规命名的刚性约束；
+  2. **知识库命名法典扩充：中文语义化分类**：在 [`knowledge/common/task_naming_spec.md`](../knowledge/common/task_naming_spec.md) 扩充七大中文语义化分类（新需/调研/优规/修漏/重构/巡检/测验），保持 `[分类编号][难度] 概述` 标准三段式；
+  3. **模型自主难度打分梯队法典化**：完善 1~100 分四维难度打分模型与四个执行区间（1~30极低/31~60中等/61~85复杂/86~100颠覆），100 分最难；
+  4. **任务概述极简与防截断**：概述汉字数严格限制在 8 字或以内，动宾短语一语中的；
+  5. **存量与新增双向全面调整**：升级脚本工具链（`check_task_naming.sh`、`name_me.sh`、`auto_naming.mjs`），向后兼容存量英文字母分类，新增任务优先中文语义化标签，并完成全库版本与台账推进至 `v4.11.0`。
+- **关联文件**：
+  - `knowledge/common/task_naming_spec.md`
+  - `scripts/check_task_naming.sh`
+  - `scripts/name_me.sh`
+  - `scripts/lib/auto_naming.mjs`
+  - `rules/workflow/task_execution_flow.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 知识库命名规范权威源完成中文语义化分类与难度标尺扩充；
+  - [x] 校验脚本与一键改名工具支持新中文分类与难度格式并实测通过；
+  - [x] 全局台账与专项目录版本统一推进至 v4.11.0。
 
 ---
 

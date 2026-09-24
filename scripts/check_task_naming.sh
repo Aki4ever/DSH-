@@ -64,10 +64,10 @@ if [[ -z "$TITLE" ]]; then
   exit 0
 fi
 
-# 逐条校验（与 rename_session.sh / 命名规范 R1~R7 同口径）
+# 逐条校验（与 rename_session.sh / 命名规范 R1~R7 同口径，支持中文语义化分类与难度分）
 REASON=""
-if [[ ! "$TITLE" =~ ^\[[RFDSOQ][0-9]{3}\]\[[0-9]{1,3}分\][[:space:]]+.+$ ]]; then
-  REASON="格式不符合「[分类编号][难度分] 概述」"
+if [[ ! "$TITLE" =~ ^\[(新需|调研|优规|修漏|重构|巡检|测验|[RFDSOQ])[0-9]{3}\]\[[0-9]{1,3}分?\][[:space:]]+.+$ ]]; then
+  REASON="格式不符合「[分类编号][难度分] 概述」（如 [新需008][90] 管控机制优化）"
 else
   CODE="$(printf '%s' "$TITLE" | sed -E 's/^\[([^]]+)\].*/\1/')"
   SCORE="$(printf '%s' "$TITLE" | sed -E 's/^\[[^]]+\]\[([^]]+)\].*/\1/')"
@@ -91,7 +91,7 @@ fi
 
 echo "⚠️  任务命名不合规：${TITLE}"
 echo "    原因：${REASON}"
-echo "    修正：./scripts/rename_session.sh \"[R048][50分] 管控机制双优化\""
+echo "    修正：./scripts/name_me.sh \"[新需008][90] 管控机制优化\""
 echo "    规范：knowledge/common/task_naming_spec.md"
 [[ "$EXIT_MODE" == 1 ]] && exit 1
 exit 0
