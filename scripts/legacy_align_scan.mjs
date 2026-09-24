@@ -64,8 +64,15 @@ export const CANONICAL = {
     'scripts/svg_rasterize.swift': '由 scripts/svg2png.sh 内部编译调用，入口以 svg2png.sh 为准',
     'scripts/test_v180_spec.sh': '已退役：面向 v1.8.0 的历史里程碑测试，26 项中 10 项因后续版本演进（元规则条号、工序编号变更）长期失败且无人运行；其能力已被冲突检测器/存量校准/通道审计等全库活体判定取代（退役说明见文件头）',
   },
-  /** 入口文件（相对项目根） */
-  entryFiles: ['AGENTS.md', 'README.md', 'indexes/rules_index.md', 'ai-control/README.md'],
+  /** 入口与索引文件（相对项目根） */
+  entryFiles: [
+    'AGENTS.md',
+    'README.md',
+    'indexes/rules_index.md',
+    'indexes/capabilities_index.md',
+    'indexes/shortcuts_index.md',
+    'ai-control/README.md',
+  ],
 }
 
 /**

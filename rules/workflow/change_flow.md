@@ -77,12 +77,13 @@
 | 需求与版本留痕 | [`docs/requirements.md`](../../docs/requirements.md) + [`rules/workflow/versioning_standard.md`](versioning_standard.md) | 每次迭代的条目与升版 |
 | 对外可视化说明 | `assets/generated_images/*` + `docs/` 说明 | 机制信息图 |
 
-### 三、四项登记（缺一项即视为"没固化"）
+### 三、五项登记（缺一项即视为"没固化"）
 
 1. **写进权威源**：只写一处，其余文件放指针，**不复述内容**；
-2. **配判定命令**：写入 [`rules/workflow/task_execution_flow.md`](task_execution_flow.md) 的"核心判定命令表"（前提是该流程确有判定手段）；
-3. **进快速通道**：可能被一句话调用的流程，必须按 [`indexes/shortcuts_index.md`](../../indexes/shortcuts_index.md) 的《快速通道注册规范》登记（触发词 + 路由 + **带链接的动作目标**）；
-4. **登记台账**：在 [`docs/requirements.md`](../../docs/requirements.md) 留痕并注明实施版本。
+2. **同步索引与接口层 (REQ-067)**：执行层能力必须在 [`indexes/capabilities_index.md`](../../indexes/capabilities_index.md) 注册唯一 Identifier 与正反案例，并在 [`indexes/tool_interfaces.md`](../../indexes/tool_interfaces.md) 声明开放接口契约（边界/入参/出参/降级）；
+3. **配判定命令**：写入 [`rules/workflow/task_execution_flow.md`](task_execution_flow.md) 的"核心判定命令表"（前提是该流程确有判定手段）；
+4. **进快速通道**：可能被一句话调用的流程，必须按 [`indexes/shortcuts_index.md`](../../indexes/shortcuts_index.md) 的《快速通道注册规范》登记（触发词 + 路由 + **带链接的动作目标**）；
+5. **登记台账**：在 [`docs/requirements.md`](../../docs/requirements.md) 留痕并注明实施版本。
 
 ### 四、固化是否到位，由机器判定（不靠自觉）
 

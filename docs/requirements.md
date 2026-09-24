@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.8.0`
+> - **当前系统实施总版本**：`v4.9.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -1834,6 +1834,34 @@
   - [x] `./scripts/control_gates.sh check` 退出码真实返回 0；
   - [x] `ai-control/reports/latest_status.md` 完整持久化；
   - [x] 全局台账与专项目录版本统一推进至 v4.8.0。
+
+---
+
+### REQ-067: 管控机制索引/路由/接口/执行四层解耦与任务命名全生命周期治理规范 (v4.9.0)
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.9.0`
+- **提出时间**：2026-09-24
+- **最新更新**：2026-09-24
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-022`）
+- **核心诉求与交付物**：
+  1. **任务命名全生命周期双向同步**：在任务执行前置（S05 环节）与门禁看板中固化自动/手动命名闭环，保持存量与新增会话命名 100% 同步合规；
+  2. **四级解耦执行体系确立**：在 [`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) 确立“索引层 (Index) ➔ 路由层 (Route) ➔ 接口层 (Interface) ➔ 执行层 (Execution)”四级解耦流水线；
+  3. **新增与变更全量同步到索引层铁律**：在 [`rules/workflow/change_flow.md`](../rules/workflow/change_flow.md) 固化索引覆盖硬约束，并在 [`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs) 建立索引覆盖探针；
+  4. **执行层全面开放标准化接口**：在 [`indexes/tool_interfaces.md`](../indexes/tool_interfaces.md) 与 [`indexes/capabilities_index.md`](../indexes/capabilities_index.md) 统一定义全域能力的 Identifier、边界范围、输入参数 Schema、输出回执与安全评级；
+  5. **执行层原子黑盒封装**：执行逻辑内部自治封装，外部调度只走确定性标准接口，杜绝跨层直接穿透。
+- **关联文件**：
+  - `rules/workflow/task_execution_flow.md`
+  - `rules/workflow/change_flow.md`
+  - `indexes/capabilities_index.md`
+  - `indexes/navigation_router.md`
+  - `indexes/tool_interfaces.md`
+  - `scripts/legacy_align_scan.mjs`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 四级解耦执行体系与全生命周期命名规范写入生效；
+  - [x] 索引层与接口层开放契约定义完备；
+  - [x] 存量校准脚本具备索引覆盖判定能力并全绿通行；
+  - [x] 全局台账与专项目录版本统一推进至 v4.9.0。
 
 ---
 

@@ -114,9 +114,16 @@ function auditCapabilitiesIndex() {
         'cli.task.naming': 'name_me.sh',
         'cli.scan.redundancy': 'redundancy_scan.mjs',
         'cli.scan.conflict': 'conflict_scan.mjs',
+        'cli.scan.legacy_align': 'legacy_align_scan.mjs',
+        'cli.audit.channel': 'channel_audit.mjs',
         'cli.audit.freshness': 'check_freshness.mjs',
         'cli.sync.requirements': 'sync_control_requirements.mjs',
-        'cli.route.navigate': 'route_navigate.mjs'
+        'cli.route.navigate': 'route_navigate.mjs',
+        'cli.sync.git': 'git_sync_remote.sh',
+        'cli.disk.clean': 'disk_check_and_cleanup.sh',
+        'cli.lock.scheduler': 'global_scheduler_lock.sh',
+        'cli.audit.fingerprint': 'fingerprint_audit.sh',
+        'cli.align.version': 'align_version.mjs'
       };
       const actualFile = cliMap[item.name] || item.name;
       const scriptPath = path.join(root, 'scripts', actualFile);
