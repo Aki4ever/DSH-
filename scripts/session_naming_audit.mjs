@@ -28,8 +28,8 @@ import { zstdDecompressSync } from 'node:zlib'
 /** zstd 帧魔数：0x28B52FFD */
 const ZSTD_MAGIC = Buffer.from([0x28, 0xb5, 0x2f, 0xfd])
 
-/** 命名规范校验（与 knowledge/common/task_naming_spec.md 的 R1~R7 对齐） */
-const TITLE_RE = /^\[([RFDSOQ])([0-9]{3})\]\[([0-9]{1,3})分\] (.+)$/
+/** 命名规范校验（支持中文语义分类或单字母+三位数字，难度分 1~100 可带或不带分） */
+const TITLE_RE = /^\[((?:新需|调研|优规|修漏|重构|巡检|测验)|[RFDSOQ])([0-9]{3})\]\[([0-9]{1,3})分?\] (.+)$/
 
 /** 统计字符串中的汉字个数（Unicode 属性匹配，不受 locale 影响）。 */
 function hanCount(s) {
@@ -60,9 +60,12 @@ function validateTitle(title) {
   return { ok: true, reason: '', code: m[1], num: Number(m[2]), score, summary: m[4] }
 }
 
-/** 解析 $DSH_HOME（与管控插件保持同一优先级）。 */
+/** 解析 $DSH_HOME（优先真实 Application Support 路径，兜底 ~/.dsh）。 */
 function resolveHome() {
-  return process.env.DSH_HOME || join(homedir(), '.dsh')
+  if (process.env.DSH_HOME) return process.env.DSH_HOME
+  const macHome = join(homedir(), 'Library', 'Application Support', 'dsh-desktop', 'harness')
+  if (existsSync(macHome)) return macHome
+  return join(homedir(), '.dsh')
 }
 
 /**
@@ -155,16 +158,27 @@ function main() {
 
   const home = resolveHome()
   const storePath = join(home, 'storages', 'session_projcache.json')
+  const sessionsDir = join(home, 'storages', 'session_projcache', 'sessions')
   const wsPath = join(home, 'storages', 'workspace.json')
   const sessRoot = join(home, 'sessions')
 
-  if (!existsSync(storePath)) {
-    console.error(`❌ 找不到会话存储：${storePath}`)
+  const rows = {}
+  if (existsSync(storePath)) {
+    const store = JSON.parse(readFileSync(storePath, 'utf8'))
+    Object.assign(rows, store.tables?.sessions ?? {})
+  } else if (existsSync(sessionsDir)) {
+    for (const f of readdirSync(sessionsDir)) {
+      if (!f.endsWith('.json')) continue
+      const sid = f.slice(0, -5)
+      try {
+        const item = JSON.parse(readFileSync(join(sessionsDir, f), 'utf8'))
+        rows[sid] = item.record ?? {}
+      } catch {}
+    }
+  } else {
+    console.error(`❌ 找不到会话存储：既无 ${storePath} 也无 ${sessionsDir}`)
     process.exit(2)
   }
-
-  const store = JSON.parse(readFileSync(storePath, 'utf8'))
-  const rows = store.tables?.sessions ?? {}
 
   // 建立 sessionId → 工作区 的映射
   const wsOf = new Map()
