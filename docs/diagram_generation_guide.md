@@ -1,8 +1,8 @@
 # 全场景流程图、信息图与教学图生成技术指南与标准模板库 (Diagram Generation Guide)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.11.0`
-> - **对应实施版本**：`v4.11.0`
+> - **当前文档版本**：`v4.12.0`
+> - **对应实施版本**：`v4.12.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`

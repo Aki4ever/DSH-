@@ -1,8 +1,8 @@
 # 思考框架与执行效率全景量化审计台账 (Efficiency & Cognitive Audit Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.11.0`
-> - **对应实施版本**：`v4.11.0`
+> - **当前文档版本**：`v4.12.0`
+> - **对应实施版本**：`v4.12.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -88,7 +88,7 @@
 
 ### 记录 005：`[D001][78分] 密钥注入器立项`
 - **任务日期**：2026-09-22
-- **关联需求**：本项目独立需求台账 [`docs/requirements.md`](../../注入器以及key管理工具/docs/requirements.md)（REQ-001 ~ REQ-015）
+- **关联需求**：该项目独立需求台账 `docs/requirements.md`（外部独立仓：注入器以及key管理工具 REQ-001 ~ REQ-015）
 - **任务概述**：从零立项并交付 macOS 原生「AI API Key 管理与配置注入器」——
   核心库（三档密钥后端 / 六格式定点注入 / 原子写与备份回滚 / 健康探测 / 审计日志）、
   CLI 基座、AppKit + WKWebView 桌面应用、38 项测试质量门禁、`.app` 与 DMG 打包链路。
