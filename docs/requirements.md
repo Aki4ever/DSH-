@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.12.0`
+> - **当前系统实施总版本**：`v4.13.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -1916,7 +1916,7 @@
 
 ### REQ-070: 管控机制结构化与全流程闭环防跳步执行规范 (v4.12.0)
 - **当前状态**：`[ACTIVE]` 生效中
-- **实施版本**：`v4.12.0`
+- **实施版本**：`v4.13.0`
 - **提出时间**：2026-09-24
 - **最新更新**：2026-09-24
 - **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-025`）
@@ -1933,6 +1933,28 @@
   - [x] 核心流程法典完成结构化、流程化与防跳步刚性卡点扩充；
   - [x] 任务执行八阶闭环流水线与机器判定命令细致落盘并完成写后读回；
   - [x] 全局台账、管控台账与受管文档版本统一推进至 v4.12.0。
+
+---
+
+### REQ-071: 任务栏改名前端可见性保障与文末四要素固定精简收尾规范 (v4.13.0)
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.13.0`
+- **提出时间**：2026-09-24
+- **最新更新**：2026-09-24
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-026`）
+- **核心诉求与交付物**：
+  1. **任务栏改名前端肉眼可见刚性保障**：彻底根治仅修改存储但前端界面脱节的问题；重构 `scripts/rename_session.sh`，自动从 SQLite 数据库提取宿主 Web 鉴权 Cookie，构造标准的 `session/rename` RPC 请求体与正确的 `args.request` 封装，通过宿主事件总线广播前端，实现前端任务栏/侧边栏无需刷新原地即时更新，并完成本地权威存储双写闭环；
+  2. **文末四要素固定精简收尾结构**：废除冗长五大模块的无效信息堆砌，在 `rules/workflow/task_execution_flow.md` 固化文末绝对刚性收尾框架，必须且仅包含：【输出物】、【输出地址】、【当前状态】、【重要说明】四项标准要素；
+  3. **四位一体版本强同步**：推进全局实施总版本号至 `v4.13.0`，主需求台账与管控台账原子同步。
+- **关联文件**：
+  - `scripts/rename_session.sh`
+  - `rules/workflow/task_execution_flow.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 改名脚本通过 RPC 广播 + 存储双写实现前端任务栏肉眼可见修改；
+  - [x] 实操法典固化文末四要素固定精简收尾结构并完成读回校验；
+  - [x] 全局台账、管控台账与受管文档版本统一推进至 v4.13.0。
 
 ---
 
