@@ -310,7 +310,7 @@ check_sync() {
 
   if (( pct < 100 )); then
     if (( dirty > G3_DIRTY_LIMIT )); then
-      HINT="未提交变更 $dirty 超阈值 $G3_DIRTY_LIMIT，文档未同步入库"
+      HINT="未提交变更 $dirty 超阈值 ${G3_DIRTY_LIMIT}，文档未同步入库"
     elif (( gaps > 0 )); then
       HINT="需求编号存在 $gaps 处缺号"
     else
@@ -880,11 +880,10 @@ case "${1:-check}" in
       # 刻意不写"生成时间"：本文件是状态快照而非流水日志。
       # 写入时间戳会让每次运行都产生内容变化，从而在版本库里形成永久噪声。
       # 保留 HEAD 哈希用于溯源：它只在真正提交后变化，具有信息量。
-      echo "- 门禁进度：**$PASSED/$TOTAL_GATES（$PCT%）**"
+      echo "- 门禁进度：**${PASSED}/${TOTAL_GATES}（${PCT}%）**"
       echo "- 可执行：$EXEC_ALLOWED"
       echo "- 当前卡点：$CURRENT_NAME"
       echo
-      local i
       for i in "${!GATE_IDS[@]}"; do
         echo "## G$((i+1)) ${GATE_NAMES[$i]} — ${RESULTS[$i]}"
         echo "- 目标：${GATE_DESC[$i]}"

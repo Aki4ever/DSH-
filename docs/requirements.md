@@ -1,9 +1,9 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.7.0`
+> - **当前系统实施总版本**：`v4.8.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
-> - **最后同步时间**：2026-09-23
+> - **最后同步时间**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
 
 本文档是本项目唯一的**独立核心需求管理台账**。按照系统元规则，所有规则的提出、变动与注销都必须在此记录，杜绝没有需求依据的规则变更。
@@ -1813,6 +1813,27 @@
   - [x] 管控机制全要素物理探针巡检完成；
   - [x] 信息图 SVG/PNG 完成实测数据重绘；
   - [x] 全局台账与专项目录版本统一推进至 v4.7.0。
+
+---
+
+### REQ-066: 管控机制状态层脚本 Bash 语法缺陷修复与快照写入健全化 (v4.8.0)
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.8.0`
+- **提出时间**：2026-09-24
+- **最新更新**：2026-09-24
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-021`）
+- **核心诉求与交付物**：
+  1. **状态层脚本（旧称门禁内核）Bash 变量解析缺陷修复**：修复 `scripts/control_gates.sh` 快照输出代码块中 `$TOTAL_GATES` 变量因紧贴中文全角括号导致的 `unbound variable` 致命异常，以及非函数上下文中使用 `local i` 的语法错误；
+  2. **门禁判定状态快照生成与退出码健全化**：消除生成 `ai-control/reports/latest_status.md` 时被 `2>/dev/null` 静默掩盖的崩溃，确保门禁看板计算执行时退出码真实返回 0 并完整产出 30 行结构化快照；
+  3. **任务级版本强制递增与双向台账闭环**：依照第三十条元规则，全库受管文档与主/专属台账实施总版本统一推进至 `v4.8.0`。
+- **关联文件**：
+  - `scripts/control_gates.sh`
+  - `ai-control/reports/latest_status.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] `./scripts/control_gates.sh check` 退出码真实返回 0；
+  - [x] `ai-control/reports/latest_status.md` 完整持久化；
+  - [x] 全局台账与专项目录版本统一推进至 v4.8.0。
 
 ---
 
