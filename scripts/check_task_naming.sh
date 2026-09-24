@@ -24,7 +24,9 @@ fi
 
 HOME_DIR="${DSH_HOME:-$HOME/.dsh}"
 STORE="$HOME_DIR/storages/session_projcache.json"
-if [[ ! -f "$STORE" ]]; then
+PER_SESSION_FILE="$HOME_DIR/storages/session_projcache/sessions/${SESSION_ID}.json"
+
+if [[ ! -f "$STORE" && ! -f "$PER_SESSION_FILE" ]]; then
   echo "⚠️  找不到会话存储，无法判定当前任务命名"
   exit 0
 fi
@@ -41,18 +43,23 @@ find_node() {
 }
 NODE_BIN="$(find_node)"
 
-# 用 Node 做真正的 JSON 解析取标题。
-# 踩坑记录：曾用 perl 按文本定位 title，但该存储里 title 字段位于 sessionId **之前**，
-# 正向查找会取到**下一个会话**的标题（静默取错值，比报错更危险），故改为结构化解析。
+# 用 Node 做真正的 JSON 解析取标题（支持单文件 session_projcache.json 与拆分目录 sessions/<sid>.json）
 TITLE=""
 if [[ -n "$NODE_BIN" ]]; then
   TITLE="$(
-    STORE="$STORE" SID="$SESSION_ID" "$NODE_BIN" -e '
+    STORE="$STORE" PER_FILE="$PER_SESSION_FILE" SID="$SESSION_ID" "$NODE_BIN" -e '
       const fs = require("node:fs")
       try {
-        const d = JSON.parse(fs.readFileSync(process.env.STORE, "utf8"))
-        const v = d?.tables?.sessions?.[process.env.SID]?.rows?.title?.val
-        if (typeof v === "string") process.stdout.write(v)
+        if (fs.existsSync(process.env.PER_FILE)) {
+          const d = JSON.parse(fs.readFileSync(process.env.PER_FILE, "utf8"))
+          const v = d?.record?.rows?.title?.val
+          if (typeof v === "string") { process.stdout.write(v); process.exit(0); }
+        }
+        if (fs.existsSync(process.env.STORE)) {
+          const d = JSON.parse(fs.readFileSync(process.env.STORE, "utf8"))
+          const v = d?.tables?.sessions?.[process.env.SID]?.rows?.title?.val
+          if (typeof v === "string") process.stdout.write(v)
+        }
       } catch {}
     ' 2>/dev/null
   )"
