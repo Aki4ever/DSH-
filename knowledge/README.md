@@ -1,8 +1,8 @@
 # 系统分层知识库总索引与前置核验协议 (Knowledge Base Hub)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.18.0`
-> - **对应实施版本**：`v4.18.0`
+> - **当前文档版本**：`v4.19.0`
+> - **对应实施版本**：`v4.19.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -53,3 +53,17 @@ knowledge/
    - 非游戏任务（如开发通用 Web 管理后台、小程序工具等），**绝对禁止载入或关联游戏世界观与设定**；
 3. **前置审查阻断**：
    - 在任务执行的【探境】与【定标】阶段，必须检索相关领域的知识库规范；一旦发现设计违背法典，立即强制阻断并提示调整。
+
+---
+
+## 🧭 四、五维法定规范矩阵（所有任务执行的法定驱动基线）
+
+依据元规则第三十二条，所有在 DSH 下执行的任务，必须由需求台账与以下**五维规范矩阵**联合驱动：
+
+| 规范维度 | 核心权威文档 | 核心法定要求 | 违规阻断红线 |
+| :--- | :--- | :--- | :--- |
+| **1. 🛠️ 工程规范** | [`engineering_specification.md`](common/engineering_specification.md) | 模块解耦、凡写必读、凡改必测、状态机原子性 | 提交未编译测试的代码、缺失退出码 0 物理证据 |
+| **2. ✍️ 文字规范** | [`readability_specification.md`](common/readability_specification.md) | 100% 全中文交互、行内层次高亮、报错三段式 | 英文裸抛、纯白文本无层次、术语黑话堆砌 |
+| **3. 💡 交互规范** | [`interaction_specification.md`](common/interaction_specification.md)<br>[`dsh_native_ui_components.md`](common/dsh_native_ui_components.md) | GenUI 原生组件全装配、格式塔映射、数据可视化 | 对话框纯文字堆叠、$\ge 3$ 条并列项未出卡片 |
+| **4. 🎨 美术规范** | [`art_specification.md`](common/art_specification.md)<br>[`component_asset_reference.md`](common/component_asset_reference.md) | 60-30-10 配比、高保真矢量 SVG/PNG、真实数据绘图 | 风格割裂、伪造图内数据、模糊位图代替矢量 |
+| **5. 🌌 世界观规范** | [`worldview.md`](projects/aether_echo/worldview.md) | 业务/项目专属背景设定权威基线、专业术语统一 | 跨领域串入无关设定、检出与世界观设定冲突 |

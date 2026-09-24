@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.18.0`
+> - **当前系统实施总版本**：`v4.19.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -2098,6 +2098,35 @@
   - [x] 物理锁全套自检用例 100% 绿灯通过；
   - [x] 全局台账与管控台账同步推进至 v4.18.0；
   - [x] 双检扫描（冗余、冲突、存量校准）100% 绿灯。
+
+---
+
+### REQ-077: DSH 全域工程执行基线（全工程物理锁 · 五维知识库驱动 · 框架式留白初始化）规约
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.19.0`
+- **提出时间**：2026-09-24
+- **最新更新**：2026-09-24
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-032`）
+- **核心诉求与交付物**：
+  1. **全域强制普适律**：确立物理锁与流程管控机制在所有 DSH 执行任务的工程中 100% 强制生效，消灭任何脱管与环境例外；
+  2. **五维知识库驱动律**：所有任务执行必须以合法需求台账与知识库五大核心规范（工程、文字、交互、美术、故事背景世界观）为法定驱动基线，前置审查防冲突，严禁脱离规范凭空捏造；
+  3. **新项目框架式留白初始化准则**：新工程初始化时坚决消除生硬假业务代码与过度膨胀的假数据，仅构建“骨架三件套 + 扩展插槽 (Slots)”，保持框架留白，为后续增量演进预留最大弹性；
+  4. **版本强同步**：推进全局实施总版本号至 `v4.19.0`。
+- **关联文件**：
+  - `rules/system/meta_rules.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `knowledge/README.md`
+  - `templates/project_dsh_bootstrap_template.md`
+  - `scripts/init_dir.sh`
+  - `indexes/rules_index.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 系统元规则新增第三十二条（双轮驱动律）与第三十三条（框架留白初始化律）；
+  - [x] 任务执行流程法典与知识库总纲强化五维规范前置约束与插槽规范；
+  - [x] 新项目立项模板与自动化初始化脚本全面贯彻框架式留白；
+  - [x] 全局台账与管控台账同步推进至 v4.19.0；
+  - [x] 双检扫描（冗余、冲突、存量校准）100% 绿灯通过。
 
 ---
 
