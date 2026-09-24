@@ -98,6 +98,7 @@ if [ "$LEGACY_PASS" -eq 0 ]; then
 fi
 
 # ── 维度 6：台账与版本双向强同步 (10分) ────────────────────────────────────
+CURRENT_VERSION=$(grep -m1 '当前系统实施总版本' "$ROOT/docs/requirements.md" 2>/dev/null | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' || echo "最新")
 SYNC_PASS=0
 if command -v node >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/sync_control_requirements.mjs" ]; then
   if node "$SCRIPT_DIR/sync_control_requirements.mjs" >/dev/null 2>&1; then
@@ -162,7 +163,7 @@ echo "| **2. 开工门禁** | 20分 | $([ $GATES_PASS -eq 1 ] && echo "G0~G4 全
 echo "| **3. 冗余扫描** | 15分 | $([ $REDUNDANCY_PASS -eq 1 ] && echo "无实质高相似代码/文档重复" || echo "存在高相似冗余块") | $([ $REDUNDANCY_PASS -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
 echo "| **4. 冲突排查** | 15分 | $([ $CONFLICT_PASS -eq 1 ] && echo "无事实矛盾与死链残留" || echo "存在事实冲突或死链") | $([ $CONFLICT_PASS -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
 echo "| **5. 存量校准** | 15分 | $([ $LEGACY_PASS -eq 1 ] && echo "遇碰即对齐清单清零" || echo "存在遗留存量待对齐项") | $([ $LEGACY_PASS -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
-echo "| **6. 台账同步** | 10分 | $([ $SYNC_PASS -eq 1 ] && echo "主台账与管控台账原子同步 v4.17.0" || echo "台账或版本号撕裂") | $([ $SYNC_PASS -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
+echo "| **6. 台账同步** | 10分 | $([ $SYNC_PASS -eq 1 ] && echo "主台账与管控台账原子同步 ${CURRENT_VERSION}" || echo "台账或版本号撕裂") | $([ $SYNC_PASS -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
 
 if [ ${#DEDUCTIONS[@]} -gt 0 ]; then
   echo ""
