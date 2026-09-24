@@ -1,8 +1,8 @@
 # 快速通道指令路由与地图式高速干道导航索引 (Arterial Routing & Quick Shortcuts Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.17.0`
-> - **对应实施版本**：`v4.17.0`
+> - **当前文档版本**：`v4.18.0`
+> - **对应实施版本**：`v4.18.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`

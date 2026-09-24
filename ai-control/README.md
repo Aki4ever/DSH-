@@ -28,6 +28,7 @@ ai-control/
 运行时状态落在 `$DSH_HOME/.dsh-control/`：
 - `status.json` — 门禁状态（供插件消费，实现常显看板与硬门禁）
 - `cache.env` — 看板缓存标记（30 秒内秒回，不重复扫描）
+- `physical_locks/` — 底层物理锁会话状态机（单向严格工序凭据，阻断越序调用）
 
 ---
 
@@ -80,6 +81,9 @@ node scripts/legacy_align_scan.mjs --self-test   # 存量校准自检（22 项�
 node scripts/channel_audit.mjs --root .          # 通道审计（死通道/说法命中/触发词冲突）
 node scripts/channel_audit.mjs --self-test       # 通道审计自检（23 项）
 node ai-control/plugin/selftest.mjs              # 拦截层插件自检（33 项）
+./scripts/physical_lock.sh status                # 查看底层物理锁状态与凭据
+./scripts/physical_lock.sh sync                  # 自适应同步推进物理锁
+node scripts/test_physical_lock.mjs             # 底层物理锁全量自检（19 项）
 ```
 
 ---

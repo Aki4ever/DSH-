@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.17.0`
+> - **当前系统实施总版本**：`v4.18.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -2066,6 +2066,38 @@
   - [x] control_gates.sh 接入 G0 命名门禁并联动阻断；
   - [x] scripts/audit_execution.sh 实现 0~100 分量化打分逻辑并输出标准卡片；
   - [x] 双检扫描与门禁脚本全部通过。
+
+---
+
+### REQ-076: 管控机制底层物理锁 Agent (Physical Lock Agent) 与全项目流程串行化硬阻断规约
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.18.0`
+- **提出时间**：2026-09-24
+- **最新更新**：2026-09-24
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-031`）
+- **核心诉求与交付物**：
+  1. **底层物理锁 Agent (Physical Lock Agent / PLA)**：在管控机制中新增独立物理锁机制，构建单向严格递增的工序链式状态机；必须完成上一步并产出机器落盘凭证，才允许解锁并执行下一步，严防跳步与抢跑；
+  2. **全项目全局无差别强生效**：物理锁机制下沉至宿主基础设施与全局薄入口，在所有被 DSH 打开和管理的项目中全域生效；
+  3. **底层拦截层联动**：在 `ai-control/plugin/index.mjs` 中接入物理锁检验，对无前置工序凭据的改动型工具调用实施底层硬阻断；
+  4. **配套物理锁工具与自检**：研发 `scripts/lib/physical_lock.mjs` 内核与 `scripts/physical_lock.sh` CLI 工具，并补充完整自检测试套件；
+  5. **版本强同步**：推进全局实施总版本号至 `v4.18.0`。
+- **关联文件**：
+  - `rules/workflow/task_execution_flow.md`
+  - `rules/system/meta_rules.md`
+  - `indexes/rules_index.md`
+  - `ai-control/README.md`
+  - `ai-control/plugin/index.mjs`
+  - `scripts/lib/physical_lock.mjs`
+  - `scripts/physical_lock.sh`
+  - `scripts/test_physical_lock.mjs`
+  - `ai-control/requirements/control_requirements_ledger.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 物理锁内核与 CLI 工具实现，支持状态查询、凭证写入、锁阶梯推进与跳步检测；
+  - [x] 拦截层接入物理锁，未满足前置工序时严格阻断改动操作；
+  - [x] 物理锁全套自检用例 100% 绿灯通过；
+  - [x] 全局台账与管控台账同步推进至 v4.18.0；
+  - [x] 双检扫描（冗余、冲突、存量校准）100% 绿灯。
 
 ---
 

@@ -1,8 +1,8 @@
 # 系统级全局元规则 (System Meta-Rules)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.17.0`
-> - **对应实施版本**：`v4.17.0`
+> - **当前文档版本**：`v4.18.0`
+> - **对应实施版本**：`v4.18.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **生效状态**：`[Release 稳定生效]`
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 🏛️ 全局元规则二十九条 (Core Meta-Laws)
+## 🏛️ 全局元规则三十一条 (Core Meta-Laws)
 
 ### 第一条：规则需求双向同步律 (Requirement-Rule Sync)
 - **溯源铁律**：严禁存在无需求依据的孤立规则。新增/修改/废弃规则必须同步更新 [`docs/requirements.md`](../../docs/requirements.md)。
@@ -137,6 +137,10 @@
 - **版本强同步三大靶点 (Three Sync Targets)**：
   - **同步至输出物**：本次产生或修改的所有交付物（文档头部元数据、代码注释常量、图形快照、收尾卡片）必须 100% 同步标记最新版本号；
   - **同步至需求台账**：全局需求管理台账 [`docs/requirements.md`](../../docs/requirements.md) 与管控台账 [`ai-control/requirements/control_requirements_ledger.md`](../../ai-control/requirements/control_requirements_ledger.md) 必须同步登记最新版本号与对应条目，做到“无台账无版本”。
+
+### 第三十一条：底层物理锁工序串行律 (Physical Lock & Strict Monotonic Flow Law)
+- **底层物理硬阻断**：在管控机制的标准流程中，由底层物理锁智能体 (Physical Lock Agent / PLA) 强制看守工序状态机。必须完成上一工序并产出机器落盘凭证（Proof Token / Exit Code 0），才允许解锁并执行下一工序，严禁任何跳步、偷跑与抢跑；拦截层对非法越序调用直接拒止。
+- **全域所有项目强生效**：物理锁机制作为宿主基础设施与全局底层拦截层，在所有由 DSH 打开、托管与执行的项目中 100% 强制生效，项目之间无特权豁免，确保跨项目执行流程绝对正确。
 
 
 ---

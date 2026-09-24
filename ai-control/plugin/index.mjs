@@ -30,8 +30,9 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
 import { execFile } from 'node:child_process'
-import { existsSync, writeFileSync } from 'node:fs'
+import { existsSync, writeFileSync, readFileSync } from 'node:fs'
 import { autoNameOnce, parseTitle as parseNamingTitle } from '../../scripts/lib/auto_naming.mjs'
+import { evaluatePhysicalLock, getLockState } from '../../scripts/lib/physical_lock.mjs'
 
 /** Cordis 插件名（用于诊断与事件来源标注）。 */
 export const name = 'ai-execution-control'
@@ -93,6 +94,8 @@ export const Config = {
     // 且与上面两个诊断脚本同属"自锁"类问题。
     // 只放行这一个入口（不放行 rename_session.sh）：它只改**当前会话的标题**这一条元数据，
     // 不触碰工程实质内容；真正的工程改动仍被门禁严格拦住。
+    // 物理锁 CLI 工具：用于查看、推进或重置物理锁
+    'scripts/physical_lock.sh',
     'scripts/name_me.sh',
   ],
   escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
@@ -496,7 +499,7 @@ function renderBadge(s) {
  * 导出以便自检脚本在不启动 DSH 的情况下验证判定逻辑。
  * @returns 拒绝理由字符串；`undefined` 表示放行。
  */
-export function evaluate(execution, status, config, cacheAgeMs = 0) {
+export function evaluate(execution, status, config, cacheAgeMs = 0, lockState = null) {
   const toolName = String(execution?.name || '')
   if (!toolName) return undefined
 
@@ -535,7 +538,21 @@ export function evaluate(execution, status, config, cacheAgeMs = 0) {
     ].join('\n')
   }
 
-  // 5) 全部门禁通过 → 放行
+  // 5) 底层物理锁判定：若存在物理锁状态，必须完成上一步才允许执行下一步（物理级阻断）
+  if (status.execAllowed && lockState) {
+    const phys = evaluatePhysicalLock(execution, lockState)
+    if (phys) {
+      return [
+        `🚨 底层物理锁硬阻断：拒绝本次 \`${toolName}\` 调用。`,
+        `当前锁阶：${phys.stageName} ➔ 目标要求：${phys.requiredStageName || '下一工序'}`,
+        `阻断原因：${phys.message}`,
+        '核心规约：在管控机制标准流程中，必须完成上一步才可以执行下一步，从物理层级上规范化执行流程。',
+        '自救动作：运行 `./scripts/physical_lock.sh status` 查看工序凭证，依序履约后方可解锁。',
+      ].join('\n')
+    }
+  }
+
+  // 6) 全部门禁通过且物理锁未阻断 → 放行
   if (status.execAllowed) return undefined
 
   // 6) 拒绝，并给出可执行的修复路径
@@ -699,8 +716,17 @@ export function apply(ctx, config = {}) {
         const age = Date.now() - cached.at
         // 状态陈旧（有依据、只是不是刚出炉的）→ 顺手把最新状态捞回来，判定当场照常进行。
         if (status && age >= STALE_MS) fireRefresh(stateDir)
+        let currentLockState = null
         try {
-          return evaluate(execution, status, cfg, age)
+          const sid = process.env.DSH_SESSION_ID || 'global_session'
+          const home = cfg.dshHome || process.env.DSH_HOME || join(homedir(), '.dsh')
+          const lockFile = join(home, '.dsh-control', 'physical_locks', `${sid.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`)
+          if (existsSync(lockFile)) {
+            currentLockState = JSON.parse(readFileSync(lockFile, 'utf8'))
+          }
+        } catch {}
+        try {
+          return evaluate(execution, status, cfg, age, currentLockState)
         } catch (err) {
           // 判定自身抛错 → 依据不可证实，失败关闭并留下可见原因。
           // 历史行为是 `return undefined`（静默放行），与"状态不可证实即失败关闭"矛盾。
