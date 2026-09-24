@@ -44,7 +44,7 @@
   <text x="60" y="120" fill="#93A9C4" font-size="16">它不负责"干活"，只回答两件事：现在能不能动手？凭什么下这个结论？</text>
   <text x="882" y="86" fill="#7FD8FF" font-size="15" font-weight="600">实测快照</text>
   <text x="882" y="110" fill="#DCE6F5" font-size="14">2026-09-24 16:42</text>
-  <text x="882" y="130" fill="#6F86A6" font-size="12">v4.20.0 · 本次实跑</text>
+  <text x="882" y="130" fill="#6F86A6" font-size="12">v4.21.0 · 本次实跑</text>
 
   <!-- ══ ① 一句话定义 ══ -->
   <rect x="60" y="150" width="1000" height="128" rx="14" fill="url(#panelBg)" stroke="#1F3A57" stroke-width="1.5"/>
@@ -96,7 +96,7 @@
   <text x="608" y="482" fill="#FFFFFF" font-size="27" font-weight="700">0</text>
   <text x="608" y="502" fill="#93A9C4" font-size="12.5">未提交变更</text>
   <line x1="608" y1="520" x2="777" y2="520" stroke="#1E2C40" stroke-width="1"/>
-  <text x="608" y="542" fill="#8FA6C0" font-size="12.5">台账版本 v4.20.0</text>
+  <text x="608" y="542" fill="#8FA6C0" font-size="12.5">台账版本 v4.21.0</text>
   <text x="608" y="562" fill="#8FA6C0" font-size="12.5">缺号 0 · 工作树干净</text>
 
   <!-- G4 -->
