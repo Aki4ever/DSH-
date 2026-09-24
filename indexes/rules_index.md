@@ -162,6 +162,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **命名自动化** | [`scripts/session_naming_audit.mjs`](../scripts/session_naming_audit.mjs) | 存量审计（只读）：枚举全部会话、判定合规率、区分主/子会话，并抽取首条真用户消息供生成概述 |
 | **命名自动化** | [`scripts/generate_naming_plan.mjs`](../scripts/generate_naming_plan.mjs) | 方案生成：按「工作区 + 分类字母」编排编号，难度分由会话规模量化推导（步数 60% + 输出 token 40%） |
 | **命名自动化** | [`scripts/batch_rename_sessions.mjs`](../scripts/batch_rename_sessions.mjs) | 批量改名：预校验 → 自动备份 → 自动回滚方案 → 以权威存储复查真实生效数（`--dry-run` 预览；回滚用 `--rollback`，该模式豁免命名规范校验，否则回滚方案会被自己拦死） |
+| **命名自动化** | [`scripts/batch_fix_sidebar_titles.mjs`](../scripts/batch_fix_sidebar_titles.mjs) | 全量穿透改名：RPC 广播 + 权威存储 + 前端 desktop-storage 本地缓存三层同步强制改名 |
 | **命名自动化** | [`scripts/lib/workspace_resolve.mjs`](../scripts/lib/workspace_resolve.mjs) | 归位共享模块：方案生成器与批量器共用同一套工作区归位口径，避免两处判断错位 |
 | **命名自动化** | [`scripts/lib/auto_naming.mjs`](../scripts/lib/auto_naming.mjs) | 自动命名核心逻辑：插件在宿主内调用，测试脚本导入同一份代码（保证"测过的就是跑的"） |
 | **命名自动化** | [`scripts/test_auto_naming.mjs`](../scripts/test_auto_naming.mjs) | 自动命名测试（24 项）：纯逻辑 + 真实数据读取 + 幂等 + 分类正确性；`--live` 可做实弹改名 |
