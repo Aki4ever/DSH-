@@ -51,6 +51,7 @@ G2_ORPHAN_MAX=0
 G2_UNTITLED_MAX=2
 G1_SKIP_DIRS=".git .dsh_locks ai-control"
 DSH_CONTROL_TTL=30
+G0_NAMING_ENFORCE=true
 if [ -f "$CONFIG_FILE" ]; then
   # shellcheck disable=SC1090
   source "$CONFIG_FILE"
@@ -465,6 +466,15 @@ compute_all() {
     GATE_INDEX=$TOTAL_GATES
     EXEC_ALLOWED="true"
   fi
+
+  # ── G0 会话命名硬门禁联动（一票否决）────────────────────────────────────────
+  if [ "${G0_NAMING_ENFORCE:-false}" = "true" ]; then
+    if ! bash "$SCRIPT_DIR/check_task_naming.sh" --exit >/dev/null 2>&1; then
+      EXEC_ALLOWED="false"
+      CURRENT_ID="naming-block"
+      CURRENT_NAME="会话未合规命名"
+    fi
+  fi
 }
 
 json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
@@ -797,6 +807,11 @@ finish() {
   if [ "${CMD:-check}" != "json" ]; then
     _naming_line="$(bash "$SCRIPT_DIR/check_task_naming.sh" 2>/dev/null | head -1 || true)"
     [ -n "$_naming_line" ] && printf '\n%s\n' "$_naming_line"
+    if [ "${G0_NAMING_ENFORCE:-false}" = "true" ]; then
+      if ! bash "$SCRIPT_DIR/check_task_naming.sh" --exit >/dev/null 2>&1; then
+        printf '❌ 门禁阻断：G0 会话命名未通过，禁止进入实质执行（请先运行 ./scripts/name_me.sh）\n' >&2
+      fi
+    fi
   fi
   [ "${EXEC_ALLOWED:-false}" = "true" ] && exit 0
   exit 1

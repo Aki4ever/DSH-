@@ -145,6 +145,7 @@ STORE_FILE="$HOME_DIR/storages/session_projcache.json"
 if command -v node >/dev/null 2>&1; then
   node -e "
     const fs = require('fs');
+    const path = require('path');
     const sid = '${SESSION_ID}';
     const title = process.argv[1];
     const pfile = '${PER_SESSION_FILE}';
@@ -153,16 +154,33 @@ if command -v node >/dev/null 2>&1; then
     try {
       if (fs.existsSync(pfile)) {
         const d = JSON.parse(fs.readFileSync(pfile, 'utf8'));
-        if (d && d.record && d.record.rows && d.record.rows.title) {
+        if (d && d.record && d.record.rows) {
+          d.record.rows.title = d.record.rows.title || {};
           d.record.rows.title.val = title;
           d.record.rows.title.ver = (d.record.rows.title.ver || 1) + 1;
           fs.writeFileSync(pfile, JSON.stringify(d, null, 2), 'utf8');
           saved = true;
         }
+      } else {
+        const pdir = path.dirname(pfile);
+        fs.mkdirSync(pdir, { recursive: true });
+        const initData = {
+          table: 'sessions',
+          record: {
+            rows: {
+              title: { val: title, ver: 1 }
+            }
+          }
+        };
+        fs.writeFileSync(pfile, JSON.stringify(initData, null, 2), 'utf8');
+        saved = true;
       }
       if (fs.existsSync(sfile)) {
         const d = JSON.parse(fs.readFileSync(sfile, 'utf8'));
-        if (d && d.tables && d.tables.sessions && d.tables.sessions[sid] && d.tables.sessions[sid].rows && d.tables.sessions[sid].rows.title) {
+        if (d && d.tables && d.tables.sessions) {
+          d.tables.sessions[sid] = d.tables.sessions[sid] || { rows: {} };
+          d.tables.sessions[sid].rows = d.tables.sessions[sid].rows || {};
+          d.tables.sessions[sid].rows.title = d.tables.sessions[sid].rows.title || {};
           d.tables.sessions[sid].rows.title.val = title;
           d.tables.sessions[sid].rows.title.ver = (d.tables.sessions[sid].rows.title.ver || 1) + 1;
           fs.writeFileSync(sfile, JSON.stringify(d, null, 2), 'utf8');
