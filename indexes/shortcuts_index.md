@@ -1,8 +1,8 @@
 # 快速通道指令路由与地图式高速干道导航索引 (Arterial Routing & Quick Shortcuts Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.13.0`
-> - **对应实施版本**：`v4.13.0`
+> - **当前文档版本**：`v4.14.0`
+> - **对应实施版本**：`v4.14.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -79,6 +79,7 @@
 | **“给出文案”**<br>*(或“生成文案/提炼文案/整理需求/需求文案”)* | **G0 高速** | 将口语想法极速提炼为标准化、便于执行的PRD需求文案 | 读取 [`templates/requirement_template.md`](../templates/requirement_template.md) 并执行意图解构 | 输出标准PRD结构卡片，首屏置顶方案规划态声明，末尾附带实施确认指令 |
 | **“可读性规范”**<br>*(或“排版设计标准/字体字号规范”)* | **G1 干线** | 查阅全端(Web/DMG/App/小程序)可读性与字号排版标准 | 读取 [`knowledge/common/readability_specification.md`](../knowledge/common/readability_specification.md) | 输出全端跨端字号阶梯、最小文字绝对底线与无障碍对比度基线卡片 |
 | **“地图导航 <能力/目标>”**<br>*(或“能力导航/路线规划”)* | **G1 干线** | 索引命中后生成起点至终点的地图式导航路线 | 执行 [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) `<目标>` | 输出起点、途径门禁/配置、终点执行落地点与避坑路况提示卡 |
+| **“项目初始化”**<br>*(或“初始化项目/立项初始化”)* | **G0 高速** | 快速生成项目结构、骨架防丢文件与基础版本 | 执行 [`scripts/init_project.sh`](../scripts/init_project.sh) `[项目路径]` | 秒级生成目录四件套与需求台账，固化 v1.0.0 基础版本基线并输出状态回执 |
 
 ---
 

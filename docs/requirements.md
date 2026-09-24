@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.13.0`
+> - **当前系统实施总版本**：`v4.14.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -1955,6 +1955,32 @@
   - [x] 改名脚本通过 RPC 广播 + 存储双写实现前端任务栏肉眼可见修改；
   - [x] 实操法典固化文末四要素固定精简收尾结构并完成读回校验；
   - [x] 全局台账、管控台账与受管文档版本统一推进至 v4.13.0。
+
+---
+
+### REQ-072: 管控机制核心链路四维深化优化（动态更名 · 版本联动 · 收敛落盘 · 初始化快速通道）
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.14.0`
+- **提出时间**：2026-09-24
+- **最新更新**：2026-09-24
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-027`）
+- **核心诉求与交付物**：
+  1. **任务全生命周期动态更名与前端穿透**：任务执行前必须强制命名（S05），执行过程中阶段演进时动态更名，依托 `scripts/rename_session.sh` 与 RPC 广播实现前端看板肉眼可见即时更新；
+  2. **版本号与需求强联动**：任务执行前置生成/关联需求编号，版本号按 SemVer 刚性递增，并在前端状态栏/版本徽标中完成同步呈现；
+  3. **收敛态落盘与“以需定测”闭环**：任务执行收敛后自动将技术决策回写项目文件夹需求文件，测试用例严格以需求文件验收条款为基准执行验证；
+  4. **“项目初始化”快速通道落地**：将“项目初始化”注册为 G0 高速通道，新增 `scripts/init_project.sh` 脚手架脚本，秒级生成目录骨架、防丢文件与 v1.0.0 基础版本。
+- **关联文件**：
+  - `scripts/init_project.sh`
+  - `indexes/shortcuts_index.md`
+  - `rules/workflow/task_execution_flow.md`
+  - `rules/workflow/versioning_standard.md`
+  - `ai-control/requirements/control_requirements_ledger.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 快速通道注册“项目初始化”且通道审计（`channel_audit.mjs`）100% 绿灯；
+  - [x] 脚手架脚本 `scripts/init_project.sh` 具备可执行权限并支持秒级骨架与基础版本生成；
+  - [x] 任务动态更名、版本需求联动、收敛落盘与以需定测在实操法典中闭环落盘；
+  - [x] 全局台账、管控台账与受管文档版本统一推进至 v4.14.0。
 
 ---
 
