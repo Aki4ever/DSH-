@@ -1,9 +1,12 @@
 # 项目页面资产与视觉台账模板 (Page Ledger Template)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前模板版本**：`v4.14.0`（对齐台账总版本）
+> - **当前模板版本**：`v4.15.0`（对齐台账总版本）
+> - **文档类型 (Doc Type)**：`[TEMPLATE-STANDARD 标准规范模板]`
+> - **清理定位 (Retention)**：`[PERMANENT 永久核心白名单 · 严禁删除]`
+> - **生成会话**：`[优规013][45] 严守管控文件标记`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
-> - **对齐时间**：2026-09-24（REQ-070）
+> - **对齐时间**：2026-09-24（REQ-073）
 
 > 规范遵循：[`rules/workflow/page_ledger_specification.md`](../rules/workflow/page_ledger_specification.md)  
 > 使用时机：所有前端、客户端、小程序或 GUI 类项目，在 `docs/page_ledger.md` 或项目目录下维护。

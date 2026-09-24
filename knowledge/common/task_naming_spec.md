@@ -1,10 +1,12 @@
 # 通用任务命名规范 (Task Naming Specification)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.14.0`
-> - **对应实施版本**：`v4.14.0`
+> - **当前文档版本**：`v4.15.0`
+> - **对应实施版本**：`v4.15.0`
+> - **文档类型 (Doc Type)**：`[CORE-KNOWLEDGE 核心知识库]`
+> - **清理定位 (Retention)**：`[PERMANENT 永久核心白名单 · 严禁删除]`
 > - **规范层级**：`【知识库 · 通用公共规范 · 命名唯一权威源】`
-> - **需求依据**：`REQ-048`（需求一：任务命名规范统一）
+> - **需求依据**：`REQ-048`、`REQ-069`、`REQ-071`、`REQ-073`
 > - **生效状态**：`[Release 稳定生效]`
 
 本文档是**任务命名格式的唯一权威源**。任何位置提到"任务名怎么起""标题格式是什么"，
@@ -131,19 +133,29 @@
 
 ---
 
-## 🔧 七、执行与校验
+## 🔧 七、执行与校验（存量与新增全域同权治理闭环）
 
-**锁定方式**：调用脚本写入标题，脚本按本文档 §二 的 R1~R7 逐条硬校验，不合规直接拒绝并打印正确示例。
+### 1. 新增任务首动强制锁定与前端穿透
+- **首发必改名**：任何新任务会话启动后，在 S05 首动握手门禁阶段，必须首先调用改名脚本；
+- **机器硬校验**：脚本按本文档 §二 的 R1~R7 逐条严格断言，任一不符直接抛出错误非零退出，杜绝“未命名裸跑”或“随性自造标题”；
+- **前端实时广播**：通过宿主 RPC `session/rename` 接口将标题即时推送至 Web 前端，实现前端任务栏/侧边栏肉眼可见秒级更新，并与本地 SQLite 权威存储双写闭环。
 
 ```bash
-./scripts/rename_session.sh "[R048][50分] 管控机制双优化"
+./scripts/rename_session.sh "[优规013][45] 严守管控文件标记"
 ```
 
-**执行时机**：由任务执行流程的**首动握手门禁（S05）**约束，本文档只定义"名字长什么样"，不定义"什么时候改"。
+### 2. 历史存量任务常态化审计与批量清洗
+- **全域同权铁律**：本命名规范对新增任务与历史存量会话 **100% 同权无差别生效**，绝不允许“新规不管老账”；
+- **自动化审计与自愈**：
+  - 运行 `node scripts/session_naming_audit.mjs` 进行全库历史会话只读合规审计；
+  - 运行 `node scripts/batch_rename_sessions.mjs` 进行存量历史会话自动化批量更名与格式归一化；
+- **门禁看板常态告警**：每次运行 `./scripts/control_gates.sh` 时，自动读取当前会话持久化状态；若检测到未合规命名，在看板底部显式告警提示，存量违规未清零前严禁声称体系完备。
 
-**相关载体**：
+### 3. 相关载体与权威指针
 
-- 改名脚本：[`scripts/rename_session.sh`](../../scripts/rename_session.sh)
-- 执行时机与轨道：[`rules/workflow/task_execution_flow.md`](../../rules/workflow/task_execution_flow.md)
-- 上层硬约束：[`rules/system/meta_rules.md`](../../rules/system/meta_rules.md)
+- 改名与穿透脚本：[`scripts/rename_session.sh`](../../scripts/rename_session.sh)
+- 合规校验脚本：[`scripts/check_task_naming.sh`](../../scripts/check_task_naming.sh)
+- 存量批处理工具：[`scripts/batch_rename_sessions.mjs`](../../scripts/batch_rename_sessions.mjs)
+- 执行时机与轨道联动：[`rules/workflow/task_execution_flow.md`](../../rules/workflow/task_execution_flow.md)
+- 上层硬约束元规则：[`rules/system/meta_rules.md`](../../rules/system/meta_rules.md)
 - 长期记忆条目：[`memory/context_memory.md`](../../memory/context_memory.md)

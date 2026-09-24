@@ -1,8 +1,8 @@
 # 本地运算优先与 Token 结构性降耗工程规范 (Local-Compute First & Token Optimization)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.14.0`
-> - **对应实施版本**：`v4.14.0`
+> - **当前文档版本**：`v4.15.0`
+> - **对应实施版本**：`v4.15.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **需求依据**：`REQ-052` / `CR-007`（结构性降低 Token 消耗与本地运算优先）
 > - **生效状态**：`[Release 稳定生效]`

@@ -1,10 +1,10 @@
 #!/bin/bash
 # ==============================================================================
 # 脚本名称: disk_check_and_cleanup.sh
-# 核心功能: DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本
+# 核心功能: DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位)
 # 适用环境: macOS / Linux (POSIX Shell)
-# 脚本自身版本: v2.0.0
-# 对齐工程版本: v3.1.0  # 新鲜度比对以此为准（脚本自身版号不参与比对）
+# 脚本自身版本: v2.1.0
+# 对齐工程版本: v4.15.0  # 新鲜度比对以此为准（脚本自身版号不参与比对）
 # ==============================================================================
 
 set -eo pipefail
@@ -126,6 +126,32 @@ if [ -d "$CURRENT_DIR/.git" ]; then
   git -C "$CURRENT_DIR" gc --prune=now --quiet 2>/dev/null || true
   echo "   - 本地 Git 对象库整理完毕。"
 fi
+
+# 3.5 基于文件元数据生命周期标记 (Retention Policy) 安全扫描与定位清除
+echo "🔍 扫描具备易失清理标记 (EPHEMERAL-AUTO / DEPRECATED-PURGEABLE) 的文件..."
+TAGGED_CLEANED=0
+# 仅扫描 Markdown、文本或临时日志，排除 .git、node_modules
+while IFS= read -r fpath; do
+  if [ -f "$fpath" ]; then
+    # 绝对白名单防御：如果路径位于白名单目录，绝不删除
+    rel_path="${fpath#$CURRENT_DIR/}"
+    case "$rel_path" in
+      rules/*|knowledge/*|memory/*|indexes/*|docs/requirements.md|templates/*)
+        # 核心资产白名单保护，跳过
+        ;;
+      *)
+        # 检查是否包含可清除生命周期元数据标记
+        if grep -q -E "Retention.*\[(EPHEMERAL-AUTO|DEPRECATED-PURGEABLE)\]" "$fpath" 2>/dev/null; then
+          f_size=$(du -sk "$fpath" 2>/dev/null | awk '{print $1}')
+          rm -f "$fpath"
+          TAGGED_CLEANED=$((TAGGED_CLEANED + 1))
+          FREED_BYTES=$((FREED_BYTES + (f_size * 1024)))
+        fi
+        ;;
+    esac
+  fi
+done < <(find "$CURRENT_DIR" -type f \( -name "*.md" -o -name "*.txt" -o -name "*.log" \) ! -path "*/.git/*" 2>/dev/null)
+echo "   - 已安全识别并清除 $TAGGED_CLEANED 个标记易失/废弃的文件。"
 
 FREED_MB=$(awk "BEGIN {printf \"%.2f\", $FREED_BYTES / 1024 / 1024}")
 echo "----------------------------------------------------------"

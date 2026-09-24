@@ -1,7 +1,7 @@
 # 管控机制专属需求台账 (Control Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前管控机制版本**：`v4.14.0`
+> - **当前管控机制版本**：`v4.15.0`
 > - **最后同步时间**：2026-09-24
 > - **全局主台账对照**：[`docs/requirements.md`](../../docs/requirements.md)
 > - **状态**：`[ACTIVE 生效中]`
@@ -39,6 +39,7 @@
 | **CR-025** | REQ-070 | `v4.12.0` | 管控机制结构化与全流程闭环防跳步执行规范 | `[ACTIVE]` |
 | **CR-026** | REQ-071 | `v4.13.0` | 任务栏改名前端可见性保障与文末四要素固定精简收尾规范 | `[ACTIVE]` |
 | **CR-027** | REQ-072 | `v4.14.0` | 管控机制核心链路四维深化优化（动态更名·版本联动·收敛落盘·初始化快速通道） | `[ACTIVE]` |
+| **CR-028** | REQ-073 | `v4.15.0` | 全域任务命名同权治理与文件生命周期标记清除定位规约 | `[ACTIVE]` |
 
 ---
 
@@ -533,6 +534,33 @@
   - [x] 脚手架脚本 `scripts/init_project.sh` 具备可执行权限并支持秒级骨架与基础版本生成；
   - [x] 任务动态更名、版本需求联动、收敛落盘与以需定测在实操法典中闭环落盘；
   - [x] 全局台账、管控台账与受管文档版本统一推进至 v4.14.0。
+
+---
+
+### CR-028: 全域任务命名同权治理与文件生命周期标记清除定位规约
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.15.0`
+- **对应全局台账**：`REQ-073`
+- **提出时间**：2026-09-24
+- **核心诉求与目标**：
+  1. **存量与新增任务命名全域同权机器治理**：依据 [`knowledge/common/task_naming_spec.md`](../../knowledge/common/task_naming_spec.md) 严格推行三要素 `[分类编号][难度分] 汉字概述`。新增任务首动强制调用 `scripts/rename_session.sh` 并通过 RPC 穿透前端任务栏；历史存量任务通过 `scripts/batch_rename_sessions.mjs` 审计与批量清洗，门禁看板常显命名状态，不合规直接阻断；
+  2. **全域文件生命周期元数据标记 (Retention Tagging)**：在所有新建或修改的文档头部强制嵌入生命周期元数据块（文档类型 Doc Type、清理定位 Retention、生成会话、到期清除条件），四级保留策略白名单（`[PERMANENT]` 永久核心资产、`[PERSISTENT]` 长期受管资产、`[EPHEMERAL-AUTO]` 临时易失产物、`[DEPRECATED-PURGEABLE]` 已废弃可清理）；
+  3. **清除机制快速扫描与自动化联动**：升级自愈清理脚本 `scripts/disk_check_and_cleanup.sh`，支持根据头部 `Retention` 标签秒级定位可删除文件并安全清理，绝对保护 `[PERMANENT]` 白名单资产；
+  4. **四位一体版本强同步**：推进全局实施总版本号至 `v4.15.0`，主需求台账与管控台账原子同步。
+- **关联产出物**：
+  - `knowledge/common/task_naming_spec.md`
+  - `rules/workflow/audit_and_cleanup.md`
+  - `templates/requirement_template.md`
+  - `templates/page_ledger_template.md`
+  - `scripts/disk_check_and_cleanup.sh`
+  - `docs/requirements.md`（`REQ-073`）
+  - `ai-control/requirements/control_requirements_ledger.md`
+- **验收标准**：
+  - [x] 任务命名规约明确新增与存量任务全域同权与机器拦截；
+  - [x] 资源治理规约明确文件元数据头部标记与四级 Retention 策略；
+  - [x] 标准模板 templates/ 注入规范生命周期元数据头部；
+  - [x] 磁盘自愈清理脚本落地基于头部元数据标记的快速定位与安全清除；
+  - [x] 全局台账、管控台账与受管文档版本统一推进至 v4.15.0。
 
 
 
