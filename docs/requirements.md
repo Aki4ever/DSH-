@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.15.0`
+> - **当前系统实施总版本**：`v4.16.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -2009,6 +2009,35 @@
   - [x] 标准模板 templates/ 注入规范生命周期元数据头部；
   - [x] 磁盘自愈清理脚本落地基于头部元数据标记的快速定位与安全清除；
   - [x] 全局台账、管控台账与受管文档版本统一推进至 v4.15.0。
+
+---
+
+### REQ-074: 任务首动命名调度句柄化与执行驱动路由索引自底向上强同步规约 (v4.16.0)
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.16.0`
+- **提出时间**：2026-09-24
+- **最新更新**：2026-09-24
+- **管控专属台账**：[`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)（`CR-029`）
+- **核心诉求与交付物**：
+  1. **任务首动改名与调度句柄法定化**：在方案筹策后、任何实质操作前，首发命令必须调用 `scripts/rename_session.sh` 并广播穿透前端任务栏；标准三要素任务名自动成为该任务在生命周期中的全局唯一调度句柄（Task Dispatch Handle），子代理派发（Agent PP/Life）、锁申领与审计台账强制显式携带该名称；
+  2. **执行驱动四级解耦自底向上逆向强同步**：确立“执行层能力变动 ➔ 接口层提取 ➔ 路由层注册 ➔ 索引层上架”的反向强同步协议（Reverse Capability Sync & Bubble-up Protocol）。任何执行层脚本能力的增删改，必须同步在接口层声明契约、在路由层注册自然语言通道、在索引层上架能力与正反案例；
+  3. **机器判定硬门禁保障**：由 `scripts/channel_audit.mjs` 实施全通道审计，死链或冲突未归零前禁止交付；
+  4. **四位一体版本强同步**：推进全局实施总版本号至 `v4.16.0`，主需求台账与管控台账原子同步。
+- **关联文件**：
+  - `rules/workflow/task_execution_flow.md`
+  - `rules/workflow/agent_life_spec.md`
+  - `indexes/capabilities_index.md`
+  - `indexes/shortcuts_index.md`
+  - `indexes/tool_interfaces.md`
+  - `scripts/channel_audit.mjs`
+  - `ai-control/requirements/control_requirements_ledger.md`
+  - `docs/requirements.md`
+- **验收标准**：
+  - [x] 实操法典确立任务首动改名为调度句柄前置法定条件；
+  - [x] 实操法典固化执行驱动四级解耦自底向上强同步规约；
+  - [x] 调度规范 agent_life_spec.md 明确子代理调度携带任务名称句柄；
+  - [x] 通道审计脚本 channel_audit.mjs 保持 100% 绿灯；
+  - [x] 全局台账、管控台账与受管文档版本统一推进至 v4.16.0。
 
 ---
 

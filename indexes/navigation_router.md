@@ -1,8 +1,8 @@
 # 地图导航式能力路由层规范 (Map Navigation Routing Layer)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.15.0`
-> - **对应实施版本**：`v4.15.0`
+> - **当前文档版本**：`v4.16.0`
+> - **对应实施版本**：`v4.16.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-054` / `CR-009`（地图导航式能力路由层）
 > - **生效状态**：`[Release 稳定生效]`
