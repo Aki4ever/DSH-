@@ -19,5 +19,62 @@
     "tracked_files": 154,
     "all_files": 777,
     "dirty_entries": 3
+  },
+  "result": {
+    "merged_at": "2026-09-28T07:50:44+0800",
+    "target_repo": "/Users/linqiyu/Documents/DSH/全局规则",
+    "merged_prefix": "skill-pool/",
+    "merge_commit": "27faaec",
+    "source_commit": "3d99364",
+    "transferred_tracked_files": 479,
+    "history_preserved": true,
+    "source_kept_as_readonly_mirror": true,
+    "session_migration": {
+      "registry": "/Users/linqiyu/Library/Application Support/dsh-desktop/harness/storages/workspace.json",
+      "backup": "/Users/linqiyu/Library/Application Support/dsh-desktop/harness/storages/workspace.json.bak-20260928-075011",
+      "source_workspace_sessions": 11,
+      "target_workspace_sessions_before": 9,
+      "target_workspace_sessions_after": 20,
+      "ledger": "/Users/linqiyu/Documents/DSH/全局规则/workspaces/workspaces.json"
+    },
+    "verified_in_target": {
+      "gates_run": 12,
+      "gates_passed": 12,
+      "list": [
+        "skill-pool validate",
+        "skill-pool consistency",
+        "audit_compliance",
+        "verify_tree",
+        "build_layer_graph --check",
+        "detect_coupling",
+        "verify_decoupling",
+        "verify_instance_safety",
+        "verify_naming --strict",
+        "render_naming_spec --check",
+        "verify_mutual_exclusion 16x20",
+        "search_skills --eval"
+      ],
+      "knowledge_path_resolved": "/Users/linqiyu/Documents/DSH/全局规则/knowledge/common",
+      "catalog_total": 165
+    },
+    "known_differences": [
+      {
+        "kind": "empty_dirs_not_representable_in_git",
+        "count": 6,
+        "dirs": [
+          "docs/cli/audit",
+          "skills/_template/references",
+          "skills/_template/scripts",
+          "skills/concise-chinese-bold-guard/references",
+          "skills/concise-chinese-bold-guard/scripts",
+          "skills/dsh-butler/references"
+        ],
+        "why": "git 不跟踪空目录，子树合并只物化受版本控制文件；这 6 个目录在源目录中也是空的，无内容丢失"
+      },
+      {
+        "kind": "source_extra_commit",
+        "detail": "源仓在本镜像提交之后又追加了 e00d771（补 MIGRATED.md 与快照最终态），该提交的两个文件已同步进本副本"
+      }
+    ]
   }
 }
