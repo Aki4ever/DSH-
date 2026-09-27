@@ -234,11 +234,27 @@ check_structure() {
   detail_parts+=("标准子目录 $hit/${#sdirs[@]}")
 
   # 2.5 无标题文件（空文件豁免）——真实检查，非恒真
+  #
+  # 判据：跳过**开头成对的 YAML frontmatter 块**（`---` … `---`）后，
+  #       首个非空行必须是以 `# ` 开头的一级标题。
+  #
+  # 为什么必须跳过 frontmatter：带 YAML 头的文档（技能契约 SKILL.md 全池 166 份）
+  # 首行是 `---` 而不是 `# `，按旧判据会被整批误报为「无标题」。实测该写法造成
+  # 161 份**假阳性**，而真实无标题文件为 0 —— 一个会把合规文档判成违规的检查，
+  # 比没有检查更糟：它会逼人忽略它的输出。
   local md_total=0 untitled=0 f first
   while IFS= read -r f; do
     md_total=$((md_total+1))
     [ -s "$f" ] || continue
-    first="$(grep -m1 -E '\S' "$f" 2>/dev/null || true)"
+    first="$(awk '
+      BEGIN { infm = 0; seen = 0 }
+      /^[[:space:]]*$/ { next }
+      {
+        if (seen == 0 && $0 ~ /^---[[:space:]]*$/) { infm = 1; seen = 1; next }
+        if (infm == 1) { if ($0 ~ /^---[[:space:]]*$/) { infm = 0 } ; next }
+        print; exit
+      }
+    ' "$f" 2>/dev/null || true)"
     case "$first" in
       '# '*) : ;;
       *) untitled=$((untitled+1)) ;;
