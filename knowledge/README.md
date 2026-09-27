@@ -34,6 +34,7 @@ knowledge/
 │   ├── engineering_specification.md   # 通用技术工程规范 (模块解耦 / 单向调用 / 零GC / 状态机原子性)
 │   ├── art_specification.md           # 通用视觉与色彩规范 (60-30-10配比 / WCAG 4.5:1对比度 / 阴影阶梯)
 │   └── dsh_native_ui_components.md    # DSH 原生可视化组件体系法典 (九大层级 / Slot拓扑 / 原子工具卡)
+│   └── capability_naming_spec.md      # 通用能力层命名规范 (四要素 / 四形态 / 禁词与同义归一 / 改名六处同步)
 └── projects/                          # 【第二层：项目专属知识库】(按工程物理隔离，严禁串扰)
     ├── README.md                      # 项目隔离规约与清单
     └── aether_echo/                   # 示例核心项目：源能回响 (Aether Echo - 游戏工程)
@@ -47,6 +48,7 @@ knowledge/
 
 ## 🛡️ 三、前置防冲突核验与隔离红线
 
+1. **能力层命名强制继承**：任何执行层（skill / cli / agent / api / mcp / plugin）的 id 一律以 `common/capability_naming_spec.md` 为准，机器可读真相源为其对应的 JSON 词表，禁止各处另立词表。
 1. **通用规范强制继承**：
    - 任何新项目、新功能，在交互设计上必须满足格式塔原理与零思考直觉，在 Unity 开发中必须严格落实“页面为 Scene、弹窗为 Prefab、按钮必配阴影与按压下沉”；
 2. **领域物理隔离红线**：
