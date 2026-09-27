@@ -1,0 +1,4017 @@
+{
+ "built_from": [
+  "docs/operations/skill-catalog.json",
+  "docs/operations/execution-layers.json"
+ ],
+ "cluster_map": {
+  "anti-pattern-guard": "③ 冲突·冗余·质量",
+  "atomic-fastpath-router": "① 意图与路由",
+  "atomic-fission-guard": "② 契约与合规",
+  "atomic-lock-guard": "③ 冲突·冗余·质量",
+  "catalog-consistency-guard": "② 契约与合规",
+  "chinese-output-guard": "④ 输出规约",
+  "concise-chinese-bold-guard": "④ 输出规约",
+  "concretization-guard": "④ 输出规约",
+  "conflict-detector": "③ 冲突·冗余·质量",
+  "decoupling-guard": "② 契约与合规",
+  "dual-lane-router": "① 意图与路由",
+  "execution-tree-guard": "② 契约与合规",
+  "full-spectrum-skill-auditor": "② 契约与合规",
+  "github": "⑥ 外部纳管",
+  "google-style-skill-search-router": "① 意图与路由",
+  "iconized-output-showcase": "④ 输出规约",
+  "index-body-contract": "② 契约与合规",
+  "index-header-contract": "② 契约与合规",
+  "instance-pool-guard": "② 契约与合规",
+  "intent-detector": "① 意图与路由",
+  "interactive-image-viewer": "⑤ 需求与透视",
+  "layer-naming-guard": "② 契约与合规",
+  "manage-problem-log": "⑥ 外部纳管",
+  "manage-requirements": "⑥ 外部纳管",
+  "milestone-progress-reporter": "④ 输出规约",
+  "on-demand-dispatcher": "① 意图与路由",
+  "one-shot-guard": "③ 冲突·冗余·质量",
+  "parallel-lock-guard": "③ 冲突·冗余·质量",
+  "qa-gatekeeper": "③ 冲突·冗余·质量",
+  "quantification-guard": "④ 输出规约",
+  "redundancy-detector": "③ 冲突·冗余·质量",
+  "schema-guard": "④ 输出规约",
+  "skill-import-pipeline": "⑦ 技能引入与演进",
+  "skill-index-router": "① 意图与路由",
+  "spec-driven-governance": "⑤ 需求与透视",
+  "standard-output-framework": "④ 输出规约",
+  "tail-metrics-showcase": "④ 输出规约",
+  "token-economy-guard": "② 契约与合规",
+  "visualize-governance-topology": "⑤ 需求与透视",
+  "zero-restart-guard": "② 契约与合规"
+ },
+ "counts": {
+  "agent": 3,
+  "api": 0,
+  "cli": 9,
+  "mcp": 0,
+  "plugin": 0,
+  "skill": 165
+ },
+ "edges": [
+  [
+   "acquire-atomic-lock",
+   "atomic-lock-policy"
+  ],
+  [
+   "anti-pattern-guard",
+   "anti-pattern-policy"
+  ],
+  [
+   "anti-pattern-guard",
+   "detect-forbidden-state"
+  ],
+  [
+   "anti-pattern-guard",
+   "verify-no-forbidden-event"
+  ],
+  [
+   "atomic-fastpath-router",
+   "fastpath-dispatch-guide"
+  ],
+  [
+   "atomic-fastpath-router",
+   "generate-fastpath-route"
+  ],
+  [
+   "atomic-fission-guard",
+   "enforce-atomic-granularity"
+  ],
+  [
+   "atomic-fission-guard",
+   "plan-fission"
+  ],
+  [
+   "atomic-lock-guard",
+   "acquire-atomic-lock"
+  ],
+  [
+   "atomic-lock-guard",
+   "atomic-lock-policy"
+  ],
+  [
+   "atomic-lock-guard",
+   "verify-atomic-mutual-exclusion"
+  ],
+  [
+   "audit-layer-naming",
+   "capability-naming-policy"
+  ],
+  [
+   "build-execution-tree",
+   "register-execution-layer"
+  ],
+  [
+   "build-image-viewer",
+   "format-zoomable-visual"
+  ],
+  [
+   "build-layer-graph",
+   "layer-decoupling-policy"
+  ],
+  [
+   "build-quantifier-table",
+   "quantify-modifier-policy"
+  ],
+  [
+   "catalog-consistency-guard",
+   "render-catalog-docs"
+  ],
+  [
+   "catalog-consistency-guard",
+   "verify-catalog-consistency"
+  ],
+  [
+   "chinese-output-guard",
+   "chinese-end-to-end"
+  ],
+  [
+   "chinese-output-guard",
+   "strip-non-prose-scope"
+  ],
+  [
+   "chinese-output-guard",
+   "verify-chinese-output"
+  ],
+  [
+   "classify-change-scope",
+   "prefer-hot-reload-policy"
+  ],
+  [
+   "classify-decision-reversibility",
+   "one-shot-resolution-policy"
+  ],
+  [
+   "classify-instance-safety",
+   "instance-pool-policy"
+  ],
+  [
+   "classify-step-tier",
+   "milestone-only-progress"
+  ],
+  [
+   "concise-chinese-bold-guard",
+   "limit-words-under-10"
+  ],
+  [
+   "concise-chinese-bold-guard",
+   "markdown-bold-only"
+  ],
+  [
+   "concise-chinese-bold-guard",
+   "no-conversational-filler"
+  ],
+  [
+   "concise-chinese-bold-guard",
+   "output-chinese-only"
+  ],
+  [
+   "concretization-guard",
+   "concretize-ambiguity-policy"
+  ],
+  [
+   "concretization-guard",
+   "concretize-term"
+  ],
+  [
+   "concretization-guard",
+   "verify-concretized-output"
+  ],
+  [
+   "concretize-term",
+   "concretize-ambiguity-policy"
+  ],
+  [
+   "concretize-term",
+   "detect-vague-modifier"
+  ],
+  [
+   "conflict-detector",
+   "arbitrate-priority-resolver"
+  ],
+  [
+   "conflict-detector",
+   "detect-rule-conflicts"
+  ],
+  [
+   "declare-lock-set",
+   "parallel-lock-policy"
+  ],
+  [
+   "decoupling-guard",
+   "build-layer-graph"
+  ],
+  [
+   "decoupling-guard",
+   "detect-layer-coupling"
+  ],
+  [
+   "decoupling-guard",
+   "layer-decoupling-policy"
+  ],
+  [
+   "decoupling-guard",
+   "verify-decoupling"
+  ],
+  [
+   "detect-forbidden-state",
+   "anti-pattern-policy"
+  ],
+  [
+   "detect-layer-coupling",
+   "build-layer-graph"
+  ],
+  [
+   "detect-lock-conflict",
+   "declare-lock-set"
+  ],
+  [
+   "detect-vague-modifier",
+   "build-quantifier-table"
+  ],
+  [
+   "dsh-butler",
+   "detect-vague-modifier"
+  ],
+  [
+   "dual-lane-router",
+   "fastlane-redline-policy"
+  ],
+  [
+   "dual-lane-router",
+   "score-task-lane"
+  ],
+  [
+   "dual-lane-router",
+   "verify-lane-decision"
+  ],
+  [
+   "emit-search-snippet",
+   "rank-skills-bm25"
+  ],
+  [
+   "execution-tree-guard",
+   "build-execution-tree"
+  ],
+  [
+   "execution-tree-guard",
+   "register-execution-layer"
+  ],
+  [
+   "execution-tree-guard",
+   "tree-update-mandatory"
+  ],
+  [
+   "execution-tree-guard",
+   "verify-execution-tree"
+  ],
+  [
+   "fold-repeated-events",
+   "classify-step-tier"
+  ],
+  [
+   "full-spectrum-skill-auditor",
+   "audit-all-skills-compliance"
+  ],
+  [
+   "full-spectrum-skill-auditor",
+   "enforce-contract-completeness"
+  ],
+  [
+   "google-style-skill-search-router",
+   "build-inverted-index"
+  ],
+  [
+   "google-style-skill-search-router",
+   "emit-search-snippet"
+  ],
+  [
+   "google-style-skill-search-router",
+   "log-query-events"
+  ],
+  [
+   "google-style-skill-search-router",
+   "parse-query"
+  ],
+  [
+   "google-style-skill-search-router",
+   "rank-skills-bm25"
+  ],
+  [
+   "google-style-skill-search-router",
+   "snippet-only-recall"
+  ],
+  [
+   "iconized-output-showcase",
+   "format-iconized-tail"
+  ],
+  [
+   "iconized-output-showcase",
+   "validate-icon-syntax"
+  ],
+  [
+   "index-body-contract",
+   "check-script-executable"
+  ],
+  [
+   "index-body-contract",
+   "standardize-workflow-sop"
+  ],
+  [
+   "index-body-contract",
+   "verify-execution-contract"
+  ],
+  [
+   "index-body-contract",
+   "verify-mermaid-syntax"
+  ],
+  [
+   "index-header-contract",
+   "standardize-when-to-use"
+  ],
+  [
+   "index-header-contract",
+   "validate-header-triggers"
+  ],
+  [
+   "instance-pool-guard",
+   "classify-instance-safety"
+  ],
+  [
+   "instance-pool-guard",
+   "instance-pool-policy"
+  ],
+  [
+   "instance-pool-guard",
+   "verify-instance-safety"
+  ],
+  [
+   "intent-detector",
+   "detect-action-verb"
+  ],
+  [
+   "intent-detector",
+   "detect-target-entity"
+  ],
+  [
+   "intent-detector",
+   "extract-core-objective"
+  ],
+  [
+   "intent-detector",
+   "filter-conversational-noise"
+  ],
+  [
+   "intent-detector",
+   "strip-whitespace-newlines"
+  ],
+  [
+   "interactive-image-viewer",
+   "build-image-viewer"
+  ],
+  [
+   "interactive-image-viewer",
+   "format-zoomable-visual"
+  ],
+  [
+   "interactive-image-viewer",
+   "verify-interactive-html"
+  ],
+  [
+   "layer-naming-guard",
+   "audit-layer-naming"
+  ],
+  [
+   "layer-naming-guard",
+   "capability-naming-policy"
+  ],
+  [
+   "layer-naming-guard",
+   "rename-execution-layer"
+  ],
+  [
+   "layer-naming-guard",
+   "render-capability-naming"
+  ],
+  [
+   "layer-naming-guard",
+   "verify-layer-naming"
+  ],
+  [
+   "load-skill-contract",
+   "lazy-load-policy"
+  ],
+  [
+   "log-query-events",
+   "rank-skills-bm25"
+  ],
+  [
+   "measure-token-budget",
+   "token-budget-policy"
+  ],
+  [
+   "milestone-progress-reporter",
+   "classify-step-tier"
+  ],
+  [
+   "milestone-progress-reporter",
+   "fold-repeated-events"
+  ],
+  [
+   "milestone-progress-reporter",
+   "milestone-only-progress"
+  ],
+  [
+   "milestone-progress-reporter",
+   "verify-progress-budget"
+  ],
+  [
+   "on-demand-dispatcher",
+   "lazy-load-policy"
+  ],
+  [
+   "on-demand-dispatcher",
+   "load-skill-contract"
+  ],
+  [
+   "on-demand-dispatcher",
+   "select-skills-for-task"
+  ],
+  [
+   "on-demand-dispatcher",
+   "verify-context-payload"
+  ],
+  [
+   "one-shot-guard",
+   "classify-decision-reversibility"
+  ],
+  [
+   "one-shot-guard",
+   "one-shot-resolution-policy"
+  ],
+  [
+   "one-shot-guard",
+   "record-assumptions"
+  ],
+  [
+   "one-shot-guard",
+   "verify-no-unnecessary-question"
+  ],
+  [
+   "parallel-lock-guard",
+   "declare-lock-set"
+  ],
+  [
+   "parallel-lock-guard",
+   "detect-lock-conflict"
+  ],
+  [
+   "parallel-lock-guard",
+   "parallel-lock-policy"
+  ],
+  [
+   "parallel-lock-guard",
+   "verify-no-lock-violation"
+  ],
+  [
+   "parse-query",
+   "build-inverted-index"
+  ],
+  [
+   "plan-fission",
+   "detect-vague-modifier"
+  ],
+  [
+   "plan-fission",
+   "enforce-atomic-granularity"
+  ],
+  [
+   "prune-redundant-context",
+   "measure-token-budget"
+  ],
+  [
+   "qa-gatekeeper",
+   "assert-zero-exitcode"
+  ],
+  [
+   "qa-gatekeeper",
+   "check-python-syntax"
+  ],
+  [
+   "qa-gatekeeper",
+   "ensure-utf8-encoding"
+  ],
+  [
+   "qa-gatekeeper",
+   "verify-file-exists"
+  ],
+  [
+   "quantification-guard",
+   "build-quantifier-table"
+  ],
+  [
+   "quantification-guard",
+   "detect-vague-modifier"
+  ],
+  [
+   "quantification-guard",
+   "quantify-modifier"
+  ],
+  [
+   "quantification-guard",
+   "quantify-modifier-policy"
+  ],
+  [
+   "quantification-guard",
+   "verify-quantified-output"
+  ],
+  [
+   "quantify-modifier",
+   "detect-vague-modifier"
+  ],
+  [
+   "rank-skills-bm25",
+   "build-inverted-index"
+  ],
+  [
+   "rank-skills-bm25",
+   "parse-query"
+  ],
+  [
+   "record-assumptions",
+   "classify-decision-reversibility"
+  ],
+  [
+   "redundancy-detector",
+   "prune-bloated-prompts"
+  ],
+  [
+   "redundancy-detector",
+   "search-duplicate-rules"
+  ],
+  [
+   "register-execution-layer",
+   "tree-update-mandatory"
+  ],
+  [
+   "rename-execution-layer",
+   "audit-layer-naming"
+  ],
+  [
+   "rename-execution-layer",
+   "build-execution-tree"
+  ],
+  [
+   "rename-execution-layer",
+   "build-inverted-index"
+  ],
+  [
+   "rename-execution-layer",
+   "build-layer-graph"
+  ],
+  [
+   "rename-execution-layer",
+   "capability-naming-policy"
+  ],
+  [
+   "rename-execution-layer",
+   "classify-instance-safety"
+  ],
+  [
+   "render-capability-naming",
+   "audit-layer-naming"
+  ],
+  [
+   "render-capability-naming",
+   "capability-naming-policy"
+  ],
+  [
+   "render-catalog-docs",
+   "enforce-atomic-granularity"
+  ],
+  [
+   "schema-guard",
+   "extract-json-payload"
+  ],
+  [
+   "schema-guard",
+   "no-conversational-filler"
+  ],
+  [
+   "schema-guard",
+   "strip-markdown-fence"
+  ],
+  [
+   "score-task-lane",
+   "fastlane-redline-policy"
+  ],
+  [
+   "select-skills-for-task",
+   "lazy-load-policy"
+  ],
+  [
+   "select-skills-for-task",
+   "rank-skills-bm25"
+  ],
+  [
+   "skill-import-pipeline",
+   "audit-imported-skill"
+  ],
+  [
+   "skill-import-pipeline",
+   "normalize-skill-contract"
+  ],
+  [
+   "skill-import-pipeline",
+   "place-skill-into-cluster"
+  ],
+  [
+   "skill-import-pipeline",
+   "search-github-skill"
+  ],
+  [
+   "skill-index-router",
+   "disambiguate-candidates"
+  ],
+  [
+   "skill-index-router",
+   "match-intent-keywords"
+  ],
+  [
+   "spec-driven-governance",
+   "reconcile-knowledge-specs"
+  ],
+  [
+   "spec-driven-governance",
+   "run-test-cases-gate"
+  ],
+  [
+   "spec-driven-governance",
+   "sync-requirements-lifecycle"
+  ],
+  [
+   "standard-output-framework",
+   "conditional-deliverable-router"
+  ],
+  [
+   "standard-output-framework",
+   "format-status-block"
+  ],
+  [
+   "standard-output-framework",
+   "high-relevance-notes-only"
+  ],
+  [
+   "standard-output-framework",
+   "verify-deliverable-paths"
+  ],
+  [
+   "strip-non-prose-scope",
+   "chinese-end-to-end"
+  ],
+  [
+   "tail-metrics-showcase",
+   "concise-focused-output"
+  ],
+  [
+   "tail-metrics-showcase",
+   "format-iconized-tail"
+  ],
+  [
+   "tail-metrics-showcase",
+   "measure-routing-metrics"
+  ],
+  [
+   "tail-metrics-showcase",
+   "output-chinese-only"
+  ],
+  [
+   "tail-metrics-showcase",
+   "plain-analogy-explanation"
+  ],
+  [
+   "tail-metrics-showcase",
+   "validate-icon-syntax"
+  ],
+  [
+   "token-economy-guard",
+   "measure-token-budget"
+  ],
+  [
+   "token-economy-guard",
+   "prune-redundant-context"
+  ],
+  [
+   "token-economy-guard",
+   "token-budget-policy"
+  ],
+  [
+   "token-economy-guard",
+   "verify-token-reduction"
+  ],
+  [
+   "verify-atomic-mutual-exclusion",
+   "acquire-atomic-lock"
+  ],
+  [
+   "verify-atomic-mutual-exclusion",
+   "atomic-lock-policy"
+  ],
+  [
+   "verify-catalog-consistency",
+   "render-catalog-docs"
+  ],
+  [
+   "verify-chinese-output",
+   "strip-non-prose-scope"
+  ],
+  [
+   "verify-concretized-output",
+   "concretize-term"
+  ],
+  [
+   "verify-context-payload",
+   "load-skill-contract"
+  ],
+  [
+   "verify-context-payload",
+   "select-skills-for-task"
+  ],
+  [
+   "verify-decoupling",
+   "detect-layer-coupling"
+  ],
+  [
+   "verify-execution-tree",
+   "build-execution-tree"
+  ],
+  [
+   "verify-instance-safety",
+   "classify-instance-safety"
+  ],
+  [
+   "verify-interactive-html",
+   "format-zoomable-visual"
+  ],
+  [
+   "verify-lane-decision",
+   "score-task-lane"
+  ],
+  [
+   "verify-layer-naming",
+   "audit-layer-naming"
+  ],
+  [
+   "verify-layer-naming",
+   "capability-naming-policy"
+  ],
+  [
+   "verify-no-forbidden-event",
+   "detect-forbidden-state"
+  ],
+  [
+   "verify-no-lock-violation",
+   "detect-forbidden-state"
+  ],
+  [
+   "verify-no-lock-violation",
+   "detect-lock-conflict"
+  ],
+  [
+   "verify-no-unnecessary-question",
+   "record-assumptions"
+  ],
+  [
+   "verify-no-unnecessary-restart",
+   "classify-change-scope"
+  ],
+  [
+   "verify-progress-budget",
+   "classify-step-tier"
+  ],
+  [
+   "verify-progress-budget",
+   "fold-repeated-events"
+  ],
+  [
+   "verify-quantified-output",
+   "detect-vague-modifier"
+  ],
+  [
+   "verify-quantified-output",
+   "quantify-modifier"
+  ],
+  [
+   "verify-token-reduction",
+   "measure-token-budget"
+  ],
+  [
+   "verify-token-reduction",
+   "prune-redundant-context"
+  ],
+  [
+   "visualize-governance-topology",
+   "extract-catalog-topology"
+  ],
+  [
+   "visualize-governance-topology",
+   "format-visual-inspection"
+  ],
+  [
+   "visualize-governance-topology",
+   "render-governance-mermaid"
+  ],
+  [
+   "zero-restart-guard",
+   "classify-change-scope"
+  ],
+  [
+   "zero-restart-guard",
+   "prefer-hot-reload-policy"
+  ],
+  [
+   "zero-restart-guard",
+   "verify-no-unnecessary-restart"
+  ],
+  [
+   "① 意图与路由",
+   "atomic-fastpath-router"
+  ],
+  [
+   "① 意图与路由",
+   "dual-lane-router"
+  ],
+  [
+   "① 意图与路由",
+   "google-style-skill-search-router"
+  ],
+  [
+   "① 意图与路由",
+   "intent-detector"
+  ],
+  [
+   "① 意图与路由",
+   "on-demand-dispatcher"
+  ],
+  [
+   "① 意图与路由",
+   "skill-index-router"
+  ],
+  [
+   "② 契约与合规",
+   "atomic-fission-guard"
+  ],
+  [
+   "② 契约与合规",
+   "catalog-consistency-guard"
+  ],
+  [
+   "② 契约与合规",
+   "decoupling-guard"
+  ],
+  [
+   "② 契约与合规",
+   "execution-tree-guard"
+  ],
+  [
+   "② 契约与合规",
+   "full-spectrum-skill-auditor"
+  ],
+  [
+   "② 契约与合规",
+   "index-body-contract"
+  ],
+  [
+   "② 契约与合规",
+   "index-header-contract"
+  ],
+  [
+   "② 契约与合规",
+   "instance-pool-guard"
+  ],
+  [
+   "② 契约与合规",
+   "layer-naming-guard"
+  ],
+  [
+   "② 契约与合规",
+   "token-economy-guard"
+  ],
+  [
+   "② 契约与合规",
+   "zero-restart-guard"
+  ],
+  [
+   "③ 冲突·冗余·质量",
+   "anti-pattern-guard"
+  ],
+  [
+   "③ 冲突·冗余·质量",
+   "atomic-lock-guard"
+  ],
+  [
+   "③ 冲突·冗余·质量",
+   "conflict-detector"
+  ],
+  [
+   "③ 冲突·冗余·质量",
+   "one-shot-guard"
+  ],
+  [
+   "③ 冲突·冗余·质量",
+   "parallel-lock-guard"
+  ],
+  [
+   "③ 冲突·冗余·质量",
+   "qa-gatekeeper"
+  ],
+  [
+   "③ 冲突·冗余·质量",
+   "redundancy-detector"
+  ],
+  [
+   "④ 输出规约",
+   "chinese-output-guard"
+  ],
+  [
+   "④ 输出规约",
+   "concise-chinese-bold-guard"
+  ],
+  [
+   "④ 输出规约",
+   "concretization-guard"
+  ],
+  [
+   "④ 输出规约",
+   "iconized-output-showcase"
+  ],
+  [
+   "④ 输出规约",
+   "milestone-progress-reporter"
+  ],
+  [
+   "④ 输出规约",
+   "quantification-guard"
+  ],
+  [
+   "④ 输出规约",
+   "schema-guard"
+  ],
+  [
+   "④ 输出规约",
+   "standard-output-framework"
+  ],
+  [
+   "④ 输出规约",
+   "tail-metrics-showcase"
+  ],
+  [
+   "⑤ 需求与透视",
+   "interactive-image-viewer"
+  ],
+  [
+   "⑤ 需求与透视",
+   "spec-driven-governance"
+  ],
+  [
+   "⑤ 需求与透视",
+   "visualize-governance-topology"
+  ],
+  [
+   "⑥ 外部纳管",
+   "github"
+  ],
+  [
+   "⑥ 外部纳管",
+   "manage-problem-log"
+  ],
+  [
+   "⑥ 外部纳管",
+   "manage-requirements"
+  ],
+  [
+   "⑦ 技能引入与演进",
+   "skill-import-pipeline"
+  ]
+ ],
+ "issues": [],
+ "layers": [
+  {
+   "auto": true,
+   "count": 165,
+   "entries": [
+    {
+     "cluster": null,
+     "id": "acquire-atomic-lock",
+     "level": "L2",
+     "path": "skills/acquire-atomic-lock",
+     "source": "registry"
+    },
+    {
+     "cluster": "③ 冲突·冗余·质量",
+     "id": "anti-pattern-guard",
+     "level": "L3",
+     "path": "skills/anti-pattern-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "anti-pattern-policy",
+     "level": "L1",
+     "path": "skills/anti-pattern-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "arbitrate-priority-resolver",
+     "level": "L1",
+     "path": "skills/arbitrate-priority-resolver",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "assert-zero-exitcode",
+     "level": "L2",
+     "path": "skills/assert-zero-exitcode",
+     "source": "registry"
+    },
+    {
+     "cluster": "① 意图与路由",
+     "id": "atomic-fastpath-router",
+     "level": "L3",
+     "path": "skills/atomic-fastpath-router",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "atomic-fission-guard",
+     "level": "L3",
+     "path": "skills/atomic-fission-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": "③ 冲突·冗余·质量",
+     "id": "atomic-lock-guard",
+     "level": "L3",
+     "path": "skills/atomic-lock-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "atomic-lock-policy",
+     "level": "L1",
+     "path": "skills/atomic-lock-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "audit-all-skills-compliance",
+     "level": "L2",
+     "path": "skills/audit-all-skills-compliance",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "audit-imported-skill",
+     "level": "L2",
+     "path": "skills/audit-imported-skill",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "audit-layer-naming",
+     "level": "L2",
+     "path": "skills/audit-layer-naming",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "build-execution-tree",
+     "level": "L2",
+     "path": "skills/build-execution-tree",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "build-image-viewer",
+     "level": "L2",
+     "path": "skills/build-image-viewer",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "build-inverted-index",
+     "level": "L2",
+     "path": "skills/build-inverted-index",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "build-layer-graph",
+     "level": "L2",
+     "path": "skills/build-layer-graph",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "build-quantifier-table",
+     "level": "L2",
+     "path": "skills/build-quantifier-table",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "capability-naming-policy",
+     "level": "L1",
+     "path": "skills/capability-naming-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "catalog-consistency-guard",
+     "level": "L3",
+     "path": "skills/catalog-consistency-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "check-python-syntax",
+     "level": "L2",
+     "path": "skills/check-python-syntax",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "check-script-executable",
+     "level": "L2",
+     "path": "skills/check-script-executable",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "chinese-end-to-end",
+     "level": "L1",
+     "path": "skills/chinese-end-to-end",
+     "source": "registry"
+    },
+    {
+     "cluster": "④ 输出规约",
+     "id": "chinese-output-guard",
+     "level": "L3",
+     "path": "skills/chinese-output-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "classify-change-scope",
+     "level": "L2",
+     "path": "skills/classify-change-scope",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "classify-decision-reversibility",
+     "level": "L2",
+     "path": "skills/classify-decision-reversibility",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "classify-instance-safety",
+     "level": "L2",
+     "path": "skills/classify-instance-safety",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "classify-step-tier",
+     "level": "L2",
+     "path": "skills/classify-step-tier",
+     "source": "registry"
+    },
+    {
+     "cluster": "④ 输出规约",
+     "id": "concise-chinese-bold-guard",
+     "level": "L3",
+     "path": "skills/concise-chinese-bold-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "concise-focused-output",
+     "level": "L1",
+     "path": "skills/concise-focused-output",
+     "source": "registry"
+    },
+    {
+     "cluster": "④ 输出规约",
+     "id": "concretization-guard",
+     "level": "L3",
+     "path": "skills/concretization-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "concretize-ambiguity-policy",
+     "level": "L1",
+     "path": "skills/concretize-ambiguity-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "concretize-term",
+     "level": "L2",
+     "path": "skills/concretize-term",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "conditional-deliverable-router",
+     "level": "L1",
+     "path": "skills/conditional-deliverable-router",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "confirm-before-coding",
+     "level": "L2",
+     "path": "@system/confirm-before-coding",
+     "source": "registry"
+    },
+    {
+     "cluster": "③ 冲突·冗余·质量",
+     "id": "conflict-detector",
+     "level": "L3",
+     "path": "skills/conflict-detector",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "declare-lock-set",
+     "level": "L2",
+     "path": "skills/declare-lock-set",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "decoupling-guard",
+     "level": "L3",
+     "path": "skills/decoupling-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "detect-action-verb",
+     "level": "L2",
+     "path": "skills/detect-action-verb",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "detect-forbidden-state",
+     "level": "L2",
+     "path": "skills/detect-forbidden-state",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "detect-layer-coupling",
+     "level": "L2",
+     "path": "skills/detect-layer-coupling",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "detect-lock-conflict",
+     "level": "L2",
+     "path": "skills/detect-lock-conflict",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "detect-rule-conflicts",
+     "level": "L2",
+     "path": "skills/detect-rule-conflicts",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "detect-target-entity",
+     "level": "L2",
+     "path": "skills/detect-target-entity",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "detect-vague-modifier",
+     "level": "L2",
+     "path": "skills/detect-vague-modifier",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "disambiguate-candidates",
+     "level": "L2",
+     "path": "skills/disambiguate-candidates",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "dsh-butler",
+     "level": "L4",
+     "path": "skills/dsh-butler",
+     "source": "registry"
+    },
+    {
+     "cluster": "① 意图与路由",
+     "id": "dual-lane-router",
+     "level": "L3",
+     "path": "skills/dual-lane-router",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "emit-search-snippet",
+     "level": "L2",
+     "path": "skills/emit-search-snippet",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "enforce-atomic-granularity",
+     "level": "L1",
+     "path": "skills/enforce-atomic-granularity",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "enforce-contract-completeness",
+     "level": "L1",
+     "path": "skills/enforce-contract-completeness",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "ensure-utf8-encoding",
+     "level": "L2",
+     "path": "skills/ensure-utf8-encoding",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "execution-tree-guard",
+     "level": "L3",
+     "path": "skills/execution-tree-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "extract-catalog-topology",
+     "level": "L2",
+     "path": "skills/extract-catalog-topology",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "extract-core-objective",
+     "level": "L2",
+     "path": "skills/extract-core-objective",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "extract-json-payload",
+     "level": "L2",
+     "path": "skills/extract-json-payload",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "fastlane-redline-policy",
+     "level": "L1",
+     "path": "skills/fastlane-redline-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "fastpath-dispatch-guide",
+     "level": "L1",
+     "path": "skills/fastpath-dispatch-guide",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "filter-conversational-noise",
+     "level": "L1",
+     "path": "skills/filter-conversational-noise",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "fold-repeated-events",
+     "level": "L2",
+     "path": "skills/fold-repeated-events",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "format-iconized-tail",
+     "level": "L1",
+     "path": "skills/format-iconized-tail",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "format-status-block",
+     "level": "L1",
+     "path": "skills/format-status-block",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "format-visual-inspection",
+     "level": "L1",
+     "path": "skills/format-visual-inspection",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "format-zoomable-visual",
+     "level": "L1",
+     "path": "skills/format-zoomable-visual",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "full-spectrum-skill-auditor",
+     "level": "L3",
+     "path": "skills/full-spectrum-skill-auditor",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "generate-fastpath-route",
+     "level": "L2",
+     "path": "skills/generate-fastpath-route",
+     "source": "registry"
+    },
+    {
+     "cluster": "⑥ 外部纳管",
+     "id": "github",
+     "level": "L3",
+     "path": "@system/github",
+     "source": "registry"
+    },
+    {
+     "cluster": "① 意图与路由",
+     "id": "google-style-skill-search-router",
+     "level": "L3",
+     "path": "skills/google-style-skill-search-router",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "high-relevance-notes-only",
+     "level": "L1",
+     "path": "skills/high-relevance-notes-only",
+     "source": "registry"
+    },
+    {
+     "cluster": "④ 输出规约",
+     "id": "iconized-output-showcase",
+     "level": "L3",
+     "path": "skills/iconized-output-showcase",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "index-body-contract",
+     "level": "L3",
+     "path": "skills/index-body-contract",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "index-header-contract",
+     "level": "L3",
+     "path": "skills/index-header-contract",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "instance-pool-guard",
+     "level": "L3",
+     "path": "skills/instance-pool-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "instance-pool-policy",
+     "level": "L1",
+     "path": "skills/instance-pool-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": "① 意图与路由",
+     "id": "intent-detector",
+     "level": "L3",
+     "path": "skills/intent-detector",
+     "source": "registry"
+    },
+    {
+     "cluster": "⑤ 需求与透视",
+     "id": "interactive-image-viewer",
+     "level": "L3",
+     "path": "skills/interactive-image-viewer",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "layer-decoupling-policy",
+     "level": "L1",
+     "path": "skills/layer-decoupling-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "layer-naming-guard",
+     "level": "L3",
+     "path": "skills/layer-naming-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "lazy-load-policy",
+     "level": "L1",
+     "path": "skills/lazy-load-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "limit-words-under-10",
+     "level": "L1",
+     "path": "skills/limit-words-under-10",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "load-skill-contract",
+     "level": "L2",
+     "path": "skills/load-skill-contract",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "log-query-events",
+     "level": "L2",
+     "path": "skills/log-query-events",
+     "source": "registry"
+    },
+    {
+     "cluster": "⑥ 外部纳管",
+     "id": "manage-problem-log",
+     "level": "L3",
+     "path": "@system/manage-problem-log",
+     "source": "registry"
+    },
+    {
+     "cluster": "⑥ 外部纳管",
+     "id": "manage-requirements",
+     "level": "L3",
+     "path": "@system/manage-requirements",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "markdown-bold-only",
+     "level": "L1",
+     "path": "skills/markdown-bold-only",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "match-intent-keywords",
+     "level": "L2",
+     "path": "skills/match-intent-keywords",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "measure-routing-metrics",
+     "level": "L2",
+     "path": "skills/measure-routing-metrics",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "measure-token-budget",
+     "level": "L2",
+     "path": "skills/measure-token-budget",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "milestone-only-progress",
+     "level": "L1",
+     "path": "skills/milestone-only-progress",
+     "source": "registry"
+    },
+    {
+     "cluster": "④ 输出规约",
+     "id": "milestone-progress-reporter",
+     "level": "L3",
+     "path": "skills/milestone-progress-reporter",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "no-conversational-filler",
+     "level": "L1",
+     "path": "skills/no-conversational-filler",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "normalize-skill-contract",
+     "level": "L2",
+     "path": "skills/normalize-skill-contract",
+     "source": "registry"
+    },
+    {
+     "cluster": "① 意图与路由",
+     "id": "on-demand-dispatcher",
+     "level": "L3",
+     "path": "skills/on-demand-dispatcher",
+     "source": "registry"
+    },
+    {
+     "cluster": "③ 冲突·冗余·质量",
+     "id": "one-shot-guard",
+     "level": "L3",
+     "path": "skills/one-shot-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "one-shot-resolution-policy",
+     "level": "L1",
+     "path": "skills/one-shot-resolution-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "output-chinese-only",
+     "level": "L1",
+     "path": "skills/output-chinese-only",
+     "source": "registry"
+    },
+    {
+     "cluster": "③ 冲突·冗余·质量",
+     "id": "parallel-lock-guard",
+     "level": "L3",
+     "path": "skills/parallel-lock-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "parallel-lock-policy",
+     "level": "L1",
+     "path": "skills/parallel-lock-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "parse-query",
+     "level": "L2",
+     "path": "skills/parse-query",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "place-skill-into-cluster",
+     "level": "L2",
+     "path": "skills/place-skill-into-cluster",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "plain-analogy-explanation",
+     "level": "L1",
+     "path": "skills/plain-analogy-explanation",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "plan-fission",
+     "level": "L2",
+     "path": "skills/plan-fission",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "prefer-hot-reload-policy",
+     "level": "L1",
+     "path": "skills/prefer-hot-reload-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "prune-bloated-prompts",
+     "level": "L1",
+     "path": "skills/prune-bloated-prompts",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "prune-redundant-context",
+     "level": "L2",
+     "path": "skills/prune-redundant-context",
+     "source": "registry"
+    },
+    {
+     "cluster": "③ 冲突·冗余·质量",
+     "id": "qa-gatekeeper",
+     "level": "L3",
+     "path": "skills/qa-gatekeeper",
+     "source": "registry"
+    },
+    {
+     "cluster": "④ 输出规约",
+     "id": "quantification-guard",
+     "level": "L3",
+     "path": "skills/quantification-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "quantify-modifier",
+     "level": "L2",
+     "path": "skills/quantify-modifier",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "quantify-modifier-policy",
+     "level": "L1",
+     "path": "skills/quantify-modifier-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "rank-skills-bm25",
+     "level": "L2",
+     "path": "skills/rank-skills-bm25",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "reconcile-knowledge-specs",
+     "level": "L2",
+     "path": "skills/reconcile-knowledge-specs",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "record-assumptions",
+     "level": "L2",
+     "path": "skills/record-assumptions",
+     "source": "registry"
+    },
+    {
+     "cluster": "③ 冲突·冗余·质量",
+     "id": "redundancy-detector",
+     "level": "L3",
+     "path": "skills/redundancy-detector",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "register-execution-layer",
+     "level": "L2",
+     "path": "skills/register-execution-layer",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "rename-execution-layer",
+     "level": "L2",
+     "path": "skills/rename-execution-layer",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "render-capability-naming",
+     "level": "L2",
+     "path": "skills/render-capability-naming",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "render-catalog-docs",
+     "level": "L2",
+     "path": "skills/render-catalog-docs",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "render-governance-mermaid",
+     "level": "L2",
+     "path": "skills/render-governance-mermaid",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "run-test-cases-gate",
+     "level": "L2",
+     "path": "skills/run-test-cases-gate",
+     "source": "registry"
+    },
+    {
+     "cluster": "④ 输出规约",
+     "id": "schema-guard",
+     "level": "L3",
+     "path": "skills/schema-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "score-task-lane",
+     "level": "L2",
+     "path": "skills/score-task-lane",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "search-duplicate-rules",
+     "level": "L2",
+     "path": "skills/search-duplicate-rules",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "search-github-skill",
+     "level": "L2",
+     "path": "skills/search-github-skill",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "select-skills-for-task",
+     "level": "L2",
+     "path": "skills/select-skills-for-task",
+     "source": "registry"
+    },
+    {
+     "cluster": "⑦ 技能引入与演进",
+     "id": "skill-import-pipeline",
+     "level": "L3",
+     "path": "skills/skill-import-pipeline",
+     "source": "registry"
+    },
+    {
+     "cluster": "① 意图与路由",
+     "id": "skill-index-router",
+     "level": "L3",
+     "path": "skills/skill-index-router",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "snippet-only-recall",
+     "level": "L1",
+     "path": "skills/snippet-only-recall",
+     "source": "registry"
+    },
+    {
+     "cluster": "⑤ 需求与透视",
+     "id": "spec-driven-governance",
+     "level": "L3",
+     "path": "skills/spec-driven-governance",
+     "source": "registry"
+    },
+    {
+     "cluster": "④ 输出规约",
+     "id": "standard-output-framework",
+     "level": "L3",
+     "path": "skills/standard-output-framework",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "standardize-when-to-use",
+     "level": "L1",
+     "path": "skills/standardize-when-to-use",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "standardize-workflow-sop",
+     "level": "L1",
+     "path": "skills/standardize-workflow-sop",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "strip-markdown-fence",
+     "level": "L1",
+     "path": "skills/strip-markdown-fence",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "strip-non-prose-scope",
+     "level": "L2",
+     "path": "skills/strip-non-prose-scope",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "strip-whitespace-newlines",
+     "level": "L1",
+     "path": "skills/strip-whitespace-newlines",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "sync-requirements-lifecycle",
+     "level": "L2",
+     "path": "skills/sync-requirements-lifecycle",
+     "source": "registry"
+    },
+    {
+     "cluster": "④ 输出规约",
+     "id": "tail-metrics-showcase",
+     "level": "L3",
+     "path": "skills/tail-metrics-showcase",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "token-budget-policy",
+     "level": "L1",
+     "path": "skills/token-budget-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "token-economy-guard",
+     "level": "L3",
+     "path": "skills/token-economy-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "track-task-progress",
+     "level": "L2",
+     "path": "@system/track-task-progress",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "tree-update-mandatory",
+     "level": "L1",
+     "path": "skills/tree-update-mandatory",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "validate-header-triggers",
+     "level": "L2",
+     "path": "skills/validate-header-triggers",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "validate-icon-syntax",
+     "level": "L2",
+     "path": "skills/validate-icon-syntax",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-atomic-mutual-exclusion",
+     "level": "L2",
+     "path": "skills/verify-atomic-mutual-exclusion",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-catalog-consistency",
+     "level": "L2",
+     "path": "skills/verify-catalog-consistency",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-chinese-output",
+     "level": "L2",
+     "path": "skills/verify-chinese-output",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-concretized-output",
+     "level": "L2",
+     "path": "skills/verify-concretized-output",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-context-payload",
+     "level": "L2",
+     "path": "skills/verify-context-payload",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-decoupling",
+     "level": "L2",
+     "path": "skills/verify-decoupling",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-deliverable-paths",
+     "level": "L2",
+     "path": "skills/verify-deliverable-paths",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-execution-contract",
+     "level": "L2",
+     "path": "skills/verify-execution-contract",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-execution-tree",
+     "level": "L2",
+     "path": "skills/verify-execution-tree",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-file-exists",
+     "level": "L2",
+     "path": "skills/verify-file-exists",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-instance-safety",
+     "level": "L2",
+     "path": "skills/verify-instance-safety",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-interactive-html",
+     "level": "L2",
+     "path": "skills/verify-interactive-html",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-lane-decision",
+     "level": "L2",
+     "path": "skills/verify-lane-decision",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-layer-naming",
+     "level": "L2",
+     "path": "skills/verify-layer-naming",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-mermaid-syntax",
+     "level": "L2",
+     "path": "skills/verify-mermaid-syntax",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-no-forbidden-event",
+     "level": "L2",
+     "path": "skills/verify-no-forbidden-event",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-no-lock-violation",
+     "level": "L2",
+     "path": "skills/verify-no-lock-violation",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-no-unnecessary-question",
+     "level": "L2",
+     "path": "skills/verify-no-unnecessary-question",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-no-unnecessary-restart",
+     "level": "L2",
+     "path": "skills/verify-no-unnecessary-restart",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-progress-budget",
+     "level": "L2",
+     "path": "skills/verify-progress-budget",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-quantified-output",
+     "level": "L2",
+     "path": "skills/verify-quantified-output",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "verify-token-reduction",
+     "level": "L2",
+     "path": "skills/verify-token-reduction",
+     "source": "registry"
+    },
+    {
+     "cluster": "⑤ 需求与透视",
+     "id": "visualize-governance-topology",
+     "level": "L3",
+     "path": "skills/visualize-governance-topology",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "zero-restart-guard",
+     "level": "L3",
+     "path": "skills/zero-restart-guard",
+     "source": "registry"
+    }
+   ],
+   "layer": "skill",
+   "title": "技能层"
+  },
+  {
+   "auto": false,
+   "count": 9,
+   "entries": [
+    {
+     "description": "技能池管理与门禁 CLI 入口",
+     "id": "skill-pool",
+     "layer": "cli",
+     "parent": "dsh-butler",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "列出技能与软链状态",
+     "id": "skill-pool:list",
+     "layer": "cli",
+     "parent": "skill-pool",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "校验技能规范合规性",
+     "id": "skill-pool:validate",
+     "layer": "cli",
+     "parent": "skill-pool",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "查看仓库状态统计概览",
+     "id": "skill-pool:status",
+     "layer": "cli",
+     "parent": "skill-pool",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "初始化新技能脚手架",
+     "id": "skill-pool:init",
+     "layer": "cli",
+     "parent": "skill-pool",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "软链技能到运行环境",
+     "id": "skill-pool:link",
+     "layer": "cli",
+     "parent": "skill-pool",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "安全解除技能软链",
+     "id": "skill-pool:unlink",
+     "layer": "cli",
+     "parent": "skill-pool",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "查询与同步全局技能编目",
+     "id": "skill-pool:catalog",
+     "layer": "cli",
+     "parent": "skill-pool",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "口径一致性门禁（受管区块刷新 + 三方对拍）",
+     "id": "skill-pool:consistency",
+     "layer": "cli",
+     "parent": "skill-pool",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    }
+   ],
+   "layer": "cli",
+   "title": "命令层"
+  },
+  {
+   "auto": false,
+   "count": 3,
+   "entries": [
+    {
+     "description": "宿主提供的子智能体能力（深度推导与并行拆解）",
+     "id": "subagent",
+     "layer": "agent",
+     "parent": "dsh-butler",
+     "path": null,
+     "source": "host",
+     "status": "active"
+    },
+    {
+     "description": "宿主提供的多子智能体编排能力",
+     "id": "workflow",
+     "layer": "agent",
+     "parent": "dsh-butler",
+     "path": null,
+     "source": "host",
+     "status": "active"
+    },
+    {
+     "description": "宿主提供的新鲜智能体迭代循环能力",
+     "id": "ralph",
+     "layer": "agent",
+     "parent": "dsh-butler",
+     "path": null,
+     "source": "host",
+     "status": "active"
+    }
+   ],
+   "layer": "agent",
+   "title": "智能体层"
+  },
+  {
+   "auto": false,
+   "count": 0,
+   "entries": [],
+   "layer": "api",
+   "title": "接口层"
+  },
+  {
+   "auto": false,
+   "count": 0,
+   "entries": [],
+   "layer": "mcp",
+   "title": "协议层"
+  },
+  {
+   "auto": false,
+   "count": 0,
+   "entries": [],
+   "layer": "plugin",
+   "title": "插件层"
+  }
+ ],
+ "skill_forest": [
+  {
+   "children": [
+    {
+     "children": [
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "fastpath-dispatch-guide",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "generate-fastpath-route",
+         "level": "L2"
+        }
+       ],
+       "id": "atomic-fastpath-router",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "fastlane-redline-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "fastlane-redline-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "score-task-lane",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "fastlane-redline-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "score-task-lane",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-lane-decision",
+         "level": "L2"
+        }
+       ],
+       "id": "dual-lane-router",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "snippet-only-recall",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "build-inverted-index",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "build-inverted-index",
+           "level": "L2"
+          }
+         ],
+         "id": "parse-query",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "build-inverted-index",
+             "level": "L2"
+            }
+           ],
+           "id": "parse-query",
+           "level": "L2"
+          },
+          {
+           "children": [],
+           "id": "build-inverted-index",
+           "level": "L2"
+          }
+         ],
+         "id": "rank-skills-bm25",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "build-inverted-index",
+               "level": "L2"
+              }
+             ],
+             "id": "parse-query",
+             "level": "L2"
+            },
+            {
+             "children": [],
+             "id": "build-inverted-index",
+             "level": "L2"
+            }
+           ],
+           "id": "rank-skills-bm25",
+           "level": "L2"
+          }
+         ],
+         "id": "emit-search-snippet",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "build-inverted-index",
+               "level": "L2"
+              }
+             ],
+             "id": "parse-query",
+             "level": "L2"
+            },
+            {
+             "children": [],
+             "id": "build-inverted-index",
+             "level": "L2"
+            }
+           ],
+           "id": "rank-skills-bm25",
+           "level": "L2"
+          }
+         ],
+         "id": "log-query-events",
+         "level": "L2"
+        }
+       ],
+       "id": "google-style-skill-search-router",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "filter-conversational-noise",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "strip-whitespace-newlines",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "detect-action-verb",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "detect-target-entity",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "extract-core-objective",
+         "level": "L2"
+        }
+       ],
+       "id": "intent-detector",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "lazy-load-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "build-inverted-index",
+               "level": "L2"
+              }
+             ],
+             "id": "parse-query",
+             "level": "L2"
+            },
+            {
+             "children": [],
+             "id": "build-inverted-index",
+             "level": "L2"
+            }
+           ],
+           "id": "rank-skills-bm25",
+           "level": "L2"
+          },
+          {
+           "children": [],
+           "id": "lazy-load-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "select-skills-for-task",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "lazy-load-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "load-skill-contract",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [
+                {
+                 "children": [],
+                 "id": "build-inverted-index",
+                 "level": "L2"
+                }
+               ],
+               "id": "parse-query",
+               "level": "L2"
+              },
+              {
+               "children": [],
+               "id": "build-inverted-index",
+               "level": "L2"
+              }
+             ],
+             "id": "rank-skills-bm25",
+             "level": "L2"
+            },
+            {
+             "children": [],
+             "id": "lazy-load-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "select-skills-for-task",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "lazy-load-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "load-skill-contract",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-context-payload",
+         "level": "L2"
+        }
+       ],
+       "id": "on-demand-dispatcher",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "match-intent-keywords",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "disambiguate-candidates",
+         "level": "L2"
+        }
+       ],
+       "id": "skill-index-router",
+       "level": "L3"
+      }
+     ],
+     "cluster": "① 意图与路由"
+    },
+    {
+     "children": [
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "enforce-atomic-granularity",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "enforce-atomic-granularity",
+           "level": "L1"
+          },
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "quantify-modifier-policy",
+               "level": "L1"
+              }
+             ],
+             "id": "build-quantifier-table",
+             "level": "L2"
+            }
+           ],
+           "id": "detect-vague-modifier",
+           "level": "L2"
+          }
+         ],
+         "id": "plan-fission",
+         "level": "L2"
+        }
+       ],
+       "id": "atomic-fission-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "enforce-atomic-granularity",
+           "level": "L1"
+          }
+         ],
+         "id": "render-catalog-docs",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "enforce-atomic-granularity",
+             "level": "L1"
+            }
+           ],
+           "id": "render-catalog-docs",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-catalog-consistency",
+         "level": "L2"
+        }
+       ],
+       "id": "catalog-consistency-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "layer-decoupling-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "layer-decoupling-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "build-layer-graph",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "layer-decoupling-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "build-layer-graph",
+           "level": "L2"
+          }
+         ],
+         "id": "detect-layer-coupling",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "layer-decoupling-policy",
+               "level": "L1"
+              }
+             ],
+             "id": "build-layer-graph",
+             "level": "L2"
+            }
+           ],
+           "id": "detect-layer-coupling",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-decoupling",
+         "level": "L2"
+        }
+       ],
+       "id": "decoupling-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "tree-update-mandatory",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "tree-update-mandatory",
+           "level": "L1"
+          }
+         ],
+         "id": "register-execution-layer",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "tree-update-mandatory",
+             "level": "L1"
+            }
+           ],
+           "id": "register-execution-layer",
+           "level": "L2"
+          }
+         ],
+         "id": "build-execution-tree",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "tree-update-mandatory",
+               "level": "L1"
+              }
+             ],
+             "id": "register-execution-layer",
+             "level": "L2"
+            }
+           ],
+           "id": "build-execution-tree",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-execution-tree",
+         "level": "L2"
+        }
+       ],
+       "id": "execution-tree-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "enforce-contract-completeness",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "audit-all-skills-compliance",
+         "level": "L2"
+        }
+       ],
+       "id": "full-spectrum-skill-auditor",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "standardize-workflow-sop",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "verify-mermaid-syntax",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "check-script-executable",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "verify-execution-contract",
+         "level": "L2"
+        }
+       ],
+       "id": "index-body-contract",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "standardize-when-to-use",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "validate-header-triggers",
+         "level": "L2"
+        }
+       ],
+       "id": "index-header-contract",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "instance-pool-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "instance-pool-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "classify-instance-safety",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "instance-pool-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "classify-instance-safety",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-instance-safety",
+         "level": "L2"
+        }
+       ],
+       "id": "instance-pool-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "capability-naming-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "capability-naming-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "audit-layer-naming",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "capability-naming-policy",
+           "level": "L1"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "capability-naming-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "audit-layer-naming",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "layer-decoupling-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "build-layer-graph",
+           "level": "L2"
+          },
+          {
+           "children": [],
+           "id": "build-inverted-index",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "instance-pool-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "classify-instance-safety",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "tree-update-mandatory",
+               "level": "L1"
+              }
+             ],
+             "id": "register-execution-layer",
+             "level": "L2"
+            }
+           ],
+           "id": "build-execution-tree",
+           "level": "L2"
+          }
+         ],
+         "id": "rename-execution-layer",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "capability-naming-policy",
+           "level": "L1"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "capability-naming-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "audit-layer-naming",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-layer-naming",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "capability-naming-policy",
+           "level": "L1"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "capability-naming-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "audit-layer-naming",
+           "level": "L2"
+          }
+         ],
+         "id": "render-capability-naming",
+         "level": "L2"
+        }
+       ],
+       "id": "layer-naming-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "token-budget-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "token-budget-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "measure-token-budget",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "token-budget-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "measure-token-budget",
+           "level": "L2"
+          }
+         ],
+         "id": "prune-redundant-context",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "token-budget-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "measure-token-budget",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "token-budget-policy",
+               "level": "L1"
+              }
+             ],
+             "id": "measure-token-budget",
+             "level": "L2"
+            }
+           ],
+           "id": "prune-redundant-context",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-token-reduction",
+         "level": "L2"
+        }
+       ],
+       "id": "token-economy-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "prefer-hot-reload-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "prefer-hot-reload-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "classify-change-scope",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "prefer-hot-reload-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "classify-change-scope",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-no-unnecessary-restart",
+         "level": "L2"
+        }
+       ],
+       "id": "zero-restart-guard",
+       "level": "L3"
+      }
+     ],
+     "cluster": "② 契约与合规"
+    },
+    {
+     "children": [
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "anti-pattern-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "anti-pattern-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "detect-forbidden-state",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "anti-pattern-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "detect-forbidden-state",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-no-forbidden-event",
+         "level": "L2"
+        }
+       ],
+       "id": "anti-pattern-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "atomic-lock-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "atomic-lock-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "acquire-atomic-lock",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "atomic-lock-policy",
+           "level": "L1"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "atomic-lock-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "acquire-atomic-lock",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-atomic-mutual-exclusion",
+         "level": "L2"
+        }
+       ],
+       "id": "atomic-lock-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "arbitrate-priority-resolver",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "detect-rule-conflicts",
+         "level": "L2"
+        }
+       ],
+       "id": "conflict-detector",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "one-shot-resolution-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "one-shot-resolution-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "classify-decision-reversibility",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "one-shot-resolution-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "classify-decision-reversibility",
+           "level": "L2"
+          }
+         ],
+         "id": "record-assumptions",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "one-shot-resolution-policy",
+               "level": "L1"
+              }
+             ],
+             "id": "classify-decision-reversibility",
+             "level": "L2"
+            }
+           ],
+           "id": "record-assumptions",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-no-unnecessary-question",
+         "level": "L2"
+        }
+       ],
+       "id": "one-shot-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "parallel-lock-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "parallel-lock-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "declare-lock-set",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "parallel-lock-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "declare-lock-set",
+           "level": "L2"
+          }
+         ],
+         "id": "detect-lock-conflict",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "parallel-lock-policy",
+               "level": "L1"
+              }
+             ],
+             "id": "declare-lock-set",
+             "level": "L2"
+            }
+           ],
+           "id": "detect-lock-conflict",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "anti-pattern-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "detect-forbidden-state",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-no-lock-violation",
+         "level": "L2"
+        }
+       ],
+       "id": "parallel-lock-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "verify-file-exists",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "check-python-syntax",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "ensure-utf8-encoding",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "assert-zero-exitcode",
+         "level": "L2"
+        }
+       ],
+       "id": "qa-gatekeeper",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "prune-bloated-prompts",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "search-duplicate-rules",
+         "level": "L2"
+        }
+       ],
+       "id": "redundancy-detector",
+       "level": "L3"
+      }
+     ],
+     "cluster": "③ 冲突·冗余·质量"
+    },
+    {
+     "children": [
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "chinese-end-to-end",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "chinese-end-to-end",
+           "level": "L1"
+          }
+         ],
+         "id": "strip-non-prose-scope",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "chinese-end-to-end",
+             "level": "L1"
+            }
+           ],
+           "id": "strip-non-prose-scope",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-chinese-output",
+         "level": "L2"
+        }
+       ],
+       "id": "chinese-output-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "output-chinese-only",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "limit-words-under-10",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "markdown-bold-only",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "no-conversational-filler",
+         "level": "L1"
+        }
+       ],
+       "id": "concise-chinese-bold-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "concretize-ambiguity-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "concretize-ambiguity-policy",
+           "level": "L1"
+          },
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "quantify-modifier-policy",
+               "level": "L1"
+              }
+             ],
+             "id": "build-quantifier-table",
+             "level": "L2"
+            }
+           ],
+           "id": "detect-vague-modifier",
+           "level": "L2"
+          }
+         ],
+         "id": "concretize-term",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "concretize-ambiguity-policy",
+             "level": "L1"
+            },
+            {
+             "children": [
+              {
+               "children": [
+                {
+                 "children": [],
+                 "id": "quantify-modifier-policy",
+                 "level": "L1"
+                }
+               ],
+               "id": "build-quantifier-table",
+               "level": "L2"
+              }
+             ],
+             "id": "detect-vague-modifier",
+             "level": "L2"
+            }
+           ],
+           "id": "concretize-term",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-concretized-output",
+         "level": "L2"
+        }
+       ],
+       "id": "concretization-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "format-iconized-tail",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "validate-icon-syntax",
+         "level": "L2"
+        }
+       ],
+       "id": "iconized-output-showcase",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "milestone-only-progress",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "milestone-only-progress",
+           "level": "L1"
+          }
+         ],
+         "id": "classify-step-tier",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "milestone-only-progress",
+             "level": "L1"
+            }
+           ],
+           "id": "classify-step-tier",
+           "level": "L2"
+          }
+         ],
+         "id": "fold-repeated-events",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "milestone-only-progress",
+               "level": "L1"
+              }
+             ],
+             "id": "classify-step-tier",
+             "level": "L2"
+            }
+           ],
+           "id": "fold-repeated-events",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "milestone-only-progress",
+             "level": "L1"
+            }
+           ],
+           "id": "classify-step-tier",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-progress-budget",
+         "level": "L2"
+        }
+       ],
+       "id": "milestone-progress-reporter",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "quantify-modifier-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "quantify-modifier-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "build-quantifier-table",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "quantify-modifier-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "build-quantifier-table",
+           "level": "L2"
+          }
+         ],
+         "id": "detect-vague-modifier",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "quantify-modifier-policy",
+               "level": "L1"
+              }
+             ],
+             "id": "build-quantifier-table",
+             "level": "L2"
+            }
+           ],
+           "id": "detect-vague-modifier",
+           "level": "L2"
+          }
+         ],
+         "id": "quantify-modifier",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [
+                {
+                 "children": [],
+                 "id": "quantify-modifier-policy",
+                 "level": "L1"
+                }
+               ],
+               "id": "build-quantifier-table",
+               "level": "L2"
+              }
+             ],
+             "id": "detect-vague-modifier",
+             "level": "L2"
+            }
+           ],
+           "id": "quantify-modifier",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [
+              {
+               "children": [],
+               "id": "quantify-modifier-policy",
+               "level": "L1"
+              }
+             ],
+             "id": "build-quantifier-table",
+             "level": "L2"
+            }
+           ],
+           "id": "detect-vague-modifier",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-quantified-output",
+         "level": "L2"
+        }
+       ],
+       "id": "quantification-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "no-conversational-filler",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "strip-markdown-fence",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "extract-json-payload",
+         "level": "L2"
+        }
+       ],
+       "id": "schema-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "format-status-block",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "conditional-deliverable-router",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "verify-deliverable-paths",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "high-relevance-notes-only",
+         "level": "L1"
+        }
+       ],
+       "id": "standard-output-framework",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "output-chinese-only",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "concise-focused-output",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "plain-analogy-explanation",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "measure-routing-metrics",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "format-iconized-tail",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "validate-icon-syntax",
+         "level": "L2"
+        }
+       ],
+       "id": "tail-metrics-showcase",
+       "level": "L3"
+      }
+     ],
+     "cluster": "④ 输出规约"
+    },
+    {
+     "children": [
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "format-zoomable-visual",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "format-zoomable-visual",
+           "level": "L1"
+          }
+         ],
+         "id": "build-image-viewer",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "format-zoomable-visual",
+           "level": "L1"
+          }
+         ],
+         "id": "verify-interactive-html",
+         "level": "L2"
+        }
+       ],
+       "id": "interactive-image-viewer",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "sync-requirements-lifecycle",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "reconcile-knowledge-specs",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "run-test-cases-gate",
+         "level": "L2"
+        }
+       ],
+       "id": "spec-driven-governance",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "format-visual-inspection",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "extract-catalog-topology",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "render-governance-mermaid",
+         "level": "L2"
+        }
+       ],
+       "id": "visualize-governance-topology",
+       "level": "L3"
+      }
+     ],
+     "cluster": "⑤ 需求与透视"
+    },
+    {
+     "children": [
+      {
+       "children": [],
+       "id": "github",
+       "level": "L3"
+      },
+      {
+       "children": [],
+       "id": "manage-problem-log",
+       "level": "L3"
+      },
+      {
+       "children": [],
+       "id": "manage-requirements",
+       "level": "L3"
+      }
+     ],
+     "cluster": "⑥ 外部纳管"
+    },
+    {
+     "children": [
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "search-github-skill",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "audit-imported-skill",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "normalize-skill-contract",
+         "level": "L2"
+        },
+        {
+         "children": [],
+         "id": "place-skill-into-cluster",
+         "level": "L2"
+        }
+       ],
+       "id": "skill-import-pipeline",
+       "level": "L3"
+      }
+     ],
+     "cluster": "⑦ 技能引入与演进"
+    }
+   ],
+   "id": "dsh-butler",
+   "level": "L4"
+  }
+ ],
+ "tree_version": "1.0.0"
+}

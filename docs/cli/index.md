@@ -11,6 +11,7 @@
   - [init](./commands/init.md)：快速初始化新技能模版
   - [link](./commands/link.md)：将技能软链发布至运行环境
   - [unlink](./commands/unlink.md)：安全解除技能软链
+  - [consistency](./commands/consistency.md)：口径一致性门禁（受管区块刷新 + 三方对拍）
 
 ## 入口脚本
 - 执行路径：`bin/skill-pool`

@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "renames": [
+    {
+      "from": "find-duplicate-rules",
+      "to": "search-duplicate-rules",
+      "target_level": "",
+      "reason": "同义归一：首段 find 是同义组别名，保留词为 search",
+      "files_rewritten": 14
+    },
+    {
+      "from": "concise-chinese-bold",
+      "to": "concise-chinese-bold-guard",
+      "target_level": "",
+      "reason": "L3 形态：补编排名词尾段 guard，语义零变化",
+      "files_rewritten": 19
+    },
+    {
+      "from": "google-style-skill-search",
+      "to": "google-style-skill-search-router",
+      "target_level": "",
+      "reason": "L3 形态：补编排名词尾段 router，语义零变化",
+      "files_rewritten": 28
+    }
+  ],
+  "allowed_contexts": [
+    {
+      "path": "skills/rename-execution-layer/SKILL.md",
+      "reason": "整改器自己的实测基线表必须写出「旧名 → 新名」才能证明整改发生过；表中旧名是证据，不是引用"
+    },
+    {
+      "path": "skills/rename-execution-layer/README.md",
+      "reason": "同上，README 的实测基线表与 SKILL.md 是同一份证据的两个入口"
+    },
+    {
+      "path": "docs/requirements/execution/pkg-007-naming-merge.md",
+      "reason": "PKG-007 需求执行明细必须记录本轮整改的旧名与新名对照，否则台账无法追溯"
+    },
+    {
+      "path": "docs/requirements/product.md",
+      "reason": "需求正文 §41.2 的存量整改实数表必须写出「旧名 → 新名 → 违规码 → 命中文件数」，否则需求无法验收"
+    },
+    {
+      "path": "docs/requirements/execution/renames-pkg007.json",
+      "reason": "整改计划输入文件本身以 from/to 定义改名，写出旧名是它的唯一职责"
+    },
+    {
+      "path": "docs/requirements/execution/testcases-naming-merge.md",
+      "reason": "测试用例表的「整改前」列必须写出旧名才能证明整改发生过"
+    }
+  ],
+  "allowed_contexts_note": "允许清单是显式、逐文件、带理由的，不是通配：清单之外任何一处旧名出现，no_dangling_ref 仍然硬失败。"
+}

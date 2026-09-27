@@ -12,7 +12,7 @@ import shutil
 import argparse
 from pathlib import Path
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 def get_repo_root() -> Path:
     # Resolves to the repo root assuming bin/skill-pool
@@ -316,6 +316,107 @@ def cmd_unlink(args):
         print(f"✂️ 成功解除软链接: {dest_path}")
     return 0
 
+def cmd_catalog(args):
+    repo_root = get_repo_root()
+    sync_script = repo_root / "skills" / "dsh-butler" / "scripts" / "sync_catalog.py"
+    catalog_json_path = repo_root / "docs" / "operations" / "skill-catalog.json"
+    
+    if args.sync:
+        if sync_script.exists():
+            import subprocess
+            res = subprocess.run([sys.executable, str(sync_script)], capture_output=True, text=True)
+            if res.returncode != 0:
+                print(f"❌ 同步失败: {res.stderr}", file=sys.stderr)
+                return 1
+            if not args.json:
+                print(res.stdout.strip())
+        else:
+            print("❌ 未找到同步脚本: skills/dsh-butler/scripts/sync_catalog.py", file=sys.stderr)
+            return 1
+            
+    if not catalog_json_path.exists():
+        print("⚠️ 未找到 Catalog 数据文件，正在首次自动生成...")
+        import subprocess
+        subprocess.run([sys.executable, str(sync_script)], capture_output=True)
+
+    if not catalog_json_path.exists():
+        print("❌ 无法加载 Catalog 数据", file=sys.stderr)
+        return 1
+
+    with open(catalog_json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    skills_list = data.get("skills", [])
+    if getattr(args, "level", None):
+        skills_list = [s for s in skills_list if s.get("level") == args.level]
+
+    if args.json:
+        out = dict(data)
+        out["skills"] = skills_list
+        out["filtered_level"] = getattr(args, "level", None)
+        print(json.dumps(out, ensure_ascii=False, indent=2))
+        return 0
+
+    print("=" * 80)
+    print(f"📚 DSH 全局 Skill Catalog (版本: {data.get('catalog_version', '1.0.0')})")
+    print(f"📅 更新时间: {data.get('updated_at', '未知')}")
+    print(f"📦 技能总数: {data.get('total_skills', len(skills_list))} | 显示数量: {len(skills_list)}")
+    if getattr(args, "level", None):
+        print(f"🎯 级别过滤: {args.level}")
+    print("=" * 80)
+    print(f"{'级别':<6} {'SKILL ID':<24} {'分类':<18} {'积木依赖 (Composition)':<26}")
+    print("-" * 80)
+    for s in skills_list:
+        comp = "+".join(s.get("composition", [])) if s.get("composition") else "-"
+        print(f"{s.get('level', '-'):<6} {s.get('id'):<24} {s.get('category_title', s.get('category')):<18} {comp:<26}")
+    print("-" * 80)
+    print("💡 提示: `bin/skill-pool catalog --level L1` 筛选原子基元; `--sync` 重新扫描全库。")
+    return 0
+
+def cmd_consistency(args):
+    """口径一致性门禁：先刷新受管区块，再做三方对拍。"""
+    repo_root = get_repo_root()
+    render_script = repo_root / "skills" / "render-catalog-docs" / "scripts" / "render_docs.py"
+    verify_script = repo_root / "skills" / "verify-catalog-consistency" / "scripts" / "verify_consistency.py"
+
+    import subprocess
+
+    for script in (render_script, verify_script):
+        if not script.exists():
+            print(f"❌ 未找到口径门禁脚本: {script}", file=sys.stderr)
+            return 1
+
+    if not args.check:
+        res = subprocess.run([sys.executable, str(render_script)], capture_output=True, text=True)
+        if res.returncode != 0:
+            print(f"❌ 受管区块生成失败:\n{res.stdout}{res.stderr}", file=sys.stderr)
+            return 1
+        if not args.json:
+            print("✅ 受管区块已刷新")
+
+    res = subprocess.run([sys.executable, str(verify_script)], capture_output=True, text=True)
+    if args.json:
+        print(res.stdout.strip() if res.stdout.strip() else res.stderr.strip())
+        return res.returncode
+
+    try:
+        payload = json.loads(res.stdout)
+    except (ValueError, TypeError):
+        print(res.stdout or res.stderr)
+        return res.returncode
+
+    if payload.get("success"):
+        print(f"\n🎉 口径一致: {payload.get('checked_skills')} 个技能与 catalog/docs 完全对齐")
+        return 0
+
+    print(f"\n⚠️ 检测到 {payload.get('issue_count')} 处口径漂移:")
+    for issue in payload.get("issues", []):
+        loc = f"{issue.get('file')}:{issue.get('line')}" if issue.get("line") else str(issue.get("file"))
+        print(f"  ❌ [{issue.get('check')}] {loc} - {issue.get('detail')}")
+    print("\n💡 手写组装表请改为由 `render_docs.py` 生成（受管区块），不要逐行手改。")
+    return 1
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="skill-pool",
@@ -359,6 +460,18 @@ def main():
     p_unlink.add_argument("--target", help="Custom target environment directory")
     p_unlink.add_argument("--json", action="store_true", help="Output in JSON format")
 
+    # catalog
+    p_cat = subparsers.add_parser("catalog", help="Inspect and sync the global Skill Catalog")
+    p_cat.add_argument("--sync", action="store_true", help="Trigger butler to rescan and sync catalog")
+    p_cat.add_argument("--level", choices=["L1", "L2", "L3", "L4"], help="Filter by capability level")
+    p_cat.add_argument("--json", action="store_true", help="Output catalog in JSON format")
+
+    # consistency
+    p_cons = subparsers.add_parser("consistency", help="Run catalog/doc consistency gate")
+    p_cons.add_argument("--check", action="store_true",
+                        help="Only detect drift; do not refresh the managed block")
+    p_cons.add_argument("--json", action="store_true", help="Output in JSON format")
+
     args = parser.parse_args()
     if not args.command:
         parser.print_help()
@@ -371,6 +484,8 @@ def main():
         "init": cmd_init,
         "link": cmd_link,
         "unlink": cmd_unlink,
+        "catalog": cmd_catalog,
+        "consistency": cmd_consistency,
     }
 
     handler = dispatch.get(args.command)

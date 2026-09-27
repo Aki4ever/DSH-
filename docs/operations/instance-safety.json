@@ -1,0 +1,2268 @@
+{
+ "counts": {
+  "needs_lock": 5,
+  "safe_multi": 144,
+  "single_only": 11
+ },
+ "issues": [],
+ "scanned": 160,
+ "skills": [
+  {
+   "id": "anti-pattern-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "arbitrate-priority-resolver",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "atomic-lock-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "capability-naming-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "chinese-end-to-end",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "concise-focused-output",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "concretize-ambiguity-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "conditional-deliverable-router",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "enforce-atomic-granularity",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "enforce-contract-completeness",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "fastlane-redline-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "fastpath-dispatch-guide",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "filter-conversational-noise",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "format-iconized-tail",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "format-status-block",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "format-visual-inspection",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "format-zoomable-visual",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "high-relevance-notes-only",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "instance-pool-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "layer-decoupling-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "lazy-load-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "limit-words-under-10",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "markdown-bold-only",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "milestone-only-progress",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "no-conversational-filler",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "one-shot-resolution-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "output-chinese-only",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "parallel-lock-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "plain-analogy-explanation",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "prefer-hot-reload-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "prune-bloated-prompts",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "quantify-modifier-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "snippet-only-recall",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "standardize-when-to-use",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "standardize-workflow-sop",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "strip-markdown-fence",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "strip-whitespace-newlines",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "token-budget-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "tree-update-mandatory",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "acquire-atomic-lock",
+   "instance_safety": "needs_lock",
+   "reason": "有写盘但目标路径非字面量（含 tempfile 唯一键），同一资源键上必须持锁",
+   "resource_keys": [
+    "atomic-lock-root"
+   ],
+   "scripts": [
+    "atomic_lock.py"
+   ],
+   "signals": {
+    "nondeterminism": [
+     "time.time"
+    ],
+    "temp": [],
+    "write": [
+     "json.dump",
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "assert-zero-exitcode",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "assert_exitcode.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "audit-all-skills-compliance",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "audit_compliance.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "audit-imported-skill",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "audit_skill.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "audit-layer-naming",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/execution-layers.json",
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "audit_naming.py",
+    "naming_rules.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "build-execution-tree",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/execution-layers.json",
+    "docs/operations/execution-tree.json",
+    "docs/operations/execution-tree.md",
+    "docs/operations/skill-catalog.json",
+    "skills/dsh-butler/SKILL.md"
+   ],
+   "scripts": [
+    "build_tree.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w"
+    ]
+   }
+  },
+  {
+   "id": "build-image-viewer",
+   "instance_safety": "needs_lock",
+   "reason": "有写盘但目标路径非字面量（含 tempfile 唯一键），同一资源键上必须持锁",
+   "resource_keys": [
+    "skills/build-image-viewer"
+   ],
+   "scripts": [
+    "build_viewer.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "build-inverted-index",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json",
+    "docs/operations/skill-index.json"
+   ],
+   "scripts": [
+    "build_index.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w"
+    ]
+   }
+  },
+  {
+   "id": "build-layer-graph",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/execution-layers.json",
+    "docs/operations/layer-graph.json",
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "build_layer_graph.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "build-quantifier-table",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/quantifier-table.json"
+   ],
+   "scripts": [
+    "build_quantifier_table.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "check-python-syntax",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "check_syntax.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "check-script-executable",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "check_executable.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "classify-change-scope",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "classify_scope.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "classify-decision-reversibility",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "classify_decision.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "classify-instance-safety",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "<键>`",
+    "docs/operations/instance-safety.json",
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "classify_instance_safety.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "classify-step-tier",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "classify_tier.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "concretize-term",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "concretize.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "declare-lock-set",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "declare_lock_set.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "detect-action-verb",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "detect_verb.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "detect-forbidden-state",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "detect_forbidden.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "detect-layer-coupling",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/execution-layers.json",
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "detect_coupling.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "detect-lock-conflict",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "detect_lock_conflict.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "detect-rule-conflicts",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "detect_conflicts.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "detect-target-entity",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "detect_entity.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "detect-vague-modifier",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/quantifier-table.json"
+   ],
+   "scripts": [
+    "detect_vague.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "disambiguate-candidates",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "disambiguate.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "emit-search-snippet",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-index.json"
+   ],
+   "scripts": [
+    "emit_snippet.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "ensure-utf8-encoding",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "check_utf8.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "extract-catalog-topology",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "extract_topology.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "extract-core-objective",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "extract_objective.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "extract-json-payload",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "extract_json.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "fold-repeated-events",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "fold_events.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "generate-fastpath-route",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "fastpath_route.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "load-skill-contract",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "load_contract.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "log-query-events",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/skill-query-log.jsonl"
+   ],
+   "scripts": [
+    "log_query.py"
+   ],
+   "signals": {
+    "nondeterminism": [
+     "datetime.now"
+    ],
+    "temp": [],
+    "write": [
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "match-intent-keywords",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "match_keywords.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "measure-routing-metrics",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "measure_metrics.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "measure-token-budget",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "measure_tokens.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "normalize-skill-contract",
+   "instance_safety": "needs_lock",
+   "reason": "有写盘但目标路径非字面量（含 tempfile 唯一键），同一资源键上必须持锁",
+   "resource_keys": [
+    "skills/normalize-skill-contract"
+   ],
+   "scripts": [
+    "normalize_skill.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "parse-query",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "parse_query.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "place-skill-into-cluster",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "place_skill.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "plan-fission",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "plan_fission.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "prune-redundant-context",
+   "instance_safety": "needs_lock",
+   "reason": "有写盘但目标路径非字面量（含 tempfile 唯一键），同一资源键上必须持锁",
+   "resource_keys": [
+    "skills/prune-redundant-context"
+   ],
+   "scripts": [
+    "prune_context.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "quantify-modifier",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "quantify.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "rank-skills-bm25",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-index.json",
+    "docs/requirements/execution/fixtures/retrieval-queries.json"
+   ],
+   "scripts": [
+    "rank_skills.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "reconcile-knowledge-specs",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "reconcile_specs.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "record-assumptions",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "record_assumptions.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "register-execution-layer",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/execution-layers.json",
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "register_layer.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "rename-execution-layer",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/retired-names.json"
+   ],
+   "scripts": [
+    "rename_layer.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "json.dump",
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "render-capability-naming",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/capability-naming.json"
+   ],
+   "scripts": [
+    "render_naming_spec.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "render-catalog-docs",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json",
+    "docs/requirements/product.md"
+   ],
+   "scripts": [
+    "render_docs.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w"
+    ]
+   }
+  },
+  {
+   "id": "render-governance-mermaid",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "render_mermaid.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "run-test-cases-gate",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "run_testcases.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "score-task-lane",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "score_lane.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "search-duplicate-rules",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "find_duplicates.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "search-github-skill",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "search_skill.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "select-skills-for-task",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-index.json"
+   ],
+   "scripts": [
+    "select_skills.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "strip-non-prose-scope",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "strip_scope.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "sync-requirements-lifecycle",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/requirements/index.md",
+    "docs/requirements/product.md"
+   ],
+   "scripts": [
+    "sync_reqs.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "validate-header-triggers",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "validate_header.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "validate-icon-syntax",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "validate_icon_syntax.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-atomic-mutual-exclusion",
+   "instance_safety": "needs_lock",
+   "reason": "有写盘但目标路径非字面量（含 tempfile 唯一键），同一资源键上必须持锁",
+   "resource_keys": [
+    "instance:dsh-mutual-exclusion"
+   ],
+   "scripts": [
+    "verify_mutual_exclusion.py"
+   ],
+   "signals": {
+    "nondeterminism": [
+     "time.time"
+    ],
+    "temp": [
+     "tempfile",
+     "tempfile(唯一键)"
+    ],
+    "write": [
+     "json.dump",
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
+   "id": "verify-catalog-consistency",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json",
+    "docs/operations/skills-catalog.md",
+    "docs/requirements/product.md"
+   ],
+   "scripts": [
+    "verify_consistency.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-chinese-output",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_chinese.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-concretized-output",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_concretized.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-context-payload",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_payload.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-decoupling",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_decoupling.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-deliverable-paths",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_paths.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-execution-contract",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_contract.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-execution-tree",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/execution-layers.json",
+    "docs/operations/execution-tree.json",
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "verify_tree.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-file-exists",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_file.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-instance-safety",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/instance-safety.json",
+    "docs/operations/skill-catalog.json"
+   ],
+   "scripts": [
+    "verify_instance_safety.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-interactive-html",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_html.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-lane-decision",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_lane.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-layer-naming",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_naming.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-mermaid-syntax",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_mermaid.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-no-forbidden-event",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_no_forbidden.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-no-lock-violation",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_no_lock_violation.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-no-unnecessary-question",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_no_question.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-no-unnecessary-restart",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_no_restart.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-progress-budget",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_progress.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-quantified-output",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_quantified.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "verify-token-reduction",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_reduction.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "anti-pattern-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "atomic-fastpath-router",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "atomic-fission-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "fission_guard.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "atomic-lock-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "catalog-consistency-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "chinese-output-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "concise-chinese-bold-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "concretization-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "conflict-detector",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "decoupling-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "dual-lane-router",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "execution-tree-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "full-spectrum-skill-auditor",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "google-style-skill-search-router",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-index.json",
+    "docs/operations/skill-query-log.jsonl",
+    "docs/requirements/execution/fixtures/retrieval-queries.json"
+   ],
+   "scripts": [
+    "search_skills.py"
+   ],
+   "signals": {
+    "nondeterminism": [
+     "datetime.now"
+    ],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "iconized-output-showcase",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "index-body-contract",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "index-header-contract",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "instance-pool-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "intent-detector",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "interactive-image-viewer",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "layer-naming-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "milestone-progress-reporter",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "on-demand-dispatcher",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [
+    "docs/operations/skill-index.json"
+   ],
+   "scripts": [
+    "dispatch_on_demand.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "one-shot-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "parallel-lock-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "qa-gatekeeper",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "check_delivery.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "quantification-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "redundancy-detector",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "schema-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "validate_schema.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "skill-import-pipeline",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "skill-index-router",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "spec-driven-governance",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "standard-output-framework",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "tail-metrics-showcase",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "token-economy-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "visualize-governance-topology",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "zero-restart-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "dsh-butler",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/skill-catalog.json",
+    "docs/operations/skills-catalog.md"
+   ],
+   "scripts": [
+    "create_rule_skill.py",
+    "fission_engine.py",
+    "sync_catalog.py"
+   ],
+   "signals": {
+    "nondeterminism": [
+     "datetime.now"
+    ],
+    "temp": [],
+    "write": [
+     "json.dump",
+     "open-w",
+     "os.makedirs",
+     "write_text"
+    ]
+   }
+  }
+ ],
+ "table_version": "1.0.0"
+}

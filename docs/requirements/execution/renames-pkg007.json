@@ -1,0 +1,22 @@
+{
+  "renames": [
+    {
+      "from": "find-duplicate-rules",
+      "to": "search-duplicate-rules",
+      "reason": "同义归一：首段 find 是同义组别名，保留词为 search"
+    },
+    {
+      "from": "concise-chinese-bold",
+      "to": "concise-chinese-bold-guard",
+      "reason": "L3 形态：补编排名词尾段 guard，语义零变化"
+    },
+    {
+      "from": "google-style-skill-search",
+      "to": "google-style-skill-search-router",
+      "reason": "L3 形态：补编排名词尾段 router，语义零变化"
+    }
+  ],
+  "package": "PKG-007",
+  "requirement": "REQ-LAYER-NAMINGAUDIT-032",
+  "note": "本文件是 PKG-007 命名整改的计划输入。用 skills/rename-execution-layer/scripts/rename_layer.py --plan 读取；--dry-run 看影响面，--apply --rebuild 执行并重建派生产物。"
+}
