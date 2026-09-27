@@ -1,0 +1,3253 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "catalog_version": "2.0.0",
+  "updated_at": "2026-09-28T07:49:23.859775",
+  "total_skills": 165,
+  "levels_summary": {
+    "L1": 39,
+    "L2": 85,
+    "L3": 40,
+    "L4": 1
+  },
+  "skills": [
+    {
+      "id": "anti-pattern-policy",
+      "name": "anti-pattern-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-反例清单",
+      "scope": "local-pool",
+      "description": "微观原子规约：反例层判定基元。定义系统「绝不允许发生」的七条反例（AP-01 死循环 ~ AP-07 播报风暴）及其物理判据、默认阈值与判定优先级，写不出物理判据的口号一律不得进入本层。",
+      "triggers": [
+        "反例层",
+        "禁止事件",
+        "死循环",
+        "无反馈",
+        "不允许发生"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/anti-pattern-policy"
+    },
+    {
+      "id": "arbitrate-priority-resolver",
+      "name": "arbitrate-priority-resolver",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-仲裁准则",
+      "scope": "local-pool",
+      "description": "微观原子规约：优先级仲裁基元。在多条规则发生逻辑冲突时，强制遵循固定优先级决断法则。",
+      "triggers": [
+        "优先级仲裁",
+        "冲突裁决",
+        "裁定优先级",
+        "仲裁法则"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/arbitrate-priority-resolver"
+    },
+    {
+      "id": "atomic-lock-policy",
+      "name": "atomic-lock-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-物理原子锁",
+      "scope": "local-pool",
+      "description": "微观原子规约：并发共享资源的物理原子锁判定基元。钉死七条硬口径——锁载体必须是 mkdir 原子目录或 flock -n 排他文件锁、锁键=归一化绝对资源路径、加锁顺序=字典序、持有者=PID+进程起始时间戳、超时默认 300 秒且超时即失败并释放、陈旧锁必须可回收、释放必达（trap EXIT/INT/TERM）；声明层检查不得冒充互斥保证。",
+      "triggers": [
+        "原子锁",
+        "物理互斥",
+        "mkdir原子目录",
+        "陈旧锁回收",
+        "释放必达"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/atomic-lock-policy"
+    },
+    {
+      "id": "capability-naming-policy",
+      "name": "capability-naming-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-能力层命名",
+      "scope": "local-pool",
+      "description": "微观原子规约：能力层命名判定基元。钉死「归属 / 分类 / 做什么 / 命名」四要素与四种已登记命名形态（动作 / 编排 / 规约 / 厂商边界），规定语法约束、禁词、同义归一、唯一性与改名的六处同步契约；词表与形态的唯一真相源是 docs/operations/capability-naming.json，本规约只出判据不做检测。",
+      "triggers": [
+        "能力层命名",
+        "命名四要素",
+        "命名形态",
+        "禁词表",
+        "同义归一"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/capability-naming-policy"
+    },
+    {
+      "id": "chinese-end-to-end",
+      "name": "chinese-end-to-end",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-全流程中文",
+      "scope": "local-pool",
+      "description": "微观原子规约：全流程中文输出。回复正文、进度播报、报错信息、解释说明与脚本注释一律中文；技术标识符与英文缩写保留原文但首现必须紧跟中文释义与中文全称。",
+      "triggers": [
+        "全流程中文",
+        "中文回复",
+        "技术标识符释义",
+        "缩写给全称"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/chinese-end-to-end"
+    },
+    {
+      "id": "concise-focused-output",
+      "name": "concise-focused-output",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-简短聚焦",
+      "scope": "local-pool",
+      "description": "微观原子规约：默认简短聚焦输出。在无特定篇幅扩充要求下，压缩篇幅、开门见山、直击要害，杜绝冗长铺垫。",
+      "triggers": [
+        "简短输出",
+        "聚焦重点",
+        "拒绝冗长",
+        "精简表达"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/concise-focused-output"
+    },
+    {
+      "id": "concretize-ambiguity-policy",
+      "name": "concretize-ambiguity-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-含糊具像化",
+      "scope": "local-pool",
+      "description": "微观原子规约：含糊词具像化判定基元。定义范围含糊、指代含糊、时序含糊三类含糊词与 hedge 缓解词四类判据及其具像化方式（确切数量 + 计数依据 / 具体实体清单 / 触发条件 + 时限 / 可核对判据），并立下「禁止用另一个含糊词替换含糊词」硬规则；词表唯一真相源归口 detect-vague-modifier。",
+      "triggers": [
+        "含糊具像化",
+        "具像化",
+        "避免含糊",
+        "范围指代时序"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/concretize-ambiguity-policy"
+    },
+    {
+      "id": "conditional-deliverable-router",
+      "name": "conditional-deliverable-router",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-分支路由",
+      "scope": "local-pool",
+      "description": "微观原子规约：输出框架条件分支裁决。有物理产物时展示输出物与地址；无产物时强制抹除输出地址，转为输出核心结论。",
+      "triggers": [
+        "条件分支",
+        "产物路由",
+        "核心结论",
+        "零空地址"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/conditional-deliverable-router"
+    },
+    {
+      "id": "enforce-atomic-granularity",
+      "name": "enforce-atomic-granularity",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-粒度物理化",
+      "scope": "local-pool",
+      "description": "微观原子规约：强制每个 SOP 步骤声明其绑定的物理探针类型，未声明或声明为非探针表述的步骤一律判定为粒度过粗，必须递归分裂。",
+      "triggers": [
+        "粒度原子化",
+        "探针绑定",
+        "不可断言不得实施",
+        "递归分裂"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/enforce-atomic-granularity"
+    },
+    {
+      "id": "enforce-contract-completeness",
+      "name": "enforce-contract-completeness",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-契约完整性",
+      "scope": "local-pool",
+      "description": "微观原子规约：技能契约完整性强制要求。所有存量与增量技能必须同时具备Frontmatter元数据、头部场景索引与主体运作SOP。",
+      "triggers": [
+        "契约完整",
+        "头体规范",
+        "场景规范",
+        "必须SOP"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/enforce-contract-completeness"
+    },
+    {
+      "id": "fastlane-redline-policy",
+      "name": "fastlane-redline-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-快车道红线",
+      "scope": "local-pool",
+      "description": "微观原子规约：定义强制进入完整流程的不可逆红线清单，并规定红线优先于任何加权分值。",
+      "triggers": [
+        "红线规约",
+        "不可逆动作",
+        "红线优先",
+        "强制完整流程"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/fastlane-redline-policy"
+    },
+    {
+      "id": "fastpath-dispatch-guide",
+      "name": "fastpath-dispatch-guide",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-快捷路由指引",
+      "scope": "local-pool",
+      "description": "微观原子规约：规范快捷路由的指引结构，必须包含目标技能ID、级别、直调执行命令与底层原子依赖。",
+      "triggers": [
+        "快捷路由指引",
+        "直调卡片",
+        "秒级触达",
+        "路由规范"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/fastpath-dispatch-guide"
+    },
+    {
+      "id": "filter-conversational-noise",
+      "name": "filter-conversational-noise",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-噪音过滤",
+      "scope": "local-pool",
+      "description": "微观原子规约：过滤用户表达或大模型交流中的语气词、叹词、客套、口癖等纯噪音内容。",
+      "triggers": [
+        "过滤噪音",
+        "去口癖",
+        "过滤语气词",
+        "去套话"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/filter-conversational-noise"
+    },
+    {
+      "id": "format-iconized-tail",
+      "name": "format-iconized-tail",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-图标尾部",
+      "scope": "local-pool",
+      "description": "微观原子规约：强制在最终回复的末尾集中使用特异化图标输出四要素框架，严禁在正文过早打断或散落分布。",
+      "triggers": [
+        "尾部图标",
+        "特异化图标",
+        "集中输出",
+        "Emoji图标"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/format-iconized-tail"
+    },
+    {
+      "id": "format-status-block",
+      "name": "format-status-block",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-状态规范",
+      "scope": "local-pool",
+      "description": "微观原子规约：规范输出框架中的“当前状态”板块，必须使用确切状态标记与一句话结论。",
+      "triggers": [
+        "当前状态",
+        "状态标记",
+        "状态输出",
+        "阶段总结"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/format-status-block"
+    },
+    {
+      "id": "format-visual-inspection",
+      "name": "format-visual-inspection",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-可视化规约",
+      "scope": "local-pool",
+      "description": "微观原子规约：强制可视化透视输出必须包含标准 Mermaid 图表或 GenUI 卡片，严禁仅输出大段无图纯文本。",
+      "triggers": [
+        "可视化规约",
+        "强制图表",
+        "拒绝纯文本",
+        "图表输出"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/format-visual-inspection"
+    },
+    {
+      "id": "format-zoomable-visual",
+      "name": "format-zoomable-visual",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-可缩放可视化",
+      "scope": "local-pool",
+      "description": "微观原子规约：一切可视化产物（图片、图谱、拓扑图、示意图）必须提供「点击放大 + 放大/缩小按钮 + 复位」三件套交互，严禁只输出静态图，且查看器必须是零外部依赖的单文件 HTML。",
+      "triggers": [
+        "可缩放",
+        "点击放大",
+        "复位交互",
+        "拒绝静态图"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/format-zoomable-visual"
+    },
+    {
+      "id": "high-relevance-notes-only",
+      "name": "high-relevance-notes-only",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-说明过滤",
+      "scope": "local-pool",
+      "description": "微观原子规约：规范输出框架中的“重要说明”，强制与本次输出物高强绑定，剔除泛泛空话与日常客套。",
+      "triggers": [
+        "重要说明",
+        "高相关说明",
+        "操作指南",
+        "去套话"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/high-relevance-notes-only"
+    },
+    {
+      "id": "instance-pool-policy",
+      "name": "instance-pool-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-多实例准入",
+      "scope": "local-pool",
+      "description": "微观原子规约：执行层实例可多开，但必须无状态或状态外置到资源键；独占资源必须声明，禁止实例间共享可变全局。",
+      "triggers": [
+        "实例多开",
+        "并发安全",
+        "资源键",
+        "独占资源声明"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/instance-pool-policy"
+    },
+    {
+      "id": "layer-decoupling-policy",
+      "name": "layer-decoupling-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-执行层解耦",
+      "scope": "local-pool",
+      "description": "微观原子规约：执行层解耦判定基元。规定执行层之间只通过契约（catalog 的 composition 边 + 已声明产物路径）通信，依赖方向只允许 L4→L3→L2→L1 与同层，禁止环与跨层直引内部实现，并给出逆向依赖、依赖环、跨层跳跃、隐式耦合、共享可变状态五类违规的物理判据。",
+      "triggers": [
+        "执行层解耦",
+        "契约通信",
+        "禁止逆向依赖",
+        "隐式耦合判据"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/layer-decoupling-policy"
+    },
+    {
+      "id": "lazy-load-policy",
+      "name": "lazy-load-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-按需加载",
+      "scope": "local-pool",
+      "description": "微观原子规约：未命中的技能一律不加载；禁止通配读取技能正文，单任务加载技能数不得超过 top-K。",
+      "triggers": [
+        "按需加载",
+        "未命中不加载",
+        "禁止通配",
+        "懒加载"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/lazy-load-policy"
+    },
+    {
+      "id": "limit-words-under-10",
+      "name": "limit-words-under-10",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-长度基元",
+      "scope": "local-pool",
+      "description": "微观原子规约：强制输出严格不超过 10 个字符（含标点符号），杜绝字数膨胀与冗余展开。",
+      "triggers": [
+        "10字内",
+        "不超过10字",
+        "简短",
+        "极短"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/limit-words-under-10"
+    },
+    {
+      "id": "markdown-bold-only",
+      "name": "markdown-bold-only",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-排版基元",
+      "scope": "local-pool",
+      "description": "微观原子规约：强制所有正文文本必须包裹在 Markdown 加粗语法（**内容**）中。",
+      "triggers": [
+        "全黑体",
+        "全加粗",
+        "Markdown粗体"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/markdown-bold-only"
+    },
+    {
+      "id": "milestone-only-progress",
+      "name": "milestone-only-progress",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-里程碑输出",
+      "scope": "local-pool",
+      "description": "微观原子规约：过程输出只报阶段目标（如从惠州去北京只报「到达长沙」「到达武汉」），严禁输出「上车」「下车」这类高度重复的微操作；同类微操作一律折叠为 ×N。",
+      "triggers": [
+        "里程碑",
+        "阶段目标",
+        "只报阶段",
+        "微操作折叠"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/milestone-only-progress"
+    },
+    {
+      "id": "no-conversational-filler",
+      "name": "no-conversational-filler",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-风格基元",
+      "scope": "local-pool",
+      "description": "微观原子规约：严禁任何开场白、问候客套、总结废话或承接虚词，直接输出核心内容。",
+      "triggers": [
+        "不要废话",
+        "零寒暄",
+        "免开场白",
+        "直接说"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/no-conversational-filler"
+    },
+    {
+      "id": "one-shot-resolution-policy",
+      "name": "one-shot-resolution-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-一次性解决",
+      "scope": "local-pool",
+      "description": "微观原子规约：默认不提问，不确定项选自决可回滚默认值并强制假设留痕，仅「红线 + 不可逆」允许每任务一次批量提问。",
+      "triggers": [
+        "一次性解决",
+        "不反复提问",
+        "自行决断",
+        "假设留痕"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/one-shot-resolution-policy"
+    },
+    {
+      "id": "output-chinese-only",
+      "name": "output-chinese-only",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-语言基元",
+      "scope": "local-pool",
+      "description": "微观原子规约：强制输出纯正中文，严禁非必要的英文单词、拼音或中英混杂，消灭跨语种表达的随机性。",
+      "triggers": [
+        "纯中文",
+        "中文输出",
+        "不要英文",
+        "汉字"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/output-chinese-only"
+    },
+    {
+      "id": "parallel-lock-policy",
+      "name": "parallel-lock-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-并行调控锁",
+      "scope": "local-pool",
+      "description": "微观原子规约：并行任务调控锁的判定基元。钉死四条硬口径——锁粒度=共享资源键、加锁顺序=字典序固定顺序、超时默认 300 秒且超时即失败释放、死循环判定复用 anti-pattern-policy 的 AP-01；无锁共享写为明确禁止项。",
+      "triggers": [
+        "并行锁",
+        "锁粒度",
+        "字典序加锁",
+        "超时释放"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/parallel-lock-policy"
+    },
+    {
+      "id": "plain-analogy-explanation",
+      "name": "plain-analogy-explanation",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-通俗比喻",
+      "scope": "local-pool",
+      "description": "微观原子规约：通俗生活化原理解释与技术细节静默。用普通人听得懂的日常原理阐述，用户未主动提问时绝对不展开底层代码技术细节。",
+      "triggers": [
+        "通俗易懂",
+        "生活比喻",
+        "常识解释",
+        "静默技术细节"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/plain-analogy-explanation"
+    },
+    {
+      "id": "prefer-hot-reload-policy",
+      "name": "prefer-hot-reload-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-不重启优先",
+      "scope": "local-pool",
+      "description": "微观原子规约：能不重启就不重启。定义 hot_reload（热更）/ incremental（增量重载）/ restart（重启）三级处置与最长前缀判定表，只有命中「不可热更边界」白名单才允许重启，且必须同时给出「路径 + 边界 + 重建命令」三要素，缺一即判为无证据重启。",
+      "triggers": [
+        "能不重启就不重启",
+        "热更优先",
+        "重启证据",
+        "不可热更边界"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/prefer-hot-reload-policy"
+    },
+    {
+      "id": "prune-bloated-prompts",
+      "name": "prune-bloated-prompts",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-防膨胀",
+      "scope": "local-pool",
+      "description": "微观原子规约：防膨胀裁剪。禁止在提示词或机制中加入等价/重复语句，保持指令极致紧凑。",
+      "triggers": [
+        "防膨胀",
+        "裁剪提示词",
+        "去同义反复",
+        "机制简洁"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/prune-bloated-prompts"
+    },
+    {
+      "id": "quantify-modifier-policy",
+      "name": "quantify-modifier-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-程度词量化",
+      "scope": "local-pool",
+      "description": "微观原子规约：程度类修饰词的量化判定基元。定义「高/大/快/多/好/严重/频繁/明显/显著…」清单、四要素（场景 + 数值或区间 + 单位 + 依据）规约、场景优先原则、不可量化的处置（声明假设而非沉默）与「禁止用另一个程度词替换程度词」禁令。",
+      "triggers": [
+        "程度词量化",
+        "高大量化",
+        "四要素",
+        "场景量化",
+        "不可量化声明"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/quantify-modifier-policy"
+    },
+    {
+      "id": "snippet-only-recall",
+      "name": "snippet-only-recall",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-片段回灌",
+      "scope": "local-pool",
+      "description": "微观原子规约：检索结果只允许回灌命中片段与元数据，严禁把 catalog 或技能正文整体灌回上下文。",
+      "triggers": [
+        "只回灌片段",
+        "不回灌全文",
+        "检索返回面",
+        "省token"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/snippet-only-recall"
+    },
+    {
+      "id": "standardize-when-to-use",
+      "name": "standardize-when-to-use",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-场景规范",
+      "scope": "local-pool",
+      "description": "微观原子规约：标准化触发场景说明。强制包含明确的正面触发条件与触发禁区，方便索引快速识破。",
+      "triggers": [
+        "场景规范",
+        "触发场景",
+        "When to Use",
+        "正反向场景"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/standardize-when-to-use"
+    },
+    {
+      "id": "standardize-workflow-sop",
+      "name": "standardize-workflow-sop",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-SOP规范",
+      "scope": "local-pool",
+      "description": "微观原子规约：标准化主体运作 SOP。强制正文必须具备清晰的 Mermaid 流程图与有序执行步骤。",
+      "triggers": [
+        "SOP规范",
+        "状态机流程",
+        "运作SOP",
+        "执行步骤"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/standardize-workflow-sop"
+    },
+    {
+      "id": "strip-markdown-fence",
+      "name": "strip-markdown-fence",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-结构基元",
+      "scope": "local-pool",
+      "description": "微观原子规约：强制输出纯净原生文本，绝对禁止包裹任何 ``` 代码围栏。",
+      "triggers": [
+        "去代码块",
+        "去围栏",
+        "纯净输出",
+        "裸文本"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/strip-markdown-fence"
+    },
+    {
+      "id": "strip-whitespace-newlines",
+      "name": "strip-whitespace-newlines",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-排版基元",
+      "scope": "local-pool",
+      "description": "微观原子规约：严格剥离文本首尾与多余的连续空白字符、制表符及空行，实现物理对齐。",
+      "triggers": [
+        "去空白",
+        "折叠空行",
+        "剥离空格",
+        "首尾修整"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/strip-whitespace-newlines"
+    },
+    {
+      "id": "token-budget-policy",
+      "name": "token-budget-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-token预算",
+      "scope": "local-pool",
+      "description": "微观原子规约：定义上下文预算优先级（索引/检索片段 > 选中技能正文 > 参考文档）与超预算裁剪顺序，规定索引与检索片段永不裁剪、README 不进上下文、docs 长文仅以片段入上下文。",
+      "triggers": [
+        "token预算",
+        "上下文预算",
+        "裁剪顺序",
+        "预算优先级"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/token-budget-policy"
+    },
+    {
+      "id": "tree-update-mandatory",
+      "name": "tree-update-mandatory",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-树同步强制",
+      "scope": "local-pool",
+      "description": "微观原子规约：任何执行层（skill/agent/api/mcp/plugin/cli）新增或优化后，必须同步刷新索引与执行层树，禁止只改能力不改树。",
+      "triggers": [
+        "改能力必改树",
+        "同步索引",
+        "树及时更新",
+        "禁止手写树"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/tree-update-mandatory"
+    },
+    {
+      "id": "acquire-atomic-lock",
+      "name": "acquire-atomic-lock",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-物理原子锁",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：基于 mkdir(2) 原子目录的物理锁获取与释放器。锁键经 realpath 归一为绝对路径，持有者记录 pid+start_ticks 防 PID 复用误判，支持 lease/live 两种锁模式与按模式分档的陈旧锁回收，释放必达（try/finally + SIGINT/SIGTERM/SIGHUP 处理器）且释放前校验 token 拒绝释放他人锁；返回退出码 0/1/2。",
+      "triggers": [
+        "获取锁",
+        "释放锁",
+        "陈旧锁回收",
+        "token校验"
+      ],
+      "composition": [
+        "atomic-lock-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/acquire-atomic-lock"
+    },
+    {
+      "id": "assert-zero-exitcode",
+      "name": "assert-zero-exitcode",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-退出码断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能：执行命令并硬断言退出码必须为 0，杜绝忽略报错与失败静默。",
+      "triggers": [
+        "退出码0",
+        "命令断言",
+        "执行成功断言",
+        "硬性校验"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/assert-zero-exitcode"
+    },
+    {
+      "id": "audit-all-skills-compliance",
+      "name": "audit-all-skills-compliance",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-全量合规审计",
+      "scope": "local-pool",
+      "description": "工序动作级技能：遍历全量存量与增量技能，物理审查其头部场景索引、主体SOP与配套脚本合规性，返回退出码 0/1。",
+      "triggers": [
+        "全量审计",
+        "存量合规",
+        "契约体检",
+        "头体验收"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/audit-all-skills-compliance"
+    },
+    {
+      "id": "audit-imported-skill",
+      "name": "audit-imported-skill",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-引入审计",
+      "scope": "local-pool",
+      "description": "工序动作级技能：对外部引入候选执行许可白名单、来源 URL、脚本可执行面、描述完整性与命名规范体检，逐项 pass/fail 给出理由并返回接受/拒绝裁决。",
+      "triggers": [
+        "引入审计",
+        "许可白名单",
+        "供应链风险",
+        "候选体检"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/audit-imported-skill"
+    },
+    {
+      "id": "audit-layer-naming",
+      "name": "audit-layer-naming",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-命名体检",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：全量执行层命名体检器。按四要素（归属 / 分类 / 做什么 / 命名）与四种命名形态逐条扫描 catalog、磁盘目录、契约头与执行层登记表，输出带违规码、对象与 file:line 的违规清单；判据实现以 naming_rules.py 为全池唯一副本，返回退出码 0/1/2。",
+      "triggers": [
+        "命名体检",
+        "违规清单",
+        "命名合规率",
+        "file:line定位"
+      ],
+      "composition": [
+        "capability-naming-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/audit-layer-naming"
+    },
+    {
+      "id": "build-execution-tree",
+      "name": "build-execution-tree",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-执行层建树",
+      "scope": "local-pool",
+      "description": "工序动作级技能：合并 skill-catalog.json 与执行层登记表，生成 execution-tree.json/md 唯一真相源，并把受管集群区块注入 dsh-butler 契约。",
+      "triggers": [
+        "执行层树",
+        "树状结构",
+        "集群归属",
+        "建树"
+      ],
+      "composition": [
+        "register-execution-layer"
+      ],
+      "has_scripts": true,
+      "path": "skills/build-execution-tree"
+    },
+    {
+      "id": "build-image-viewer",
+      "name": "build-image-viewer",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-查看器生成",
+      "scope": "local-pool",
+      "description": "工序动作级技能：把任意图片以 base64 内联进零依赖单文件 HTML，产出可点击放大、可滚轮缩放、可拖拽平移、可一键复位的交互查看器。",
+      "triggers": [
+        "生成查看器",
+        "单文件HTML",
+        "内联图片",
+        "零依赖产物"
+      ],
+      "composition": [
+        "format-zoomable-visual"
+      ],
+      "has_scripts": true,
+      "path": "skills/build-image-viewer"
+    },
+    {
+      "id": "build-inverted-index",
+      "name": "build-inverted-index",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-倒排索引",
+      "scope": "local-pool",
+      "description": "工序动作级技能：由 skill-catalog.json 生成倒排索引 skill-index.json（term→文档→字段→词频），并把分词器作为可复用库对外暴露。",
+      "triggers": [
+        "倒排索引",
+        "建索引",
+        "term检索",
+        "分词索引"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/build-inverted-index"
+    },
+    {
+      "id": "build-layer-graph",
+      "name": "build-layer-graph",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-层间依赖图",
+      "scope": "local-pool",
+      "description": "工序动作级技能：由 skill-catalog.json 与执行层登记表生成层间依赖图 layer-graph.json（节点 / 边 / 层级计数），幂等可重跑。",
+      "triggers": [
+        "层间依赖图",
+        "建图",
+        "层级关系",
+        "边集合"
+      ],
+      "composition": [
+        "layer-decoupling-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/build-layer-graph"
+    },
+    {
+      "id": "build-quantifier-table",
+      "name": "build-quantifier-table",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-量化映射表",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：生成并维护场景量化映射表 docs/operations/quantifier-table.json。内置种子映射不少于 20 条，覆盖高/大/快/多/好/严重/频繁等词且每词至少 3 个场景；每条必须含 term/domain/quantified/unit/basis，缺 basis 即 exit 1。",
+      "triggers": [
+        "量化映射表",
+        "建量化表",
+        "场景阈值",
+        "量化依据"
+      ],
+      "composition": [
+        "quantify-modifier-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/build-quantifier-table"
+    },
+    {
+      "id": "check-python-syntax",
+      "name": "check-python-syntax",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-语法编译",
+      "scope": "local-pool",
+      "description": "工序动作级技能：对指定的 Python 源码文件执行静态编译语法验证，防止引入 SyntaxError。",
+      "triggers": [
+        "Python语法",
+        "编译校验",
+        "代码检查"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/check-python-syntax"
+    },
+    {
+      "id": "check-script-executable",
+      "name": "check-script-executable",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-脚本可执行检测",
+      "scope": "local-pool",
+      "description": "工序动作级技能：物理检测指定技能目录中的配套脚本是否存在且具备可执行权限 (chmod +x)。",
+      "triggers": [
+        "执行权限检测",
+        "可执行检查",
+        "脚本存在",
+        "chmod检测"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/check-script-executable"
+    },
+    {
+      "id": "classify-change-scope",
+      "name": "classify-change-scope",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-变更处置判定",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：把一组变更路径逐条判定为 hot_reload / incremental / restart，输出理由与命中的不可热更边界，并给出 no_restart_needed / restart_required 总判定。",
+      "triggers": [
+        "变更判定",
+        "热更判定",
+        "是否需要重启",
+        "处置级别"
+      ],
+      "composition": [
+        "prefer-hot-reload-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/classify-change-scope"
+    },
+    {
+      "id": "classify-decision-reversibility",
+      "name": "classify-decision-reversibility",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-决策可逆判定",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：对每个不确定项确定性判定可逆性与红线归属，输出 decide_now / ask_once、建议默认值与回滚方式。",
+      "triggers": [
+        "可逆判定",
+        "自行决断还是提问",
+        "红线不可逆",
+        "决策判定"
+      ],
+      "composition": [
+        "one-shot-resolution-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/classify-decision-reversibility"
+    },
+    {
+      "id": "classify-instance-safety",
+      "name": "classify-instance-safety",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-实例安全分档",
+      "scope": "local-pool",
+      "description": "工序动作级技能：真实扫描执行层脚本，判定 safe_multi / needs_lock / single_only 三档，提取资源键与信号，并可写出实例安全声明表。",
+      "triggers": [
+        "实例分档",
+        "并发安全判定",
+        "safe_multi",
+        "single_only"
+      ],
+      "composition": [
+        "instance-pool-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/classify-instance-safety"
+    },
+    {
+      "id": "classify-step-tier",
+      "name": "classify-step-tier",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-事件分档",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：把一条过程事件确定性判定为 milestone / micro / action 三档之一，并输出 category 归类，作为折叠的前置判据。",
+      "triggers": [
+        "事件分档",
+        "milestone判定",
+        "micro识别",
+        "进度分级"
+      ],
+      "composition": [
+        "milestone-only-progress"
+      ],
+      "has_scripts": true,
+      "path": "skills/classify-step-tier"
+    },
+    {
+      "id": "concretize-term",
+      "name": "concretize-term",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-含糊词具像化",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：含糊词具像化建议器。从唯一真相源加载含糊词并集 AMBIGUITY_WORDS 与分类函数 classify_word，对每个命中词按 range/reference/timing/hedge 四类产出具像化建议模板与占位示例；reference 类在同目录可枚举时自动列出真实文件名；内置替换词黑名单校验，建议去掉该词后仍含同类别含糊词即标 weak:true；依赖模块缺失即 exit 2，绝不内置兜底词表。",
+      "triggers": [
+        "具像化词汇",
+        "把若干变具体",
+        "实体枚举",
+        "补判据"
+      ],
+      "composition": [
+        "concretize-ambiguity-policy",
+        "detect-vague-modifier"
+      ],
+      "has_scripts": true,
+      "path": "skills/concretize-term"
+    },
+    {
+      "id": "confirm-before-coding",
+      "name": "confirm-before-coding",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "安全准入-变更审批",
+      "scope": "system-builtin",
+      "description": "系统能力：安全准入-变更审批",
+      "triggers": [
+        "代码修改",
+        "破坏性操作",
+        "写入前确认"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "@system/confirm-before-coding"
+    },
+    {
+      "id": "declare-lock-set",
+      "name": "declare-lock-set",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-锁集合声明",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：为并行任务归一化并排序锁集合（去重 + 字典序），并检测「没有锁却要写」与「锁键非归一化路径」两类静态错误，输出每任务的 locks 与 acquire_order。",
+      "triggers": [
+        "锁集合",
+        "锁键归一",
+        "加锁顺序",
+        "缺锁检测"
+      ],
+      "composition": [
+        "parallel-lock-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/declare-lock-set"
+    },
+    {
+      "id": "detect-action-verb",
+      "name": "detect-action-verb",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-动词识别",
+      "scope": "local-pool",
+      "description": "工序动作级技能：单点物理识别并提取语句中的指令动作动词（如创建/生成/校验/修改）。",
+      "triggers": [
+        "动作词",
+        "动词判定",
+        "指令动作",
+        "动词提取"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/detect-action-verb"
+    },
+    {
+      "id": "detect-forbidden-state",
+      "name": "detect-forbidden-state",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-反例检测",
+      "scope": "local-pool",
+      "description": "工序动作级技能：把事件流（JSONL 或 stdin）逐条判定七条反例，每条反例都有独立可命中的检测分支，命中即给出反例编号、事件 seq 列表与人类可读证据，并按正确性 > 进展 > 可观测 > 成本上报。",
+      "triggers": [
+        "反例检测",
+        "禁止状态",
+        "事件流检测",
+        "AP检测"
+      ],
+      "composition": [
+        "anti-pattern-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/detect-forbidden-state"
+    },
+    {
+      "id": "detect-layer-coupling",
+      "name": "detect-layer-coupling",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-耦合检测",
+      "scope": "local-pool",
+      "description": "工序动作级技能：按 layer-decoupling-policy 的五类判据真实扫描契约与脚本源码，输出逆向依赖、依赖环、跨层跳跃、隐式耦合与共享可变状态违规。",
+      "triggers": [
+        "耦合检测",
+        "依赖违规",
+        "隐式耦合",
+        "共享可变状态"
+      ],
+      "composition": [
+        "build-layer-graph"
+      ],
+      "has_scripts": true,
+      "path": "skills/detect-layer-coupling"
+    },
+    {
+      "id": "detect-lock-conflict",
+      "name": "detect-lock-conflict",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-锁冲突检测",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：对并行任务检测锁冲突（锁集合交集非空）、潜在死锁（等待图成环）与超时未释放（跨度超 timeout_s 或逻辑已超时），并给出必须串行的任务对与可安全并行的分组建议。",
+      "triggers": [
+        "锁冲突",
+        "死锁检测",
+        "超时未释放",
+        "并行分组"
+      ],
+      "composition": [
+        "declare-lock-set"
+      ],
+      "has_scripts": true,
+      "path": "skills/detect-lock-conflict"
+    },
+    {
+      "id": "detect-rule-conflicts",
+      "name": "detect-rule-conflicts",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-冲突对拍",
+      "scope": "local-pool",
+      "description": "工序动作级技能：检测规则集中的排他性冲突（如语种互斥、长度上下限倒挂、格式互斥）。",
+      "triggers": [
+        "冲突检测",
+        "互斥检测",
+        "规则冲突",
+        "矛盾检测"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/detect-rule-conflicts"
+    },
+    {
+      "id": "detect-target-entity",
+      "name": "detect-target-entity",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-实体提取",
+      "scope": "local-pool",
+      "description": "工序动作级技能：单点物理提取语句中的核心操作实体（如JSON/文档/代码/文件）。",
+      "triggers": [
+        "实体识别",
+        "操作对象",
+        "目标实体",
+        "实体边界"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/detect-target-entity"
+    },
+    {
+      "id": "detect-vague-modifier",
+      "name": "detect-vague-modifier",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-模糊词检测",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：扫描文本中的程度类与含糊类词语，输出命中词、类别（degree/ambiguity 与五类细分）、位置、是否已有场景量化映射。本技能内置词表是全仓模糊词表的唯一真相源，DEGREE_WORDS / AMBIGUITY_WORDS / classify_word / scan 可被 importlib 直接复用。",
+      "triggers": [
+        "模糊词检测",
+        "含糊词检测",
+        "程度词检测",
+        "词表真相源"
+      ],
+      "composition": [
+        "build-quantifier-table"
+      ],
+      "has_scripts": true,
+      "path": "skills/detect-vague-modifier"
+    },
+    {
+      "id": "disambiguate-candidates",
+      "name": "disambiguate-candidates",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-消歧打分",
+      "scope": "local-pool",
+      "description": "工序动作级技能：消除候选技能间的调用歧义，根据权重与上下文确定单一首选或互补协同组合。",
+      "triggers": [
+        "消除歧义",
+        "消歧",
+        "候选打分",
+        "精准命中"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/disambiguate-candidates"
+    },
+    {
+      "id": "emit-search-snippet",
+      "name": "emit-search-snippet",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-摘要片段",
+      "scope": "local-pool",
+      "description": "工序动作级技能：为单条检索结果生成 ≤120 字的确定性摘要片段，并对命中词做居中截断。",
+      "triggers": [
+        "摘要片段",
+        "snippet",
+        "命中片段",
+        "截断"
+      ],
+      "composition": [
+        "rank-skills-bm25"
+      ],
+      "has_scripts": true,
+      "path": "skills/emit-search-snippet"
+    },
+    {
+      "id": "ensure-utf8-encoding",
+      "name": "ensure-utf8-encoding",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-编码检测",
+      "scope": "local-pool",
+      "description": "工序动作级技能：物理检测并断言指定文件是否为合法 UTF-8 编码且无不可读乱码。",
+      "triggers": [
+        "UTF8检测",
+        "编码断言",
+        "防乱码",
+        "编码校验"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/ensure-utf8-encoding"
+    },
+    {
+      "id": "extract-catalog-topology",
+      "name": "extract-catalog-topology",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-拓扑提取",
+      "scope": "local-pool",
+      "description": "工序动作级技能：物理读取全局 Catalog JSON 数据，提取全量技能节点与其加法依赖拓扑边。",
+      "triggers": [
+        "提取拓扑",
+        "读取Catalog",
+        "拓扑数据",
+        "节点提取"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/extract-catalog-topology"
+    },
+    {
+      "id": "extract-core-objective",
+      "name": "extract-core-objective",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-目标提取",
+      "scope": "local-pool",
+      "description": "工序动作级技能：提取自然语言语句中的核心动宾主干与关键实体目标，输出标准化结构。",
+      "triggers": [
+        "提取意图",
+        "动宾提取",
+        "实体识别",
+        "核心目标"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/extract-core-objective"
+    },
+    {
+      "id": "extract-json-payload",
+      "name": "extract-json-payload",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-数据抽取",
+      "scope": "local-pool",
+      "description": "工序动作级技能：从任意夹杂自然语言的文本中，精准提取并解析出闭合合法的 JSON 负载。",
+      "triggers": [
+        "提取JSON",
+        "正则提取",
+        "JSON解析"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/extract-json-payload"
+    },
+    {
+      "id": "fold-repeated-events",
+      "name": "fold-repeated-events",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-事件折叠",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：把逐条过程事件折叠成里程碑逐条保留、动作按类别计数、微操作汇总为 ×N 的紧凑过程输出。",
+      "triggers": [
+        "事件折叠",
+        "计数折叠",
+        "重复合并",
+        "进度聚合"
+      ],
+      "composition": [
+        "classify-step-tier"
+      ],
+      "has_scripts": true,
+      "path": "skills/fold-repeated-events"
+    },
+    {
+      "id": "generate-fastpath-route",
+      "name": "generate-fastpath-route",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-快捷路由生成",
+      "scope": "local-pool",
+      "description": "工序动作级技能：接收 Skill ID，秒级提取并返回其直达运行命令、级别属性与原子依赖链。",
+      "triggers": [
+        "快捷路由",
+        "提取直调命令",
+        "直达原子",
+        "快速触达"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/generate-fastpath-route"
+    },
+    {
+      "id": "load-skill-contract",
+      "name": "load-skill-contract",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-单契约加载",
+      "scope": "local-pool",
+      "description": "工序动作级技能：按精确技能 id 加载单个 SKILL.md 正文，拒绝通配与目录递归，并返回字节数与 token 估算。",
+      "triggers": [
+        "加载技能",
+        "按需读取",
+        "单契约",
+        "禁止通配"
+      ],
+      "composition": [
+        "lazy-load-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/load-skill-contract"
+    },
+    {
+      "id": "log-query-events",
+      "name": "log-query-events",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-质量信号",
+      "scope": "local-pool",
+      "description": "工序动作级技能：把 query → top-K → 实际选用 追加写入 skill-query-log.jsonl，作为质量信号用于后续触发词修订。",
+      "triggers": [
+        "检索日志",
+        "质量信号",
+        "query日志",
+        "点击反馈"
+      ],
+      "composition": [
+        "rank-skills-bm25"
+      ],
+      "has_scripts": true,
+      "path": "skills/log-query-events"
+    },
+    {
+      "id": "match-intent-keywords",
+      "name": "match-intent-keywords",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-关键词索引",
+      "scope": "local-pool",
+      "description": "工序动作级技能：在全局 Skill Catalog 中执行倒排关键词与触发标签匹配，快速筛选初筛候选技能。",
+      "triggers": [
+        "匹配关键词",
+        "检索技能",
+        "初筛候选",
+        "倒排索引"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/match-intent-keywords"
+    },
+    {
+      "id": "measure-routing-metrics",
+      "name": "measure-routing-metrics",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-路由耗时测算",
+      "scope": "local-pool",
+      "description": "工序动作级技能：物理测算索引匹配与路由检索的命中技能及执行耗时（毫秒级 ms），提供量化优化指标。",
+      "triggers": [
+        "测算耗时",
+        "路由时长",
+        "索引命中测算",
+        "耗时量化"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/measure-routing-metrics"
+    },
+    {
+      "id": "measure-token-budget",
+      "name": "measure-token-budget",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-token度量",
+      "scope": "local-pool",
+      "description": "工序动作级技能：用唯一确定性公式物理测算文本与文件的 token 占用，并按技能契约 / README / Catalog / docs / 其他五个分区汇总，为裁剪与门禁提供可复算基线。",
+      "triggers": [
+        "统计token",
+        "token消耗",
+        "上下文统计",
+        "token估算",
+        "度量预算"
+      ],
+      "composition": [
+        "token-budget-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/measure-token-budget"
+    },
+    {
+      "id": "normalize-skill-contract",
+      "name": "normalize-skill-contract",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-契约归一",
+      "scope": "local-pool",
+      "description": "工序动作级技能：把外部引入技能改造为本池统一契约，在 skills/<name>/ 下幂等生成含 YAML Frontmatter、场景索引、Mermaid SOP 与探针步骤的 SKILL.md 与 README.md。",
+      "triggers": [
+        "契约归一",
+        "补齐Frontmatter",
+        "统一SOP",
+        "幂等生成"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/normalize-skill-contract"
+    },
+    {
+      "id": "parse-query",
+      "name": "parse-query",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-查询解析",
+      "scope": "local-pool",
+      "description": "工序动作级技能：查询解析——归一化、分词、停用词剔除、同义词扩展与 ASCII 拼写纠错，输出可排序的 term 列表。",
+      "triggers": [
+        "查询解析",
+        "分词",
+        "同义词",
+        "拼写纠错"
+      ],
+      "composition": [
+        "build-inverted-index"
+      ],
+      "has_scripts": true,
+      "path": "skills/parse-query"
+    },
+    {
+      "id": "place-skill-into-cluster",
+      "name": "place-skill-into-cluster",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-定级挂载",
+      "scope": "local-pool",
+      "description": "工序动作级技能：依据级别与触发关键词判定引入技能的集群归属与建议父级，校验 composition 依赖边是否都真实存在于 catalog，只输出建议不写任何文件。",
+      "triggers": [
+        "定级挂载",
+        "集群归属",
+        "依赖边校验",
+        "挂载建议"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/place-skill-into-cluster"
+    },
+    {
+      "id": "plan-fission",
+      "name": "plan-fission",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-分裂规划",
+      "scope": "local-pool",
+      "description": "工序动作级技能：读取 SOP 或技能主体，逐步骤判定探针绑定情况，输出结构化分裂清单（待拆步骤、建议级别、建议探针、建议父级）。",
+      "triggers": [
+        "分裂规划",
+        "粒度评估",
+        "分裂清单",
+        "探针绑定检查"
+      ],
+      "composition": [
+        "enforce-atomic-granularity",
+        "detect-vague-modifier"
+      ],
+      "has_scripts": true,
+      "path": "skills/plan-fission"
+    },
+    {
+      "id": "prune-redundant-context",
+      "name": "prune-redundant-context",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-上下文裁剪",
+      "scope": "local-pool",
+      "description": "工序动作级技能：以保守语义无损规则折叠连续重复行、重复段落与连续空行，同时逐字节保护 CATALOG 受管区块与 docs/requirements 编号表格行，输出裁剪前后 token 账。",
+      "triggers": [
+        "裁剪上下文",
+        "去重复",
+        "冗余裁剪",
+        "压缩上下文"
+      ],
+      "composition": [
+        "measure-token-budget"
+      ],
+      "has_scripts": true,
+      "path": "skills/prune-redundant-context"
+    },
+    {
+      "id": "quantify-modifier",
+      "name": "quantify-modifier",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-程度词量化",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：按场景把程度类修饰词替换为可判定的数值区间。命中且有 (term, domain) 映射时产出「保留原词 + → 数值 单位（依据：…）」的建议；无映射或场景未声明时落 unquantifiable 并要求显式声明假设，不以命中决定退出码。",
+      "triggers": [
+        "量化程度词",
+        "把高量化",
+        "给出数值区间",
+        "补数值"
+      ],
+      "composition": [
+        "detect-vague-modifier"
+      ],
+      "has_scripts": true,
+      "path": "skills/quantify-modifier"
+    },
+    {
+      "id": "rank-skills-bm25",
+      "name": "rank-skills-bm25",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-相关度排序",
+      "scope": "local-pool",
+      "description": "工序动作级技能：对技能倒排索引执行 BM25 排序（字段权重 + 文档长度归一），支持 top-K、分页与命中率评测。",
+      "triggers": [
+        "BM25",
+        "相关度排序",
+        "排序",
+        "分页"
+      ],
+      "composition": [
+        "parse-query",
+        "build-inverted-index"
+      ],
+      "has_scripts": true,
+      "path": "skills/rank-skills-bm25"
+    },
+    {
+      "id": "reconcile-knowledge-specs",
+      "name": "reconcile-knowledge-specs",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-规范对照仲裁",
+      "scope": "local-pool",
+      "description": "工序动作级技能：遍历 7 大知识库规范并对拍冲突，强制裁定知识库规范为绝对最高执行基准。",
+      "triggers": [
+        "规范对照",
+        "知识库规范",
+        "规范对拍",
+        "冲突仲裁"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/reconcile-knowledge-specs"
+    },
+    {
+      "id": "record-assumptions",
+      "name": "record-assumptions",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-假设留痕",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：把自行决断的项写成可追溯假设四元组（项/取值/依据/回滚方式），缺依据或回滚方式即阻断。",
+      "triggers": [
+        "假设留痕",
+        "记录假设",
+        "假设清单",
+        "可回滚默认值"
+      ],
+      "composition": [
+        "classify-decision-reversibility"
+      ],
+      "has_scripts": true,
+      "path": "skills/record-assumptions"
+    },
+    {
+      "id": "register-execution-layer",
+      "name": "register-execution-layer",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-执行层登记",
+      "scope": "local-pool",
+      "description": "工序动作级技能：登记与维护非技能执行层条目（cli/agent/api/mcp/plugin），校验层名合法、仓库内路径存在、id 唯一，幂等可重跑。",
+      "triggers": [
+        "登记执行层",
+        "cli登记",
+        "mcp登记",
+        "插件登记"
+      ],
+      "composition": [
+        "tree-update-mandatory"
+      ],
+      "has_scripts": true,
+      "path": "skills/register-execution-layer"
+    },
+    {
+      "id": "rename-execution-layer",
+      "name": "rename-execution-layer",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-命名整改",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：执行层命名整改器。一次改名同步六处（目录名 / catalog id / Frontmatter name / 组装边 / 树与索引五件产物 / docs 与登记表），配套脚本同名改写，改前校验目标名合法性、改后自动重建派生产物，并把旧名写入 retired-names.json 供悬空引用扫描；支持干跑与幂等重跑，返回退出码 0/1/2。",
+      "triggers": [
+        "改名整改",
+        "六处同步",
+        "幂等重跑",
+        "旧名留痕"
+      ],
+      "composition": [
+        "capability-naming-policy",
+        "audit-layer-naming",
+        "build-layer-graph",
+        "build-inverted-index",
+        "classify-instance-safety",
+        "build-execution-tree"
+      ],
+      "has_scripts": true,
+      "path": "skills/rename-execution-layer"
+    },
+    {
+      "id": "render-capability-naming",
+      "name": "render-capability-naming",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-命名文档渲染",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：能力层命名规范文档渲染器。把 docs/operations/capability-naming.json 单向渲染成本仓文档与全局规则知识库文档两份受管区块，规则表全部由真相源生成、禁止人工双写；知识库路径按合并前/合并后两种仓库布局自动探测，支持 --check 漂移检测，返回退出码 0/1/2。",
+      "triggers": [
+        "命名规范文档",
+        "受管区块渲染",
+        "漂移检测",
+        "知识库同步"
+      ],
+      "composition": [
+        "capability-naming-policy",
+        "audit-layer-naming"
+      ],
+      "has_scripts": true,
+      "path": "skills/render-capability-naming"
+    },
+    {
+      "id": "render-catalog-docs",
+      "name": "render-catalog-docs",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-受管区块生成",
+      "scope": "local-pool",
+      "description": "工序动作级技能：读取 skill-catalog.json，把组装关系注入 docs 的受管区块，取消人工手写组装表，支持幂等重跑与 --check 漂移检测。",
+      "triggers": [
+        "生成受管区块",
+        "刷新组装表",
+        "禁止手写",
+        "幂等生成"
+      ],
+      "composition": [
+        "enforce-atomic-granularity"
+      ],
+      "has_scripts": true,
+      "path": "skills/render-catalog-docs"
+    },
+    {
+      "id": "render-governance-mermaid",
+      "name": "render-governance-mermaid",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-图谱编译",
+      "scope": "local-pool",
+      "description": "工序动作级技能：将拓扑数据物理编译为合规的 Mermaid 语法代码，支持调度链路图与全景拓扑图渲染。",
+      "triggers": [
+        "渲染Mermaid",
+        "编译图表",
+        "生成拓扑图",
+        "流程图编译"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/render-governance-mermaid"
+    },
+    {
+      "id": "run-test-cases-gate",
+      "name": "run-test-cases-gate",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-测试用例门禁",
+      "scope": "local-pool",
+      "description": "工序动作级技能：对照需求规格执行自动化测试案例脚本，所有用例全部通过方可放行验收。",
+      "triggers": [
+        "测试用例",
+        "测试门禁",
+        "自动化测试",
+        "用例验证"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/run-test-cases-gate"
+    },
+    {
+      "id": "score-task-lane",
+      "name": "score-task-lane",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-分流判定",
+      "scope": "local-pool",
+      "description": "工序动作级技能：对任务做确定性双流程分流判定，输出 lane、score、matched_redlines 与 reason 四元组。",
+      "triggers": [
+        "分流判定",
+        "快车道",
+        "完整流程",
+        "红线判定"
+      ],
+      "composition": [
+        "fastlane-redline-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/score-task-lane"
+    },
+    {
+      "id": "search-duplicate-rules",
+      "name": "search-duplicate-rules",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-重复比对",
+      "scope": "local-pool",
+      "description": "工序动作级技能：计算两条或多条文本规则之间的词频重叠度，精准定位重复与高冗余规则。",
+      "triggers": [
+        "检测重复",
+        "冗余规则",
+        "相似度比对",
+        "规则重复"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/search-duplicate-rules"
+    },
+    {
+      "id": "search-github-skill",
+      "name": "search-github-skill",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-外部技能检索",
+      "scope": "local-pool",
+      "description": "工序动作级技能：按能力关键词检索 GitHub 外部技能/插件候选，把结果归一为标准结构化候选清单 JSON（名称、URL、星标、许可、是否含脚本、描述）。",
+      "triggers": [
+        "检索技能",
+        "GitHub候选",
+        "候选清单",
+        "外部技能发现"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/search-github-skill"
+    },
+    {
+      "id": "select-skills-for-task",
+      "name": "select-skills-for-task",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-选技清单",
+      "scope": "local-pool",
+      "description": "工序动作级技能：由一个任务描述产出受 top-K 约束的选中技能 id 清单，只读检索结果、绝不读取技能正文。",
+      "triggers": [
+        "选技",
+        "技能清单",
+        "命中技能",
+        "候选技能"
+      ],
+      "composition": [
+        "rank-skills-bm25",
+        "lazy-load-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/select-skills-for-task"
+    },
+    {
+      "id": "strip-non-prose-scope",
+      "name": "strip-non-prose-scope",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-非散文剥离",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：按固定顺序剥离四类非散文成分（围栏代码块、行内代码、URL、文件路径），产出「待检正文」与白名单命中，供中文占比断言使用。",
+      "triggers": [
+        "剥离代码",
+        "剥离路径",
+        "剥离URL",
+        "待检正文"
+      ],
+      "composition": [
+        "chinese-end-to-end"
+      ],
+      "has_scripts": true,
+      "path": "skills/strip-non-prose-scope"
+    },
+    {
+      "id": "sync-requirements-lifecycle",
+      "name": "sync-requirements-lifecycle",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-需求生命周期同步",
+      "scope": "local-pool",
+      "description": "工序动作级技能：物理检查并同步 requirements 需求生命周期版本，确保任务严格从最新图纸出发。",
+      "triggers": [
+        "需求同步",
+        "需求版本",
+        "图纸检查",
+        "需求对齐"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/sync-requirements-lifecycle"
+    },
+    {
+      "id": "track-task-progress",
+      "name": "track-task-progress",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "执行监控-进度追踪",
+      "scope": "system-builtin",
+      "description": "系统能力：执行监控-进度追踪",
+      "triggers": [
+        "进度",
+        "步骤跟踪",
+        "任务看板"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "@system/track-task-progress"
+    },
+    {
+      "id": "validate-header-triggers",
+      "name": "validate-header-triggers",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-头部校验",
+      "scope": "local-pool",
+      "description": "工序动作级技能：静态校验 Skill 的 YAML Frontmatter 元数据与触发关键词覆盖度。",
+      "triggers": [
+        "头部校验",
+        "Frontmatter校验",
+        "元数据检查",
+        "触发词校验"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/validate-header-triggers"
+    },
+    {
+      "id": "validate-icon-syntax",
+      "name": "validate-icon-syntax",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-图标正则校验",
+      "scope": "local-pool",
+      "description": "工序动作级技能：通过正则表达式物理断言输出文案的尾部是否包含合规的特异化图标框架。",
+      "triggers": [
+        "校验图标",
+        "尾部正则",
+        "图标断言",
+        "合规图标"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/validate-icon-syntax"
+    },
+    {
+      "id": "verify-atomic-mutual-exclusion",
+      "name": "verify-atomic-mutual-exclusion",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-互斥压测断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：原子锁互斥性物理压测断言器。真实拉起 N 个独立进程并发抢同一把 mkdir 原子锁，采集临界区进入/退出时间戳做扫描线，断言重叠窗口为 0 且任一瞬间持有者 ≤ 1；同时跑无锁负向对照段证明检测器确实能看见并发（否则持锁段的 0 属假阴性），并伪造死 PID 锁验证陈旧回收；三段证据齐备才 exit 0。",
+      "triggers": [
+        "互斥压测",
+        "临界区重叠",
+        "多进程并发",
+        "无锁对照"
+      ],
+      "composition": [
+        "atomic-lock-policy",
+        "acquire-atomic-lock"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-atomic-mutual-exclusion"
+    },
+    {
+      "id": "verify-catalog-consistency",
+      "name": "verify-catalog-consistency",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-口径对拍",
+      "scope": "local-pool",
+      "description": "工序动作级技能：三方对拍 SKILL.md Frontmatter、skill-catalog.json 与 docs 受管区块，并扫描正文手写组装关系造成的口径漂移，返回退出码 0/1。",
+      "triggers": [
+        "口径对拍",
+        "三方一致",
+        "漂移检测",
+        "文档与技能不一致"
+      ],
+      "composition": [
+        "render-catalog-docs"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-catalog-consistency"
+    },
+    {
+      "id": "verify-chinese-output",
+      "name": "verify-chinese-output",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-中文断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：中文输出三项硬断言（待检正文 CJK 占比 ≥ 0.85、非白名单拉丁词 = 0、独立大写缩写后必须有中文释义），全部通过才 Exit 0。",
+      "triggers": [
+        "中文占比",
+        "拉丁词零容忍",
+        "缩写释义",
+        "中文探针"
+      ],
+      "composition": [
+        "strip-non-prose-scope"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-chinese-output"
+    },
+    {
+      "id": "verify-concretized-output",
+      "name": "verify-concretized-output",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-具像化断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：含糊词具像化断言器。对「已具像化」的正文做三项硬断言——不含未具像化含糊词（AMBIGUITY_WORDS 命中数为 0）、--strict 下任何数量表述必须带依据（如 12 个（依据：…））、命中词右侧 6 字内不得出现替换词（同类别含糊词或等长同位仅差一字的换字变体，如「尽快……尽早」）；全过才 exit 0，有违规 exit 1，依赖未就绪或输入缺失 exit 2。",
+      "triggers": [
+        "具像化断言",
+        "含糊词校验",
+        "同义替换检测",
+        "未具像化拦截"
+      ],
+      "composition": [
+        "concretize-term"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-concretized-output"
+    },
+    {
+      "id": "verify-context-payload",
+      "name": "verify-context-payload",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-上下文预算断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能：断言一次任务加载的技能正文数不超过 top-K、字节数不超预算，且未出现选中清单之外的技能。",
+      "triggers": [
+        "上下文预算",
+        "加载量断言",
+        "越权加载",
+        "字节预算"
+      ],
+      "composition": [
+        "select-skills-for-task",
+        "load-skill-contract"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-context-payload"
+    },
+    {
+      "id": "verify-decoupling",
+      "name": "verify-decoupling",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-解耦断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能：断言五类耦合违规为零；豁免必须经 --allow 显式声明并在输出中标注 waived，杜绝静默放过。",
+      "triggers": [
+        "解耦断言",
+        "零违规",
+        "显式豁免",
+        "解耦门禁"
+      ],
+      "composition": [
+        "detect-layer-coupling"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-decoupling"
+    },
+    {
+      "id": "verify-deliverable-paths",
+      "name": "verify-deliverable-paths",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-地址探针",
+      "scope": "local-pool",
+      "description": "工序动作级技能：物理验证交付物地址的有效性，严禁输出不存在或空路径。",
+      "triggers": [
+        "校验路径",
+        "输出地址",
+        "地址物理检测",
+        "文件存在"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/verify-deliverable-paths"
+    },
+    {
+      "id": "verify-execution-contract",
+      "name": "verify-execution-contract",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-契约脚本验证",
+      "scope": "local-pool",
+      "description": "工序动作级技能：校验 Skill 的输入/输出契约完整性及本地挂载脚本的可执行性。",
+      "triggers": [
+        "执行契约",
+        "验证脚本",
+        "白盒运作",
+        "脚本存在"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/verify-execution-contract"
+    },
+    {
+      "id": "verify-execution-tree",
+      "name": "verify-execution-tree",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-树一致性断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能：断言执行层树与 catalog、登记表、受管区块四方一致，扫描文档中手写集群枚举造成的结构漂移并给出文件与行号。",
+      "triggers": [
+        "树一致性",
+        "结构漂移",
+        "孤儿原子",
+        "手写集群表"
+      ],
+      "composition": [
+        "build-execution-tree"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-execution-tree"
+    },
+    {
+      "id": "verify-file-exists",
+      "name": "verify-file-exists",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-文件探针",
+      "scope": "local-pool",
+      "description": "工序动作级技能：物理验证指定文件路径是否真实存在于磁盘上，且文件大小大于 0 字节。",
+      "triggers": [
+        "文件检测",
+        "落地验证",
+        "文件存在"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/verify-file-exists"
+    },
+    {
+      "id": "verify-instance-safety",
+      "name": "verify-instance-safety",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-实例声明断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能：断言每个本地执行层都有实例安全声明、声明与实际扫描一致、safe_multi 无写盘证据、受限档位带资源键。",
+      "triggers": [
+        "声明一致性",
+        "实例安全断言",
+        "声明陈旧检测"
+      ],
+      "composition": [
+        "classify-instance-safety"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-instance-safety"
+    },
+    {
+      "id": "verify-interactive-html",
+      "name": "verify-interactive-html",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-交互HTML探针",
+      "scope": "local-pool",
+      "description": "工序动作级技能：对交互查看器 HTML 做静态断言，校验缩放控制标识齐备、结构标签闭合且零外部资源引用，返回退出码 0/1。",
+      "triggers": [
+        "交互探针",
+        "缩放控件断言",
+        "零外链校验",
+        "HTML结构校验"
+      ],
+      "composition": [
+        "format-zoomable-visual"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-interactive-html"
+    },
+    {
+      "id": "verify-lane-decision",
+      "name": "verify-lane-decision",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-判定复算",
+      "scope": "local-pool",
+      "description": "工序动作级技能：对同一任务重复执行分流判定，断言结果 100% 一致，杜绝分流被随机性污染。",
+      "triggers": [
+        "判定复算",
+        "分流确定性",
+        "lane抖动",
+        "结果可复现"
+      ],
+      "composition": [
+        "score-task-lane"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-lane-decision"
+    },
+    {
+      "id": "verify-layer-naming",
+      "name": "verify-layer-naming",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-命名断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：执行层命名整改后的三项硬断言器——合规率必须为 1.0000、旧名残留引用必须为 0（按词边界扫描，避免把新名误判为旧名残留）、执行层登记表零违规；判据复用 audit-layer-naming 的 naming_rules.py，返回退出码 0/1/2。",
+      "triggers": [
+        "合规率断言",
+        "悬空引用",
+        "词边界扫描",
+        "登记表零违规"
+      ],
+      "composition": [
+        "capability-naming-policy",
+        "audit-layer-naming"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-layer-naming"
+    },
+    {
+      "id": "verify-mermaid-syntax",
+      "name": "verify-mermaid-syntax",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-流程图语法校验",
+      "scope": "local-pool",
+      "description": "工序动作级技能：物理提取文本中的 Mermaid 流程图并执行语法校验，确保流程图无语法破坏。",
+      "triggers": [
+        "Mermaid校验",
+        "流程图语法",
+        "图表合法性",
+        "语法探针"
+      ],
+      "composition": [],
+      "has_scripts": true,
+      "path": "skills/verify-mermaid-syntax"
+    },
+    {
+      "id": "verify-no-forbidden-event",
+      "name": "verify-no-forbidden-event",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-反例零命中断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能：反例零命中断言。进程内 importlib 加载 detect-forbidden-state 的检测器，要求 hits == 0；--strict 时额外要求 checked_events > 0，杜绝空事件流「空过」放行。",
+      "triggers": [
+        "零命中",
+        "反例断言",
+        "事件流合规",
+        "阻断禁用"
+      ],
+      "composition": [
+        "detect-forbidden-state"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-no-forbidden-event"
+    },
+    {
+      "id": "verify-no-lock-violation",
+      "name": "verify-no-lock-violation",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-锁违规断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：并行派单前的五项硬断言——无锁冲突、无死锁环、无超时未释放、每个任务都已声明锁、死循环体检复用 anti-pattern-policy 的 AP-01；全过才退 0，任一违规即阻断。",
+      "triggers": [
+        "锁违规断言",
+        "并行派单门禁",
+        "死循环体检"
+      ],
+      "composition": [
+        "detect-lock-conflict",
+        "detect-forbidden-state"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-no-lock-violation"
+    },
+    {
+      "id": "verify-no-unnecessary-question",
+      "name": "verify-no-unnecessary-question",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-反问检测断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：对本次任务的提问记录做四项硬断言（次数≤1、必须红线、必须不可逆、必须批量合并），默认零提问。",
+      "triggers": [
+        "反问检测",
+        "提问次数断言",
+        "挤牙膏追问",
+        "零提问"
+      ],
+      "composition": [
+        "record-assumptions"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-no-unnecessary-question"
+    },
+    {
+      "id": "verify-no-unnecessary-restart",
+      "name": "verify-no-unnecessary-restart",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-重启必要性断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：对实际发生的重启事件做三项硬断言——路径在变更集合内、判定确实需要重启、带非空重建命令；任一不成立即记为不必要重启或无证据重启并退 1。",
+      "triggers": [
+        "不必要重启",
+        "重启证据",
+        "重建命令",
+        "零重启"
+      ],
+      "composition": [
+        "classify-change-scope"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-no-unnecessary-restart"
+    },
+    {
+      "id": "verify-progress-budget",
+      "name": "verify-progress-budget",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-进度预算断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：对折叠后的过程输出做四项硬断言（零微操作泄漏、里程碑预算、里程碑 100% 覆盖、事件数不增加），全部通过才放行交付。",
+      "triggers": [
+        "进度预算",
+        "里程碑覆盖",
+        "micro泄漏",
+        "事件数断言"
+      ],
+      "composition": [
+        "fold-repeated-events",
+        "classify-step-tier"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-progress-budget"
+    },
+    {
+      "id": "verify-quantified-output",
+      "name": "verify-quantified-output",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-量化断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：量化输出三项硬断言——文本中不存在未量化的程度词、不存在程度词被另一个程度词替换、--require-mapping 下每个命中词都能找到 domain 条目；全部通过才 exit 0，否则 exit 1 并列出词与行号。",
+      "triggers": [
+        "未量化断言",
+        "量化门禁",
+        "同义替换拦截",
+        "量化校验"
+      ],
+      "composition": [
+        "quantify-modifier",
+        "detect-vague-modifier"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-quantified-output"
+    },
+    {
+      "id": "verify-token-reduction",
+      "name": "verify-token-reduction",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-降幅断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能：对裁剪前后文本同时断言 token 降幅达标与等价能力存活（cases.json 的 requires 证据串全部命中），任一条不成立即退 1 阻断放行。",
+      "triggers": [
+        "降幅断言",
+        "token下降",
+        "能力不变",
+        "等价断言"
+      ],
+      "composition": [
+        "measure-token-budget",
+        "prune-redundant-context"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-token-reduction"
+    },
+    {
+      "id": "anti-pattern-guard",
+      "name": "anti-pattern-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-反例门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：反例门禁。把「清单 → 检测 → 断言」串成一道\"绝不允许发生\"的放行门禁，挂载于管家「③ 冲突·冗余·质量」集群，命中反例一律阻断，禁止记录后继续。",
+      "triggers": [
+        "反例门禁",
+        "禁止事件门禁",
+        "死循环阻断"
+      ],
+      "composition": [
+        "anti-pattern-policy",
+        "detect-forbidden-state",
+        "verify-no-forbidden-event"
+      ],
+      "has_scripts": false,
+      "path": "skills/anti-pattern-guard"
+    },
+    {
+      "id": "atomic-fastpath-router",
+      "name": "atomic-fastpath-router",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-快捷路由总控",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：原子级快捷路由总控。当索引命中目标技能后，提供直达原子动作的Shell执行命令与依赖指引，实现毫秒级触达。",
+      "triggers": [
+        "快捷路由总控",
+        "原子直达",
+        "路由引擎"
+      ],
+      "composition": [
+        "fastpath-dispatch-guide",
+        "generate-fastpath-route"
+      ],
+      "has_scripts": false,
+      "path": "skills/atomic-fastpath-router"
+    },
+    {
+      "id": "atomic-fission-guard",
+      "name": "atomic-fission-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-粒度分裂门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：粒度递归分裂门禁。任何管控步骤若不能绑定四类物理探针之一，一律阻断实施并强制向下分裂。",
+      "triggers": [
+        "粒度门禁",
+        "不可断言阻断",
+        "递归分裂门禁",
+        "物理原子性"
+      ],
+      "composition": [
+        "enforce-atomic-granularity",
+        "plan-fission"
+      ],
+      "has_scripts": true,
+      "path": "skills/atomic-fission-guard"
+    },
+    {
+      "id": "atomic-lock-guard",
+      "name": "atomic-lock-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-物理原子锁门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：并发处理原子锁放行门禁。把「口径 → 真获取 → 真并发压测 → 断言」串成一道不可跳步的互斥门禁，挂载于管家「③ 冲突·冗余·质量」集群；放行的唯一合法证据是「持锁段重叠窗口 0 + 无锁对照段看得见并发 + 陈旧锁可回收」三段齐备，任一缺失一律阻断。",
+      "triggers": [
+        "原子锁门禁",
+        "物理互斥证明",
+        "同时处理放行"
+      ],
+      "composition": [
+        "atomic-lock-policy",
+        "acquire-atomic-lock",
+        "verify-atomic-mutual-exclusion"
+      ],
+      "has_scripts": false,
+      "path": "skills/atomic-lock-guard"
+    },
+    {
+      "id": "catalog-consistency-guard",
+      "name": "catalog-consistency-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-口径一致性门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：口径一致性门禁。串联受管区块生成与三方对拍，是技能池任何写入动作的前置门禁。",
+      "triggers": [
+        "口径门禁",
+        "一致性门禁",
+        "消除漂移",
+        "文档对齐"
+      ],
+      "composition": [
+        "render-catalog-docs",
+        "verify-catalog-consistency"
+      ],
+      "has_scripts": false,
+      "path": "skills/catalog-consistency-guard"
+    },
+    {
+      "id": "chinese-output-guard",
+      "name": "chinese-output-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-中文输出门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：全流程中文输出交付前门禁。把「规约 → 剥离 → 断言」串成一道门禁，挂载于管家「④ 输出规约」，代码块与命令原文豁免，白名单外拉丁词零容忍。",
+      "triggers": [
+        "中文门禁",
+        "全中文交付",
+        "中文校验门禁"
+      ],
+      "composition": [
+        "chinese-end-to-end",
+        "strip-non-prose-scope",
+        "verify-chinese-output"
+      ],
+      "has_scripts": false,
+      "path": "skills/chinese-output-guard"
+    },
+    {
+      "id": "concise-chinese-bold-guard",
+      "name": "concise-chinese-bold-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-极简加粗",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：基于 4 个微观 L1 原子规约叠加而成。强制要求输出文本不超过 10 个字、纯中文、全黑体、零闲聊。",
+      "triggers": [
+        "极简中文加粗",
+        "10个字以内全加粗中文"
+      ],
+      "composition": [
+        "output-chinese-only",
+        "limit-words-under-10",
+        "markdown-bold-only",
+        "no-conversational-filler"
+      ],
+      "has_scripts": false,
+      "path": "skills/concise-chinese-bold-guard"
+    },
+    {
+      "id": "concretization-guard",
+      "name": "concretization-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-具像化门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：含糊词具像化交付门禁。把「规约 → 具像化建议 → 断言」串成一道不可跳步的放行门禁，挂载于管家「④ 输出规约」集群；与 quantification-guard 分工为「程度词补数值 / 含糊词补实体与判据」；weak:true 的建议与同义替换一律不合格。",
+      "triggers": [
+        "具像化门禁",
+        "含糊词门禁",
+        "实体化交付"
+      ],
+      "composition": [
+        "concretize-ambiguity-policy",
+        "concretize-term",
+        "verify-concretized-output"
+      ],
+      "has_scripts": false,
+      "path": "skills/concretization-guard"
+    },
+    {
+      "id": "conflict-detector",
+      "name": "conflict-detector",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-冲突检测",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：规则冲突检测与仲裁自愈。检测多技能或多指令间的排他矛盾，给出确定性裁决方案，保障管控稳固有效。",
+      "triggers": [
+        "冲突检测",
+        "冲突仲裁",
+        "解决冲突",
+        "互斥自愈"
+      ],
+      "composition": [
+        "arbitrate-priority-resolver",
+        "detect-rule-conflicts"
+      ],
+      "has_scripts": false,
+      "path": "skills/conflict-detector"
+    },
+    {
+      "id": "decoupling-guard",
+      "name": "decoupling-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-解耦门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：执行层解耦门禁。任何执行层变更后强制建图、检测并断言五类违规为零，契约外耦合一律阻断。",
+      "triggers": [
+        "解耦门禁",
+        "依赖合法性门禁",
+        "契约通信门禁"
+      ],
+      "composition": [
+        "layer-decoupling-policy",
+        "build-layer-graph",
+        "detect-layer-coupling",
+        "verify-decoupling"
+      ],
+      "has_scripts": false,
+      "path": "skills/decoupling-guard"
+    },
+    {
+      "id": "dual-lane-router",
+      "name": "dual-lane-router",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-双流程分流总控",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：完整流程与快速流程双轨总控。先判红线，再算加权分，判定可复算后方可进入执行。",
+      "triggers": [
+        "双流程",
+        "快慢分流",
+        "流程选择",
+        "任务分流"
+      ],
+      "composition": [
+        "fastlane-redline-policy",
+        "score-task-lane",
+        "verify-lane-decision"
+      ],
+      "has_scripts": false,
+      "path": "skills/dual-lane-router"
+    },
+    {
+      "id": "execution-tree-guard",
+      "name": "execution-tree-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-执行层树门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：执行层树门禁。任何执行层变更后强制重建并断言树与索引一致，手写集群表一律阻断。",
+      "triggers": [
+        "树门禁",
+        "结构一致性门禁",
+        "执行层树维护"
+      ],
+      "composition": [
+        "tree-update-mandatory",
+        "register-execution-layer",
+        "build-execution-tree",
+        "verify-execution-tree"
+      ],
+      "has_scripts": false,
+      "path": "skills/execution-tree-guard"
+    },
+    {
+      "id": "full-spectrum-skill-auditor",
+      "name": "full-spectrum-skill-auditor",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-全量审计门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：全量技能合规自检门禁。在每次更新时穿透审计全量存量与增量技能的Frontmatter元数据、头部场景索引与主体SOP，确保零契约缺失。",
+      "triggers": [
+        "全量体检",
+        "合规门禁",
+        "全盘审计"
+      ],
+      "composition": [
+        "enforce-contract-completeness",
+        "audit-all-skills-compliance"
+      ],
+      "has_scripts": false,
+      "path": "skills/full-spectrum-skill-auditor"
+    },
+    {
+      "id": "github",
+      "name": "github",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "代码协同-Git/PR",
+      "scope": "system-builtin",
+      "description": "系统能力：代码协同-Git/PR",
+      "triggers": [
+        "git commit",
+        "push",
+        "pr",
+        "github"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "@system/github"
+    },
+    {
+      "id": "google-style-skill-search-router",
+      "name": "google-style-skill-search-router",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-技能检索总控",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：Google 式技能检索总控。进程内组装查询解析、BM25 排序、片段生成与质量日志，只回灌片段不回灌全文。",
+      "triggers": [
+        "技能检索",
+        "搜索技能",
+        "找技能",
+        "检索总控"
+      ],
+      "composition": [
+        "snippet-only-recall",
+        "build-inverted-index",
+        "parse-query",
+        "rank-skills-bm25",
+        "emit-search-snippet",
+        "log-query-events"
+      ],
+      "has_scripts": true,
+      "path": "skills/google-style-skill-search-router"
+    },
+    {
+      "id": "iconized-output-showcase",
+      "name": "iconized-output-showcase",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-图标展示总控",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：尾部集中特异化图标展示总控。将交付输出全部收敛至最终末尾，通过特异化Emoji形成结构化视觉锚点，并通过正则断言保障物理合规。",
+      "triggers": [
+        "图标展示",
+        "尾部图标总控",
+        "图标输出"
+      ],
+      "composition": [
+        "format-iconized-tail",
+        "validate-icon-syntax"
+      ],
+      "has_scripts": false,
+      "path": "skills/iconized-output-showcase"
+    },
+    {
+      "id": "index-body-contract",
+      "name": "index-body-contract",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-主体契约",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：索引主体运作契约。细化解耦为SOP流程规范、Mermaid流程图语法物理校验、底层脚本可执行权限物理检测与执行契约完整性验证。",
+      "triggers": [
+        "索引主体",
+        "主体契约",
+        "运作机制",
+        "具体运作"
+      ],
+      "composition": [
+        "standardize-workflow-sop",
+        "verify-mermaid-syntax",
+        "check-script-executable",
+        "verify-execution-contract"
+      ],
+      "has_scripts": false,
+      "path": "skills/index-body-contract"
+    },
+    {
+      "id": "index-header-contract",
+      "name": "index-header-contract",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-头部契约",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：索引头部契约规约。规范 Skill 的元数据与触发场景，使索引系统能够快速、精准识别适用时机。",
+      "triggers": [
+        "索引头部",
+        "头部契约",
+        "场景契约",
+        "使用场景"
+      ],
+      "composition": [
+        "standardize-when-to-use",
+        "validate-header-triggers"
+      ],
+      "has_scripts": false,
+      "path": "skills/index-header-contract"
+    },
+    {
+      "id": "instance-pool-guard",
+      "name": "instance-pool-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-实例准入门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：实例准入门禁。多实例不是默认允许，必须先分档、再断言，只有 safe_multi 可无锁并发。",
+      "triggers": [
+        "实例准入门禁",
+        "多开许可",
+        "并发准入"
+      ],
+      "composition": [
+        "instance-pool-policy",
+        "classify-instance-safety",
+        "verify-instance-safety"
+      ],
+      "has_scripts": false,
+      "path": "skills/instance-pool-guard"
+    },
+    {
+      "id": "intent-detector",
+      "name": "intent-detector",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-意图检测",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：意图识别与噪声过滤。解耦组装了噪音剥离、空白规约、动词判定、实体提取与核心目标提取五项原子能力。",
+      "triggers": [
+        "意图识别",
+        "意图检测",
+        "检测目的",
+        "过滤无用表达"
+      ],
+      "composition": [
+        "filter-conversational-noise",
+        "strip-whitespace-newlines",
+        "detect-action-verb",
+        "detect-target-entity",
+        "extract-core-objective"
+      ],
+      "has_scripts": false,
+      "path": "skills/intent-detector"
+    },
+    {
+      "id": "interactive-image-viewer",
+      "name": "interactive-image-viewer",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-可缩放查看器总控",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：可缩放可视化总控。把规约、单文件生成器与静态验证探针串成「生成 → 自检 → 交付」端到端流程，确保交付的每一张图片或图谱都真正可点击放大、可缩放复位。",
+      "triggers": [
+        "查看器总控",
+        "图片放大",
+        "缩放交付",
+        "可视化交互"
+      ],
+      "composition": [
+        "format-zoomable-visual",
+        "build-image-viewer",
+        "verify-interactive-html"
+      ],
+      "has_scripts": false,
+      "path": "skills/interactive-image-viewer"
+    },
+    {
+      "id": "layer-naming-guard",
+      "name": "layer-naming-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-命名规范门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：执行层命名规范门禁。把「体检 → 整改 → 断言 → 渲染」串成一道不可跳步的放行门禁，挂载于管家「② 契约与合规」集群；放行的唯一合法证据是「合规率 1.0000 + 旧名悬空引用 0 + 文档与真相源零漂移」三项实数齐备，任一缺失一律阻断。",
+      "triggers": [
+        "命名规范门禁",
+        "命名放行",
+        "三项实数"
+      ],
+      "composition": [
+        "capability-naming-policy",
+        "audit-layer-naming",
+        "rename-execution-layer",
+        "verify-layer-naming",
+        "render-capability-naming"
+      ],
+      "has_scripts": false,
+      "path": "skills/layer-naming-guard"
+    },
+    {
+      "id": "manage-problem-log",
+      "name": "manage-problem-log",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "质量运维-问题归档",
+      "scope": "system-builtin",
+      "description": "系统能力：质量运维-问题归档",
+      "triggers": [
+        "bug",
+        "问题",
+        "报错",
+        "复盘"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "@system/manage-problem-log"
+    },
+    {
+      "id": "manage-requirements",
+      "name": "manage-requirements",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "系统协同-需求管理",
+      "scope": "system-builtin",
+      "description": "系统能力：系统协同-需求管理",
+      "triggers": [
+        "需求",
+        "REQ-",
+        "需求变更",
+        "基线"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "@system/manage-requirements"
+    },
+    {
+      "id": "milestone-progress-reporter",
+      "name": "milestone-progress-reporter",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-里程碑输出总控",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：过程输出里程碑化总控。把「分档 → 折叠 → 预算断言」串成一条流水线，挂载于管家「④ 输出规约」集群，保证里程碑只增不删、微操作只折叠不静默丢弃。",
+      "triggers": [
+        "里程碑输出",
+        "进度播报",
+        "阶段汇报",
+        "过程输出"
+      ],
+      "composition": [
+        "milestone-only-progress",
+        "classify-step-tier",
+        "fold-repeated-events",
+        "verify-progress-budget"
+      ],
+      "has_scripts": false,
+      "path": "skills/milestone-progress-reporter"
+    },
+    {
+      "id": "on-demand-dispatcher",
+      "name": "on-demand-dispatcher",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-按需调用总控",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：按需调用总控。先选技、再逐个加载、最后做预算断言，清单之外的技能一个都不读。",
+      "triggers": [
+        "按需调用",
+        "派发下属",
+        "上下文成本",
+        "只读命中"
+      ],
+      "composition": [
+        "lazy-load-policy",
+        "select-skills-for-task",
+        "load-skill-contract",
+        "verify-context-payload"
+      ],
+      "has_scripts": true,
+      "path": "skills/on-demand-dispatcher"
+    },
+    {
+      "id": "one-shot-guard",
+      "name": "one-shot-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-一次性解决门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：一次性解决门禁。把「判定 → 决断 → 留痕 → 反问检测」串成一道派单前/交付前门禁，挂载于管家「③ 冲突·冗余·质量」集群。",
+      "triggers": [
+        "一次性门禁",
+        "不反复提问门禁",
+        "假设门禁"
+      ],
+      "composition": [
+        "one-shot-resolution-policy",
+        "classify-decision-reversibility",
+        "record-assumptions",
+        "verify-no-unnecessary-question"
+      ],
+      "has_scripts": false,
+      "path": "skills/one-shot-guard"
+    },
+    {
+      "id": "parallel-lock-guard",
+      "name": "parallel-lock-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-并行锁门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：并行任务调控锁派单前门禁。把「声明 → 冲突/死锁检测 → 断言」串成一道不可跳步的放行门禁，挂载于管家「③ 冲突·冗余·质量」集群；并行的前置条件是先证明可并行（parallel_groups 非空且冲突为零），死循环判定复用 anti-pattern-policy 的 AP-01。",
+      "triggers": [
+        "并行锁门禁",
+        "派单前门禁",
+        "并行安全性"
+      ],
+      "composition": [
+        "parallel-lock-policy",
+        "declare-lock-set",
+        "detect-lock-conflict",
+        "verify-no-lock-violation"
+      ],
+      "has_scripts": false,
+      "path": "skills/parallel-lock-guard"
+    },
+    {
+      "id": "qa-gatekeeper",
+      "name": "qa-gatekeeper",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-质量门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：交付门禁与质量守卫。解耦组装了物理落地检测、Python编译验证、UTF-8编码断言与退出码硬断言。",
+      "triggers": [
+        "交付",
+        "终审",
+        "质量门禁",
+        "自检"
+      ],
+      "composition": [
+        "verify-file-exists",
+        "check-python-syntax",
+        "ensure-utf8-encoding",
+        "assert-zero-exitcode"
+      ],
+      "has_scripts": true,
+      "path": "skills/qa-gatekeeper"
+    },
+    {
+      "id": "quantification-guard",
+      "name": "quantification-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-量化门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：量化交付门禁。把「规约 → 建表 → 检测 → 量化 → 断言」串成一道出口门禁，挂载于管家「④ 输出规约」集群；缺失映射不阻断但必须声明假设，禁止用另一个程度词替换程度词糊过去。",
+      "triggers": [
+        "量化门禁",
+        "程度词门禁",
+        "交付前量化"
+      ],
+      "composition": [
+        "quantify-modifier-policy",
+        "build-quantifier-table",
+        "detect-vague-modifier",
+        "quantify-modifier",
+        "verify-quantified-output"
+      ],
+      "has_scripts": false,
+      "path": "skills/quantification-guard"
+    },
+    {
+      "id": "redundancy-detector",
+      "name": "redundancy-detector",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-冗余检测",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：冗余检测与防机制膨胀。检测管控规则中的重复与重叠，输出去重与裁剪方案，确保机制简洁高效。",
+      "triggers": [
+        "冗余检测",
+        "去冗余",
+        "保持简洁",
+        "防膨胀"
+      ],
+      "composition": [
+        "prune-bloated-prompts",
+        "search-duplicate-rules"
+      ],
+      "has_scripts": false,
+      "path": "skills/redundancy-detector"
+    },
+    {
+      "id": "schema-guard",
+      "name": "schema-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-格式守卫",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：基于 L1 零闲聊、L1 去围栏与 L2 JSON提取叠加组装而成。保证严格结构化纯净输出。",
+      "triggers": [
+        "纯JSON",
+        "严格YAML",
+        "Schema契约",
+        "无噪音数据"
+      ],
+      "composition": [
+        "no-conversational-filler",
+        "strip-markdown-fence",
+        "extract-json-payload"
+      ],
+      "has_scripts": true,
+      "path": "skills/schema-guard"
+    },
+    {
+      "id": "skill-import-pipeline",
+      "name": "skill-import-pipeline",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-技能引入管线",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：GitHub 外部技能引入管线总控。五步串联检索→审计→归一→定级挂载→门禁验证，落点新集群「⑦ 技能引入与演进」，坚持引入即纳管、拒绝必留痕。",
+      "triggers": [
+        "技能引入",
+        "外部技能纳管",
+        "引入即纳管",
+        "外部资产接入"
+      ],
+      "composition": [
+        "search-github-skill",
+        "audit-imported-skill",
+        "normalize-skill-contract",
+        "place-skill-into-cluster"
+      ],
+      "has_scripts": false,
+      "path": "skills/skill-import-pipeline"
+    },
+    {
+      "id": "skill-index-router",
+      "name": "skill-index-router",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-索引控制",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：索引控制与消歧路由。控制全局 Catalog 索引寻址，消灭调用歧义，确保极速精准命中。",
+      "triggers": [
+        "控制索引",
+        "快速索引",
+        "技能路由",
+        "消歧命中"
+      ],
+      "composition": [
+        "match-intent-keywords",
+        "disambiguate-candidates"
+      ],
+      "has_scripts": false,
+      "path": "skills/skill-index-router"
+    },
+    {
+      "id": "spec-driven-governance",
+      "name": "spec-driven-governance",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-规范驱动总控",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：需求驱动执行与规范仲裁总控。强制任务严格从需求图纸出发，全程对照知识库7大规范（冲突以规范为准），并通过自动化测试用例方可验收交付。",
+      "triggers": [
+        "规范驱动",
+        "需求驱动",
+        "测试闭环",
+        "知识库优先"
+      ],
+      "composition": [
+        "sync-requirements-lifecycle",
+        "reconcile-knowledge-specs",
+        "run-test-cases-gate"
+      ],
+      "has_scripts": false,
+      "path": "skills/spec-driven-governance"
+    },
+    {
+      "id": "standard-output-framework",
+      "name": "standard-output-framework",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-输出总控",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：交付输出框架标准化总控。强制最终答复统一遵循“当前状态、输出物、输出地址、重要说明”，无产物时自动剔除输出地址转为核心结论。",
+      "triggers": [
+        "输出框架",
+        "交付规范",
+        "标准输出",
+        "收尾模版"
+      ],
+      "composition": [
+        "format-status-block",
+        "conditional-deliverable-router",
+        "verify-deliverable-paths",
+        "high-relevance-notes-only"
+      ],
+      "has_scripts": false,
+      "path": "skills/standard-output-framework"
+    },
+    {
+      "id": "tail-metrics-showcase",
+      "name": "tail-metrics-showcase",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-量化指标总控",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：尾部量化指标与通俗表达总控。实现输出纯中文、默认极简聚焦、通俗生活常识比喻，并在尾部展示索引命中与路由时长量化指标。",
+      "triggers": [
+        "量化指标",
+        "通俗交付",
+        "指标总控",
+        "聚焦输出"
+      ],
+      "composition": [
+        "output-chinese-only",
+        "concise-focused-output",
+        "plain-analogy-explanation",
+        "measure-routing-metrics",
+        "format-iconized-tail",
+        "validate-icon-syntax"
+      ],
+      "has_scripts": false,
+      "path": "skills/tail-metrics-showcase"
+    },
+    {
+      "id": "token-economy-guard",
+      "name": "token-economy-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-token门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：token 经济门禁。把「先测 → 裁剪 → 等价能力断言」串成一道写入前置门禁，挂载于管家「② 契约与合规」集群，证据串不存活即阻断。",
+      "triggers": [
+        "token门禁",
+        "省token",
+        "token优化",
+        "结构降本"
+      ],
+      "composition": [
+        "token-budget-policy",
+        "measure-token-budget",
+        "prune-redundant-context",
+        "verify-token-reduction"
+      ],
+      "has_scripts": false,
+      "path": "skills/token-economy-guard"
+    },
+    {
+      "id": "visualize-governance-topology",
+      "name": "visualize-governance-topology",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-可视化透视",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：全景索引与管家调度链路可视化透视。基于物理数据源提取与图表编译，向用户直观呈现静态资产金字塔与动态管控调用轨迹。",
+      "triggers": [
+        "可视化",
+        "查看索引",
+        "调用链路",
+        "透视管家",
+        "看索引"
+      ],
+      "composition": [
+        "format-visual-inspection",
+        "extract-catalog-topology",
+        "render-governance-mermaid"
+      ],
+      "has_scripts": false,
+      "path": "skills/visualize-governance-topology"
+    },
+    {
+      "id": "zero-restart-guard",
+      "name": "zero-restart-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-零重启门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：零重启写入门禁。把「路径 → 处置判定 → 重启证据断言」串成一道写入门禁，挂载于管家「② 契约与合规」集群，默认目标是零重启，重启必须由不可热更边界加重建命令双向举证。",
+      "triggers": [
+        "零重启门禁",
+        "重启审批",
+        "热更门禁"
+      ],
+      "composition": [
+        "prefer-hot-reload-policy",
+        "classify-change-scope",
+        "verify-no-unnecessary-restart"
+      ],
+      "has_scripts": false,
+      "path": "skills/zero-restart-guard"
+    },
+    {
+      "id": "dsh-butler",
+      "name": "dsh-butler",
+      "layer": "skill",
+      "level": "L4",
+      "category_title": "中枢编排-全局管家",
+      "scope": "local-pool",
+      "description": "DSH 全局主控管家(L4 中枢编排级)，统筹调度 L1~L3 全量执行层，支持自底向上按需拼装能力积木与动态造物。",
+      "triggers": [
+        "管家",
+        "统筹",
+        "调度",
+        "动态造物",
+        "规划",
+        "治理"
+      ],
+      "composition": [
+        "detect-vague-modifier"
+      ],
+      "has_scripts": true,
+      "path": "skills/dsh-butler"
+    }
+  ]
+}

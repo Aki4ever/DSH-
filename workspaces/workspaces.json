@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "migrated_at": "2026-09-28T07:50:11+0800",
+  "requirement": "REQ-REPO-MERGE-033",
+  "registry_of_record": "/Users/linqiyu/Library/Application Support/dsh-desktop/harness/storages/workspace.json",
+  "backup": "/Users/linqiyu/Library/Application Support/dsh-desktop/harness/storages/workspace.json.bak-20260928-075011",
+  "operation": "把 Skill池 工作区的会话归属并入 全局规则 工作区；原条目保留并标注 mergedInto，避免运行中的会话失去归属",
+  "workspaces": [
+    {
+      "role": "source",
+      "workspace_id": "03abb964-caba-476a-a542-57008c31f97b",
+      "title_before": "Skill池",
+      "title_after": "Skill池（已并入全局规则）",
+      "path": "/Users/linqiyu/Documents/DSH/Skill池",
+      "session_count": 11,
+      "session_ids": [
+        "session-c35e900a-4cfc-4ef6-b00a-d1d5181981cd",
+        "session-1d3d5f06-cfc8-4660-83b9-83a0edfb9f6c",
+        "session-7b4fde37-f93a-4468-b762-1e8f8fd64998",
+        "session-abbd9da5-945a-44a5-9775-881994e1c0c3",
+        "session-3c09e8ff-900b-4173-8c5b-1dd50aeb4dc1",
+        "session-3e9a9435-e8c0-406a-b4f9-30f1c33d064c",
+        "session-62d938aa-efff-4c56-83c7-c0ae65975388",
+        "session-182640e9-15be-48b6-b054-25c6d984cf4f",
+        "session-5096ce36-a13d-4e00-8586-8acb56568f1f",
+        "session-6790f6d3-9d8e-45c2-8041-92faa83b2239",
+        "session-b84ade80-4e47-41eb-877f-c7bbd95f58df"
+      ],
+      "merged_into": "062de4c1-0482-4ed7-a5cd-f5d25fa3b123",
+      "note": "源目录保留为只读镜像；仓库内容已以子树合并方式迁入 全局规则/skill-pool/"
+    },
+    {
+      "role": "target",
+      "workspace_id": "062de4c1-0482-4ed7-a5cd-f5d25fa3b123",
+      "title": "全局规则",
+      "path": "/Users/linqiyu/Documents/DSH/全局规则",
+      "session_count_before": 9,
+      "session_count_after": 20,
+      "session_ids_before": [
+        "session-3d30f0c1-417b-4be2-861a-ec7b9a04f1e3",
+        "session-105e0b2b-806f-46bb-bbe0-ca7052c2790e",
+        "session-191a8f4f-3a20-4e06-b3d2-8bb65ed293d0",
+        "session-c1dc5133-a3c3-4b0c-bda0-be58cd72d011",
+        "session-55cbde0a-6b7e-4bb8-909b-1eb10400621d",
+        "session-f0931765-8bfa-4fb3-b532-6d3c8a2ff7d3",
+        "session-b1b41d58-9813-4728-97d2-9742266c8a07",
+        "session-260a3acc-a3f9-400d-b18e-30ea48b3159d",
+        "session-7f04e437-8ae9-46fd-a58e-d0551d9fd04a"
+      ],
+      "session_ids_after": [
+        "session-3d30f0c1-417b-4be2-861a-ec7b9a04f1e3",
+        "session-105e0b2b-806f-46bb-bbe0-ca7052c2790e",
+        "session-191a8f4f-3a20-4e06-b3d2-8bb65ed293d0",
+        "session-c1dc5133-a3c3-4b0c-bda0-be58cd72d011",
+        "session-55cbde0a-6b7e-4bb8-909b-1eb10400621d",
+        "session-f0931765-8bfa-4fb3-b532-6d3c8a2ff7d3",
+        "session-b1b41d58-9813-4728-97d2-9742266c8a07",
+        "session-260a3acc-a3f9-400d-b18e-30ea48b3159d",
+        "session-7f04e437-8ae9-46fd-a58e-d0551d9fd04a",
+        "session-c35e900a-4cfc-4ef6-b00a-d1d5181981cd",
+        "session-1d3d5f06-cfc8-4660-83b9-83a0edfb9f6c",
+        "session-7b4fde37-f93a-4468-b762-1e8f8fd64998",
+        "session-abbd9da5-945a-44a5-9775-881994e1c0c3",
+        "session-3c09e8ff-900b-4173-8c5b-1dd50aeb4dc1",
+        "session-3e9a9435-e8c0-406a-b4f9-30f1c33d064c",
+        "session-62d938aa-efff-4c56-83c7-c0ae65975388",
+        "session-182640e9-15be-48b6-b054-25c6d984cf4f",
+        "session-5096ce36-a13d-4e00-8586-8acb56568f1f",
+        "session-6790f6d3-9d8e-45c2-8041-92faa83b2239",
+        "session-b84ade80-4e47-41eb-877f-c7bbd95f58df"
+      ],
+      "note": "合并后成为唯一根：skill-pool/ 与 knowledge/ 平级"
+    }
+  ],
+  "rollback": "拷贝 /Users/linqiyu/Library/Application Support/dsh-desktop/harness/storages/workspace.json.bak-20260928-075011 覆盖回 /Users/linqiyu/Library/Application Support/dsh-desktop/harness/storages/workspace.json 即可完全还原（迁移不改动任何会话数据，只改归属登记）"
+}

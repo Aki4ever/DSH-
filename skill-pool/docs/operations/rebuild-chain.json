@@ -1,0 +1,47 @@
+{
+  "chain": "execution-layer-derived-artifacts",
+  "version": 1,
+  "note": "执行层派生产物重建链。任何改名 / 新增 / 删除执行层之后，必须按本链顺序重建全部派生产物，否则树与索引会与 catalog 漂移。本文件是链条的唯一真相源：整改器不硬编码任何 skills/<id>/scripts/ 路径，路径由 skill + script 两字段拼出，避免与解耦门禁的隐式耦合判据冲突。",
+  "steps": [
+    {
+      "name": "sync_catalog",
+      "skill": "dsh-butler",
+      "script": "scripts/sync_catalog.py",
+      "args": [],
+      "produces": ["docs/operations/skill-catalog.json", "docs/operations/skills-catalog.md"],
+      "owner_note": "所有者是 L4 根能力；整改器以子进程方式调用它，不声明 composition 边（L2→L4 属逆向依赖，被 layer-decoupling-policy 禁止）"
+    },
+    {
+      "name": "build_layer_graph",
+      "skill": "build-layer-graph",
+      "script": "scripts/build_layer_graph.py",
+      "args": [],
+      "produces": ["docs/operations/layer-graph.json"]
+    },
+    {
+      "name": "build_inverted_index",
+      "skill": "build-inverted-index",
+      "script": "scripts/build_index.py",
+      "args": [],
+      "produces": ["docs/operations/skill-index.json"]
+    },
+    {
+      "name": "classify_instance_safety",
+      "skill": "classify-instance-safety",
+      "script": "scripts/classify_instance_safety.py",
+      "args": ["--all", "--write"],
+      "produces": ["docs/operations/instance-safety.json"]
+    },
+    {
+      "name": "build_execution_tree",
+      "skill": "build-execution-tree",
+      "script": "scripts/build_tree.py",
+      "args": [],
+      "produces": [
+        "docs/operations/execution-tree.json",
+        "docs/operations/execution-tree.md",
+        "skills/dsh-butler/SKILL.md"
+      ]
+    }
+  ]
+}

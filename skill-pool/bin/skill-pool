@@ -1,0 +1,498 @@
+#!/usr/bin/env python3
+"""
+Skill Pool (skill-pool) CLI Tool
+A lightweight CLI for managing, validating, and linking Agent Skills in the Skill Pool repository.
+"""
+
+import os
+import sys
+import re
+import json
+import shutil
+import argparse
+from pathlib import Path
+
+VERSION = "0.2.0"
+
+def get_repo_root() -> Path:
+    # Resolves to the repo root assuming bin/skill-pool
+    return Path(__file__).resolve().parent.parent
+
+def parse_frontmatter(content: str) -> dict:
+    meta = {}
+    if content.startswith("---"):
+        parts = content.split("---", 2)
+        if len(parts) >= 3:
+            fm_text = parts[1]
+            for line in fm_text.splitlines():
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                match = re.match(r"^([a-zA-Z0-9_\-]+)\s*:\s*(.*)$", line)
+                if match:
+                    k, v = match.group(1), match.group(2).strip()
+                    if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
+                        v = v[1:-1]
+                    meta[k] = v
+    return meta
+
+def get_target_dir(custom_target: str = None) -> Path:
+    if custom_target:
+        return Path(custom_target).expanduser().resolve()
+    default_dir = os.environ.get("SKILL_TARGET_DIR") or os.environ.get("CODEX_SKILLS_DIR")
+    if default_dir:
+        return Path(default_dir).expanduser().resolve()
+    return Path.home() / ".codex" / "skills"
+
+def scan_skills(repo_root: Path):
+    skills_dir = repo_root / "skills"
+    if not skills_dir.exists():
+        return []
+    
+    results = []
+    for item in sorted(skills_dir.iterdir()):
+        if not item.is_dir() or item.name.startswith(".") or item.name == "_template":
+            continue
+        
+        skill_info = {
+            "name": item.name,
+            "path": str(item),
+            "has_skill_md": False,
+            "has_readme_md": False,
+            "meta_name": None,
+            "description": None,
+            "valid": True,
+            "issues": []
+        }
+        
+        # Check kebab-case
+        if not re.match(r"^[a-z0-9]+(-[a-z0-9]+)*$", item.name):
+            skill_info["valid"] = False
+            skill_info["issues"].append(f"Directory name '{item.name}' is not valid kebab-case.")
+        
+        skill_file = item / "SKILL.md"
+        readme_file = item / "README.md"
+        
+        if skill_file.exists():
+            skill_info["has_skill_md"] = True
+            try:
+                content = skill_file.read_text(encoding="utf-8")
+                meta = parse_frontmatter(content)
+                skill_info["meta_name"] = meta.get("name")
+                skill_info["description"] = meta.get("description")
+                if not meta.get("name"):
+                    skill_info["valid"] = False
+                    skill_info["issues"].append("Missing 'name' field in SKILL.md frontmatter.")
+                elif meta.get("name") != item.name:
+                    skill_info["valid"] = False
+                    skill_info["issues"].append(f"Frontmatter name '{meta.get('name')}' does not match directory '{item.name}'.")
+                if not meta.get("description"):
+                    skill_info["valid"] = False
+                    skill_info["issues"].append("Missing 'description' field in SKILL.md frontmatter.")
+            except Exception as e:
+                skill_info["valid"] = False
+                skill_info["issues"].append(f"Error reading SKILL.md: {str(e)}")
+        else:
+            skill_info["valid"] = False
+            skill_info["issues"].append("Missing required SKILL.md file.")
+            
+        if readme_file.exists():
+            skill_info["has_readme_md"] = True
+            
+        results.append(skill_info)
+    return results
+
+def cmd_list(args):
+    repo_root = get_repo_root()
+    skills = scan_skills(repo_root)
+    target_dir = get_target_dir(args.target)
+    
+    # check link status
+    for s in skills:
+        link_path = target_dir / s["name"]
+        s["linked"] = link_path.is_symlink() and link_path.resolve() == Path(s["path"]).resolve()
+        s["link_target"] = str(link_path)
+    
+    if args.json:
+        print(json.dumps({"count": len(skills), "skills": skills}, indent=2, ensure_ascii=False))
+        return 0
+    
+    print(f"\n📦 Skill Pool 仓库已登记技能 ({len(skills)} 个):")
+    print(f"🎯 默认同步目标目录: {target_dir}")
+    print("-" * 78)
+    if not skills:
+        print("  (当前暂无技能，使用 `skill-pool init <skill-name>` 创建)")
+    for s in skills:
+        status_icon = "🔗 [已软链]" if s["linked"] else "   [未链接]"
+        valid_icon = "✅" if s["valid"] else "❌"
+        desc = (s["description"] or "(无描述)")[:45]
+        if len(s["description"] or "") > 45:
+            desc += "..."
+        print(f"  {valid_icon} {s['name']:<24} {status_icon} - {desc}")
+    print("-" * 78)
+    return 0
+
+def cmd_validate(args):
+    repo_root = get_repo_root()
+    skills = scan_skills(repo_root)
+    
+    if args.name:
+        skills = [s for s in skills if s["name"] == args.name]
+        if not skills:
+            if args.json:
+                print(json.dumps({"ok": False, "error": f"Skill '{args.name}' not found"}, indent=2))
+            else:
+                print(f"❌ 错误: 未找到技能 '{args.name}'", file=sys.stderr)
+            return 1
+            
+    all_valid = True
+    report = []
+    
+    for s in skills:
+        item = {
+            "name": s["name"],
+            "valid": s["valid"],
+            "issues": s["issues"]
+        }
+        report.append(item)
+        if not s["valid"]:
+            all_valid = False
+            
+    if args.json:
+        print(json.dumps({"ok": all_valid, "checked": len(skills), "report": report}, indent=2, ensure_ascii=False))
+        return 0 if all_valid else 1
+
+    print(f"\n🔍 正在校验 Skill 规范 (共 {len(skills)} 项)...")
+    for r in report:
+        if r["valid"]:
+            print(f"  ✅ {r['name']}: 符合规范")
+        else:
+            print(f"  ❌ {r['name']}: 存在问题")
+            for issue in r["issues"]:
+                print(f"     - {issue}")
+                
+    if all_valid:
+        print("\n🎉 所有检查项均通过规范校验！")
+        return 0
+    else:
+        print("\n⚠️ 存在不符合规范的项，请根据上述提示修复后再试。")
+        return 1
+
+def cmd_status(args):
+    repo_root = get_repo_root()
+    skills = scan_skills(repo_root)
+    target_dir = get_target_dir(args.target)
+    
+    valid_count = sum(1 for s in skills if s["valid"])
+    linked_count = 0
+    
+    target_exists = target_dir.exists()
+    for s in skills:
+        link_path = target_dir / s["name"]
+        if link_path.is_symlink() and link_path.resolve() == Path(s["path"]).resolve():
+            linked_count += 1
+            
+    result = {
+        "repo_root": str(repo_root),
+        "target_dir": str(target_dir),
+        "target_exists": target_exists,
+        "total_skills": len(skills),
+        "valid_skills": valid_count,
+        "invalid_skills": len(skills) - valid_count,
+        "linked_skills": linked_count
+    }
+    
+    if args.json:
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+        return 0
+        
+    print("\n📊 Skill Pool 状态概览:")
+    print(f"  - 仓库根目录: {repo_root}")
+    print(f"  - 同步目标目录: {target_dir} ({'已存在' if target_exists else '不存在'})")
+    print(f"  - 技能总数: {len(skills)}")
+    print(f"  - 规范合规: {valid_count} 个")
+    print(f"  - 存在异常: {len(skills) - valid_count} 个")
+    print(f"  - 已软链同步: {linked_count} / {len(skills)} 个")
+    return 0
+
+def cmd_init(args):
+    name = args.name.strip().lower()
+    if not re.match(r"^[a-z0-9]+(-[a-z0-9]+)*$", name):
+        print(f"❌ 错误: 技能名称 '{name}' 必须符合 kebab-case 规范（全小写数字与连字符）。", file=sys.stderr)
+        return 1
+        
+    repo_root = get_repo_root()
+    target_skill_dir = repo_root / "skills" / name
+    if target_skill_dir.exists():
+        print(f"❌ 错误: 技能目录已存在: {target_skill_dir}", file=sys.stderr)
+        return 1
+        
+    template_dir = repo_root / "skills" / "_template"
+    title = args.title or name.replace("-", " ").title()
+    desc = args.description or f"Use when the user requests {name} tasks."
+    
+    if template_dir.exists():
+        shutil.copytree(template_dir, target_skill_dir)
+        skill_md = target_skill_dir / "SKILL.md"
+        if skill_md.exists():
+            c = skill_md.read_text(encoding="utf-8")
+            c = re.sub(r"name:\s*.*", f"name: {name}", c, count=1)
+            c = re.sub(r"description:\s*.*", f"description: {desc}", c, count=1)
+            c = re.sub(r"#\s*.*", f"# {title}", c, count=1)
+            skill_md.write_text(c, encoding="utf-8")
+        readme_md = target_skill_dir / "README.md"
+        if readme_md.exists():
+            rc = readme_md.read_text(encoding="utf-8")
+            rc = re.sub(r"#\s*.*", f"# {title}", rc, count=1)
+            readme_md.write_text(rc, encoding="utf-8")
+    else:
+        target_skill_dir.mkdir(parents=True)
+        (target_skill_dir / "scripts").mkdir()
+        (target_skill_dir / "references").mkdir()
+        (target_skill_dir / "SKILL.md").write_text(
+            f"---\nname: {name}\ndescription: {desc}\n---\n\n# {title}\n\n## Overview\n\n",
+            encoding="utf-8"
+        )
+        (target_skill_dir / "README.md").write_text(
+            f"# {title}\n\n## 简介\n\n",
+            encoding="utf-8"
+        )
+        
+    if args.json:
+        print(json.dumps({"ok": True, "created": str(target_skill_dir), "name": name}, indent=2))
+    else:
+        print(f"✨ 成功初始化技能骨架: skills/{name}/")
+        print(f"   已生成: SKILL.md, README.md, scripts/, references/")
+    return 0
+
+def cmd_link(args):
+    name = args.name
+    repo_root = get_repo_root()
+    source_dir = repo_root / "skills" / name
+    if not source_dir.exists() or not source_dir.is_dir():
+        print(f"❌ 错误: 未在仓库 skills/ 下找到 '{name}'", file=sys.stderr)
+        return 1
+        
+    target_dir = get_target_dir(args.target)
+    target_dir.mkdir(parents=True, exist_ok=True)
+    
+    dest_path = target_dir / name
+    if dest_path.is_symlink():
+        dest_path.unlink()
+    elif dest_path.exists():
+        if not args.force:
+            print(f"❌ 错误: 目标路径已存在且非软链接: {dest_path}。使用 --force 覆盖或手动备份。", file=sys.stderr)
+            return 1
+        if dest_path.is_dir():
+            shutil.rmtree(dest_path)
+        else:
+            dest_path.unlink()
+            
+    dest_path.symlink_to(source_dir.resolve(), target_is_directory=True)
+    if args.json:
+        print(json.dumps({"ok": True, "source": str(source_dir), "destination": str(dest_path)}, indent=2))
+    else:
+        print(f"🔗 成功创建软链接:")
+        print(f"   {source_dir.resolve()} -> {dest_path}")
+    return 0
+
+def cmd_unlink(args):
+    name = args.name
+    target_dir = get_target_dir(args.target)
+    dest_path = target_dir / name
+    
+    if not dest_path.exists() and not dest_path.is_symlink():
+        print(f"⚠️ 提示: 目标目录下不存在链接: {dest_path}")
+        return 0
+        
+    if not dest_path.is_symlink():
+        print(f"❌ 错误: 目标路径存在但并非软链接，为保障安全拒绝自动删除: {dest_path}", file=sys.stderr)
+        return 1
+        
+    dest_path.unlink()
+    if args.json:
+        print(json.dumps({"ok": True, "removed": str(dest_path)}, indent=2))
+    else:
+        print(f"✂️ 成功解除软链接: {dest_path}")
+    return 0
+
+def cmd_catalog(args):
+    repo_root = get_repo_root()
+    sync_script = repo_root / "skills" / "dsh-butler" / "scripts" / "sync_catalog.py"
+    catalog_json_path = repo_root / "docs" / "operations" / "skill-catalog.json"
+    
+    if args.sync:
+        if sync_script.exists():
+            import subprocess
+            res = subprocess.run([sys.executable, str(sync_script)], capture_output=True, text=True)
+            if res.returncode != 0:
+                print(f"❌ 同步失败: {res.stderr}", file=sys.stderr)
+                return 1
+            if not args.json:
+                print(res.stdout.strip())
+        else:
+            print("❌ 未找到同步脚本: skills/dsh-butler/scripts/sync_catalog.py", file=sys.stderr)
+            return 1
+            
+    if not catalog_json_path.exists():
+        print("⚠️ 未找到 Catalog 数据文件，正在首次自动生成...")
+        import subprocess
+        subprocess.run([sys.executable, str(sync_script)], capture_output=True)
+
+    if not catalog_json_path.exists():
+        print("❌ 无法加载 Catalog 数据", file=sys.stderr)
+        return 1
+
+    with open(catalog_json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    skills_list = data.get("skills", [])
+    if getattr(args, "level", None):
+        skills_list = [s for s in skills_list if s.get("level") == args.level]
+
+    if args.json:
+        out = dict(data)
+        out["skills"] = skills_list
+        out["filtered_level"] = getattr(args, "level", None)
+        print(json.dumps(out, ensure_ascii=False, indent=2))
+        return 0
+
+    print("=" * 80)
+    print(f"📚 DSH 全局 Skill Catalog (版本: {data.get('catalog_version', '1.0.0')})")
+    print(f"📅 更新时间: {data.get('updated_at', '未知')}")
+    print(f"📦 技能总数: {data.get('total_skills', len(skills_list))} | 显示数量: {len(skills_list)}")
+    if getattr(args, "level", None):
+        print(f"🎯 级别过滤: {args.level}")
+    print("=" * 80)
+    print(f"{'级别':<6} {'SKILL ID':<24} {'分类':<18} {'积木依赖 (Composition)':<26}")
+    print("-" * 80)
+    for s in skills_list:
+        comp = "+".join(s.get("composition", [])) if s.get("composition") else "-"
+        print(f"{s.get('level', '-'):<6} {s.get('id'):<24} {s.get('category_title', s.get('category')):<18} {comp:<26}")
+    print("-" * 80)
+    print("💡 提示: `bin/skill-pool catalog --level L1` 筛选原子基元; `--sync` 重新扫描全库。")
+    return 0
+
+def cmd_consistency(args):
+    """口径一致性门禁：先刷新受管区块，再做三方对拍。"""
+    repo_root = get_repo_root()
+    render_script = repo_root / "skills" / "render-catalog-docs" / "scripts" / "render_docs.py"
+    verify_script = repo_root / "skills" / "verify-catalog-consistency" / "scripts" / "verify_consistency.py"
+
+    import subprocess
+
+    for script in (render_script, verify_script):
+        if not script.exists():
+            print(f"❌ 未找到口径门禁脚本: {script}", file=sys.stderr)
+            return 1
+
+    if not args.check:
+        res = subprocess.run([sys.executable, str(render_script)], capture_output=True, text=True)
+        if res.returncode != 0:
+            print(f"❌ 受管区块生成失败:\n{res.stdout}{res.stderr}", file=sys.stderr)
+            return 1
+        if not args.json:
+            print("✅ 受管区块已刷新")
+
+    res = subprocess.run([sys.executable, str(verify_script)], capture_output=True, text=True)
+    if args.json:
+        print(res.stdout.strip() if res.stdout.strip() else res.stderr.strip())
+        return res.returncode
+
+    try:
+        payload = json.loads(res.stdout)
+    except (ValueError, TypeError):
+        print(res.stdout or res.stderr)
+        return res.returncode
+
+    if payload.get("success"):
+        print(f"\n🎉 口径一致: {payload.get('checked_skills')} 个技能与 catalog/docs 完全对齐")
+        return 0
+
+    print(f"\n⚠️ 检测到 {payload.get('issue_count')} 处口径漂移:")
+    for issue in payload.get("issues", []):
+        loc = f"{issue.get('file')}:{issue.get('line')}" if issue.get("line") else str(issue.get("file"))
+        print(f"  ❌ [{issue.get('check')}] {loc} - {issue.get('detail')}")
+    print("\n💡 手写组装表请改为由 `render_docs.py` 生成（受管区块），不要逐行手改。")
+    return 1
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog="skill-pool",
+        description="Skill Pool (skill-pool) CLI - Manage, validate, and link Agent Skills."
+    )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
+    subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
+
+    # list
+    p_list = subparsers.add_parser("list", help="List all skills in the repository")
+    p_list.add_argument("--target", help="Custom target environment directory")
+    p_list.add_argument("--json", action="store_true", help="Output in JSON format")
+
+    # validate
+    p_val = subparsers.add_parser("validate", help="Validate skill specifications")
+    p_val.add_argument("name", nargs="?", help="Specific skill name to validate")
+    p_val.add_argument("--json", action="store_true", help="Output in JSON format")
+
+    # status
+    p_stat = subparsers.add_parser("status", help="Show summary status of the skill pool")
+    p_stat.add_argument("--target", help="Custom target environment directory")
+    p_stat.add_argument("--json", action="store_true", help="Output in JSON format")
+
+    # init
+    p_init = subparsers.add_parser("init", help="Initialize a new skill scaffold")
+    p_init.add_argument("name", help="New skill name (kebab-case)")
+    p_init.add_argument("--title", help="Skill title")
+    p_init.add_argument("--description", help="Skill description")
+    p_init.add_argument("--json", action="store_true", help="Output in JSON format")
+
+    # link
+    p_link = subparsers.add_parser("link", help="Create a symlink of the skill to target runtime")
+    p_link.add_argument("name", help="Skill name to link")
+    p_link.add_argument("--target", help="Custom target environment directory")
+    p_link.add_argument("--force", action="store_true", help="Overwrite non-symlink target if present")
+    p_link.add_argument("--json", action="store_true", help="Output in JSON format")
+
+    # unlink
+    p_unlink = subparsers.add_parser("unlink", help="Remove symlink from target runtime")
+    p_unlink.add_argument("name", help="Skill name to unlink")
+    p_unlink.add_argument("--target", help="Custom target environment directory")
+    p_unlink.add_argument("--json", action="store_true", help="Output in JSON format")
+
+    # catalog
+    p_cat = subparsers.add_parser("catalog", help="Inspect and sync the global Skill Catalog")
+    p_cat.add_argument("--sync", action="store_true", help="Trigger butler to rescan and sync catalog")
+    p_cat.add_argument("--level", choices=["L1", "L2", "L3", "L4"], help="Filter by capability level")
+    p_cat.add_argument("--json", action="store_true", help="Output catalog in JSON format")
+
+    # consistency
+    p_cons = subparsers.add_parser("consistency", help="Run catalog/doc consistency gate")
+    p_cons.add_argument("--check", action="store_true",
+                        help="Only detect drift; do not refresh the managed block")
+    p_cons.add_argument("--json", action="store_true", help="Output in JSON format")
+
+    args = parser.parse_args()
+    if not args.command:
+        parser.print_help()
+        return 0
+
+    dispatch = {
+        "list": cmd_list,
+        "validate": cmd_validate,
+        "status": cmd_status,
+        "init": cmd_init,
+        "link": cmd_link,
+        "unlink": cmd_unlink,
+        "catalog": cmd_catalog,
+        "consistency": cmd_consistency,
+    }
+
+    handler = dispatch.get(args.command)
+    if handler:
+        return handler(args)
+    parser.print_help()
+    return 1
+
+if __name__ == "__main__":
+    sys.exit(main())

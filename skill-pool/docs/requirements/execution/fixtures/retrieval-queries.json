@@ -1,0 +1,57 @@
+{
+  "$comment": "REQ-BUTLER-RETRIEVAL-017 检索命中率验收样本：只要 expect_any_of 中任一技能出现在 top-3 即判定该查询命中",
+  "top_k": 3,
+  "pass_threshold": 0.9,
+  "queries": [
+    {
+      "id": "Q01",
+      "query": "把输出严格限制在10个字以内并且全中文加粗",
+      "expect_any_of": ["concise-chinese-bold-guard", "limit-words-under-10", "output-chinese-only"]
+    },
+    {
+      "id": "Q02",
+      "query": "校验交付的文件是否真的存在于磁盘上而且非空",
+      "expect_any_of": ["verify-file-exists", "qa-gatekeeper", "verify-deliverable-paths"]
+    },
+    {
+      "id": "Q03",
+      "query": "检查技能文档写的组装关系和技能实际定义是否一致",
+      "expect_any_of": ["verify-catalog-consistency", "catalog-consistency-guard", "render-catalog-docs"]
+    },
+    {
+      "id": "Q04",
+      "query": "判断这个任务该走快速流程还是完整流程",
+      "expect_any_of": ["score-task-lane", "dual-lane-router", "fastlane-redline-policy"]
+    },
+    {
+      "id": "Q05",
+      "query": "生成一个可以点击放大缩小的图片查看器",
+      "expect_any_of": ["build-image-viewer", "interactive-image-viewer", "format-zoomable-visual"]
+    },
+    {
+      "id": "Q06",
+      "query": "从github检索并引入外部技能到技能池",
+      "expect_any_of": ["search-github-skill", "skill-import-pipeline", "audit-imported-skill"]
+    },
+    {
+      "id": "Q07",
+      "query": "统计这次上下文一共消耗了多少token",
+      "expect_any_of": ["measure-token-budget", "token-economy-guard", "prune-redundant-context"]
+    },
+    {
+      "id": "Q08",
+      "query": "只输出阶段性的进度不要逐条刷屏播报微操作",
+      "expect_any_of": ["classify-step-tier", "milestone-progress-reporter", "fold-repeated-events"]
+    },
+    {
+      "id": "Q09",
+      "query": "按需加载技能不要把全部技能正文都读进来",
+      "expect_any_of": ["load-skill-contract", "on-demand-dispatcher", "select-skills-for-task"]
+    },
+    {
+      "id": "Q10",
+      "query": "检测规则之间是否存在互相冲突或重复",
+      "expect_any_of": ["conflict-detector", "redundancy-detector", "detect-rule-conflicts"]
+    }
+  ]
+}

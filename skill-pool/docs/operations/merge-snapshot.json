@@ -1,0 +1,23 @@
+{
+  "created_at": "2026-09-28T07:49:44+0800",
+  "source": {
+    "path": "/Users/linqiyu/Documents/DSH/Skill池",
+    "branch": "main",
+    "head": "b1f68906e452018a0cb2dc6e842f71b99caecb8d",
+    "head_subject": "feat(init): 初始化 Skill池 资产管理库与配套 CLI",
+    "remote": "https://github.com/akidotdot-ai/skill-pool.git",
+    "tracked_files": 29,
+    "all_files": 550,
+    "dirty_entries": 200
+  },
+  "target": {
+    "path": "/Users/linqiyu/Documents/DSH/全局规则",
+    "branch": "main",
+    "head": "e7a965f6c2cc0f76eb3b726c005f92b77b8eb248",
+    "head_subject": "fix(naming): 全域 18 个会话三层存储与前端侧边栏穿透更名，合规率达成 100%",
+    "remote": "https://github.com/Aki4ever/DSH-.git",
+    "tracked_files": 154,
+    "all_files": 777,
+    "dirty_entries": 3
+  }
+}
