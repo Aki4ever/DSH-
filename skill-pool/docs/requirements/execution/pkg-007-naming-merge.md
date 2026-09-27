@@ -204,8 +204,11 @@ python3 skills/verify-layer-naming/scripts/verify_naming.py --strict   # 期望 
 
 ### 4.5 验收断言
 
-- 新位置 `./bin/skill-pool validate` + `consistency` + 八道脚本门禁**全部 exit 0**。
-- `全局规则/skills/` 目录数与源目录**逐条相等**（差值 = 0）。
+- 新位置十二道门禁**全部 exit 0**（validate / consistency / audit / verify_tree / 依赖图 --check / 耦合检测 / 解耦断言 / 实例安全 / 命名断言 / 渲染漂移 / 互斥压测 / 检索评测）。
+- `全局规则/skill-pool/` 与源目录**逐文件 diff 除空目录外为空**（受版本控制文件差值 = 0）。
+  口径说明：git 不跟踪空目录，子树合并只物化受版本控制文件，因此源目录中 6 个空目录
+  （`docs/cli/audit`、`skills/_template/{references,scripts}`、`skills/concise-chinese-bold-guard/{references,scripts}`、
+  `skills/dsh-butler/references`）在合并副本中不存在；这 6 个目录在源目录中同样是空的，无内容丢失。
 - `workspaces.json` 中每个任务会话路径**真实存在且非空**（`verify-deliverable-paths` 复用）。
 - 源目录 `Skill池` 仍可读可执行，本会话不中断。
 
