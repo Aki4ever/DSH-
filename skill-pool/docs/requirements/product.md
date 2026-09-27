@@ -1032,7 +1032,7 @@
 
 | 形态 | 判据 | 强制层级 | 例 |
 | :--- | :--- | :--- | :--- |
-| `action` 动作形态 | 首段 ∈ 动词词汇表（58 条，含语义边界） | **L2 强制** | `verify-layer-naming` |
+| `action` 动作形态 | 首段 ∈ 动词词汇表（61 条，含语义边界） | **L2 强制** | `verify-layer-naming` |
 | `orchestration` 编排形态 | 末段 ∈ 编排名词表（15 条） | L3 二者取一 | `layer-naming-guard` |
 | `policy` 规约形态 | 末段 ∈ `policy`/`spec`/`standard`/`protocol` | L1 允许 | `atomic-lock-policy` |
 | `vendor` 厂商形态 | 整名为单段且 ∈ 单段厂商白名单 | 外部平台边界 | `github` |
