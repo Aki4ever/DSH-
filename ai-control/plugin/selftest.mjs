@@ -262,9 +262,16 @@ check('极端参数 · 不抛出异常', threw, false)
 //      旧版会抛 TypeError，这正是"管控插件拖垮宿主"的失败模式）
 {
   const mod = await import('./index.mjs')
+  // 自检必须沙箱化 stateDir：apply 一执行就会写 plugin-status.txt，
+  // 若用默认目录，自检会把**宿主真实激活记录覆盖成 isHost=false**，
+  // 使 install_host_gate.sh verify 在机制明明活着时误报未激活（2026-09-28 实测）。
+  // 判定工具的测试不得污染被测对象的状态 —— 这是自检的基本卫生。
+  const { mkdtempSync } = await import('node:fs')
+  const { tmpdir: osTmp } = await import('node:os')
+  const sandbox = mkdtempSync(`${osTmp()}/dsh-gate-selftest-sandbox-`)
   const safe = (label, ctx) => {
     let threw = false
-    try { mod.apply(ctx, {}) } catch { threw = true }
+    try { mod.apply(ctx, { stateDir: sandbox }) } catch { threw = true }
     check(label, threw, false)
   }
   safe('故障安全 · 无 tools 服务不抛错', { on() {} })
@@ -273,6 +280,8 @@ check('极端参数 · 不抛出异常', threw, false)
   safe('故障安全 · tools 为 null 不抛错', { on() {}, tools: null })
   // on 缺失也必须降级
   safe('故障安全 · on 缺失不抛错', { tools: { guard() {} } })
+  const { rmSync } = await import('node:fs')
+  rmSync(sandbox, { recursive: true, force: true })
 }
 
 // 11) Loader 契约：宿主只读「被加载模块」导出的 inject。

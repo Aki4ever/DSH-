@@ -42,9 +42,26 @@ url_encode_path() {
 
 has_entry() { [ -f "$PATCH_FILE" ] && grep -q "id: $ENTRY_ID" "$PATCH_FILE"; }
 
-# 判定宿主是否**真的**激活过插件：isHost=true 才作数（自检脚本调用会写 isHost=false）
+# 宿主激活证据有两个来源，任一成立即算激活：
+#   1) 追加式台账 host-activation.log（只记 isHost=true 事件，测试进程覆盖不掉）——首选；
+#   2) 覆盖式 plugin-status.txt 里的 isHost=true —— 兼容旧记录。
+# 为什么必须两源：plugin-status.txt 会被任何一次 apply 覆盖。实测 2026-09-28：
+# 自检脚本在默认 stateDir 里 apply 一次，就把宿主真实激活记录覆盖成 isHost=false，
+# 于是 verify 在机制明明活着时误报"未激活"。凭据必须是不被无关进程抹掉的那种。
+# 脚本自身版本: v1.1.0
+ACTIVATION_LOG="$DSH_HOME_DIR/.dsh-control/host-activation.log"
 host_activated() {
+  if [ -f "$ACTIVATION_LOG" ] && grep -q 'HOST ' "$ACTIVATION_LOG"; then return 0; fi
   [ -f "$STATUS_FILE" ] && grep -q '^isHost=true' "$STATUS_FILE"
+}
+
+# 取最近一次宿主激活记录（供展示）
+host_evidence() {
+  if [ -f "$ACTIVATION_LOG" ]; then
+    tail -1 "$ACTIVATION_LOG" | sed 's/^/宿主激活台账: /'
+  else
+    grep -m1 '插件已激活' "$STATUS_FILE" 2>/dev/null || true
+  fi
 }
 
 case "$ACTION" in
@@ -57,9 +74,9 @@ case "$ACTION" in
     echo "加载器路径: $LOADER_ABS"
     [ -f "$LOADER_ABS" ] && echo "加载器文件: ✅ 存在" || { echo "加载器文件: ⛔ 不存在"; local_ok=0; }
     if host_activated; then
-      echo "宿主激活: ✅ isHost=true（$(grep -m1 '插件已激活' "$STATUS_FILE" || true)）"
+      echo "宿主激活: ✅ 有宿主激活凭据（$(host_evidence)）"
     else
-      echo "宿主激活: ⛔ 未激活（plugin-status.txt 无 isHost=true）"
+      echo "宿主激活: ⛔ 无宿主激活凭据（host-activation.log 与 plugin-status.txt 均无 isHost=true）"
       echo "          提示：条目写入后需重载 profile 才会激活；未激活前所有硬门禁都不生效。"
       local_ok=0
     fi

@@ -30,7 +30,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
 import { execFile } from 'node:child_process'
-import { existsSync, writeFileSync, readFileSync } from 'node:fs'
+import { existsSync, writeFileSync, appendFileSync, readFileSync } from 'node:fs'
 import { autoNameOnce, parseTitle as parseNamingTitle } from '../../scripts/lib/auto_naming.mjs'
 import { evaluatePhysicalLock, getLockState, advanceLockTo, STAGES } from '../../scripts/lib/physical_lock.mjs'
 import { checkTodoGate, recordTodoWriteSync } from '../../scripts/lib/todo_tracker.mjs'
@@ -684,6 +684,15 @@ export function apply(ctx, config = {}) {
   // 为什么要做这件事：本插件出现过"宿主根本没激活它"的情形（inject 未解析），
   // 表现是看板 0 次注入、自动命名 0 次触发，而自检全绿——**完全静默**。
   // 没有这行记录，事后只能靠猜。apply 一执行就落盘，含关键环境事实。
+  //
+  // 2026-09-28 二次修正：宿主激活证据必须**追加**到独立文件，不能只写覆盖式的
+  // plugin-status.txt。实测缺陷：自检脚本（`node ai-control/plugin/selftest.mjs`）
+  // 在同一个 stateDir 里 apply 一次，就把宿主真实激活的记录覆盖成 `isHost=false`，
+  // 于是 `install_host_gate.sh verify` 会在机制明明活着的时候报"未激活"——
+  // 一个会被无关进程抹掉的凭据，等于没有凭据。
+  const isHostProcess =
+    /dsh[\\/]lib[\\/]bin\.js/.test(process.argv[1] ?? '') ||
+    /dsh[\\/]lib[\\/]bin\.js/.test(process.argv.join(' '))
   try {
     writeFileSync(
       join(stateDir, 'plugin-status.txt'),
@@ -692,7 +701,7 @@ export function apply(ctx, config = {}) {
         `pid=${process.pid}`,
         // 必须区分"宿主激活"与"测试脚本调用 apply"：自检脚本会用 mock ctx 调 apply，
         // 若不区分，测试留下的标记会被误读成"宿主已激活"（实测踩过这个假阳性）。
-        `isHost=${/dsh[\\/]lib[\\/]bin\.js/.test(process.argv[1] ?? '') || /dsh[\\/]lib[\\/]bin\.js/.test(process.argv.join(' '))}`,
+        `isHost=${isHostProcess}`,
         `argv1=${process.argv[1] ?? ''}`,
         `tools 服务可用=${typeof ctx?.tools === 'object' && ctx.tools !== null}`,
         `showCard=${!!cfg.showCard} enforce=${!!cfg.enforce}`,
@@ -703,6 +712,14 @@ export function apply(ctx, config = {}) {
       ].join('\n'),
       'utf8',
     )
+    // 追加式宿主激活台账：只记 isHost=true 的事件，任何测试进程都覆盖不了它。
+    if (isHostProcess) {
+      appendFileSync(
+        join(stateDir, 'host-activation.log'),
+        `${new Date().toISOString()} HOST pid=${process.pid} stateDir=${stateDir}\n`,
+        'utf8',
+      )
+    }
   } catch { /* 诊断失败绝不影响主流程 */ }
 
   // 上下文可用性防御：宿主调用时机异常时静默降级，绝不抛错拖垮宿主。
