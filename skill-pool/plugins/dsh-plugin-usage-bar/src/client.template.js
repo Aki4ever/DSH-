@@ -40,13 +40,15 @@ function diag(patch) {
   } catch (err) { /* 诊断失败绝不影响宿主 */ }
 }
 
-/** 组装一行展示文本：时段 + 折扣 + 倒计时；额度未接入时显式标注。 */
+/** 组装一行展示文本：时段 + 折扣 + 倒计时；额度由每轮常显看板承载（本插件无宿主数据通道）。 */
 function buildLine(nowMs, balanceText) {
   var r = CORE.resolvePeriod(nowMs);
   var tail = '距切换 ' + CORE.humanizeSeconds(r.nextSwitchInSeconds) + '（' + r.nextSwitchAtBeijing + '）';
   var price = r.period === 'offpeak' ? '空闲价 · 高峰价 5 折' : '高峰价';
   var head = (r.period === 'offpeak' ? '🌙 ' : '🔥 ') + 'DeepSeek ' + r.periodLabel + ' · ' + price;
-  return head + ' · ' + tail + ' · 额度：' + (balanceText || '未接入');
+  // 额度不在本行显示：客户端拿不到宿主数据（投影契约未确认），写个永久「未接入」只会让人以为坏了。
+  // 真实额度由 ai-control 拦截层在每轮常显看板里给出（宿主侧调用官方接口）。
+  return head + ' · ' + tail + ' · 额度见每轮常显看板' + (balanceText ? '（' + balanceText + '）' : '');
 }
 
 /** React 组件：每秒重算一次倒计时（纯本地计算，无网络请求）。 */

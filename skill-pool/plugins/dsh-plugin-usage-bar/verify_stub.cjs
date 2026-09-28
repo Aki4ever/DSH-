@@ -96,7 +96,7 @@ if (registered && registered.Component) {
   const text = node && node.children ? String(node.children[0]) : '';
   check('渲染文本含真实时段', /高峰时段|空闲时段/.test(text), text);
   check('渲染文本含下次切换倒计时', /距切换/.test(text), text);
-  check('额度栏目如实显示「未接入」且不含数字额度', /额度：未接入/.test(text) && !/额度：[\d¥]/.test(text), text);
+  check('不显示任何数字型额度（额度由宿主看板承载，前端不编造）', !/额度：[\d¥]/.test(text) && !/未接入/.test(text), text);
 } else {
   check('渲染文本含真实时段', false, '未捕获到组件');
 }

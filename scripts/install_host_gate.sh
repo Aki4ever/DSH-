@@ -101,6 +101,25 @@ case "$ACTION" in
     if has_entry; then echo "条目存在: ✅ id=$ENTRY_ID"; local_ok=1; else echo "条目存在: ⛔ 缺失"; fi
     echo "加载器路径: $LOADER_ABS"
     [ -f "$LOADER_ABS" ] && echo "加载器文件: ✅ 存在" || { echo "加载器文件: ⛔ 不存在"; local_ok=0; }
+    # 载体"能解析"才算在位（2026-09-29 新增）
+    # 为什么必须补这一条：实战中 `ai-control/plugin/index.mjs` 曾带一个**真语法错误**
+    # （try 块少一个闭括号）并被正常提交，而 verify 只检查"文件存在"就报在位 ——
+    # 结果是"文件在、机制不在"：import 抛异常 → loader 降级为空插件 → 门禁与看板全都不存在，
+    # 外观症状却与"插件没注册"一模一样。存在性检查抓不到这一类，必须真的解析一遍。
+    NODE_BIN="${DSH_NODE_BIN:-$(command -v node 2>/dev/null || true)}"
+    [ -n "$NODE_BIN" ] || NODE_BIN="/opt/homebrew/bin/node"
+    if [ -x "$NODE_BIN" ]; then
+      for f in "$LOADER_ABS" "$ROOT/ai-control/plugin/index.mjs"; do
+        if "$NODE_BIN" --check "$f" >/dev/null 2>&1; then
+          echo "语法自检  : ✅ $(basename "$f") 可解析"
+        else
+          echo "语法自检  : ⛔ $(basename "$f") 解析失败 —— 插件无法加载，机制等于不存在"
+          local_ok=0
+        fi
+      done
+    else
+      echo "语法自检  : ⚠️ 找不到 node，跳过（此项判「未验证」，不算通过）"
+    fi
     if host_activated; then
       echo "宿主激活: ✅ 有宿主激活凭据（$(host_evidence)）"
       host_ok=1

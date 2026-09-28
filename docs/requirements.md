@@ -2452,3 +2452,42 @@
 `skill-pool/plugins/dsh-plugin-usage-bar/src/usage-core.cjs`（客户端内核）**各有一份实现**；
 原因是浏览器 bundle 不能 require 仓库文件、必须内联。两者行为已对拍一致（各 9/9），
 但存在漂移风险，后续应让 CLI 复用该内核（`createRequire` 加载）；本轮为控制改动半径未动已审计的 CLI。
+
+### 额度接入 + 拦截层致命语法错误修复（2026-09-29 · 阶段 B 续）
+
+**1) 阻断性发现：拦截层插件从来没被成功加载过**
+`ai-control/plugin/index.mjs` 第 902 行存在**真语法错误** —— `try { stats = { ...stats, ...JSON.parse(...) } catch {`
+少了**一个闭括号**（那个 `}` 闭合的是对象字面量，try 块从未闭合）。
+后果链：`import` 必然抛异常 → `loader.mjs` 按"故障安全"设计降级为空插件 →
+**硬门禁、常显看板、S07 待办常显、物理锁运行时拦截四件事全部从未运行过**，
+而外观症状与"插件没注册"完全一致，极难归因。
+关键证据：`git show HEAD:ai-control/plugin/index.mjs` **同样报同一处语法错误**，
+即该缺陷**已在上一版提交里**；而 `selftest.mjs` 第 18 行是 `import ... from './index.mjs'` 的**静态导入** ——
+文件语法错误时自检根本无法启动，所以"自检 69/69 全绿"必然是**在文件被改坏之前**跑的，
+之后没有任何一道关卡重新解析过载体。**已修**：`node --check` 通过，`selftest.mjs` 复跑 **69/69 通过**。
+
+**2) 补关卡：载体自证新增"可解析"判定**
+`scripts/install_host_gate.sh verify` 原来只检查"加载器文件是否存在"就报在位，
+存在性检查抓不到语法错误这一类。现新增两条语法自检（`loader.mjs` + `index.mjs` 各跑一次 `node --check`），
+失败即把 `local_ok` 归零（判"载体坏了"）。实测输出：`语法自检 : ✅ loader.mjs 可解析` / `✅ index.mjs 可解析`。
+
+**3) 额度接入（宿主侧通道已打通，凭据待用户提供）**
+- **前置事实（实测）**：全机搜索无 `sk-` 凭据 —— 环境变量无、shell rc 无、钥匙串无、配置目录无；
+  `~/.dsh/.credentials.yaml` 里只有 `deepseek-account-platform` 的**账号令牌**，
+  而官方余额接口只认 `Bearer sk-...`（实测返回 `401 Authentication Fails (auth header format should be Bearer sk-...)`）。
+  即：**桌面端账号 ≠ API Key**，二者不是一套东西；
+- **新增**：`scripts/deepseek_key_setup.sh` —— 交互式安全落盘（`read -s` 不回显，写 `$DSH_HOME/.dsh-control/deepseek_api_key`，权限 600），
+  并当场调官方接口验证；另有 `--check`（只报状态与长度）/`--clear`/`--from-env`；
+- **新增**：拦截层常显看板的**用量常显行** —— `ai-control/plugin/index.mjs` 新增 `buildUsageLine()`，
+  每 5 分钟调一次本仓已审计的探针 CLI（**不在插件里重算**，避免双实现漂移），
+  渲染形如 `> DeepSeek **空闲时段**（高峰价 5 折） · 距切换 6 小时 19 分 · 剩余额度 <真实值/明确原因>`；
+  探针不可用时该行**自动消失**，绝不用假数字占位；已实测导出函数并按真实输出验证；
+- **前端措辞**：底栏插件原来固定显示"额度：未接入"（客户端拿不到宿主数据，看着像坏了），
+  改为 `额度见每轮常显看板`，把额度归口到唯一有数据通道的地方；桩件实测复跑 **9/9 通过**。
+
+**4) 复跑**：`install_host_gate.sh verify` exit 2（已注册 + 载体语法通过 + 待重载）· 拦截层自检 69/69 ·
+底栏桩件 9/9 · 索引 228 条 100% 收录（新增 `cli` 1 条）· 指纹台账已更新。
+
+**5) 仍未闭环的一步**：需**重启桌面端**（profile patch 与插件 bundle 在宿主启动时读取）。
+重启后 `verify` 应为 exit 0（isHost=true），常显看板会出现用量行；
+在此之前，额度仍按"未配置 API Key"如实显示。

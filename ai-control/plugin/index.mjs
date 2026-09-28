@@ -29,6 +29,7 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
+import { fileURLToPath } from 'node:url'
 import { execFile } from 'node:child_process'
 import { existsSync, writeFileSync, appendFileSync, readFileSync } from 'node:fs'
 import { autoNameOnce, parseTitle as parseNamingTitle } from '../../scripts/lib/auto_naming.mjs'
@@ -487,8 +488,10 @@ function progressBar(passed, total, width = 16) {
   return '█'.repeat(filled) + '░'.repeat(Math.max(0, width - filled))
 }
 
-/** 渲染面向模型的常显看板（Markdown，DSH GUI 原生渲染）。支持全绿态高密度 Token 压缩。 */
-function renderCard(s) {
+/** 渲染面向模型的常显看板（Markdown，DSH GUI 原生渲染）。支持全绿态高密度 Token 压缩。
+ *  第二个参数 usage 是"用量常显行"（DeepSeek 时段 + 剩余额度），由本仓已审计的
+ *  探针 CLI 产出；取不到时为空串，看板照常渲染，绝不用假数字占位。 */
+function renderCard(s, usage = '') {
   const lines = []
   lines.push('<system-reminder>')
   if (s.execAllowed) {
@@ -500,6 +503,7 @@ function renderCard(s) {
     const m2 = g[2] ? `${g[2].metricA ?? ''}需求(${g[2].metricB ?? 0}未交)` : ''
     const m3 = g[3] ? `${g[3].metricA ?? ''}冗余` : ''
     lines.push(`> 指标实况：${[m0, m1, m2, m3].filter(Boolean).join(' · ')}`)
+    if (usage) lines.push(usage)
     lines.push(`刷新：\`./scripts/control_gates.sh check\`（${s.generatedAt || '最新'}）`)
     lines.push('</system-reminder>')
     return lines.join('\n')
@@ -525,8 +529,68 @@ function renderCard(s) {
   }
   lines.push('')
   lines.push(`刷新方式：\`./scripts/control_gates.sh check\`（快照时间 ${s.generatedAt || '未知'}）`)
+  if (usage) lines.push(usage)
   lines.push('</system-reminder>')
   return lines.join('\n')
+}
+
+/* ── 用量常显行（DeepSeek 时段 + 剩余额度）───────────────────────────────────
+ * 数据来源刻意做成"只调本仓已审计的探针 CLI"，而不是在本插件里重算一遍：
+ * 时段规则、官方余额接口、定价指纹各只有一份实现（`scripts/deepseek_usage_probe.mjs`），
+ * 避免"宿主与 CLI 两套口径"这种典型的双实现漂移。
+ * 缓存 5 分钟：`agent/pre-step` 每个步骤都会触发，不能每一步都去 spawn 进程。
+ * 探针不可用时返回空串 —— 看板照常显示，**绝不用假数字占位**。 */
+const USAGE_TTL_MS = 5 * 60 * 1000
+const USAGE_PROBE = fileURLToPath(new URL('../../scripts/deepseek_usage_probe.mjs', import.meta.url))
+let usageCache = { at: 0, line: '' }
+let usageWarned = false
+
+function probeUsage() {
+  return new Promise((resolve) => {
+    try {
+      execFile(process.execPath, [USAGE_PROBE, '--json'], { timeout: 20000, maxBuffer: 4 * 1024 * 1024 },
+        (err, stdout) => {
+          if (err) return resolve(null)
+          try { resolve(JSON.parse(stdout)) } catch { resolve(null) }
+        })
+    } catch { resolve(null) }
+  })
+}
+
+/** 组装一行用量文本；取不到就返回空串（不编造）。 */
+export async function buildUsageLine() {
+  const now = Date.now()
+  if (now - usageCache.at < USAGE_TTL_MS) return usageCache.line
+  const data = await probeUsage()
+  if (!data) {
+    if (!usageWarned) {
+      usageWarned = true
+      console.warn('[ai-execution-control] 用量探针不可用，看板省略用量行（不影响门禁）')
+    }
+    usageCache = { at: now, line: '' }
+    return ''
+  }
+  let line = ''
+  try {
+    const label = data.period === 'offpeak' ? '空闲时段' : '高峰时段'
+    const off = data.period === 'offpeak' ? '（高峰价 5 折）' : '（高峰价）'
+    const mins = Math.max(0, Math.round((data.nextSwitchInSeconds || 0) / 60))
+    const eta = mins >= 60 ? `${Math.floor(mins / 60)} 小时 ${mins % 60} 分` : `${mins} 分`
+    const b = data.balance || {}
+    let bal
+    if (b.available && Array.isArray(b.items) && b.items.length > 0) {
+      bal = b.items.map((it) => `${it.currency} ${it.totalBalance}（赠金 ${it.grantedBalance} + 充值 ${it.toppedUpBalance}）`).join(' / ')
+    } else if (b.errorKind === 'no-credential') {
+      bal = '未配置 API Key（跑 `./scripts/deepseek_key_setup.sh` 一键接入）'
+    } else {
+      bal = `取数失败：${b.errorKind || 'unknown'}`
+    }
+    line = `> DeepSeek **${label}**${off} · 距切换 ${eta} · 剩余额度 ${bal}`
+  } catch {
+    line = ''
+  }
+  usageCache = { at: now, line }
+  return line
 }
 
 /** 一行式徽标，用于拒绝理由（省 token）。 */
@@ -794,8 +858,10 @@ export function apply(ctx, config = {}) {
           return decision
         }
         const { createUserMessage } = llm
+        // 用量行是旁路增强：探针失败/超时都只让这一行消失，不影响看板与门禁。
+        const usage = await buildUsageLine().catch(() => '')
         const card = createUserMessage({
-          content: [{ type: 'text', text: renderCard(status) }],
+          content: [{ type: 'text', text: renderCard(status, usage) }],
           source: { kind: 'plugin', plugin: name, form: 'notice', summary: renderBadge(status) },
         })
         return { kind: 'enter', messages: [...decision.messages, card] }
@@ -833,7 +899,11 @@ export function apply(ctx, config = {}) {
         try {
           const statsFile = join(stateDir, 'compact-stats.json')
           let stats = { seen: 0, assistantMessages: 0, wrote: 0, lastType: '', lastError: '', updatedAt: '' }
-          try { stats = { ...stats, ...JSON.parse(readFileSync(statsFile, 'utf8')) } catch { /* 首次运行 */ }
+          // 修（2026-09-29）：原写法 `try { stats = { ...stats, ...JSON.parse(...) } catch {` 少了**一个闭括号**——
+          // 那个 `}` 闭合的是对象字面量，try 块从未闭合，于是整份文件是**语法错误**，
+          // `import` 必然抛异常 → loader.mjs 按设计降级为空插件 → **拦截层从来没被成功加载过**，
+          // 而外部看到的只是"没有看板、没有拦截"，与"插件没注册"症状完全一样，极难归因。
+          try { stats = { ...stats, ...JSON.parse(readFileSync(statsFile, 'utf8')) } } catch { /* 首次运行 */ }
           stats.seen++
           stats.lastType = String(event?.type ?? '(无)')
           if (event?.type !== 'assistant/message') {

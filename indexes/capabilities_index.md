@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：227**（技能 178 · 其他执行层 49）
+**执行层条目总数：228**（技能 178 · 其他执行层 50）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -530,6 +530,7 @@
 | 脚本 (CLI) | `cli.rules.check_unique_identifiers` | `scripts/check_unique_identifiers.mjs` | check_unique_identifiers.mjs |
 | 脚本 (CLI) | `cli.rules.conflict_scan` | `scripts/conflict_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.control_gates` | `scripts/control_gates.sh` | — |
+| 脚本 (CLI) | `cli.rules.deepseek_key_setup` | `scripts/deepseek_key_setup.sh` | — |
 | 脚本 (CLI) | `cli.rules.deepseek_usage_probe` | `scripts/deepseek_usage_probe.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.disk_check_and_cleanup` | `scripts/disk_check_and_cleanup.sh` | DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位) |
 | 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
