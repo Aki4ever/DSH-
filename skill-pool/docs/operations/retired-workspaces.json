@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "retired_at": "20260928-082305",
+  "source": "/Users/linqiyu/Documents/DSH/Skill池",
+  "target": "/Users/linqiyu/Documents/DSH/全局规则/skill-pool",
+  "source_head": "1c57af40ec8b32cf6f8041a36ad8984cfa61c92b",
+  "workspace_entry_removed": "03abb964-caba-476a-a542-57008c31f97b",
+  "sessions_migrated": 11,
+  "rollback": "源仓库内容已在远端各有一份：git clone <remote> 即可恢复；workspace.json 可从备份还原",
+  "reason": "PKG-007 只做了子树合并并保留源目录为镜像，两轮内分叉 44 个文件；本步骤完成真正的退役"
+}

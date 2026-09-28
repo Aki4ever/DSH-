@@ -64,8 +64,14 @@ def main(argv):
     source_absent = not os.path.exists(source or "")
     entry_absent = not any(os.path.abspath(v.get("path", "")) == os.path.abspath(source or "")
                            for v in workspaces.values())
-    target_key = next((k for k, v in workspaces.items()
-                       if os.path.abspath(v.get("path", "")) == os.path.abspath(target or "")), None)
+    # 目标工作区要按**祖先**匹配：工作区注册在仓库根（如 …/全局规则），
+    # 而 --target 往往指向其子目录（如 …/全局规则/skill-pool）。
+    # 用路径相等去找，会在「目标目录是工作区子目录」时永远找不到，制造假失败。
+    target_abs = os.path.abspath(target or "")
+    def _covers(workspace_path):
+        base = os.path.abspath(workspace_path or "")
+        return bool(base) and (target_abs == base or target_abs.startswith(base + os.sep))
+    target_key = next((k for k, v in workspaces.items() if _covers(v.get("path", ""))), None)
     target_ids = set(workspaces.get(target_key, {}).get("sessionIds") or []) if target_key else set()
     expected = int(ledger.get("sessions_migrated") or 0)
     sessions_complete = len(target_ids) >= expected and target_key is not None
