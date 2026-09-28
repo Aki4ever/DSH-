@@ -42,7 +42,10 @@ import json
 import argparse
 
 # 仓库根：本脚本位于 skills/detect-vague-modifier/scripts/ 之下
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../.."))
+# 合并后布局（2026-09-28）：docs/、plugins/ 随技能池主体迁入 <项目根>/skill-pool/，
+# 而 skills/ 仍在 <项目根>。以下先探测技能池根，探测不到时回退旧的「三级上溯」写法。
+_POOL_CANDIDATE = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../skill-pool"))
+REPO_ROOT = _POOL_CANDIDATE if os.path.isdir(os.path.join(_POOL_CANDIDATE, "docs", "operations")) else os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../.."))
 TABLE_PATH = os.path.join(REPO_ROOT, "docs/operations/quantifier-table.json")
 
 # 对外二值类别口径（契约字段 category）

@@ -35,6 +35,7 @@ import { autoNameOnce, parseTitle as parseNamingTitle } from '../../scripts/lib/
 import { evaluatePhysicalLock, getLockState, advanceLockTo, STAGES } from '../../scripts/lib/physical_lock.mjs'
 import { checkTodoGate, recordTodoWriteSync } from '../../scripts/lib/todo_tracker.mjs'
 import { buildCompactReport, writeCompactReport } from '../../scripts/lib/output_compactness.mjs'
+import { isHostProcess as isHostProcessImpl } from '../lib/host_identity.mjs'
 
 /** Cordis 插件名（用于诊断与事件来源标注）。 */
 export const name = 'ai-execution-control'
@@ -690,9 +691,12 @@ export function apply(ctx, config = {}) {
   // 在同一个 stateDir 里 apply 一次，就把宿主真实激活的记录覆盖成 `isHost=false`，
   // 于是 `install_host_gate.sh verify` 会在机制明明活着的时候报"未激活"——
   // 一个会被无关进程抹掉的凭据，等于没有凭据。
-  const isHostProcess =
-    /dsh[\\/]lib[\\/]bin\.js/.test(process.argv[1] ?? '') ||
-    /dsh[\\/]lib[\\/]bin\.js/.test(process.argv.join(' '))
+  // ── isHost 判定：判据已抽到唯一权威源 ai-control/lib/host_identity.mjs ──────
+  // 为什么抽出去：这份判据曾在 index.mjs 与 loader.mjs 各写一份、且两份都错
+  // （只认 dsh/lib/bin.js，真实宿主是 Electron NodeService 形态），
+  // 导致 isHost 恒 false、宿主激活台账长期空白，只能靠手工回填。
+  // 判据唯一的写法见该模块头部注释。
+  const isHostProcess = isHostProcessImpl()
   try {
     writeFileSync(
       join(stateDir, 'plugin-status.txt'),
@@ -822,15 +826,40 @@ export function apply(ctx, config = {}) {
   if (cfg.enforce) {
     try {
       ctx.on('session/event', (session, event) => {
+        // 诊断计数：把"钩子到底有没有被触发"变成可查事实。
+        // 为什么需要：实测 `.dsh-control/compact/` 目录在整台机器上从未出现，
+        // 而症状完全相同的原因有三类——钩子没挂上 / 事件没派发 / 载荷取不到正文。
+        // 没有计数就只能猜；有了它，一件事一秒可判。
         try {
-          if (!event || event.type !== 'assistant/message') return
+          const statsFile = join(stateDir, 'compact-stats.json')
+          let stats = { seen: 0, assistantMessages: 0, wrote: 0, lastType: '', lastError: '', updatedAt: '' }
+          try { stats = { ...stats, ...JSON.parse(readFileSync(statsFile, 'utf8')) } catch { /* 首次运行 */ }
+          stats.seen++
+          stats.lastType = String(event?.type ?? '(无)')
+          if (event?.type !== 'assistant/message') {
+            stats.updatedAt = new Date().toISOString()
+            writeFileSync(statsFile, JSON.stringify(stats, null, 2), 'utf8')
+            return
+          }
+          stats.assistantMessages++
           const sid = session?.id
-          if (typeof sid !== 'string' || !sid) return
+          if (typeof sid !== 'string' || !sid) { stats.lastError = 'no_session_id'; throw new Error('no session id') }
           const text = extractText(event.data?.message)
-          if (!text) return
+          if (!text) { stats.lastError = 'no_text_extracted'; throw new Error('empty text') }
           const report = buildCompactReport(text, cfg.compactThresholds || {})
-          writeCompactReport(sid, report, cfg.dshHome || process.env.DSH_HOME)
-        } catch { /* 度量失败绝不影响对话 */ }
+          const ok = writeCompactReport(sid, report, cfg.dshHome || process.env.DSH_HOME)
+          if (ok) { stats.wrote++; stats.lastError = '' } else { stats.lastError = 'write_failed' }
+          stats.updatedAt = new Date().toISOString()
+          writeFileSync(statsFile, JSON.stringify(stats, null, 2), 'utf8')
+        } catch (e) {
+          try {
+            const statsFile = join(stateDir, 'compact-stats.json')
+            const stats = JSON.parse(readFileSync(statsFile, 'utf8'))
+            stats.lastError = String(e?.message || e).slice(0, 120)
+            stats.updatedAt = new Date().toISOString()
+            writeFileSync(statsFile, JSON.stringify(stats, null, 2), 'utf8')
+          } catch { /* 诊断失败绝不影响对话 */ }
+        }
       })
     } catch (err) {
       console.warn('[ai-execution-control] 输出压缩度量未挂载（管控降级）：', err?.message || err)

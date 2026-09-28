@@ -38,7 +38,10 @@ EXIT_FAIL = 1
 EXIT_INPUT = 2
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-POOL_ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+# 合并后布局（2026-09-28）：docs/、plugins/ 随技能池主体迁入 <项目根>/skill-pool/，
+# 而 skills/ 仍在 <项目根>。以下先探测技能池根，探测不到时回退旧的「三级上溯」写法。
+_POOL_CANDIDATE = os.path.abspath(os.path.join(HERE, "../../../skill-pool"))
+POOL_ROOT = _POOL_CANDIDATE if os.path.isdir(os.path.join(_POOL_CANDIDATE, "docs", "operations")) else os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 DEFAULT_PLUGIN = os.path.join(POOL_ROOT, "plugins", "dsh-plugin-control-jump")
 HARNESS = os.path.join(HERE, "harness.cjs")
 PLUGIN_ID = "dsh-plugin-control-jump"

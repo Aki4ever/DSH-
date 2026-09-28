@@ -36,9 +36,14 @@ EXIT_FAIL = 1
 EXIT_INPUT = 2
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-POOL_ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+# 合并后布局（2026-09-28）：docs/、plugins/ 随技能池主体迁入 <项目根>/skill-pool/，
+# 而 skills/ 仍在 <项目根>。以下先探测技能池根，探测不到时回退旧的「三级上溯」写法。
+_POOL_CANDIDATE = os.path.abspath(os.path.join(HERE, "../../../skill-pool"))
+POOL_ROOT = _POOL_CANDIDATE if os.path.isdir(os.path.join(_POOL_CANDIDATE, "docs", "operations")) else os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+_SKILLS_CANDIDATE = os.path.join(os.path.dirname(POOL_ROOT), "skills")
+SKILLS_ROOT = _SKILLS_CANDIDATE if os.path.isdir(_SKILLS_CANDIDATE) else os.path.join(POOL_ROOT, "skills")
 CATALOG_PATH = os.path.join(POOL_ROOT, "docs", "operations", "skill-catalog.json")
-GITHUB_SEARCH = os.path.join(POOL_ROOT, "skills", "search-github-skill", "scripts", "search_skill.py")
+GITHUB_SEARCH = os.path.join(SKILLS_ROOT, "search-github-skill", "scripts", "search_skill.py")
 
 # 中英同义桥：用户说「信息图」，GitHub 上的仓库叫 infographic / chart / diagram。
 # 没有这座桥，中文查询在英文生态里的召回率接近 0。

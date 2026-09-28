@@ -16,11 +16,16 @@ import glob
 import argparse
 import subprocess
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+# 合并后布局（2026-09-28）：docs/、plugins/ 随技能池主体迁入 <项目根>/skill-pool/，
+# 而 skills/ 仍在 <项目根>。以下先探测技能池根，探测不到时回退旧的「三级上溯」写法。
+_POOL_CANDIDATE = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../skill-pool"))
+REPO_ROOT = _POOL_CANDIDATE if os.path.isdir(os.path.join(_POOL_CANDIDATE, "docs", "operations")) else os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+_SKILLS_CANDIDATE = os.path.join(os.path.dirname(REPO_ROOT), "skills")
+SKILLS_ROOT = _SKILLS_CANDIDATE if os.path.isdir(_SKILLS_CANDIDATE) else os.path.join(REPO_ROOT, "skills")
 TREE_JSON = os.path.join(REPO_ROOT, "docs/operations/execution-tree.json")
 CATALOG_JSON = os.path.join(REPO_ROOT, "docs/operations/skill-catalog.json")
 REGISTRY_JSON = os.path.join(REPO_ROOT, "docs/operations/execution-layers.json")
-BUILD_SCRIPT = os.path.join(REPO_ROOT, "skills/build-execution-tree/scripts/build_tree.py")
+BUILD_SCRIPT = os.path.join(SKILLS_ROOT, "build-execution-tree/scripts/build_tree.py")
 
 LAYERS = ["skill", "cli", "agent", "api", "mcp", "plugin"]
 # 判据用「集群名」而非圈码：①②③ 在中文里被当普通编号用得太滥，
@@ -51,7 +56,7 @@ def strip_managed(text):
 
 def scan_handwritten_cluster_enum():
     issues = []
-    targets = sorted(glob.glob(os.path.join(REPO_ROOT, "skills/**/*.md"), recursive=True))
+    targets = sorted(glob.glob(os.path.join(SKILLS_ROOT, "**/*.md"), recursive=True))
     targets += sorted(glob.glob(os.path.join(REPO_ROOT, "docs/requirements/*.md")))
     for path in targets:
         try:

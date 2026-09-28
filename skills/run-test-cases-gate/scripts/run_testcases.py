@@ -5,7 +5,12 @@ import subprocess
 import argparse
 import json
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+# 合并后布局（2026-09-28）：docs/、plugins/ 随技能池主体迁入 <项目根>/skill-pool/，
+# 而 skills/ 仍在 <项目根>。以下先探测技能池根，探测不到时回退旧的「三级上溯」写法。
+_POOL_CANDIDATE = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../skill-pool"))
+REPO_ROOT = _POOL_CANDIDATE if os.path.isdir(os.path.join(_POOL_CANDIDATE, "docs", "operations")) else os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+_SKILLS_CANDIDATE = os.path.join(os.path.dirname(REPO_ROOT), "skills")
+SKILLS_ROOT = _SKILLS_CANDIDATE if os.path.isdir(_SKILLS_CANDIDATE) else os.path.join(REPO_ROOT, "skills")
 STANDARDS_DIR = os.path.join(REPO_ROOT, "docs/knowledge/standards")
 
 def run_tests() -> dict:
@@ -39,7 +44,7 @@ def run_tests() -> dict:
         all_passed = False
 
     # TC-SPEC-002: 需求基线对齐
-    sync_script = os.path.join(REPO_ROOT, "skills/sync-requirements-lifecycle/scripts/sync_reqs.py")
+    sync_script = os.path.join(SKILLS_ROOT, "sync-requirements-lifecycle/scripts/sync_reqs.py")
     if os.path.exists(sync_script):
         cmd = f"python3 {sync_script} --req-id REQ-BUTLER-SPEC-GOVERNANCE-009"
         res = subprocess.run(cmd, shell=True, capture_output=True, text=True)
@@ -56,7 +61,7 @@ def run_tests() -> dict:
         all_passed = False
 
     # TC-SPEC-003: 全盘合规体检
-    audit_script = os.path.join(REPO_ROOT, "skills/audit-all-skills-compliance/scripts/audit_compliance.py")
+    audit_script = os.path.join(SKILLS_ROOT, "audit-all-skills-compliance/scripts/audit_compliance.py")
     if os.path.exists(audit_script):
         res = subprocess.run(f"python3 {audit_script}", shell=True, capture_output=True, text=True)
         tc3_ok = res.returncode == 0

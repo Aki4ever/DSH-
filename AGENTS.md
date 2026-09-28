@@ -19,6 +19,9 @@
 ./scripts/physical_lock.sh sync       # 按磁盘实况逐阶对齐物理锁（带凭据，不跳阶）
 ./scripts/todo_gate.sh check          # S07 待办常显判定：未挂任务列表 → 改动型调用被拒
 ./scripts/install_host_gate.sh verify # 机制载体自证：宿主是否真的加载了拦截层（isHost=true）
+node scripts/mechanism_audit.mjs      # 物理触达审计：哪条机制只有文字、没有载体
+node scripts/restore_skill_pool.mjs --check     # 技能池归位判定（面板能否看见技能）
+node scripts/build_capabilities_index.mjs --check  # 执行层是否 100% 入索引层
 ```
 
 > **为什么后两条必须常跑（REQ-080 / REQ-082 实测根因）**：门禁看板只能证明"工程内文件对不对"，

@@ -15,12 +15,17 @@ import json
 import argparse
 import subprocess
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
-SKILLS_DIR = os.path.join(REPO_ROOT, "skills")
+# 合并后布局（2026-09-28）：docs/、plugins/ 随技能池主体迁入 <项目根>/skill-pool/，
+# 而 skills/ 仍在 <项目根>。以下先探测技能池根，探测不到时回退旧的「三级上溯」写法。
+_POOL_CANDIDATE = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../skill-pool"))
+REPO_ROOT = _POOL_CANDIDATE if os.path.isdir(os.path.join(_POOL_CANDIDATE, "docs", "operations")) else os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+_SKILLS_CANDIDATE = os.path.join(os.path.dirname(REPO_ROOT), "skills")
+SKILLS_ROOT = _SKILLS_CANDIDATE if os.path.isdir(_SKILLS_CANDIDATE) else os.path.join(REPO_ROOT, "skills")
+SKILLS_DIR = SKILLS_ROOT
 CATALOG_JSON = os.path.join(REPO_ROOT, "docs/operations/skill-catalog.json")
 CATALOG_MD = os.path.join(REPO_ROOT, "docs/operations/skills-catalog.md")
 PRODUCT_MD = os.path.join(REPO_ROOT, "docs/requirements/product.md")
-RENDER_SCRIPT = os.path.join(REPO_ROOT, "skills/render-catalog-docs/scripts/render_docs.py")
+RENDER_SCRIPT = os.path.join(SKILLS_ROOT, "render-catalog-docs/scripts/render_docs.py")
 
 # 正文手写组装行：`skill-id` (L3) = `a` (L1) + `b` (L2)
 PROSE_ASSEMBLY_RE = re.compile(r"`([a-z0-9][a-z0-9\-]*)`\s*\(L[1-4]\)\s*=\s*(.+)$")

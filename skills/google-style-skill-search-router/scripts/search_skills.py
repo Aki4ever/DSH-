@@ -21,12 +21,17 @@ import argparse
 import importlib.util
 
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+# 合并后布局（2026-09-28）：docs/、plugins/ 随技能池主体迁入 <项目根>/skill-pool/，
+# 而 skills/ 仍在 <项目根>。以下先探测技能池根，探测不到时回退旧的「三级上溯」写法。
+_POOL_CANDIDATE = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../skill-pool"))
+REPO_ROOT = _POOL_CANDIDATE if os.path.isdir(os.path.join(_POOL_CANDIDATE, "docs", "operations")) else os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+_SKILLS_CANDIDATE = os.path.join(os.path.dirname(REPO_ROOT), "skills")
+SKILLS_ROOT = _SKILLS_CANDIDATE if os.path.isdir(_SKILLS_CANDIDATE) else os.path.join(REPO_ROOT, "skills")
 INDEX_JSON = os.path.join(REPO_ROOT, "docs/operations/skill-index.json")
-BUILD_SCRIPT = os.path.join(REPO_ROOT, "skills/build-inverted-index/scripts/build_index.py")
-RANK_SCRIPT = os.path.join(REPO_ROOT, "skills/rank-skills-bm25/scripts/rank_skills.py")
-SNIPPET_SCRIPT = os.path.join(REPO_ROOT, "skills/emit-search-snippet/scripts/emit_snippet.py")
-LOG_SCRIPT = os.path.join(REPO_ROOT, "skills/log-query-events/scripts/log_query.py")
+BUILD_SCRIPT = os.path.join(SKILLS_ROOT, "build-inverted-index/scripts/build_index.py")
+RANK_SCRIPT = os.path.join(SKILLS_ROOT, "rank-skills-bm25/scripts/rank_skills.py")
+SNIPPET_SCRIPT = os.path.join(SKILLS_ROOT, "emit-search-snippet/scripts/emit_snippet.py")
+LOG_SCRIPT = os.path.join(SKILLS_ROOT, "log-query-events/scripts/log_query.py")
 DEFAULT_FIXTURE = os.path.join(REPO_ROOT, "docs/requirements/execution/fixtures/retrieval-queries.json")
 
 MAX_PAYLOAD_BYTES = 1536

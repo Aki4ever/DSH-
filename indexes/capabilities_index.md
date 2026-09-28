@@ -143,10 +143,196 @@
 
 ## 🧰 三、技能池执行层索引（由 `scripts/build_capabilities_index.mjs` 生成，请勿手改）
 
-> 数据源：`skills/`（技能唯一权威源）、`skill-pool/agents`、`skill-pool/plugins`、`skill-pool/cli`。
+> 数据源：`skills/`（技能唯一权威源）、`skill-pool/agents`、`skill-pool/plugins`、`skill-pool/docs/cli/commands`、`scripts/`（本工程 CLI）。
+> 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：179**
+**执行层条目总数：224**（技能 177 · 其他执行层 47）
+**catalog 分级口径**：L1 43 · L2 95 · L3 43 · L4 1
+
+### 3.0 能力分级与集群（真相源口径）
+
+| 级别 | 分类集群 | 能力标识 | 物理路径 |
+| :--- | :--- | :--- | :--- |
+| L2 | 工序动作-物理原子锁 | `skill.pool.acquire-atomic-lock` | `skills/acquire-atomic-lock` |
+| L3 | 复合流程-反例门禁 | `skill.pool.anti-pattern-guard` | `skills/anti-pattern-guard` |
+| L1 | 原子规约-反例清单 | `skill.pool.anti-pattern-policy` | `skills/anti-pattern-policy` |
+| L1 | 原子规约-仲裁准则 | `skill.pool.arbitrate-priority-resolver` | `skills/arbitrate-priority-resolver` |
+| L2 | 工序动作-退出码断言 | `skill.pool.assert-zero-exitcode` | `skills/assert-zero-exitcode` |
+| L3 | 复合流程-快捷路由总控 | `skill.pool.atomic-fastpath-router` | `skills/atomic-fastpath-router` |
+| L3 | 复合流程-粒度分裂门禁 | `skill.pool.atomic-fission-guard` | `skills/atomic-fission-guard` |
+| L3 | 复合流程-物理原子锁门禁 | `skill.pool.atomic-lock-guard` | `skills/atomic-lock-guard` |
+| L1 | 原子规约-物理原子锁 | `skill.pool.atomic-lock-policy` | `skills/atomic-lock-policy` |
+| L2 | 工序动作-全量合规审计 | `skill.pool.audit-all-skills-compliance` | `skills/audit-all-skills-compliance` |
+| L2 | 工序动作-引入审计 | `skill.pool.audit-imported-skill` | `skills/audit-imported-skill` |
+| L2 | 工序动作-命名体检 | `skill.pool.audit-layer-naming` | `skills/audit-layer-naming` |
+| L2 | 工序动作-执行层建树 | `skill.pool.build-execution-tree` | `skills/build-execution-tree` |
+| L2 | 工序动作-查看器生成 | `skill.pool.build-image-viewer` | `skills/build-image-viewer` |
+| L2 | 工序动作-倒排索引 | `skill.pool.build-inverted-index` | `skills/build-inverted-index` |
+| L2 | 工序动作-层间依赖图 | `skill.pool.build-layer-graph` | `skills/build-layer-graph` |
+| L2 | 工序动作-量化映射表 | `skill.pool.build-quantifier-table` | `skills/build-quantifier-table` |
+| L1 | 原子规约-能力层命名 | `skill.pool.capability-naming-policy` | `skills/capability-naming-policy` |
+| L3 | 复合流程-口径一致性门禁 | `skill.pool.catalog-consistency-guard` | `skills/catalog-consistency-guard` |
+| L2 | 工序动作-语法编译 | `skill.pool.check-python-syntax` | `skills/check-python-syntax` |
+| L2 | 工序动作-脚本可执行检测 | `skill.pool.check-script-executable` | `skills/check-script-executable` |
+| L1 | 原子规约-全流程中文 | `skill.pool.chinese-end-to-end` | `skills/chinese-end-to-end` |
+| L3 | 复合流程-中文输出门禁 | `skill.pool.chinese-output-guard` | `skills/chinese-output-guard` |
+| L2 | 工序动作-变更处置判定 | `skill.pool.classify-change-scope` | `skills/classify-change-scope` |
+| L2 | 工序动作-决策可逆判定 | `skill.pool.classify-decision-reversibility` | `skills/classify-decision-reversibility` |
+| L2 | 工序动作-实例安全分档 | `skill.pool.classify-instance-safety` | `skills/classify-instance-safety` |
+| L2 | 工序动作-事件分档 | `skill.pool.classify-step-tier` | `skills/classify-step-tier` |
+| L2 | 工序动作-流程取证 | `skill.pool.collect-process-evidence` | `skills/collect-process-evidence` |
+| L3 | 复合流程-极简加粗 | `skill.pool.concise-chinese-bold-guard` | `skills/concise-chinese-bold-guard` |
+| L1 | 原子规约-简短聚焦 | `skill.pool.concise-focused-output` | `skills/concise-focused-output` |
+| L3 | 复合流程-具像化门禁 | `skill.pool.concretization-guard` | `skills/concretization-guard` |
+| L1 | 原子规约-含糊具像化 | `skill.pool.concretize-ambiguity-policy` | `skills/concretize-ambiguity-policy` |
+| L2 | 工序动作-含糊词具像化 | `skill.pool.concretize-term` | `skills/concretize-term` |
+| L1 | 原子规约-分支路由 | `skill.pool.conditional-deliverable-router` | `skills/conditional-deliverable-router` |
+| L3 | 复合流程-冲突检测 | `skill.pool.conflict-detector` | `skills/conflict-detector` |
+| L2 | 工序动作-锁集合声明 | `skill.pool.declare-lock-set` | `skills/declare-lock-set` |
+| L3 | 复合流程-解耦门禁 | `skill.pool.decoupling-guard` | `skills/decoupling-guard` |
+| L2 | 工序动作-动词识别 | `skill.pool.detect-action-verb` | `skills/detect-action-verb` |
+| L2 | 工序动作-反例检测 | `skill.pool.detect-forbidden-state` | `skills/detect-forbidden-state` |
+| L2 | 工序动作-耦合检测 | `skill.pool.detect-layer-coupling` | `skills/detect-layer-coupling` |
+| L2 | 工序动作-锁冲突检测 | `skill.pool.detect-lock-conflict` | `skills/detect-lock-conflict` |
+| L2 | 工序动作-冲突对拍 | `skill.pool.detect-rule-conflicts` | `skills/detect-rule-conflicts` |
+| L2 | 工序动作-实体提取 | `skill.pool.detect-target-entity` | `skills/detect-target-entity` |
+| L2 | 工序动作-模糊词检测 | `skill.pool.detect-vague-modifier` | `skills/detect-vague-modifier` |
+| L2 | 工序动作-消歧打分 | `skill.pool.disambiguate-candidates` | `skills/disambiguate-candidates` |
+| L2 | 工序动作-四源检索调度 | `skill.pool.dispatch-skill-search` | `skills/dispatch-skill-search` |
+| L4 | 中枢编排-全局管家 | `skill.pool.dsh-butler` | `skills/dsh-butler` |
+| L3 | 复合流程-双流程分流总控 | `skill.pool.dual-lane-router` | `skills/dual-lane-router` |
+| L2 | 工序动作-摘要片段 | `skill.pool.emit-search-snippet` | `skills/emit-search-snippet` |
+| L1 | 原子规约-粒度物理化 | `skill.pool.enforce-atomic-granularity` | `skills/enforce-atomic-granularity` |
+| L1 | 原子规约-契约完整性 | `skill.pool.enforce-contract-completeness` | `skills/enforce-contract-completeness` |
+| L2 | 工序动作-编码检测 | `skill.pool.ensure-utf8-encoding` | `skills/ensure-utf8-encoding` |
+| L3 | 复合流程-执行层树门禁 | `skill.pool.execution-tree-guard` | `skills/execution-tree-guard` |
+| L2 | 工序动作-拓扑提取 | `skill.pool.extract-catalog-topology` | `skills/extract-catalog-topology` |
+| L2 | 工序动作-目标提取 | `skill.pool.extract-core-objective` | `skills/extract-core-objective` |
+| L2 | 工序动作-数据抽取 | `skill.pool.extract-json-payload` | `skills/extract-json-payload` |
+| L1 | 原子规约-快车道红线 | `skill.pool.fastlane-redline-policy` | `skills/fastlane-redline-policy` |
+| L1 | 原子规约-快捷路由指引 | `skill.pool.fastpath-dispatch-guide` | `skills/fastpath-dispatch-guide` |
+| L1 | 原子规约-噪音过滤 | `skill.pool.filter-conversational-noise` | `skills/filter-conversational-noise` |
+| L2 | 工序动作-事件折叠 | `skill.pool.fold-repeated-events` | `skills/fold-repeated-events` |
+| L1 | 原子规约-图标尾部 | `skill.pool.format-iconized-tail` | `skills/format-iconized-tail` |
+| L1 | 原子规约-状态规范 | `skill.pool.format-status-block` | `skills/format-status-block` |
+| L1 | 原子规约-可视化规约 | `skill.pool.format-visual-inspection` | `skills/format-visual-inspection` |
+| L1 | 原子规约-可缩放可视化 | `skill.pool.format-zoomable-visual` | `skills/format-zoomable-visual` |
+| L3 | 复合流程-全量审计门禁 | `skill.pool.full-spectrum-skill-auditor` | `skills/full-spectrum-skill-auditor` |
+| L2 | 工序动作-快捷路由生成 | `skill.pool.generate-fastpath-route` | `skills/generate-fastpath-route` |
+| L3 | 复合流程-技能检索总控 | `skill.pool.google-style-skill-search-router` | `skills/google-style-skill-search-router` |
+| L1 | 原子规约-说明过滤 | `skill.pool.high-relevance-notes-only` | `skills/high-relevance-notes-only` |
+| L3 | 复合流程-图标展示总控 | `skill.pool.iconized-output-showcase` | `skills/iconized-output-showcase` |
+| L3 | 复合流程-主体契约 | `skill.pool.index-body-contract` | `skills/index-body-contract` |
+| L3 | 复合流程-头部契约 | `skill.pool.index-header-contract` | `skills/index-header-contract` |
+| L2 | 工序动作-客户端插件装配 | `skill.pool.install-client-plugin` | `skills/install-client-plugin` |
+| L3 | 复合流程-实例准入门禁 | `skill.pool.instance-pool-guard` | `skills/instance-pool-guard` |
+| L1 | 原子规约-多实例准入 | `skill.pool.instance-pool-policy` | `skills/instance-pool-policy` |
+| L3 | 复合流程-意图检测 | `skill.pool.intent-detector` | `skills/intent-detector` |
+| L3 | 复合流程-可缩放查看器总控 | `skill.pool.interactive-image-viewer` | `skills/interactive-image-viewer` |
+| L1 | 原子规约-执行层解耦 | `skill.pool.layer-decoupling-policy` | `skills/layer-decoupling-policy` |
+| L3 | 复合流程-命名规范门禁 | `skill.pool.layer-naming-guard` | `skills/layer-naming-guard` |
+| L1 | 原子规约-按需加载 | `skill.pool.lazy-load-policy` | `skills/lazy-load-policy` |
+| L1 | 原子规约-长度基元 | `skill.pool.limit-words-under-10` | `skills/limit-words-under-10` |
+| L2 | 工序动作-单契约加载 | `skill.pool.load-skill-contract` | `skills/load-skill-contract` |
+| L2 | 工序动作-质量信号 | `skill.pool.log-query-events` | `skills/log-query-events` |
+| L1 | 原子规约-排版基元 | `skill.pool.markdown-bold-only` | `skills/markdown-bold-only` |
+| L2 | 工序动作-关键词索引 | `skill.pool.match-intent-keywords` | `skills/match-intent-keywords` |
+| L2 | 工序动作-路由耗时测算 | `skill.pool.measure-routing-metrics` | `skills/measure-routing-metrics` |
+| L2 | 工序动作-token度量 | `skill.pool.measure-token-budget` | `skills/measure-token-budget` |
+| L2 | 工序动作-候选去重归一 | `skill.pool.merge-search-candidates` | `skills/merge-search-candidates` |
+| L1 | 原子规约-里程碑输出 | `skill.pool.milestone-only-progress` | `skills/milestone-only-progress` |
+| L3 | 复合流程-里程碑输出总控 | `skill.pool.milestone-progress-reporter` | `skills/milestone-progress-reporter` |
+| L1 | 原子规约-多源检索 | `skill.pool.multi-source-search-policy` | `skills/multi-source-search-policy` |
+| L1 | 原子规约-风格基元 | `skill.pool.no-conversational-filler` | `skills/no-conversational-filler` |
+| L2 | 工序动作-契约归一 | `skill.pool.normalize-skill-contract` | `skills/normalize-skill-contract` |
+| L3 | 复合流程-按需调用总控 | `skill.pool.on-demand-dispatcher` | `skills/on-demand-dispatcher` |
+| L3 | 复合流程-一次性解决门禁 | `skill.pool.one-shot-guard` | `skills/one-shot-guard` |
+| L1 | 原子规约-一次性解决 | `skill.pool.one-shot-resolution-policy` | `skills/one-shot-resolution-policy` |
+| L1 | 原子规约-语言基元 | `skill.pool.output-chinese-only` | `skills/output-chinese-only` |
+| L3 | 复合流程-并行锁门禁 | `skill.pool.parallel-lock-guard` | `skills/parallel-lock-guard` |
+| L1 | 原子规约-并行调控锁 | `skill.pool.parallel-lock-policy` | `skills/parallel-lock-policy` |
+| L2 | 工序动作-查询解析 | `skill.pool.parse-query` | `skills/parse-query` |
+| L2 | 工序动作-定级挂载 | `skill.pool.place-skill-into-cluster` | `skills/place-skill-into-cluster` |
+| L1 | 原子规约-通俗比喻 | `skill.pool.plain-analogy-explanation` | `skills/plain-analogy-explanation` |
+| L2 | 工序动作-分裂规划 | `skill.pool.plan-fission` | `skills/plan-fission` |
+| L2 | 工序动作-流程整改 | `skill.pool.plan-process-rectification` | `skills/plan-process-rectification` |
+| L3 | 复合流程-插件调控门禁 | `skill.pool.plugin-control-guard` | `skills/plugin-control-guard` |
+| L1 | 原子规约-插件调控入口 | `skill.pool.plugin-control-jump-policy` | `skills/plugin-control-jump-policy` |
+| L1 | 原子规约-不重启优先 | `skill.pool.prefer-hot-reload-policy` | `skills/prefer-hot-reload-policy` |
+| L1 | 原子规约-流程合规 | `skill.pool.process-conformance-policy` | `skills/process-conformance-policy` |
+| L3 | 复合流程-流程监督员 | `skill.pool.process-supervisor` | `skills/process-supervisor` |
+| L1 | 原子规约-防膨胀 | `skill.pool.prune-bloated-prompts` | `skills/prune-bloated-prompts` |
+| L2 | 工序动作-上下文裁剪 | `skill.pool.prune-redundant-context` | `skills/prune-redundant-context` |
+| L3 | 复合流程-质量门禁 | `skill.pool.qa-gatekeeper` | `skills/qa-gatekeeper` |
+| L3 | 复合流程-量化门禁 | `skill.pool.quantification-guard` | `skills/quantification-guard` |
+| L2 | 工序动作-程度词量化 | `skill.pool.quantify-modifier` | `skills/quantify-modifier` |
+| L1 | 原子规约-程度词量化 | `skill.pool.quantify-modifier-policy` | `skills/quantify-modifier-policy` |
+| L2 | 工序动作-相关度排序 | `skill.pool.rank-skills-bm25` | `skills/rank-skills-bm25` |
+| L2 | 工序动作-规范对照仲裁 | `skill.pool.reconcile-knowledge-specs` | `skills/reconcile-knowledge-specs` |
+| L2 | 工序动作-假设留痕 | `skill.pool.record-assumptions` | `skills/record-assumptions` |
+| L3 | 复合流程-冗余检测 | `skill.pool.redundancy-detector` | `skills/redundancy-detector` |
+| L2 | 工序动作-执行层登记 | `skill.pool.register-execution-layer` | `skills/register-execution-layer` |
+| L2 | 工序动作-命名整改 | `skill.pool.rename-execution-layer` | `skills/rename-execution-layer` |
+| L2 | 工序动作-命名文档渲染 | `skill.pool.render-capability-naming` | `skills/render-capability-naming` |
+| L2 | 工序动作-受管区块生成 | `skill.pool.render-catalog-docs` | `skills/render-catalog-docs` |
+| L2 | 工序动作-图谱编译 | `skill.pool.render-governance-mermaid` | `skills/render-governance-mermaid` |
+| L2 | 工序动作-工作区退役 | `skill.pool.retire-legacy-workspace` | `skills/retire-legacy-workspace` |
+| L2 | 工序动作-测试用例门禁 | `skill.pool.run-test-cases-gate` | `skills/run-test-cases-gate` |
+| L3 | 复合流程-格式守卫 | `skill.pool.schema-guard` | `skills/schema-guard` |
+| L2 | 工序动作-流程打分 | `skill.pool.score-process-conformance` | `skills/score-process-conformance` |
+| L2 | 工序动作-分流判定 | `skill.pool.score-task-lane` | `skills/score-task-lane` |
+| L2 | 工序动作-重复比对 | `skill.pool.search-duplicate-rules` | `skills/search-duplicate-rules` |
+| L2 | 工序动作-外部技能检索 | `skill.pool.search-github-skill` | `skills/search-github-skill` |
+| L2 | 工序动作-官网源检索 | `skill.pool.search-official-source` | `skills/search-official-source` |
+| L2 | 工序动作-选技清单 | `skill.pool.select-skills-for-task` | `skills/select-skills-for-task` |
+| L3 | 复合流程-技能引入管线 | `skill.pool.skill-import-pipeline` | `skills/skill-import-pipeline` |
+| L3 | 复合流程-索引控制 | `skill.pool.skill-index-router` | `skills/skill-index-router` |
+| L1 | 原子规约-片段回灌 | `skill.pool.snippet-only-recall` | `skills/snippet-only-recall` |
+| L3 | 复合流程-规范驱动总控 | `skill.pool.spec-driven-governance` | `skills/spec-driven-governance` |
+| L3 | 复合流程-输出总控 | `skill.pool.standard-output-framework` | `skills/standard-output-framework` |
+| L1 | 原子规约-场景规范 | `skill.pool.standardize-when-to-use` | `skills/standardize-when-to-use` |
+| L1 | 原子规约-SOP规范 | `skill.pool.standardize-workflow-sop` | `skills/standardize-workflow-sop` |
+| L1 | 原子规约-结构基元 | `skill.pool.strip-markdown-fence` | `skills/strip-markdown-fence` |
+| L2 | 工序动作-非散文剥离 | `skill.pool.strip-non-prose-scope` | `skills/strip-non-prose-scope` |
+| L1 | 原子规约-排版基元 | `skill.pool.strip-whitespace-newlines` | `skills/strip-whitespace-newlines` |
+| L2 | 工序动作-需求生命周期同步 | `skill.pool.sync-requirements-lifecycle` | `skills/sync-requirements-lifecycle` |
+| L3 | 复合流程-量化指标总控 | `skill.pool.tail-metrics-showcase` | `skills/tail-metrics-showcase` |
+| L1 | 原子规约-token预算 | `skill.pool.token-budget-policy` | `skills/token-budget-policy` |
+| L3 | 复合流程-token门禁 | `skill.pool.token-economy-guard` | `skills/token-economy-guard` |
+| L1 | 原子规约-树同步强制 | `skill.pool.tree-update-mandatory` | `skills/tree-update-mandatory` |
+| L2 | 工序动作-头部校验 | `skill.pool.validate-header-triggers` | `skills/validate-header-triggers` |
+| L2 | 工序动作-图标正则校验 | `skill.pool.validate-icon-syntax` | `skills/validate-icon-syntax` |
+| L2 | 工序动作-互斥压测断言 | `skill.pool.verify-atomic-mutual-exclusion` | `skills/verify-atomic-mutual-exclusion` |
+| L2 | 工序动作-口径对拍 | `skill.pool.verify-catalog-consistency` | `skills/verify-catalog-consistency` |
+| L2 | 工序动作-中文断言 | `skill.pool.verify-chinese-output` | `skills/verify-chinese-output` |
+| L2 | 工序动作-具像化断言 | `skill.pool.verify-concretized-output` | `skills/verify-concretized-output` |
+| L2 | 工序动作-上下文预算断言 | `skill.pool.verify-context-payload` | `skills/verify-context-payload` |
+| L2 | 工序动作-解耦断言 | `skill.pool.verify-decoupling` | `skills/verify-decoupling` |
+| L2 | 工序动作-地址探针 | `skill.pool.verify-deliverable-paths` | `skills/verify-deliverable-paths` |
+| L2 | 工序动作-契约脚本验证 | `skill.pool.verify-execution-contract` | `skills/verify-execution-contract` |
+| L2 | 工序动作-树一致性断言 | `skill.pool.verify-execution-tree` | `skills/verify-execution-tree` |
+| L2 | 工序动作-文件探针 | `skill.pool.verify-file-exists` | `skills/verify-file-exists` |
+| L2 | 工序动作-实例声明断言 | `skill.pool.verify-instance-safety` | `skills/verify-instance-safety` |
+| L2 | 工序动作-交互HTML探针 | `skill.pool.verify-interactive-html` | `skills/verify-interactive-html` |
+| L2 | 工序动作-判定复算 | `skill.pool.verify-lane-decision` | `skills/verify-lane-decision` |
+| L2 | 工序动作-命名断言 | `skill.pool.verify-layer-naming` | `skills/verify-layer-naming` |
+| L2 | 工序动作-流程图语法校验 | `skill.pool.verify-mermaid-syntax` | `skills/verify-mermaid-syntax` |
+| L2 | 工序动作-反例零命中断言 | `skill.pool.verify-no-forbidden-event` | `skills/verify-no-forbidden-event` |
+| L2 | 工序动作-锁违规断言 | `skill.pool.verify-no-lock-violation` | `skills/verify-no-lock-violation` |
+| L2 | 工序动作-反问检测断言 | `skill.pool.verify-no-unnecessary-question` | `skills/verify-no-unnecessary-question` |
+| L2 | 工序动作-重启必要性断言 | `skill.pool.verify-no-unnecessary-restart` | `skills/verify-no-unnecessary-restart` |
+| L2 | 工序动作-调控按钮断言 | `skill.pool.verify-plugin-control-button` | `skills/verify-plugin-control-button` |
+| L2 | 工序动作-进度预算断言 | `skill.pool.verify-progress-budget` | `skills/verify-progress-budget` |
+| L2 | 工序动作-量化断言 | `skill.pool.verify-quantified-output` | `skills/verify-quantified-output` |
+| L2 | 工序动作-降幅断言 | `skill.pool.verify-token-reduction` | `skills/verify-token-reduction` |
+| L2 | 工序动作-退役断言 | `skill.pool.verify-workspace-retirement` | `skills/verify-workspace-retirement` |
+| L3 | 复合流程-可视化交互门禁 | `skill.pool.visual-interaction-guard` | `skills/visual-interaction-guard` |
+| L3 | 复合流程-可视化透视 | `skill.pool.visualize-governance-topology` | `skills/visualize-governance-topology` |
+| L3 | 复合流程-零重启门禁 | `skill.pool.zero-restart-guard` | `skills/zero-restart-guard` |
+| L1 | 原子规约-可视化交互 | `skill.pool.zoom-level-policy` | `skills/zoom-level-policy` |
+
+### 3.1 全量执行层速查（含 agent / plugin / cli）
 
 | 层级 | 能力标识 (Identifier) | 物理路径 | 简介 |
 | :--- | :--- | :--- | :--- |
@@ -329,8 +515,64 @@
 | 技能 (Skill) | `skill.pool.zoom-level-policy` | `skills/zoom-level-policy` | 微观原子规约：可视化产物交互判定基元。钉死三条硬口径——缩放必须走离散档位表（13 档，+/- 跳相邻档，滚轮连续微调后吸附，档位可枚举可复算）、下载必须三段降级（showSaveFilePicker / Blob 下载 / 就地提示，禁止 |
 | 智能体 (Agent) | `agent.skillpool.process-supervisor-agent` | `skill-pool/agents/process-supervisor-agent` | --- |
 | 插件 (Plugin) | `plugin.skillpool.dsh-plugin-control-jump` | `skill-pool/plugins/dsh-plugin-control-jump` | — |
+| 脚本 (CLI) | `cli.rules.agent_life` | `scripts/agent_life.mjs` | agent_life.mjs |
+| 脚本 (CLI) | `cli.rules.align_version` | `scripts/align_version.mjs` | 全库受管文档版本归位（把受管文档头部版本统一改到当前总版本） |
+| 脚本 (CLI) | `cli.rules.audit_execution` | `scripts/audit_execution.sh` | 对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片 |
+| 脚本 (CLI) | `cli.rules.batch_fix_sidebar_titles` | `scripts/batch_fix_sidebar_titles.mjs` | 全量穿透修复前端侧边栏及权威存储中的全部存量会话标题 |
+| 脚本 (CLI) | `cli.rules.batch_rename_sessions` | `scripts/batch_rename_sessions.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.build_capabilities_index` | `scripts/build_capabilities_index.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.channel_audit` | `scripts/channel_audit.mjs` | 快速通道注册审计器 —— 校验"通道表"是否真的可用（对应 REQ-045） |
+| 脚本 (CLI) | `cli.rules.check_freshness` | `scripts/check_freshness.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.check_task_naming` | `scripts/check_task_naming.sh` | 检查「当前会话」的任务命名是否符合规范，供看板常显与流程判定使用 |
+| 脚本 (CLI) | `cli.rules.check_unique_identifiers` | `scripts/check_unique_identifiers.mjs` | check_unique_identifiers.mjs |
+| 脚本 (CLI) | `cli.rules.conflict_scan` | `scripts/conflict_scan.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.control_gates` | `scripts/control_gates.sh` | — |
+| 脚本 (CLI) | `cli.rules.disk_check_and_cleanup` | `scripts/disk_check_and_cleanup.sh` | DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位) |
+| 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
+| 脚本 (CLI) | `cli.rules.generate_image` | `scripts/generate_image.py` | — |
+| 脚本 (CLI) | `cli.rules.generate_naming_plan` | `scripts/generate_naming_plan.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.git_sync_remote` | `scripts/git_sync_remote.sh` | DSH 工程远程 Git 智能探针、缺地址开页引导、动态摘要提交与强同步引擎 |
+| 脚本 (CLI) | `cli.rules.global_scheduler_lock` | `scripts/global_scheduler_lock.sh` | DSH 全自动轻量级全局调度锁中枢与并发资源防冲突引擎 |
+| 脚本 (CLI) | `cli.rules.init_dir` | `scripts/init_dir.sh` | — |
+| 脚本 (CLI) | `cli.rules.init_project` | `scripts/init_project.sh` | — |
+| 脚本 (CLI) | `cli.rules.install_host_gate` | `scripts/install_host_gate.sh` | — |
+| 脚本 (CLI) | `cli.rules.legacy_align_scan` | `scripts/legacy_align_scan.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.mechanism_audit` | `scripts/mechanism_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.name_me` | `scripts/name_me.sh` | **立刻**给"当前会话"改名——开工第一动作，一条命令，任何目录可用 |
+| 脚本 (CLI) | `cli.rules.naming_watchdog` | `scripts/naming_watchdog.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.normalize_all_projects` | `scripts/normalize_all_projects.mjs` | 全域存量 DSH 工程文件夹批量合规与规范化治理脚本 |
+| 脚本 (CLI) | `cli.rules.patch_dsh_todo_progress` | `scripts/patch_dsh_todo_progress.cjs` | 补丁：给 DSH 输入坞任务条（TodoPanel）加「首栏总进度 + 每行实时进度」，并把 |
+| 脚本 (CLI) | `cli.rules.physical_lock` | `scripts/physical_lock.sh` | — |
+| 脚本 (CLI) | `cli.rules.probe_long_output` | `scripts/probe_long_output.mjs` | 长输出实测探针：验证 max_tokens 提高后单次回复能否突破旧上限（32768）。 |
+| 脚本 (CLI) | `cli.rules.probe_long_output_stream` | `scripts/probe_long_output_stream.mjs` | 长输出触顶实测（流式版）：验证单次回复到底能有多长。 |
+| 脚本 (CLI) | `cli.rules.probe_max_tokens` | `scripts/probe_max_tokens.mjs` | 探测服务端对 max_tokens 的接受范围。 |
+| 脚本 (CLI) | `cli.rules.redundancy_scan` | `scripts/redundancy_scan.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.rename_session` | `scripts/rename_session.sh` | 通过 DSH 后台 HTTP RPC 接口，为当前会话重命名并锁定侧边栏标题 |
+| 脚本 (CLI) | `cli.rules.restore_skill_pool` | `scripts/restore_skill_pool.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.route_navigate` | `scripts/route_navigate.mjs` | route_navigate.mjs |
+| 脚本 (CLI) | `cli.rules.session_naming_audit` | `scripts/session_naming_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.svg2png` | `scripts/svg2png.sh` | 把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节） |
+| 脚本 (CLI) | `cli.rules.sync_control_requirements` | `scripts/sync_control_requirements.mjs` | 管控机制专属需求同步校验脚本 (Control Requirements Sync Verifier) |
+| 脚本 (CLI) | `cli.rules.test_auto_naming` | `scripts/test_auto_naming.mjs` | 自动命名逻辑测试（在**不重启宿主**的前提下验证）。 |
+| 脚本 (CLI) | `cli.rules.test_physical_lock` | `scripts/test_physical_lock.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.test_v180_spec` | `scripts/test_v180_spec.sh` | — |
+| 脚本 (CLI) | `cli.rules.todo_gate` | `scripts/todo_gate.sh` | — |
+| 脚本 (CLI) | `cli.rules.verify_auto_naming_e2e` | `scripts/verify_auto_naming_e2e.mjs` | 自动命名端到端验收（重启后运行，一次给出结论）。 |
+| 脚本 (CLI) | `cli.rules.verify_escape_hatch` | `scripts/verify_escape_hatch.sh` | — |
+| 脚本 (CLI) | `cli.rules.verify_guard_live` | `scripts/verify_guard_live.sh` | — |
 
-### 3.1 执行层资产指针（非能力条目，但必须可追溯）
+### 3.2 ⚠️ catalog 与磁盘漂移（必须处理，禁止当成可用能力）
+
+以下条目在真相源 catalog 中登记，但 `skills/<name>/SKILL.md` **在磁盘上不存在**。
+它们不是本仓技能，必须二选一：补齐文件，或从 catalog 注销。
+
+- `confirm-before-coding`（catalog 有、磁盘无）
+- `track-task-progress`（catalog 有、磁盘无）
+- `github`（catalog 有、磁盘无）
+- `manage-problem-log`（catalog 有、磁盘无）
+- `manage-requirements`（catalog 有、磁盘无）
+
+### 3.3 执行层资产指针（非能力条目，但必须可追溯）
 
 | 资产 | 物理路径 | 作用 |
 | :--- | :--- | :--- |

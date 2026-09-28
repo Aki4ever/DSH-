@@ -11,8 +11,13 @@ import json
 import re
 from datetime import datetime
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
-SKILLS_DIR = os.path.join(REPO_ROOT, "skills")
+# 合并后布局（2026-09-28）：docs/、plugins/ 随技能池主体迁入 <项目根>/skill-pool/，
+# 而 skills/ 仍在 <项目根>。以下先探测技能池根，探测不到时回退旧的「三级上溯」写法。
+_POOL_CANDIDATE = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../skill-pool"))
+REPO_ROOT = _POOL_CANDIDATE if os.path.isdir(os.path.join(_POOL_CANDIDATE, "docs", "operations")) else os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+_SKILLS_CANDIDATE = os.path.join(os.path.dirname(REPO_ROOT), "skills")
+SKILLS_ROOT = _SKILLS_CANDIDATE if os.path.isdir(_SKILLS_CANDIDATE) else os.path.join(REPO_ROOT, "skills")
+SKILLS_DIR = SKILLS_ROOT
 CATALOG_JSON_PATH = os.path.join(REPO_ROOT, "docs/operations/skill-catalog.json")
 CATALOG_MD_PATH = os.path.join(REPO_ROOT, "docs/operations/skills-catalog.md")
 

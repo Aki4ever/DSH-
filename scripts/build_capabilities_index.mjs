@@ -97,7 +97,60 @@ function collectAll() {
     ...scanDirLayer('skill-pool/agents', '智能体 (Agent)', 'agent.skillpool'),
     ...scanDirLayer('skill-pool/plugins', '插件 (Plugin)', 'plugin.skillpool'),
     ...scanDirLayer('skill-pool/docs/cli/commands', '脚本 (CLI)', 'cli.skillpool'),
+    // 本工程自己的 CLI 也必须入索引（2026-09-28 审计发现的覆盖率自证缺陷：
+    // 生成器原先从不扫 scripts/，45 个 CLI 游离于"分子分母"之外，
+    // `--check` 恒报"未收录 0"——它度量的是自己定义的集合，不是全部执行层）。
+    ...scanScriptLayer(),
   ]
+}
+
+/** 扫描本工程 CLI：`scripts/**` 下的可执行脚本（.sh/.mjs/.cjs/.py），排除 lib 内部实现。 */
+function scanScriptLayer() {
+  const dir = join(ROOT, 'scripts')
+  if (!existsSync(dir)) return []
+  const out = []
+  const walk = (rel) => {
+    for (const entry of readdirSync(join(ROOT, rel), { withFileTypes: true })) {
+      const childRel = `${rel}/${entry.name}`
+      if (entry.isDirectory()) {
+        if (entry.name === 'lib') continue          // lib/ 是内部实现，不是对外 CLI
+        walk(childRel)
+        continue
+      }
+      if (!/\.(sh|mjs|cjs|py)$/.test(entry.name)) continue
+      const id = `cli.rules.${entry.name.replace(/\.[a-z]+$/, '')}`
+      out.push({
+        layer: '脚本 (CLI)',
+        id,
+        path: childRel,
+        desc: (() => {
+          const text = readFileSync(join(ROOT, childRel), 'utf8')
+          const line = text.split('\n').slice(0, 30).find((l) => /功能描述|核心功能|作用[:：]|^\s*\*\s*\S/.test(l))
+          return (line || '').replace(/^[\s*/#-]+/, '').replace(/功能描述[:：]?|核心功能[:：]?/, '').trim().slice(0, 100)
+        })(),
+      })
+    }
+  }
+  walk('scripts')
+  return out.sort((a, b) => a.id.localeCompare(b.id))
+}
+
+/**
+ * 读取技能目录真相源（catalog），并**对拍磁盘**。
+ *
+ * 为什么必须对拍：catalog 记的是"应该有"，磁盘是"真的有"。实测二者已经漂移——
+ * catalog 里有 5 个技能在 `skills/` 下根本不存在。若索引只照抄 catalog，
+ * 索引会宣称一批不存在的技能可用；这正是"虚无缥缈"的生成方式。
+ */
+function loadCatalog() {
+  const file = join(ROOT, 'skill-pool', 'docs', 'operations', 'skill-catalog.json')
+  if (!existsSync(file)) return { entries: [], summary: null, missingOnDisk: [] }
+  const data = JSON.parse(readFileSync(file, 'utf8'))
+  const entries = Array.isArray(data.skills) ? data.skills : []
+  const missingOnDisk = entries
+    .filter((e) => e.layer === 'skill' && !existsSync(join(ROOT, 'skills', e.name, 'SKILL.md')))
+    .map((e) => e.name)
+  return { entries, summary: data.levels_summary || null, missingOnDisk }
 }
 
 /** 非条目但属执行层资产的指针（工具链入口与真相源数据），必须在索引里可追溯。 */
@@ -117,14 +170,33 @@ const ASSET_POINTERS = [
 
 function renderSection(items) {
   const lines = []
+  const cat = loadCatalog()
+  const levelOf = new Map(cat.entries.map((e) => [e.name, e.level]))
+  const titleOf = new Map(cat.entries.map((e) => [e.name, e.category_title]))
   lines.push(BEGIN)
   lines.push('')
   lines.push('## 🧰 三、技能池执行层索引（由 `scripts/build_capabilities_index.mjs` 生成，请勿手改）')
   lines.push('')
-  lines.push('> 数据源：`skills/`（技能唯一权威源）、`skill-pool/agents`、`skill-pool/plugins`、`skill-pool/cli`。')
+  lines.push('> 数据源：`skills/`（技能唯一权威源）、`skill-pool/agents`、`skill-pool/plugins`、`skill-pool/docs/cli/commands`、`scripts/`（本工程 CLI）。')
+  lines.push('> 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。')
   lines.push('> 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。')
   lines.push('')
-  lines.push(`**执行层条目总数：${items.length}**`)
+  lines.push(`**执行层条目总数：${items.length}**（技能 ${items.filter((i) => i.layer.includes('Skill')).length} · 其他执行层 ${items.filter((i) => !i.layer.includes('Skill')).length}）`)
+  if (cat.summary) {
+    lines.push(`**catalog 分级口径**：${Object.entries(cat.summary).map(([k, v]) => `${k} ${v}`).join(' · ')}`)
+  }
+  lines.push('')
+  lines.push('### 3.0 能力分级与集群（真相源口径）')
+  lines.push('')
+  lines.push('| 级别 | 分类集群 | 能力标识 | 物理路径 |')
+  lines.push('| :--- | :--- | :--- | :--- |')
+  const skillItems = items.filter((i) => i.layer.includes('Skill'))
+  for (const it of skillItems) {
+    const name = it.path.replace('skills/', '')
+    lines.push(`| ${levelOf.get(name) || '—'} | ${titleOf.get(name) || '—'} | \`${it.id}\` | \`${it.path}\` |`)
+  }
+  lines.push('')
+  lines.push('### 3.1 全量执行层速查（含 agent / plugin / cli）')
   lines.push('')
   lines.push('| 层级 | 能力标识 (Identifier) | 物理路径 | 简介 |')
   lines.push('| :--- | :--- | :--- | :--- |')
@@ -132,7 +204,16 @@ function renderSection(items) {
     lines.push(`| ${it.layer} | \`${it.id}\` | \`${it.path}\` | ${it.desc.replace(/\|/g, '\\|') || '—'} |`)
   }
   lines.push('')
-  lines.push('### 3.1 执行层资产指针（非能力条目，但必须可追溯）')
+  if (cat.missingOnDisk.length) {
+    lines.push('### 3.2 ⚠️ catalog 与磁盘漂移（必须处理，禁止当成可用能力）')
+    lines.push('')
+    lines.push('以下条目在真相源 catalog 中登记，但 `skills/<name>/SKILL.md` **在磁盘上不存在**。')
+    lines.push('它们不是本仓技能，必须二选一：补齐文件，或从 catalog 注销。')
+    lines.push('')
+    for (const n of cat.missingOnDisk) lines.push(`- \`${n}\`（catalog 有、磁盘无）`)
+    lines.push('')
+  }
+  lines.push('### 3.3 执行层资产指针（非能力条目，但必须可追溯）')
   lines.push('')
   lines.push('| 资产 | 物理路径 | 作用 |')
   lines.push('| :--- | :--- | :--- |')
@@ -147,18 +228,22 @@ function renderSection(items) {
 
 function check() {
   const items = collectAll()
+  const cat = loadCatalog()
   const indexText = existsSync(INDEX_FILE) ? readFileSync(INDEX_FILE, 'utf8') : ''
   const missing = items.filter((it) => !indexText.includes(it.id))
   console.log('🔎 执行层 → 索引层 覆盖率判定')
   console.log('-----------------------------------------')
-  console.log(`执行层条目：${items.length}`)
+  console.log(`执行层条目：${items.length}（技能 ${items.filter((i) => i.layer.includes('Skill')).length} · agent/plugin/cli ${items.filter((i) => !i.layer.includes('Skill')).length}）`)
   console.log(`已收录：${items.length - missing.length} · 未收录：${missing.length}`)
   if (missing.length) {
     console.log('未收录样例：' + missing.slice(0, 6).map((m) => m.id).join('、'))
   }
+  console.log(`catalog 登记条目：${cat.entries.length}`)
+  console.log(`catalog 有但磁盘无（漂移，必须在索引 3.2 显式列出）：${cat.missingOnDisk.length}${cat.missingOnDisk.length ? ' → ' + cat.missingOnDisk.join('、') : ''}`)
   console.log(`受管区间标记：${indexText.includes(BEGIN) && indexText.includes(END) ? '✅ 在位' : '⛔ 缺失（跑 --apply 生成）'}`)
   console.log('-----------------------------------------')
-  return missing.length === 0 && indexText.includes(BEGIN)
+  const driftListed = cat.missingOnDisk.every((n) => indexText.includes(n))
+  return missing.length === 0 && indexText.includes(BEGIN) && driftListed
 }
 
 function apply() {

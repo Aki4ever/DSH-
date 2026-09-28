@@ -582,3 +582,12 @@ if (args.json) {
   if (result.itemCount > args.top) console.log(`\n…… 其余 ${result.itemCount - args.top} 项已省略`)
   console.log(result.itemCount === 0 ? '\n✅ 存量已与新规范对齐' : '\n⚠️ 存在待对齐项，须在本次迭代内清零或书面说明原因')
 }
+
+// ── 退出码语义（2026-09-28 修正，实测缺陷驱动）──────────────────────────────
+// 旧行为：默认模式**恒 exit 0**，退出码只在 `--self-test` 时才有意义。
+// 后果：调用方（audit_execution.sh 维度 5）只判退出码 → 明明打印着"待对齐 4 项"，
+// 却被判成"✅ 存量校准通过：遇碰即对齐清单清零 (+12)"，**假绿**。
+// 一个打印着失败却返回成功的检查，比没有检查更危险：它让失败长期隐形。
+// 现在：默认模式有待对齐项即 exit 1，使所有"只看退出码"的调用方自动变正确。
+// `--json` 保持 exit 0（机器消费者契约以 stdout 为准，避免破坏既有集成）。
+if (!args.json && result.itemCount > 0) process.exit(1)

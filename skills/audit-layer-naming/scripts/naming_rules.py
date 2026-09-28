@@ -148,7 +148,12 @@ class NamingRules(object):
         if level == "L3" and not context.get("cluster"):
             add("owner_missing", "L3 未落在 execution-tree 的任一集群内（无归属）")
 
-        skill_dir = os.path.join(context["root"], "skills", identifier)
+        # 合并后布局（2026-09-28）：root 指向技能池根时，skills/ 在其上一级（<项目根>/skills）。
+        _root = context["root"]
+        _skills = os.path.join(os.path.dirname(_root), "skills")
+        if not os.path.isdir(_skills):
+            _skills = os.path.join(_root, "skills")
+        skill_dir = os.path.join(_skills, identifier)
         if scope == "local-pool":
             if not os.path.isdir(skill_dir):
                 add("dir_missing", "目录不存在：skills/%s/" % identifier)

@@ -75,15 +75,27 @@ case "$ACTION" in
     [ -f "$LOADER_ABS" ] && echo "加载器文件: ✅ 存在" || { echo "加载器文件: ⛔ 不存在"; local_ok=0; }
     if host_activated; then
       echo "宿主激活: ✅ 有宿主激活凭据（$(host_evidence)）"
+      host_ok=1
     else
       echo "宿主激活: ⛔ 无宿主激活凭据（host-activation.log 与 plugin-status.txt 均无 isHost=true）"
       echo "          提示：条目写入后需重载 profile 才会激活；未激活前所有硬门禁都不生效。"
-      local_ok=0
+      # 关键：这里**不能**把 local_ok 归零。载体是否存在与宿主是否已激活是两件事；
+      # 混在一个变量里会让"已注册但还没重载"被判成"载体坏了"（实测踩过：
+      # verify 在载体完好的情况下退 1，调用方只能一律报警）。
+      host_ok=0
     fi
     echo "-----------------------------------------"
-    # 仅"条目在位 + 加载器存在"只能证明已注册；宿主未激活时整体判未生效。
-    # 这样调用方不会把"我写了配置"误读成"机制在运行"。
-    [ "$local_ok" -eq 1 ] && exit 0 || exit 1
+    # 三态语义（2026-09-28 修正）：
+    #   0 = 已注册 且 有宿主运行时激活凭据（唯一可宣称"机制在运行"的状态）；
+    #   1 = 载体坏了（条目缺失或加载器文件不存在）——真正的故障；
+    #   2 = 已注册，但宿主尚未落运行时凭据（未重载 / 刚清空回填凭据）。
+    # 为什么把 2 单独拆出来：把"还没跑起来"与"装坏了"混成同一个失败码，
+    # 调用方就无法区分"该重启"与"该修配置"，只能一律报警。
+    # 同时修一个真实缺陷：旧写法 `[ … ] && exit 0 || exit 1` 在本脚本里
+    # 实测恒定返回 0（未激活时 verify 也报成功），使这个自证工具本身失去判定力。
+    if [ "$local_ok" -ne 1 ]; then exit 1; fi
+    if [ "$host_ok" -eq 1 ]; then exit 0; fi
+    exit 2
     ;;
   install)
     if [ ! -f "$PATCH_FILE" ]; then echo "❌ 找不到 profile 配置：$PATCH_FILE"; exit 2; fi

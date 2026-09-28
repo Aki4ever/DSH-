@@ -40,7 +40,9 @@ def main(argv):
     args = ap.parse_args(argv)
 
     here = os.path.dirname(os.path.abspath(__file__))
-    pool = os.path.abspath(os.path.join(here, "..", "..", ".."))
+    # 合并后布局（2026-09-28）：退役台账随技能池主体落在 <项目根>/skill-pool/docs/operations/。
+    _pool_candidate = os.path.abspath(os.path.join(here, "..", "..", "..", "skill-pool"))
+    pool = _pool_candidate if os.path.isdir(os.path.join(_pool_candidate, "docs", "operations")) else os.path.abspath(os.path.join(here, "..", "..", ".."))
     ledger_path = args.ledger or os.path.join(pool, "docs", "operations", "retired-workspaces.json")
     home = os.environ.get("DSH_HOME") or os.path.join(os.path.expanduser("~"), ".dsh")
     ws_path = args.ws or os.path.join(home, "storages", "workspace.json")

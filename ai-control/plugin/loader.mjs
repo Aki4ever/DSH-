@@ -20,6 +20,7 @@ import { existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
+import { isHostProcess } from '../lib/host_identity.mjs'
 
 /** 被加载的真实插件路径（与本文件同目录的 index.mjs）。 */
 const PLUGIN_URL = new URL('./index.mjs', import.meta.url)
@@ -67,8 +68,11 @@ try {
   mkdirSync(dir, { recursive: true })
   // 必须区分"宿主加载"与"测试脚本加载"：自检脚本也会 import 本文件，
   // 若不区分，测试留下的标记会被误读成"宿主已加载"（实测踩过这个假阳性）。
+  // 判据取唯一权威源 ai-control/lib/host_identity.mjs —— 此前这里与 index.mjs
+  // 各写一份、且两份都只认 dsh/lib/bin.js，真实宿主（Electron NodeService 形态）
+  // 永不命中，导致宿主激活记录长期空白并被迫手工回填。
   const argv1 = process.argv[1] ?? ''
-  const isHost = /dsh[\\/]lib[\\/]bin\.js/.test(argv1) || /dsh[\\/]lib[\\/]bin\.js/.test(process.argv.join(' '))
+  const isHost = isHostProcess()
   writeFileSync(join(dir, 'loader-status.txt'),
     `loader 模块已导入: ${new Date().toISOString()}\npid=${process.pid}\nisHost=${isHost}\nargv1=${argv1}\n`, 'utf8')
 } catch { /* 诊断失败绝不影响加载 */ }
