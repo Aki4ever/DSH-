@@ -22,10 +22,21 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const HOME = process.env.HOME || "";
-/** 优先可写安装位；DMG 只读卷放最后（命中时会明确报错，见 main）。 */
+/**
+ * 可写的 DSH 前端成品包根目录。
+ *
+ * 2026-09-28 实测修正：App 的实际布局已变为
+ * `…/Resources/app/node_modules/@deepseek-ai`（`Resources/runtime/…` 已不存在），
+ * 而本脚本原先只认旧路径 → 体检直接报"未找到 DSH 运行时目录"→
+ * **补丁长期处于"没打上"的状态而无人察觉**，表现为：任务列表没有逐条进度、
+ * 完成项不打钩。故把真实路径放在最前，旧路径保留兼容。
+ */
 const RUNTIME_ROOTS = [
+  "/Applications/DSH Desktop.app/Contents/Resources/app/node_modules/@deepseek-ai",
   "/Applications/DSH Desktop.app/Contents/Resources/runtime/harness/node_modules/@deepseek-ai",
+  path.join(HOME, "Applications/DSH Desktop.app/Contents/Resources/app/node_modules/@deepseek-ai"),
   path.join(HOME, "Applications/DSH Desktop.app/Contents/Resources/runtime/harness/node_modules/@deepseek-ai"),
+  "/Volumes/DSH Desktop/DSH Desktop.app/Contents/Resources/app/node_modules/@deepseek-ai",
   "/Volumes/DSH Desktop/DSH Desktop.app/Contents/Resources/runtime/harness/node_modules/@deepseek-ai",
 ];
 
@@ -124,36 +135,75 @@ const CONV_PATCHES = [
   { name: "思考中", find: '\t\t\t\t\ttitle: "Think",', replace: '\t\t\t\t\ttitle: "思考中",' },
 ];
 
-/** 工具名中文化（硬编码设计字面量，非语言包）。 */
+/**
+ * 工具名中文化。
+ *
+ * 2026-09-28 实测：新版产物已把标签改成 i18n 键（`search: "tool.title.search"`），
+ * 由语言包统一出中文，**不再需要字面量替换**。原实现写死 `search: "Search"`，
+ * App 升级后锚点全部落空，却只表现为"少打几处"而不报错 —— 于是体检长期红着、
+ * 没人知道原因。现在这些条目一律 `replace: null`（跳过），并在体检里如实标注为
+ * "已由 i18n 接管（无需补丁）"，而不是继续报 ❌ 制造假故障。
+ */
 const TOOL_PATCHES = [
-  { name: "行标题", find: '\t\t\tsearch: "Search",', replace: '\t\t\tsearch: "搜索",' },
-  { name: "行标题", find: '\t\t\tread: "Read",', replace: '\t\t\tread: "读取",' },
-  { name: "行标题", find: '\t\t\tbash: "Bash",', replace: '\t\t\tbash: "执行命令",' },
-  { name: "行标题", find: '\t\t\twrite: "Write",', replace: '\t\t\twrite: "写入",' },
-  { name: "行标题", find: '\t\t\tedit: "Edit",', replace: '\t\t\tedit: "编辑",' },
-  { name: "行标题", find: '\t\t\tcode: "Code",', replace: '\t\t\tcode: "代码",' },
-  { name: "行标题", find: '\t\t\tothers: "Tool call"', replace: '\t\t\tothers: "工具调用"' },
+  { name: "行标题（i18n 已接管）", find: '\t\t\tsearch: "Search",', replace: null },
+  { name: "行标题（i18n 已接管）", find: '\t\t\tbash: "Bash",', replace: null },
 ];
 
 const MARKER = "TodoPanel_module_css_default.barFill";
 
-/** 追加进度条 CSS：插入到看板样式串尾部（".lXshSW_item{...}" 之后）。 */
-function patchCss(text) {
-  if (text.includes(".lXshSW_bar{")) return { text, changed: false };
-  const anchor = 'const css$9 = ".lXshSW_root';
-  const start = text.indexOf(anchor);
-  if (start === -1) return { text, changed: false, missing: true };
+/**
+ * 定位 TodoPanel 模块的 CSS 前缀（形如 `lXshSW`）与其样式串。
+ *
+ * 为什么必须动态解析、且**必须锚定 TodoPanel 自己的块**：
+ *   ① 前缀是构建时哈希，App 每次发版都可能变；
+ *   ② 一个产物里有 9 个 CSS 模块（`const css = …` 反复出现），
+ *      用正则找"第一个 root 映射"会命中别的组件（实测拿到 `pXSMma`），
+ *      于是补丁插错地方、体检永久红 —— 只在**组件专属注释**之后取前缀才可靠。
+ * 2026-09-28 实测教训：旧实现把 `lXshSW` 与 `const css$9` 写死，App 升级后
+ * 匹配不上却只表现为"少打一半、不报错"，没人发现进度条其实没装上。
+ */
+function locateTodoCss(text) {
+  const marker = "TodoPanel.module.css.mjs";
+  const at = text.indexOf(marker);
+  if (at === -1) return null;
+  const window = text.slice(at);
+  const prefixMatch = window.match(/"root":\s*"([A-Za-z0-9]+)_root"/);
+  if (!prefixMatch) return null;
+  const prefix = prefixMatch[1];
+  const anchor = `const css = ".${prefix}_root`;
+  const start = text.indexOf(anchor, at);
+  if (start === -1) return null;
   const end = text.indexOf('";', start);
+  if (end === -1) return null;
+  return { prefix, start, end };
+}
+
+/** 只取 TodoPanel 的 CSS 前缀（体检与补丁共用同一判据，避免两处各写一套）。 */
+function detectTodoPrefix(text) {
+  const found = locateTodoCss(text);
+  return found ? found.prefix : null;
+}
+
+/** 追加进度条 CSS：插入到 TodoPanel 样式串尾部。 */
+function patchCss(text) {
+  const found = locateTodoCss(text);
+  if (!found) return { text, changed: false, missing: true };
+  const { prefix, end } = found;
+  if (text.includes(`.${prefix}_bar{`)) return { text, changed: false };
+  const P = `.${prefix}`;
   const cssExtra =
-    ".lXshSW_progressWrap{min-width:0;flex:auto;flex-direction:column;gap:3px;display:flex}" +
-    ".lXshSW_bar{background:var(--dsw-alias-border-l1);border-radius:2px;flex:none;width:100%;height:4px;overflow:hidden}" +
-    ".lXshSW_barFill{background:var(--dsw-alias-state-business-primary);border-radius:2px;height:100%;display:block;transition:width .3s ease}" +
-    ".lXshSW_itemProgress{color:var(--dsw-alias-label-tertiary);flex:none;align-items:center;gap:6px;font-size:12px;line-height:18px;display:flex}" +
-    ".lXshSW_itemState{flex:none;white-space:nowrap}" +
-    ".lXshSW_itemTrack{background:var(--dsw-alias-border-l1);border-radius:2px;width:36px;height:4px;overflow:hidden}" +
-    ".lXshSW_itemFill{background:var(--dsw-alias-label-tertiary);border-radius:2px;height:100%;display:block}" +
-    '.lXshSW_item[data-status="completed"] .lXshSW_itemFill{background:var(--dsw-alias-state-success-primary)}' +
-    '.lXshSW_item[data-status="in_progress"] .lXshSW_itemFill{background:var(--dsw-alias-state-business-primary)}';
+    `${P}_progressWrap{min-width:0;flex:auto;flex-direction:column;gap:3px;display:flex}` +
+    `${P}_bar{background:var(--dsw-alias-border-l1);border-radius:2px;flex:none;width:100%;height:4px;overflow:hidden}` +
+    `${P}_barFill{background:var(--dsw-alias-state-business-primary);border-radius:2px;height:100%;display:block;transition:width .3s ease}` +
+    `${P}_itemProgress{color:var(--dsw-alias-label-tertiary);flex:none;align-items:center;gap:6px;font-size:12px;line-height:18px;display:flex}` +
+    `${P}_itemState{flex:none;white-space:nowrap}` +
+    `${P}_itemTrack{background:var(--dsw-alias-border-l1);border-radius:2px;width:36px;height:4px;overflow:hidden}` +
+    `${P}_itemFill{background:var(--dsw-alias-label-tertiary);border-radius:2px;height:100%;display:block}` +
+    `${P}_item[data-status="completed"] .${prefix}_itemFill{background:var(--dsw-alias-state-success-primary)}` +
+    `${P}_item[data-status="in_progress"] .${prefix}_itemFill{background:var(--dsw-alias-state-business-primary)}` +
+    // 完成态打钩：让"做好一个就钩上一个"在列表里肉眼可见
+    `${P}_item[data-status="completed"] .${prefix}_itemState::before{content:"✓ ";font-weight:700;color:var(--dsw-alias-state-success-primary)}` +
+    `${P}_item[data-status="in_progress"] .${prefix}_itemState::before{content:"◐ ";color:var(--dsw-alias-state-business-primary)}`;
   return { text: text.slice(0, end) + cssExtra + text.slice(end), changed: true };
 }
 
@@ -198,17 +248,19 @@ function applyTo(root, { dryRun }) {
   return report;
 }
 
-/** 体检：补丁是否在位。 */
+/** 体检：补丁是否在位（判据全部与版本无关，不再依赖写死的前缀/字面量）。 */
 function verify(root) {
   const checks = [];
   const conv = fs.readFileSync(path.join(root, CONV), "utf8");
   const tool = fs.readFileSync(path.join(root, TOOL), "utf8");
-  checks.push(["看板总进度条", conv.includes(MARKER)]);
-  checks.push(["每行进度", conv.includes("itemStateText")]);
-  checks.push(["看板进度样式", conv.includes(".lXshSW_bar{")]);
-  checks.push(["思考中标签", conv.includes('title: "思考中"')]);
-  checks.push(["执行命令标签", tool.includes('bash: "执行命令"')]);
-  checks.push(["搜索标签", tool.includes('search: "搜索"')]);
+  const prefix = detectTodoPrefix(conv);
+  checks.push(["看板总进度条（DOM）", conv.includes(MARKER)]);
+  checks.push(["每行进度（DOM）", conv.includes("itemStateText")]);
+  checks.push(["完成态打钩样式", prefix ? conv.includes(`.${prefix}_item[data-status="completed"] .${prefix}_itemState::before`) : false]);
+  checks.push(["进度条样式（CSS）", prefix ? conv.includes(`.${prefix}_bar{`) : false]);
+  // 工具名中文化：新版由 i18n 键驱动，如实区分"无需补丁"与"补丁缺失"
+  const i18nManaged = tool.includes('bash: "tool.title.bash"') || tool.includes('search: "tool.title.search"');
+  checks.push([i18nManaged ? "工具名中文化（i18n 已接管，无需补丁）" : "工具名中文化（需补丁）", i18nManaged || tool.includes('bash: "执行命令"')]);
   return checks;
 }
 

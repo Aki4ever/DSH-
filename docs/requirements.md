@@ -1,7 +1,7 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.22.0`
+> - **当前系统实施总版本**：`v4.23.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-09-28
 > - **版本状态**：`[Release 稳定生效]`
@@ -2241,6 +2241,91 @@
    不在拦截层逃生舱白名单内 → 提交需先过门禁、过门禁需先提交，实测死锁（68 个待提交文件）。
    修复：将 `scripts/git_sync_remote.sh` 列入 `escapeScriptPrefixes`，并在代码中写明这与 2026-09-23
    那次"门禁要求改名而改名被拦"属同一类自锁，避免同类缺陷第三次复发。
+
+---
+
+### REQ-083: 任务列表可视化补强（完成即打钩 · 逐条进度条 · 面板可见性）
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.23.0`
+- **提出时间**：2026-09-28
+- **最新更新**：2026-09-28
+- **核心诉求与交付物**：
+  1. **完成即钩上**：任务列表每一行按状态显示勾号与颜色（完成 ✓ / 进行中 ◐），做好一项立刻可见；
+  2. **逐条进度条**：每行带独立进度条（0%/50%/100%）与状态文字，另有首栏总体进度条与百分比，随时知道"当前这条"和"整体"的进度；
+  3. **根因治理**：补丁脚本 `scripts/patch_dsh_todo_progress.cjs` 原先写死旧运行时路径
+     （`Resources/runtime/harness/…`）与 CSS 哈希锚点（`const css$9`、`.lXshSW_`），
+     App 升级后**锚点全部落空却只表现为"少打一半、不报错"**，补丁长期处于未生效状态；
+  4. **抗失效改造**：运行时路径改为多候选探测；CSS 前缀从 **TodoPanel 自己的模块块**动态解析
+     （不再取全文第一个 `"root"` 映射，避免命中别的组件）；体检判据改为版本无关；
+     工具名中文化如实标注为"i18n 已接管（无需补丁）"而非继续报假故障。
+- **关联文件**：`scripts/patch_dsh_todo_progress.cjs`
+- **验收标准**：
+  - [x] `node scripts/patch_dsh_todo_progress.cjs --check` 五项回读校验全 ✅（退出码 0）；
+  - [x] 补丁后产物 `node --check` 语法通过；
+  - [x] DOM 注入 4 处（总进度条 / 每行进度 / itemStateText / itemPercent）与 CSS 打钩样式均实测在位。
+
+---
+
+### REQ-084: 技能池归位与技能面板复活（178 技能找回 + CLI 路径治理）
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.23.0`
+- **提出时间**：2026-09-28
+- **最新更新**：2026-09-28
+- **核心诉求与交付物**：
+  1. **实测根因**：技能池合并落点为 `skill-pool/skills/`，而 DSH 技能面板只扫描
+     `<项目根>/skills`（源码依据：`@michengai/dsh-skills-manager` 的 `PROJECT_SOURCES`），
+     因此"磁盘上 178 个技能、面板里 0 个"——内容没丢，但**没有加载器能看见它**；
+  2. **归位执行**：`scripts/restore_skill_pool.mjs` 以**逐文件字节比对**为前置条件完成归位，
+     不一致则拒绝清理源目录；归位后源副本移除（git 历史保留，可回退）；
+  3. **CLI 治理**：`skill-pool/bin/skill-pool` 的 6 处技能路径全部改为 `resolve_skills_dir()`
+     （环境变量 → 项目根 skills → 本地 skills），修复"技能总数: 0"与 catalog not found；
+  4. **面板复活实证**：会话可用技能目录已实际出现技能池条目（`acquire-atomic-lock`、
+     `dsh-butler`、`process-supervisor`、`plugin-control-guard` 等）。
+- **关联文件**：`scripts/restore_skill_pool.mjs`、`skills/`（178 目录）、`skills/README.md`、`skill-pool/bin/skill-pool`
+- **验收标准**：
+  - [x] `node scripts/restore_skill_pool.mjs --check` 退出码 0（源已清空、目标 177 技能、索引已收录）；
+  - [x] `./skill-pool/bin/skill-pool validate` 全部技能通过规范校验；
+  - [x] `./skill-pool/bin/skill-pool status` 技能总数 177、规范合规 177、异常 0；
+  - [x] 技能面板实际展示技能池技能（会话技能目录已变更，可复核）。
+
+---
+
+### REQ-085: 执行层全量入索引层与覆盖率硬判定
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.23.0`
+- **提出时间**：2026-09-28
+- **最新更新**：2026-09-28
+- **核心诉求与交付物**：
+  1. **根因**：执行层（技能/agent/插件/CLI）已有实物，但 `indexes/` 全库**一处未提** skill-pool，
+     索引层与实际执行层脱钩；靠手工抄表必然再次脱钩；
+  2. **生成式同步**：`scripts/build_capabilities_index.mjs` 扫描执行层并在
+     `indexes/capabilities_index.md` 受管区间（`<!-- SKILL-POOL-INDEX:BEGIN/END -->`）**重写**索引表，
+     同时登记 11 条执行层资产指针（CLI 入口、catalog、执行层树、实例安全表、流程规约等）；
+  3. **硬判定**：`--check` 以"未收录数 = 0"判定覆盖率，退出码 0/1，可接入门禁与审计；
+  4. **口径统一**：`_template` 明确排除（脚手架非技能），索引口径 177 与 CLI 口径 177 逐名一致。
+- **关联文件**：`scripts/build_capabilities_index.mjs`、`indexes/capabilities_index.md`、`skills/.skill-pool-manifest.json`
+- **验收标准**：
+  - [x] `node scripts/build_capabilities_index.mjs --check` 退出码 0（179 条执行层 100% 收录）；
+  - [x] `--apply` 可重复执行且幂等（受管区间外内容零改动）；
+  - [x] 索引口径与 CLI 口径逐名比对无差异（脚本实测）。
+
+---
+
+### REQ-086: 物理触达审计与"无载体机制"清零
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.23.0`
+- **提出时间**：2026-09-28
+- **最新更新**：2026-09-28
+- **核心诉求与交付物**：
+  1. **把"有没有物理触达"变成可判定问题**：逐条核对规则中宣称"必须/强制"的机制，
+     给出「载体 + 实测命令 + 实测结果」三件套，无载体即判"未物理触达"；
+  2. **禁止虚无缥缈**：任何写进规则的"必须"必须能回答"谁来执行、怎么判定、判定不过会怎样"；
+  3. **交付补课清单**：对未触达项给出可执行命令级整改项，纳入后续迭代。
+- **关联文件**：`rules/system/meta_rules.md`（第三十六条 硬约束物理化律）、`ai-control/`
+- **验收标准**：
+  - [ ] 产出触达矩阵（机制 / 宣称出处 / 载体 / 实测命令 / 结果 / 判定）；
+  - [ ] 未触达项全部给出可执行整改命令；
+  - [ ] 无法当场整改的项在台账中显式标注为待办，不以"已优化"含糊带过。
 
 ---
 

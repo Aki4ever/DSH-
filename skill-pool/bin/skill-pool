@@ -44,8 +44,28 @@ def get_target_dir(custom_target: str = None) -> Path:
         return Path(default_dir).expanduser().resolve()
     return Path.home() / ".codex" / "skills"
 
+def resolve_skills_dir(repo_root: Path) -> Path:
+    """
+    解析技能目录。
+
+    为什么要支持重定向（2026-09-28）：本仓库并入「全局规则」之后，技能的
+    **唯一权威源**已归位到项目根的 `skills/`（DSH 技能面板只扫描该路径）。
+    若继续写死 `skill-pool/skills`，面板与 CLI 会各看一处、各报一个数字——
+    实测即"技能总数: 0"，而磁盘上明明有 178 个技能。
+    解析优先级：显式环境变量 → 项目根 skills（新家） → 本地 skills（旧布局）。
+    """
+    for env_key in ("SKILL_POOL_DIR", "GLOBAL_RULES_SKILLS_DIR"):
+        explicit = os.environ.get(env_key)
+        if explicit:
+            return Path(explicit).expanduser().resolve()
+    project_skills = repo_root.parent / "skills"
+    if project_skills.exists():
+        return project_skills
+    return repo_root / "skills"
+
+
 def scan_skills(repo_root: Path):
-    skills_dir = repo_root / "skills"
+    skills_dir = resolve_skills_dir(repo_root)
     if not skills_dir.exists():
         return []
     
@@ -222,12 +242,12 @@ def cmd_init(args):
         return 1
         
     repo_root = get_repo_root()
-    target_skill_dir = repo_root / "skills" / name
+    target_skill_dir = resolve_skills_dir(repo_root) / name
     if target_skill_dir.exists():
         print(f"❌ 错误: 技能目录已存在: {target_skill_dir}", file=sys.stderr)
         return 1
         
-    template_dir = repo_root / "skills" / "_template"
+    template_dir = resolve_skills_dir(repo_root) / "_template"
     title = args.title or name.replace("-", " ").title()
     desc = args.description or f"Use when the user requests {name} tasks."
     
@@ -268,7 +288,7 @@ def cmd_init(args):
 def cmd_link(args):
     name = args.name
     repo_root = get_repo_root()
-    source_dir = repo_root / "skills" / name
+    source_dir = resolve_skills_dir(repo_root) / name
     if not source_dir.exists() or not source_dir.is_dir():
         print(f"❌ 错误: 未在仓库 skills/ 下找到 '{name}'", file=sys.stderr)
         return 1
@@ -318,7 +338,7 @@ def cmd_unlink(args):
 
 def cmd_catalog(args):
     repo_root = get_repo_root()
-    sync_script = repo_root / "skills" / "dsh-butler" / "scripts" / "sync_catalog.py"
+    sync_script = resolve_skills_dir(repo_root) / "dsh-butler" / "scripts" / "sync_catalog.py"
     catalog_json_path = repo_root / "docs" / "operations" / "skill-catalog.json"
     
     if args.sync:
@@ -376,8 +396,8 @@ def cmd_catalog(args):
 def cmd_consistency(args):
     """口径一致性门禁：先刷新受管区块，再做三方对拍。"""
     repo_root = get_repo_root()
-    render_script = repo_root / "skills" / "render-catalog-docs" / "scripts" / "render_docs.py"
-    verify_script = repo_root / "skills" / "verify-catalog-consistency" / "scripts" / "verify_consistency.py"
+    render_script = resolve_skills_dir(repo_root) / "render-catalog-docs" / "scripts" / "render_docs.py"
+    verify_script = resolve_skills_dir(repo_root) / "verify-catalog-consistency" / "scripts" / "verify_consistency.py"
 
     import subprocess
 

@@ -1,0 +1,1255 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-09-28T00:41:32.149Z",
+  "source": "skill-pool/skills",
+  "target": "skills",
+  "total": 178,
+  "skills": [
+    {
+      "name": "_template",
+      "path": "skills/_template",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "acquire-atomic-lock",
+      "path": "skills/acquire-atomic-lock",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "anti-pattern-guard",
+      "path": "skills/anti-pattern-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "anti-pattern-policy",
+      "path": "skills/anti-pattern-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "arbitrate-priority-resolver",
+      "path": "skills/arbitrate-priority-resolver",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "assert-zero-exitcode",
+      "path": "skills/assert-zero-exitcode",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "atomic-fastpath-router",
+      "path": "skills/atomic-fastpath-router",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "atomic-fission-guard",
+      "path": "skills/atomic-fission-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "atomic-lock-guard",
+      "path": "skills/atomic-lock-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "atomic-lock-policy",
+      "path": "skills/atomic-lock-policy",
+      "hasSkillDoc": true,
+      "hasReadme": false,
+      "files": 1
+    },
+    {
+      "name": "audit-all-skills-compliance",
+      "path": "skills/audit-all-skills-compliance",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "audit-imported-skill",
+      "path": "skills/audit-imported-skill",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "audit-layer-naming",
+      "path": "skills/audit-layer-naming",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 4
+    },
+    {
+      "name": "build-execution-tree",
+      "path": "skills/build-execution-tree",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "build-image-viewer",
+      "path": "skills/build-image-viewer",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "build-inverted-index",
+      "path": "skills/build-inverted-index",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "build-layer-graph",
+      "path": "skills/build-layer-graph",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "build-quantifier-table",
+      "path": "skills/build-quantifier-table",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "capability-naming-policy",
+      "path": "skills/capability-naming-policy",
+      "hasSkillDoc": true,
+      "hasReadme": false,
+      "files": 1
+    },
+    {
+      "name": "catalog-consistency-guard",
+      "path": "skills/catalog-consistency-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "check-python-syntax",
+      "path": "skills/check-python-syntax",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "check-script-executable",
+      "path": "skills/check-script-executable",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "chinese-end-to-end",
+      "path": "skills/chinese-end-to-end",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "chinese-output-guard",
+      "path": "skills/chinese-output-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "classify-change-scope",
+      "path": "skills/classify-change-scope",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "classify-decision-reversibility",
+      "path": "skills/classify-decision-reversibility",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "classify-instance-safety",
+      "path": "skills/classify-instance-safety",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "classify-step-tier",
+      "path": "skills/classify-step-tier",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "collect-process-evidence",
+      "path": "skills/collect-process-evidence",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "concise-chinese-bold-guard",
+      "path": "skills/concise-chinese-bold-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "concise-focused-output",
+      "path": "skills/concise-focused-output",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "concretization-guard",
+      "path": "skills/concretization-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "concretize-ambiguity-policy",
+      "path": "skills/concretize-ambiguity-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "concretize-term",
+      "path": "skills/concretize-term",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "conditional-deliverable-router",
+      "path": "skills/conditional-deliverable-router",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "conflict-detector",
+      "path": "skills/conflict-detector",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "declare-lock-set",
+      "path": "skills/declare-lock-set",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "decoupling-guard",
+      "path": "skills/decoupling-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "detect-action-verb",
+      "path": "skills/detect-action-verb",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "detect-forbidden-state",
+      "path": "skills/detect-forbidden-state",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "detect-layer-coupling",
+      "path": "skills/detect-layer-coupling",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "detect-lock-conflict",
+      "path": "skills/detect-lock-conflict",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "detect-rule-conflicts",
+      "path": "skills/detect-rule-conflicts",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "detect-target-entity",
+      "path": "skills/detect-target-entity",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "detect-vague-modifier",
+      "path": "skills/detect-vague-modifier",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "disambiguate-candidates",
+      "path": "skills/disambiguate-candidates",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "dispatch-skill-search",
+      "path": "skills/dispatch-skill-search",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "dsh-butler",
+      "path": "skills/dsh-butler",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 5
+    },
+    {
+      "name": "dual-lane-router",
+      "path": "skills/dual-lane-router",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "emit-search-snippet",
+      "path": "skills/emit-search-snippet",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "enforce-atomic-granularity",
+      "path": "skills/enforce-atomic-granularity",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "enforce-contract-completeness",
+      "path": "skills/enforce-contract-completeness",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "ensure-utf8-encoding",
+      "path": "skills/ensure-utf8-encoding",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "execution-tree-guard",
+      "path": "skills/execution-tree-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "extract-catalog-topology",
+      "path": "skills/extract-catalog-topology",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "extract-core-objective",
+      "path": "skills/extract-core-objective",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "extract-json-payload",
+      "path": "skills/extract-json-payload",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "fastlane-redline-policy",
+      "path": "skills/fastlane-redline-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "fastpath-dispatch-guide",
+      "path": "skills/fastpath-dispatch-guide",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "filter-conversational-noise",
+      "path": "skills/filter-conversational-noise",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "fold-repeated-events",
+      "path": "skills/fold-repeated-events",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "format-iconized-tail",
+      "path": "skills/format-iconized-tail",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "format-status-block",
+      "path": "skills/format-status-block",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "format-visual-inspection",
+      "path": "skills/format-visual-inspection",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "format-zoomable-visual",
+      "path": "skills/format-zoomable-visual",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "full-spectrum-skill-auditor",
+      "path": "skills/full-spectrum-skill-auditor",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "generate-fastpath-route",
+      "path": "skills/generate-fastpath-route",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "google-style-skill-search-router",
+      "path": "skills/google-style-skill-search-router",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "high-relevance-notes-only",
+      "path": "skills/high-relevance-notes-only",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "iconized-output-showcase",
+      "path": "skills/iconized-output-showcase",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "index-body-contract",
+      "path": "skills/index-body-contract",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "index-header-contract",
+      "path": "skills/index-header-contract",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "install-client-plugin",
+      "path": "skills/install-client-plugin",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "instance-pool-guard",
+      "path": "skills/instance-pool-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "instance-pool-policy",
+      "path": "skills/instance-pool-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "intent-detector",
+      "path": "skills/intent-detector",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "interactive-image-viewer",
+      "path": "skills/interactive-image-viewer",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "layer-decoupling-policy",
+      "path": "skills/layer-decoupling-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "layer-naming-guard",
+      "path": "skills/layer-naming-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "lazy-load-policy",
+      "path": "skills/lazy-load-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "limit-words-under-10",
+      "path": "skills/limit-words-under-10",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "load-skill-contract",
+      "path": "skills/load-skill-contract",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "log-query-events",
+      "path": "skills/log-query-events",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "markdown-bold-only",
+      "path": "skills/markdown-bold-only",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "match-intent-keywords",
+      "path": "skills/match-intent-keywords",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "measure-routing-metrics",
+      "path": "skills/measure-routing-metrics",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "measure-token-budget",
+      "path": "skills/measure-token-budget",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "merge-search-candidates",
+      "path": "skills/merge-search-candidates",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "milestone-only-progress",
+      "path": "skills/milestone-only-progress",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "milestone-progress-reporter",
+      "path": "skills/milestone-progress-reporter",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "multi-source-search-policy",
+      "path": "skills/multi-source-search-policy",
+      "hasSkillDoc": true,
+      "hasReadme": false,
+      "files": 1
+    },
+    {
+      "name": "no-conversational-filler",
+      "path": "skills/no-conversational-filler",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "normalize-skill-contract",
+      "path": "skills/normalize-skill-contract",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "on-demand-dispatcher",
+      "path": "skills/on-demand-dispatcher",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "one-shot-guard",
+      "path": "skills/one-shot-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "one-shot-resolution-policy",
+      "path": "skills/one-shot-resolution-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "output-chinese-only",
+      "path": "skills/output-chinese-only",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "parallel-lock-guard",
+      "path": "skills/parallel-lock-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "parallel-lock-policy",
+      "path": "skills/parallel-lock-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "parse-query",
+      "path": "skills/parse-query",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "place-skill-into-cluster",
+      "path": "skills/place-skill-into-cluster",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "plain-analogy-explanation",
+      "path": "skills/plain-analogy-explanation",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "plan-fission",
+      "path": "skills/plan-fission",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "plan-process-rectification",
+      "path": "skills/plan-process-rectification",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "plugin-control-guard",
+      "path": "skills/plugin-control-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "plugin-control-jump-policy",
+      "path": "skills/plugin-control-jump-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "prefer-hot-reload-policy",
+      "path": "skills/prefer-hot-reload-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "process-conformance-policy",
+      "path": "skills/process-conformance-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "process-supervisor",
+      "path": "skills/process-supervisor",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "prune-bloated-prompts",
+      "path": "skills/prune-bloated-prompts",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "prune-redundant-context",
+      "path": "skills/prune-redundant-context",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "qa-gatekeeper",
+      "path": "skills/qa-gatekeeper",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "quantification-guard",
+      "path": "skills/quantification-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "quantify-modifier",
+      "path": "skills/quantify-modifier",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "quantify-modifier-policy",
+      "path": "skills/quantify-modifier-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "rank-skills-bm25",
+      "path": "skills/rank-skills-bm25",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "reconcile-knowledge-specs",
+      "path": "skills/reconcile-knowledge-specs",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "record-assumptions",
+      "path": "skills/record-assumptions",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "redundancy-detector",
+      "path": "skills/redundancy-detector",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "register-execution-layer",
+      "path": "skills/register-execution-layer",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "rename-execution-layer",
+      "path": "skills/rename-execution-layer",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "render-capability-naming",
+      "path": "skills/render-capability-naming",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "render-catalog-docs",
+      "path": "skills/render-catalog-docs",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "render-governance-mermaid",
+      "path": "skills/render-governance-mermaid",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "retire-legacy-workspace",
+      "path": "skills/retire-legacy-workspace",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "run-test-cases-gate",
+      "path": "skills/run-test-cases-gate",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "schema-guard",
+      "path": "skills/schema-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "score-process-conformance",
+      "path": "skills/score-process-conformance",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "score-task-lane",
+      "path": "skills/score-task-lane",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "search-duplicate-rules",
+      "path": "skills/search-duplicate-rules",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "search-github-skill",
+      "path": "skills/search-github-skill",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "search-official-source",
+      "path": "skills/search-official-source",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "select-skills-for-task",
+      "path": "skills/select-skills-for-task",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "skill-import-pipeline",
+      "path": "skills/skill-import-pipeline",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "skill-index-router",
+      "path": "skills/skill-index-router",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "snippet-only-recall",
+      "path": "skills/snippet-only-recall",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "spec-driven-governance",
+      "path": "skills/spec-driven-governance",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "standard-output-framework",
+      "path": "skills/standard-output-framework",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "standardize-when-to-use",
+      "path": "skills/standardize-when-to-use",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "standardize-workflow-sop",
+      "path": "skills/standardize-workflow-sop",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "strip-markdown-fence",
+      "path": "skills/strip-markdown-fence",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "strip-non-prose-scope",
+      "path": "skills/strip-non-prose-scope",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "strip-whitespace-newlines",
+      "path": "skills/strip-whitespace-newlines",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "sync-requirements-lifecycle",
+      "path": "skills/sync-requirements-lifecycle",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "tail-metrics-showcase",
+      "path": "skills/tail-metrics-showcase",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "token-budget-policy",
+      "path": "skills/token-budget-policy",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "token-economy-guard",
+      "path": "skills/token-economy-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "tree-update-mandatory",
+      "path": "skills/tree-update-mandatory",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "validate-header-triggers",
+      "path": "skills/validate-header-triggers",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "validate-icon-syntax",
+      "path": "skills/validate-icon-syntax",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-atomic-mutual-exclusion",
+      "path": "skills/verify-atomic-mutual-exclusion",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-catalog-consistency",
+      "path": "skills/verify-catalog-consistency",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-chinese-output",
+      "path": "skills/verify-chinese-output",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-concretized-output",
+      "path": "skills/verify-concretized-output",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-context-payload",
+      "path": "skills/verify-context-payload",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-decoupling",
+      "path": "skills/verify-decoupling",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-deliverable-paths",
+      "path": "skills/verify-deliverable-paths",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-execution-contract",
+      "path": "skills/verify-execution-contract",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-execution-tree",
+      "path": "skills/verify-execution-tree",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-file-exists",
+      "path": "skills/verify-file-exists",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-instance-safety",
+      "path": "skills/verify-instance-safety",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-interactive-html",
+      "path": "skills/verify-interactive-html",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-lane-decision",
+      "path": "skills/verify-lane-decision",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-layer-naming",
+      "path": "skills/verify-layer-naming",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-mermaid-syntax",
+      "path": "skills/verify-mermaid-syntax",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-no-forbidden-event",
+      "path": "skills/verify-no-forbidden-event",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-no-lock-violation",
+      "path": "skills/verify-no-lock-violation",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-no-unnecessary-question",
+      "path": "skills/verify-no-unnecessary-question",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-no-unnecessary-restart",
+      "path": "skills/verify-no-unnecessary-restart",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-plugin-control-button",
+      "path": "skills/verify-plugin-control-button",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 4
+    },
+    {
+      "name": "verify-progress-budget",
+      "path": "skills/verify-progress-budget",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-quantified-output",
+      "path": "skills/verify-quantified-output",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-token-reduction",
+      "path": "skills/verify-token-reduction",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "verify-workspace-retirement",
+      "path": "skills/verify-workspace-retirement",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 3
+    },
+    {
+      "name": "visual-interaction-guard",
+      "path": "skills/visual-interaction-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "visualize-governance-topology",
+      "path": "skills/visualize-governance-topology",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "zero-restart-guard",
+      "path": "skills/zero-restart-guard",
+      "hasSkillDoc": true,
+      "hasReadme": true,
+      "files": 2
+    },
+    {
+      "name": "zoom-level-policy",
+      "path": "skills/zoom-level-policy",
+      "hasSkillDoc": true,
+      "hasReadme": false,
+      "files": 1
+    }
+  ]
+}
