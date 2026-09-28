@@ -217,6 +217,10 @@
       "boundary": "把对象划入已定义的少数几档之一"
     },
     {
+      "verb": "collect",
+      "boundary": "按判据从多个来源汇聚证据或数据，只取不改"
+    },
+    {
       "verb": "compare",
       "boundary": "对不同来源的口径做对拍并列出差异"
     },
@@ -385,6 +389,10 @@
       "boundary": "把冲突收敛到确定解"
     },
     {
+      "verb": "retire",
+      "boundary": "让已被替代的对象退出服役，可回滚并留台账"
+    },
+    {
       "verb": "run",
       "boundary": "执行既有用例或流程并汇总结果"
     },
@@ -452,7 +460,8 @@
     "governance",
     "topology",
     "registry",
-    "butler"
+    "butler",
+    "supervisor"
   ],
   "policy_suffixes": [
     "policy",

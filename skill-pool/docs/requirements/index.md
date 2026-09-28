@@ -7,7 +7,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 需求集编号 | REQ-BASE-001 |
-| 当前生效基线 | v0.4.0 |
+| 当前生效基线 | v0.5.0 |
 | 有效性 | 生效 |
 | 交付状态 | 开发中 |
 
@@ -55,6 +55,9 @@
 | REQ-PLUGIN-QUICKCONTROL-036 | 插件市场下载的插件必须常显调控按钮，直达详情控制页 | 架构与智能体调度 | 生效 | 已交付 | [product.md#插件市场常显调控按钮](./product.md) |
 | REQ-VISUAL-DOWNLOAD-037 | 可视化产物可下载按钮与目录选择（三段降级） | 输出与表达规范 | 生效 | 已交付 | [product.md#可视化产物的多级缩放与可下载](./product.md) |
 | REQ-SEARCH-MULTISOURCE-038 | GitHub 与官网作为执行层检索源（本地优先四源调度） | 架构与智能体调度 | 生效 | 已交付 | [product.md#github-与官网作为执行层检索源](./product.md) |
+| REQ-REPO-MERGE-039 | 迁移收尾：源目录 Skill池 真正退场并留台账 | 工程与仓库治理 | 生效 | 已交付 | [product.md#迁移收尾源目录真正退场](./product.md) |
+| REQ-PROCESS-SUPERVISOR-040 | 流程监督员：按约定流程取证打分并对不合规项整改 | 架构与智能体调度 | 生效 | 已交付 | [product.md#流程监督员](./product.md) |
+| REQ-GCM-GAPFIX-041 | GCM 缺口修复：G0 真空通过、不覆盖 skill-pool、双份真相 | 工程与仓库治理 | 生效 | 已交付 | [product.md#gcm-缺口修复](./product.md) |
 
 > 交付说明：PKG-004 已实施并通过六道门禁；`TC-ZHFLOW-019` 存在一处已知口径边界（命令参考文档不在中文门禁适用范围内，见 AMEND-11），其余 33 条用例均已实跑通过。
 >
@@ -77,6 +80,11 @@
 > **插件常显调控按钮实测：静态 13 项 + 运行时（Node + DOM 打桩）18 项 = 31 项全过；装配幂等（二次 `changed=0`）、有备份、可一键回滚；诚实声明需重启宿主才生效。**
 > **多源检索实测：查询「信息图」本地短路命中已装的 `@tt-a1i/archify-dsh`，零网络调用；零命中且未允许外呼时显式报「这是未完成检索」；GitHub 限流被正确区分为失败而非空结果。**
 > **实施中修掉两个自己的缺陷：联网后按带限定符的原始 query 二次过滤（把「检索成功但为空」伪装成「没人在做」）；`license` 对象直接 `str()` 导致 `has_scripts` 恒 false（假阴性），改为取 `spdx_id` 且 `has_scripts` 改三态。**
+
+> PKG-009 已实施：skill 175 → 182、**agent 层 3 → 4**（首个仓库自定义 agent 层）、执行层总数 196；GCM 门禁由 3/4 修复至 **4/4**。
+> **G0 真空通过是三重缺陷叠加**：判不了就 exit 0、只认旧的两种存储布局（实际有第三种多帧 zstd 布局）、无法判定与不合规混为一谈。修复后当场闭环：读出真实标题 → 判不合规 → `name_me.sh` 改名 → 通过。
+> **GCM 原来完全不覆盖 skill-pool**：G4 扫描 71 文件即报 100%，而 skill-pool 另有 518 个文件从未被查过。修复后扫描 465 文件。
+> **两项结构性假阳性止损**：重复标题与单行最高被契约强制骨架顶爆（`## Overview` ×171、`flowchart TD` ×120），已降级为报告指标；G4 只依赖块级相似度，并当场验证植入 >120 字复制块能抓到。
 
 ## 关联索引
 - 变更记录：[change-log.md](./change-log.md)
@@ -102,6 +110,10 @@
 - 改名台账：[../operations/retired-names.json](../operations/retired-names.json)
 - 可视化交互门禁明细：[execution/pkg-008-interaction-plugins.md](./execution/pkg-008-interaction-plugins.md)
 - 可视化交互测试用例：[execution/testcases-interaction-plugins.md](./execution/testcases-interaction-plugins.md)
+- 迁移与监督员执行明细：[execution/pkg-009-migration-supervisor.md](./execution/pkg-009-migration-supervisor.md)
+- 迁移与监督员测试用例：[execution/testcases-migration-supervisor.md](./execution/testcases-migration-supervisor.md)
+- 约定流程唯一真相源：[../operations/process-spec.json](../operations/process-spec.json)
+- 退役台账：[../operations/retired-workspaces.json](../operations/retired-workspaces.json)
 - 缩放档位与下载唯一口径源：[../operations/../skills/zoom-level-policy/SKILL.md](../skills/zoom-level-policy/SKILL.md)
 - 多源检索唯一口径源：[../skills/multi-source-search-policy/SKILL.md](../skills/multi-source-search-policy/SKILL.md)
 - 执行层树（唯一真相源）：[../operations/execution-tree.md](../operations/execution-tree.md)

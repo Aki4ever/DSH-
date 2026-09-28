@@ -4,6 +4,15 @@
 # 功能描述：检查「当前会话」的任务命名是否符合规范，供看板常显与流程判定使用
 # 使用方式：./scripts/check_task_naming.sh          # 人类可读输出
 #           ./scripts/check_task_naming.sh --exit   # 不合规时以退出码 1 结束
+#
+# 退出码语义（三态，PKG-009 / REQ-GCM-GAPFIX-041 修订）：
+#   0  判定为合规
+#   1  判定为不合规
+#   3  **无法判定**（缺 DSH_SESSION_ID 或找不到会话存储）
+#
+# 为什么必须区分 3 与 0：本脚本是 GCM 唯一一票否决闸的判据入口。
+# 旧实现在「找不到会话存储」时 `exit 0`，等于**判不了就放行** —— 最强的闸没有牙。
+# 现在无法判定一律退 3，由 control_gates.sh 记为 pending（而非 pass）。
 # 规范唯一权威源：knowledge/common/task_naming_spec.md
 # ==============================================================================
 # 背景：任务的命名是"说得出"的约束，需要"查得到"的判据才算真约束。
@@ -19,15 +28,40 @@ EXIT_MODE=0
 SESSION_ID="${DSH_SESSION_ID:-}"
 if [[ -z "$SESSION_ID" ]]; then
   echo "⚠️  未检测到 DSH_SESSION_ID，无法判定当前任务命名"
+  [[ "$EXIT_MODE" == 1 ]] && exit 3
   exit 0
 fi
 
 HOME_DIR="${DSH_HOME:-$HOME/.dsh}"
 STORE="$HOME_DIR/storages/session_projcache.json"
-PER_SESSION_FILE="$HOME_DIR/storages/session_projcache/sessions/${SESSION_ID}.json"
 
-if [[ ! -f "$STORE" && ! -f "$PER_SESSION_FILE" ]]; then
-  echo "⚠️  找不到会话存储，无法判定当前任务命名"
+# 会话存储布局会演进：早期是单个 session_projcache.json，现在是按名分片的
+# storages/session_projcache*/sessions/<sid>.json（例如 session_projcache_archive_manager_v2）。
+# 只认其中一种写法，就会在布局变化后集体「找不到会话存储」而静默放行。
+PER_SESSION_FILE=""
+for candidate in "$HOME_DIR"/storages/session_projcache*/sessions/"${SESSION_ID}.json"; do
+  [ -f "$candidate" ] && PER_SESSION_FILE="$candidate" && break
+done
+if [ -z "$PER_SESSION_FILE" ]; then
+  for candidate in "$HOME_DIR"/storages/session_projcache/sessions/"${SESSION_ID}.json"; do
+    [ -f "$candidate" ] && PER_SESSION_FILE="$candidate" && break
+  done
+fi
+
+# 第三种布局（新版宿主）：harness/sessions/<编码后的工作区>/<sid>/session.v3.jsonl.zstd
+# 该文件是**多帧** zstd 压缩的 JSONL；会话标题落在 `session/title` 事件的 data.title。
+# 实测：只认前两种布局时，本机所有会话都判「找不到存储」——不是没命名，是入口没查对。
+SESSION_ZSTD=""
+if [ -z "$PER_SESSION_FILE" ] && [ ! -f "$STORE" ]; then
+  for candidate in "$HOME_DIR"/sessions/*/"${SESSION_ID}"/session.v3.jsonl.zstd; do
+    [ -f "$candidate" ] && SESSION_ZSTD="$candidate" && break
+  done
+fi
+
+if [[ ! -f "$STORE" && -z "$PER_SESSION_FILE" && -z "$SESSION_ZSTD" ]]; then
+  # 三种布局都查不到 —— 这时才真的是「这个会话没有任何落盘记录」。
+  echo "❌ 会话尚未命名：已定位 ${SESSION_ID}，但查不到其命名记录（请运行 ./scripts/name_me.sh \"[分类][难度] 概述\"）"
+  [[ "$EXIT_MODE" == 1 ]] && exit 1
   exit 0
 fi
 
@@ -47,9 +81,38 @@ NODE_BIN="$(find_node)"
 TITLE=""
 if [[ -n "$NODE_BIN" ]]; then
   TITLE="$(
-    STORE="$STORE" PER_FILE="$PER_SESSION_FILE" SID="$SESSION_ID" "$NODE_BIN" -e '
+    STORE="$STORE" PER_FILE="$PER_SESSION_FILE" SESSION_ZSTD="$SESSION_ZSTD" SID="$SESSION_ID" "$NODE_BIN" -e '
       const fs = require("node:fs")
+      const zlib = require("node:zlib")
+      // 多帧 zstd：zstdDecompressSync 只解第一帧，必须按魔数扫描逐帧解。
+      function readZstdJsonl(path) {
+        const input = fs.readFileSync(path)
+        let off = 0, text = ""
+        const MAGIC = [0x28, 0xB5, 0x2F, 0xFD]
+        while (off < input.length) {
+          try { text += zlib.zstdDecompressSync(input.subarray(off)).toString("utf8") }
+          catch (err) { break }
+          let next = -1
+          for (let i = off + 4; i < input.length - 3; i++) {
+            if (input[i] === MAGIC[0] && input[i+1] === MAGIC[1] && input[i+2] === MAGIC[2] && input[i+3] === MAGIC[3]) { next = i; break }
+          }
+          if (next < 0) break
+          off = next
+        }
+        return text.split("\n").filter(Boolean)
+      }
       try {
+        if (process.env.SESSION_ZSTD && fs.existsSync(process.env.SESSION_ZSTD)) {
+          let latest = ""
+          for (const line of readZstdJsonl(process.env.SESSION_ZSTD)) {
+            let evt
+            try { evt = JSON.parse(line) } catch (err) { continue }
+            if (evt && evt.type === "session/title" && evt.data && typeof evt.data.title === "string") {
+              latest = evt.data.title        // 取最后一次标题事件：它是当前生效标题
+            }
+          }
+          if (latest) { process.stdout.write(latest); process.exit(0) }
+        }
         if (fs.existsSync(process.env.PER_FILE)) {
           const d = JSON.parse(fs.readFileSync(process.env.PER_FILE, "utf8"))
           const v = d?.record?.rows?.title?.val

@@ -116,6 +116,15 @@
       "path": "plugins/dsh-plugin-control-jump",
       "source": "repo",
       "status": "active"
+    },
+    {
+      "description": "流程监督员的独立复核者：不共享主上下文，只依据磁盘证据包逐项判定，看不到的就是没做",
+      "id": "process-supervisor-agent",
+      "layer": "agent",
+      "parent": "process-supervisor",
+      "path": "agents/process-supervisor-agent/PROMPT.md",
+      "source": "repo",
+      "status": "active"
     }
   ],
   "layers": {

@@ -3,6 +3,7 @@ name: dsh-butler
 level: L4
 composition:
   - detect-vague-modifier
+  - retire-legacy-workspace
 description: DSH 全局主控管家(L4 中枢编排级)，统筹调度 L1~L3 全量执行层，支持自底向上按需拼装能力积木与动态造物。
 ---
 
@@ -122,7 +123,7 @@ flowchart TD
 
 ## 下属编制 (L1~L3 Subordinate Clusters)
 
-管家当前纳管 6 个执行层，其中技能层 175 条（cli 9 / agent 3 / api 0 / mcp 0 / plugin 1）。
+管家当前纳管 6 个执行层，其中技能层 182 条（cli 9 / agent 4 / api 0 / mcp 0 / plugin 1）。
 
 完整树见 `docs/operations/execution-tree.md`（唯一真相源，禁止手写副本）。
 
@@ -130,7 +131,7 @@ flowchart TD
 | :--- | :--- |
 | ① 意图与路由 | `atomic-fastpath-router`、`dual-lane-router`、`google-style-skill-search-router`、`intent-detector`、`on-demand-dispatcher`、`skill-index-router` |
 | ② 契约与合规 | `atomic-fission-guard`、`catalog-consistency-guard`、`decoupling-guard`、`execution-tree-guard`、`full-spectrum-skill-auditor`、`index-body-contract`、`index-header-contract`、`instance-pool-guard`、`layer-naming-guard`、`plugin-control-guard`、`token-economy-guard`、`zero-restart-guard` |
-| ③ 冲突·冗余·质量 | `anti-pattern-guard`、`atomic-lock-guard`、`conflict-detector`、`one-shot-guard`、`parallel-lock-guard`、`qa-gatekeeper`、`redundancy-detector` |
+| ③ 冲突·冗余·质量 | `anti-pattern-guard`、`atomic-lock-guard`、`conflict-detector`、`one-shot-guard`、`parallel-lock-guard`、`process-supervisor`、`qa-gatekeeper`、`redundancy-detector` |
 | ④ 输出规约 | `chinese-output-guard`、`concise-chinese-bold-guard`、`concretization-guard`、`iconized-output-showcase`、`milestone-progress-reporter`、`quantification-guard`、`schema-guard`、`standard-output-framework`、`tail-metrics-showcase` |
 | ⑤ 需求与透视 | `interactive-image-viewer`、`spec-driven-governance`、`visual-interaction-guard`、`visualize-governance-topology` |
 | ⑥ 外部纳管 | `github`、`manage-problem-log`、`manage-requirements` |

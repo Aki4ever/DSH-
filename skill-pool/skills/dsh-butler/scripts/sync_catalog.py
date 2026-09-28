@@ -59,6 +59,7 @@ CATEGORY_DEFAULTS = {
     "atomic-lock-policy": ("L1", "原子规约-物理原子锁", ["原子锁", "物理互斥", "mkdir原子目录", "陈旧锁回收", "释放必达"]),
     "capability-naming-policy": ("L1", "原子规约-能力层命名", ["能力层命名", "命名四要素", "命名形态", "禁词表", "同义归一"]),
     "zoom-level-policy": ("L1", "原子规约-可视化交互", ["多级缩放", "缩放档位", "吸附", "下载降级"]),
+    "process-conformance-policy": ("L1", "原子规约-流程合规", ["流程合规", "九步流程", "必需项否决", "na第三态"]),
     "multi-source-search-policy": ("L1", "原子规约-多源检索", ["检索源", "本地优先", "候选契约", "失败语义"]),
     "plugin-control-jump-policy": ("L1", "原子规约-插件调控入口", ["常显按钮", "幂等去重", "降级导航", "三态语义"]),
     "parallel-lock-policy": ("L1", "原子规约-并行调控锁", ["并行锁", "锁粒度", "字典序加锁", "超时释放"]),
@@ -193,6 +194,12 @@ CATEGORY_DEFAULTS = {
     "verify-plugin-control-button": ("L2", "工序动作-调控按钮断言", ["按钮断言", "DOM打桩", "幂等验证", "逐字内联"]),
     "visual-interaction-guard": ("L3", "复合流程-可视化交互门禁", ["交互四件套", "档位门禁", "下载门禁", "零外链"]),
     "plugin-control-guard": ("L3", "复合流程-插件调控门禁", ["插件调控门禁", "装配放行", "31项断言"]),
+    "collect-process-evidence": ("L2", "工序动作-流程取证", ["流程取证", "证据包", "无证据即fail", "三态判定"]),
+    "score-process-conformance": ("L2", "工序动作-流程打分", ["流程打分", "权重分子分母", "必需项否决", "算式公开"]),
+    "plan-process-rectification": ("L2", "工序动作-流程整改", ["整改清单", "可执行命令", "空话判不合格"]),
+    "retire-legacy-workspace": ("L2", "工序动作-工作区退役", ["工作区退役", "不丢文件", "摘注册", "台账留痕"]),
+    "verify-workspace-retirement": ("L2", "工序动作-退役断言", ["退役断言", "源已消失", "会话完整"]),
+    "process-supervisor": ("L3", "复合流程-流程监督员", ["流程监督员", "出口自检", "独立复核", "整改闭环"]),
     # L4 中枢调度级 (Orchestration)
     "dsh-butler": ("L4", "中枢编排-全局管家", ["管家", "统筹", "调度", "动态造物", "规划", "治理"]),
 

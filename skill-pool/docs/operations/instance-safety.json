@@ -1,11 +1,11 @@
 {
  "counts": {
-  "needs_lock": 6,
-  "safe_multi": 153,
-  "single_only": 11
+  "needs_lock": 8,
+  "safe_multi": 157,
+  "single_only": 12
  },
  "issues": [],
- "scanned": 170,
+ "scanned": 177,
  "skills": [
   {
    "id": "anti-pattern-policy",
@@ -381,6 +381,18 @@
   },
   {
    "id": "prefer-hot-reload-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "process-conformance-policy",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
    "resource_keys": [],
@@ -781,6 +793,29 @@
     "nondeterminism": [],
     "temp": [],
     "write": []
+   }
+  },
+  {
+   "id": "collect-process-evidence",
+   "instance_safety": "single_only",
+   "reason": "写盘目标为字面量固定路径或固定临时文件，并发会互相覆盖，必须串行",
+   "resource_keys": [
+    "docs/operations/workflows.md",
+    "docs/requirements/change-log.md",
+    "docs/requirements/index.md",
+    "docs/requirements/product.md"
+   ],
+   "scripts": [
+    "collect_evidence.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "json.dump",
+     "open-w",
+     "os.makedirs"
+    ]
    }
   },
   {
@@ -1225,6 +1260,20 @@
    }
   },
   {
+   "id": "plan-process-rectification",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "plan_rectification.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
    "id": "prune-redundant-context",
    "instance_safety": "needs_lock",
    "reason": "有写盘但目标路径非字面量（含 tempfile 唯一键），同一资源键上必须持锁",
@@ -1397,12 +1446,46 @@
    }
   },
   {
+   "id": "retire-legacy-workspace",
+   "instance_safety": "needs_lock",
+   "reason": "有写盘但目标路径非字面量（含 tempfile 唯一键），同一资源键上必须持锁",
+   "resource_keys": [
+    "skills/retire-legacy-workspace"
+   ],
+   "scripts": [
+    "retire_workspace.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "json.dump",
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
    "id": "run-test-cases-gate",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
    "resource_keys": [],
    "scripts": [
     "run_testcases.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "score-process-conformance",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "score_conformance.py"
    ],
    "signals": {
     "nondeterminism": [],
@@ -1888,6 +1971,20 @@
    }
   },
   {
+   "id": "verify-workspace-retirement",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_retirement.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
    "id": "anti-pattern-guard",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
@@ -2211,6 +2308,24 @@
     "nondeterminism": [],
     "temp": [],
     "write": []
+   }
+  },
+  {
+   "id": "process-supervisor",
+   "instance_safety": "needs_lock",
+   "reason": "有写盘但目标路径非字面量（含 tempfile 唯一键），同一资源键上必须持锁",
+   "resource_keys": [
+    "skills/process-supervisor"
+   ],
+   "scripts": [
+    "supervise.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "open-w"
+    ]
    }
   },
   {

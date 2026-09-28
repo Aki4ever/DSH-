@@ -7,9 +7,9 @@
 
 | 层级 | 名称 | 自动派生 | 条目数 |
 | :--- | :--- | :--- | ---: |
-| `skill` | 技能层 | 是 | 175 |
+| `skill` | 技能层 | 是 | 182 |
 | `cli` | 命令层 | 否 | 9 |
-| `agent` | 智能体层 | 否 | 3 |
+| `agent` | 智能体层 | 否 | 4 |
 | `api` | 接口层 | 否 | 0 |
 | `mcp` | 协议层 | 否 | 0 |
 | `plugin` | 插件层 | 否 | 1 |
@@ -30,6 +30,7 @@
 | `agent` | `subagent` | `dsh-butler` | `-` | host | 宿主提供的子智能体能力（深度推导与并行拆解） |
 | `agent` | `workflow` | `dsh-butler` | `-` | host | 宿主提供的多子智能体编排能力 |
 | `agent` | `ralph` | `dsh-butler` | `-` | host | 宿主提供的新鲜智能体迭代循环能力 |
+| `agent` | `process-supervisor-agent` | `process-supervisor` | `agents/process-supervisor-agent/PROMPT.md` | repo | 流程监督员的独立复核者：不共享主上下文，只依据磁盘证据包逐项判定，看不到的就是没做 |
 | `plugin` | `dsh-plugin-control-jump` | `dsh-butler` | `plugins/dsh-plugin-control-jump` | repo | DSH 客户端插件：在插件市场已安装列表与设置→插件清单的每个条目注入常显「调控」按钮，一键直达该插件的详情控制页 |
 
 ## 3. 技能层树（L4 → 集群 → L3 → 原子）
@@ -193,6 +194,14 @@
       - `verify-no-lock-violation` (L2)
         - `detect-lock-conflict` (L2)
         - `detect-forbidden-state` (L2)
+    - `process-supervisor` (L3)
+      - `process-conformance-policy` (L1)
+      - `collect-process-evidence` (L2)
+        - `process-conformance-policy` (L1)
+      - `score-process-conformance` (L2)
+        - `process-conformance-policy` (L1)
+      - `plan-process-rectification` (L2)
+        - `process-conformance-policy` (L1)
     - `qa-gatekeeper` (L3)
       - `verify-file-exists` (L2)
       - `check-python-syntax` (L2)

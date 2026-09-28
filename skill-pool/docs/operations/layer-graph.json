@@ -4,7 +4,7 @@
   "docs/operations/execution-layers.json"
  ],
  "dangling_dependencies": [],
- "edge_count": 216,
+ "edge_count": 225,
  "edges": [
   {
    "from": "acquire-atomic-lock",
@@ -132,6 +132,11 @@
    "to": "milestone-only-progress"
   },
   {
+   "from": "collect-process-evidence",
+   "kind": "composition",
+   "to": "process-conformance-policy"
+  },
+  {
    "from": "concise-chinese-bold-guard",
    "kind": "composition",
    "to": "limit-words-under-10"
@@ -255,6 +260,11 @@
    "from": "dsh-butler",
    "kind": "composition",
    "to": "detect-vague-modifier"
+  },
+  {
+   "from": "dsh-butler",
+   "kind": "composition",
+   "to": "retire-legacy-workspace"
   },
   {
    "from": "dual-lane-router",
@@ -582,6 +592,11 @@
    "to": "enforce-atomic-granularity"
   },
   {
+   "from": "plan-process-rectification",
+   "kind": "composition",
+   "to": "process-conformance-policy"
+  },
+  {
    "from": "plugin-control-guard",
    "kind": "composition",
    "to": "install-client-plugin"
@@ -595,6 +610,26 @@
    "from": "plugin-control-guard",
    "kind": "composition",
    "to": "verify-plugin-control-button"
+  },
+  {
+   "from": "process-supervisor",
+   "kind": "composition",
+   "to": "collect-process-evidence"
+  },
+  {
+   "from": "process-supervisor",
+   "kind": "composition",
+   "to": "plan-process-rectification"
+  },
+  {
+   "from": "process-supervisor",
+   "kind": "composition",
+   "to": "process-conformance-policy"
+  },
+  {
+   "from": "process-supervisor",
+   "kind": "composition",
+   "to": "score-process-conformance"
   },
   {
    "from": "prune-redundant-context",
@@ -727,6 +762,11 @@
    "to": "enforce-atomic-granularity"
   },
   {
+   "from": "retire-legacy-workspace",
+   "kind": "composition",
+   "to": "verify-workspace-retirement"
+  },
+  {
    "from": "schema-guard",
    "kind": "composition",
    "to": "extract-json-payload"
@@ -740,6 +780,11 @@
    "from": "schema-guard",
    "kind": "composition",
    "to": "strip-markdown-fence"
+  },
+  {
+   "from": "score-process-conformance",
+   "kind": "composition",
+   "to": "process-conformance-policy"
   },
   {
    "from": "score-task-lane",
@@ -1089,9 +1134,9 @@
  ],
  "graph_version": "1.0.0",
  "layers": {
-  "L1": 42,
-  "L2": 90,
-  "L3": 42,
+  "L1": 43,
+  "L2": 95,
+  "L3": 43,
   "L4": 1
  },
  "nodes": [
@@ -1321,6 +1366,13 @@
   },
   {
    "composition": [],
+   "id": "process-conformance-policy",
+   "layer": "skill",
+   "level": "L1",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [],
    "id": "prune-bloated-prompts",
    "layer": "skill",
    "level": "L1",
@@ -1517,6 +1569,15 @@
     "milestone-only-progress"
    ],
    "id": "classify-step-tier",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
+    "process-conformance-policy"
+   ],
+   "id": "collect-process-evidence",
    "layer": "skill",
    "level": "L2",
    "scope": "local-pool"
@@ -1770,6 +1831,15 @@
   },
   {
    "composition": [
+    "process-conformance-policy"
+   ],
+   "id": "plan-process-rectification",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
     "measure-token-budget"
    ],
    "id": "prune-redundant-context",
@@ -1862,8 +1932,26 @@
    "scope": "local-pool"
   },
   {
+   "composition": [
+    "verify-workspace-retirement"
+   ],
+   "id": "retire-legacy-workspace",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
    "composition": [],
    "id": "run-test-cases-gate",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
+    "process-conformance-policy"
+   ],
+   "id": "score-process-conformance",
    "layer": "skill",
    "level": "L2",
    "scope": "local-pool"
@@ -2150,6 +2238,13 @@
     "prune-redundant-context"
    ],
    "id": "verify-token-reduction",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [],
+   "id": "verify-workspace-retirement",
    "layer": "skill",
    "level": "L2",
    "scope": "local-pool"
@@ -2471,6 +2566,18 @@
   },
   {
    "composition": [
+    "process-conformance-policy",
+    "collect-process-evidence",
+    "score-process-conformance",
+    "plan-process-rectification"
+   ],
+   "id": "process-supervisor",
+   "layer": "skill",
+   "level": "L3",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
     "verify-file-exists",
     "check-python-syntax",
     "ensure-utf8-encoding",
@@ -2626,7 +2733,8 @@
   },
   {
    "composition": [
-    "detect-vague-modifier"
+    "detect-vague-modifier",
+    "retire-legacy-workspace"
    ],
    "id": "dsh-butler",
    "layer": "skill",
@@ -2634,6 +2742,6 @@
    "scope": "local-pool"
   }
  ],
- "non_skill_nodes": 13,
+ "non_skill_nodes": 14,
  "skipped": []
 }

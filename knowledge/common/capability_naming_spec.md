@@ -96,7 +96,7 @@
 
 ---
 
-## 五、动词词汇表（62 条，含语义边界）
+## 五、动词词汇表（64 条，含语义边界）
 
 动作形态的首段必须落在此表内。表中同时钉死易混淆词的**边界**，边界即「什么时候该用哪个词」，避免同一个动作被拆成多个近义动词。
 
@@ -109,6 +109,7 @@
 | `build` | 由已有数据源生成产物，必须幂等可重跑 |
 | `check` | 单点静态检测，只返回事实不做出放行裁决（与 verify 的边界见 synonym_groups） |
 | `classify` | 把对象划入已定义的少数几档之一 |
+| `collect` | 按判据从多个来源汇聚证据或数据，只取不改 |
 | `compare` | 对不同来源的口径做对拍并列出差异 |
 | `concretize` | 把含糊表述补成具体实体与可核对判据 |
 | `confirm` | 在动作前取得授权或确认 |
@@ -151,6 +152,7 @@
 | `rename` | 改名并同步全部引用 |
 | `render` | 把数据源渲染成受管区块或图表 |
 | `resolve` | 把冲突收敛到确定解 |
+| `retire` | 让已被替代的对象退出服役，可回滚并留台账 |
 | `run` | 执行既有用例或流程并汇总结果 |
 | `score` | 按固定维度打分 |
 | `search` | 在候选空间中按查询检索（同义组的唯一保留词，见 synonym_groups） |
@@ -169,7 +171,7 @@
 
 ## 六、编排名词表与规约尾段
 
-**编排名词表**（L3 编排形态的末段必须落在此表内）：`guard`、`router`、`detector`、`dispatcher`、`pipeline`、`framework`、`gatekeeper`、`auditor`、`reporter`、`viewer`、`showcase`、`governance`、`topology`、`registry`、`butler`
+**编排名词表**（L3 编排形态的末段必须落在此表内）：`guard`、`router`、`detector`、`dispatcher`、`pipeline`、`framework`、`gatekeeper`、`auditor`、`reporter`、`viewer`、`showcase`、`governance`、`topology`、`registry`、`butler`、`supervisor`
 
 **规约尾段**（L1 规约形态的末段）：`policy`、`spec`、`standard`、`protocol`
 
@@ -220,10 +222,10 @@
 
 | 指标 | 数值 |
 | --- | --- |
-| 执行层总数 | 175 |
-| 合规数 | 173 |
+| 执行层总数 | 182 |
+| 合规数 | 180 |
 | 违规数 | 2 |
-| 合规率 | 0.9886 |
-| 按层级分布 | L1 42 / L2 90 / L3 42 / L4 1 |
+| 合规率 | 0.9890 |
+| 按层级分布 | L1 43 / L2 95 / L3 43 / L4 1 |
 | 快照来源 | `docs/operations/skill-catalog.json` |
 <!-- CAPNAMING:END -->

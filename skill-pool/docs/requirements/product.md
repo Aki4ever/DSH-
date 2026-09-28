@@ -629,8 +629,8 @@
 
 ## 附录 A. 组装关系受管区块（自动生成）
 
-- 数据源：`docs/operations/skill-catalog.json`（catalog_version 2.0.0，total_skills 175）
-- 级别分布：L1 42 / L2 90 / L3 42 / L4 1
+- 数据源：`docs/operations/skill-catalog.json`（catalog_version 2.0.0，total_skills 182）
+- 级别分布：L1 43 / L2 95 / L3 43 / L4 1
 
 | 级别 | Skill ID | 组装依赖 (Composition) |
 | :--- | :--- | :--- |
@@ -644,6 +644,7 @@
 | **L2** | `classify-decision-reversibility` | `one-shot-resolution-policy` |
 | **L2** | `classify-instance-safety` | `instance-pool-policy` |
 | **L2** | `classify-step-tier` | `milestone-only-progress` |
+| **L2** | `collect-process-evidence` | `process-conformance-policy` |
 | **L2** | `concretize-term` | `concretize-ambiguity-policy` + `detect-vague-modifier` |
 | **L2** | `declare-lock-set` | `parallel-lock-policy` |
 | **L2** | `detect-forbidden-state` | `anti-pattern-policy` |
@@ -660,6 +661,7 @@
 | **L2** | `merge-search-candidates` | `multi-source-search-policy` |
 | **L2** | `parse-query` | `build-inverted-index` |
 | **L2** | `plan-fission` | `enforce-atomic-granularity` + `detect-vague-modifier` |
+| **L2** | `plan-process-rectification` | `process-conformance-policy` |
 | **L2** | `prune-redundant-context` | `measure-token-budget` |
 | **L2** | `quantify-modifier` | `detect-vague-modifier` |
 | **L2** | `rank-skills-bm25` | `parse-query` + `build-inverted-index` |
@@ -668,6 +670,8 @@
 | **L2** | `rename-execution-layer` | `capability-naming-policy` + `audit-layer-naming` + `build-layer-graph` + `build-inverted-index` + `classify-instance-safety` + `build-execution-tree` |
 | **L2** | `render-capability-naming` | `capability-naming-policy` + `audit-layer-naming` |
 | **L2** | `render-catalog-docs` | `enforce-atomic-granularity` |
+| **L2** | `retire-legacy-workspace` | `verify-workspace-retirement` |
+| **L2** | `score-process-conformance` | `process-conformance-policy` |
 | **L2** | `score-task-lane` | `fastlane-redline-policy` |
 | **L2** | `search-official-source` | `multi-source-search-policy` |
 | **L2** | `select-skills-for-task` | `rank-skills-bm25` + `lazy-load-policy` |
@@ -717,6 +721,7 @@
 | **L3** | `one-shot-guard` | `one-shot-resolution-policy` + `classify-decision-reversibility` + `record-assumptions` + `verify-no-unnecessary-question` |
 | **L3** | `parallel-lock-guard` | `parallel-lock-policy` + `declare-lock-set` + `detect-lock-conflict` + `verify-no-lock-violation` |
 | **L3** | `plugin-control-guard` | `plugin-control-jump-policy` + `install-client-plugin` + `verify-plugin-control-button` |
+| **L3** | `process-supervisor` | `process-conformance-policy` + `collect-process-evidence` + `score-process-conformance` + `plan-process-rectification` |
 | **L3** | `qa-gatekeeper` | `verify-file-exists` + `check-python-syntax` + `ensure-utf8-encoding` + `assert-zero-exitcode` |
 | **L3** | `quantification-guard` | `quantify-modifier-policy` + `build-quantifier-table` + `detect-vague-modifier` + `quantify-modifier` + `verify-quantified-output` |
 | **L3** | `redundancy-detector` | `prune-bloated-prompts` + `search-duplicate-rules` |
@@ -730,7 +735,7 @@
 | **L3** | `visual-interaction-guard` | `format-zoomable-visual` + `zoom-level-policy` + `build-image-viewer` + `verify-interactive-html` + `interactive-image-viewer` |
 | **L3** | `visualize-governance-topology` | `format-visual-inspection` + `extract-catalog-topology` + `render-governance-mermaid` |
 | **L3** | `zero-restart-guard` | `prefer-hot-reload-policy` + `classify-change-scope` + `verify-no-unnecessary-restart` |
-| **L4** | `dsh-butler` | `detect-vague-modifier` |
+| **L4** | `dsh-butler` | `detect-vague-modifier` + `retire-legacy-workspace` |
 
 <!-- CATALOG:END -->
 
@@ -1373,4 +1378,178 @@
 | 本地优先 | 硬规则，命中即短路 | 用户示例（信息图 skill）本机已装 `archify-dsh`，重造无收益 | 规约改一处 |
 | 是否引入 archify 为新技能 | **否**，登记为已装外部能力 | 已在机器上且会话可见，重复引入会产生两份真相 | `skill-import-pipeline` 留痕 |
 | 官网源技术路线 | 站点自声明 sitemap | 来源可追溯、结果可复现；搜索引擎排序会漂移 | 规约改一处 |
+
+---
+
+## 49. 迁移收尾：源目录真正退场 (REQ-REPO-MERGE-039)
+
+**需求原文**：「为何 skill 池文件夹没有迁移并合并到 DSH 下面的全局规则文件夹里？(以我理解是只要迁移完成,所有内容都会合并到那边并且任务对话会自动关掉,实际的 skill 池也会自动消失)」
+
+### 49.1 上一轮做错了什么（诚实复盘）
+
+PKG-007 我做了子树合并（内容进新家、历史保留），却把源目录保留成「只读镜像」。
+理由写的是「cwd 在里面，搬走会立即断链」——这句话本身没错，但我把「不搬」当成了终点，
+结果是**复制而不是迁移**。实测代价：
+
+| 证据 | 数值 |
+| :--- | :--- |
+| 两处内容差异 | 50 处（PKG-008 后继续扩大） |
+| 两仓 HEAD | `Skill池` 停在 PKG-007；`全局规则` 已到 PKG-009 |
+| 两仓远端 | 各持一份历史 |
+
+**用户的判断是对的。** 当初真正的顾虑是「删掉 workspace 条目会让会话失去归属」，
+本轮核实该顾虑不成立：当前会话 id 同时存在于两个工作区的 `sessionIds` 里。
+
+### 49.2 退役的安全顺序（不可调换）
+
+```
+1 不丢文件：源侧独有文件数 = 0        ← 唯一硬门
+2 目标已入库：git status 干净
+3 会话完整：源 sessionIds ⊆ 目标 sessionIds
+4 写台账到【新家】
+5 备份并摘除 workspace.json 源条目   ← 必须早于第 6 步
+6 物理删除源目录
+7 复核：源路径不存在
+```
+
+**为什么第 1 步只查「源侧独有」而不是「完全一致」**：源是被冻结的旧镜像，
+它的文件比目标旧（`content_mismatch`）与目标多出文件都是**预期状态**；
+唯一真实的删除风险是「某个文件只存在于将被删除那一侧」。
+
+**为什么第 5 步必须早于第 6 步**：先取消注册再删目录，避免「注册项指向不存在路径」的中间态。
+
+---
+
+## 50. 流程监督员 (REQ-PROCESS-SUPERVISOR-040)
+
+**需求原文**：「新增当前管控机制的流程监督员,这个监督员帮忙查看流程是否按照约定进行,并进行打分,如果流程不合规就要整改;目标是让所有任务都按约定的流程进行」。
+
+### 50.1 缺口
+
+池内 **43 个 L3 门禁、14 道出厂检验全部是单点检查**：catalog 一致吗、树对得上吗、命名合规吗。
+**没有任何一个能力回答「这个任务整体按约定的流程走了吗」。**
+`workflows.md` §1 写了 8 步规范流转，但那是**散文**——没有探针，就没有强制力。
+门禁可以逐道全绿，而流程整段没走，照样交付。
+
+### 50.2 把散文变成数据
+
+`docs/operations/process-spec.json`（唯一真相源）把约定流程写成九步，
+每步绑定四类探针之一、带权重与必需标记，权重合计 **100**。
+
+| 步 | 约定动作 | 探针 | 权重 | 必需 |
+| :---: | :--- | :--- | ---: | :---: |
+| S1 | 取当前生效需求与基线 | file | 10 | ✅ |
+| S2 | 判定增量还是完整规则审计 | file | 5 | — |
+| S3 | 问题诊断先查问题台账 | file | 5 | — |
+| S4 | 双流程分流判定且可复算 | exitcode | 15 | ✅ |
+| S5 | 按需加载选中技能（≤ top-K） | exitcode | 10 | — |
+| S6 | 写入过粒度门禁 / 契约变更过口径门禁 | exitcode | 20 | ✅ |
+| S7 | 同步受影响的需求 / CLI / 界面 / 操作索引 | file | 15 | ✅ |
+| S8 | 提交前生成并展示非空备注 | regex | 10 | ✅ |
+| S9 | 交付前过输出规约门禁 | exitcode | 10 | — |
+
+### 50.3 三条关键口径
+
+| 口径 | 取值 | 为什么 |
+| :--- | :--- | :--- |
+| 通过线 | **≥ 85 且全部必需项 pass** | 必需项一票否决，靠加权摊平等于允许用别的高分买通它 |
+| `na` | 独立第三态，**权重从分母扣除且绝不当 pass** | 不分场景要求会造假失败；把「没做」算过会造假通过 |
+| 缺证据 | 一律 `fail` + `unverifiable` | **没有证据不等于走了这一步**；「我记得我做了」不是证据 |
+
+### 50.4 递归分裂：监督员是一条链，不是一个技能
+
+| 层 | 能力 | 职责 |
+| :--- | :--- | :--- |
+| L1 | `process-conformance-policy` | 钉九步、权重、三态、通过线 |
+| L2 | `collect-process-evidence` | 从磁盘实况逐步取证 |
+| L2 | `score-process-conformance` | 分子/分母/na 公开打分 |
+| L2 | `plan-process-rectification` | 出可执行整改命令 |
+| **agent** | `process-supervisor-agent` | **独立视角复核**（不共享上下文） |
+| L3 | `process-supervisor` | 串成出口门禁 |
+
+**agent 层这一环是本包唯一真正需要它的地方**：自己给自己打分必然偏松——
+主上下文里「我记得我做了」会污染取证。独立上下文只能看到磁盘证据包，
+**看不到的就是没做**。无 `--agent-command` 时输出 `agent_review=skipped` 并提示分数偏松：
+**知情降级，不是静默跳过**。
+
+### 50.5 验收实数
+
+| 夹具 | 得分 | 必需项 | 退出码 |
+| :--- | ---: | :--- | ---: |
+| 空证据目录 | 20 / 100 = 20% | 未过 `S4,S6,S7,S8` | 1 |
+| 合规证据 | 100 / 100 = 100% | 全过 | 0 |
+
+---
+
+## 51. GCM 缺口修复 (REQ-GCM-GAPFIX-041)
+
+### P1（已修）G0 一票否决闸**真空通过** —— 而且是三重缺陷叠加
+
+| # | 缺陷 | 实测证据 |
+| :---: | :--- | :--- |
+| 1 | 判不了就放行 | `check_task_naming.sh --exit` 输出「找不到会话存储」却 **exit=0** |
+| 2 | 存储查找只认旧布局 | 实际有**三种**布局，第三种是 `sessions/<编码工作区>/<sid>/session.v3.jsonl.zstd`（**多帧 zstd**），两个脚本都没查 |
+| 3 | 无法判定与不合规混为一谈 | 都用 `if ! cmd` 判，整改动作不同却给同一提示 |
+
+修复后：语义改为三态 —— **0 合规 / 1 不合规 / 3 无法判定**；
+接入第三种布局（按 zstd 魔数逐帧解压，取最后一个 `session/title` 事件的 `data.title`）；
+有 session id 却无记录判「会话尚未命名」（退出码 1，动作明确），无 session id 才判「无法判定」（3）。
+
+**当场闭环**：读出真实标题「查看管家下属树状结构」→ 判不合规 → 运行 `name_me.sh` 改为
+`[优规001][85] 管控机制补缺` → G0 通过。
+
+### P2（已修）GCM 不覆盖 `skill-pool/`
+
+| 项 | 修复前 | 修复后 |
+| :--- | :--- | :--- |
+| G4 扫描目录 | `rules knowledge indexes docs templates memory` | **加入 `skill-pool`** |
+| G4 扫描文件数 | 71 | **465** |
+| G2 散落垃圾深度 | `maxdepth 2` | **`maxdepth 4`** |
+
+修复前 GCM 看板显示 100%，但那份 100% 只覆盖本工程自己的 81 个文件——
+**一个只检查 13% 文件却报满分的门禁，比不检查更危险。**
+
+### 同批修掉的两个结构性假阳性
+
+扩展覆盖后，G4 的两项指标被模板骨架顶爆：
+
+| 指标 | 修复前 | 顶爆来源 | 处置 |
+| :--- | ---: | :--- | :--- |
+| 重复标题 | 69（限 12） | `## Overview` ×171、`## Usage & Script` ×125 —— **契约强制每份文档都写** | 降级为**报告指标** |
+| 单行最高 | 120（限 65） | `flowchart TD` ×120、`composition:` ×97 —— 同样是强制骨架 | 降级为**报告指标** |
+
+**为什么是降级而不是继续加白名单**：我一开始加了两级豁免（模板标题 + 模板化路径），
+残留仍有 24 条与 88 次，来源全是版本块、README 模板、CLI 子命令骨架。
+再往下加就是养一张无限增长的清单——**正是本包 P5 指出的反模式**。
+所以止损：G4 的放行只依赖 **4.1 块级 Jaccard 相似度**（阈值 0），
+它是唯一能区分「模板骨架」与「真复制粘贴」的判据。
+
+**可证伪性当场验证**：植入一段 >120 字复制块 → `高相似块对` 由 0 → 1 → G4 失败；
+删除后回到 0 → G4 通过。**真冗余抓得住，就不需要一个只会随文档数量线性增长的计数器来当闸。**
+
+### P3（本包完成）双份真相 —— 由 §49 退役收尾消除
+
+### P4/P5/P6 处置
+
+| 级 | 缺口 | 处置 |
+| :--- | :--- | :--- |
+| P4 | 无任务出口自检 | ✅ 本包实施（§50 流程监督员） |
+| P5 | 旧名允许清单可被滥用 | 本包**已用同一推理止损**：不再给 G4 加豁免，而是把两项指标降级；`allowed_contexts` 的 reason 非空 + 条数上限断言登记待办 |
+| P6 | `api`/`mcp` 两层长期为空 | **不改**：本机确实没有自建 API 与 MCP，凑层属机制膨胀 |
+
+---
+
+## 52. 本次演进带来的编制变化
+
+| 级别 | 新增数 | 总览 |
+| :--- | :--- | :--- |
+| L1 原子规约 | +1 | `process-conformance-policy` |
+| L2 工序动作 | +5 | `collect-process-evidence`、`score-process-conformance`、`plan-process-rectification`、`retire-legacy-workspace`、`verify-workspace-retirement` |
+| L3 复合流程 | +1 | `process-supervisor` |
+| **agent 智能体** | **+1** | `process-supervisor-agent`（**首个仓库自定义 agent 层执行层**） |
+| **合计** | **+8** | skill 175 → 182，agent 3 → 4，执行层总数 188 → **196** |
+
+新增产物：`docs/operations/process-spec.json`（约定流程唯一真相源）、
+`docs/operations/retired-workspaces.json`（退役台账）、
+`agents/process-supervisor-agent/PROMPT.md`（监督员契约）。
 

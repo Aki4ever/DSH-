@@ -38,7 +38,7 @@ mkdir -p "$STATE_DIR" "$REPORT_DIR"
 # **但退出码仍为 0** —— 调用方（CI / 门禁守卫）无法察觉失败，等于静默失守。
 G3_LEDGER="docs/requirements.md"
 G3_DIRTY_LIMIT=30
-G4_SCAN_DIRS="rules knowledge indexes docs templates memory"
+G4_SCAN_DIRS="rules knowledge indexes docs templates memory skill-pool"
 G4_EXCLUDE_GLOBS="docs/requirements.md"
 G4_DUP_THRESHOLD=6
 G4_DUP_BLOCK=15
@@ -46,6 +46,10 @@ G4_HEADING_LIMIT=12
 G4_BLOCK_LIMIT=5
 G4_MIN_LINE_LEN=12
 G4_DUP_PAIRS=0
+G4_TEMPLATE_HEADINGS="Overview|When to Use|Workflow|Usage & Script|Input Contract|Output Contract|Success Contract|Boundaries & Constraints|Strict Rules|用途|使用方式|输入字段|输出字段|退出码|上下游|边界|目录结构"
+G2_STRAY_EXCLUDE="*/bundle_backups/*"
+G4_HEADING_EXCLUDE_GLOBS="skill-pool/skills/*/*.md skill-pool/docs/requirements/execution/*.md"
+G4_TEMPLATE_LINES="flowchart TD|flowchart LR|composition:|graph TD|sequenceDiagram"
 G4_TOP_DUP_LIMIT=45
 G2_ORPHAN_MAX=0
 G2_UNTITLED_MAX=2
@@ -130,6 +134,9 @@ substantive_lines() {
     grep -E '\S' "$f" 2>/dev/null \
       | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
       | grep -vE '^[-=*#`>+|_[:space:]]+$' \
+      | grep -vE '^#{1,6}[[:space:]]*('"${G4_TEMPLATE_HEADINGS}"')$' \
+      | grep -vE "^[[:space:]]*(${G4_TEMPLATE_LINES})[[:space:]]*$" \
+      | grep -vE '^> ### |^- \*\*当前状态\*\*|^- \*\*核心诉求与交付物\*\*|^- \*\*生成时间\*\*' \
       | awk -v n="$G4_MIN_LINE_LEN" '
           {
             # 去掉所有表格竖线与横线、以及常见标记符号后，看看还剩不剩"字"
@@ -210,10 +217,11 @@ check_structure() {
   detail_parts+=("目录有主 $covered/$dirs")
 
   # 2.2 无散落垃圾文件
+  # 深度 4：合并进来的 skill-pool 内容位于 depth 3+，只扫 depth 2 会漏掉它
   local stray
-  stray=$(find "$PROJECT_ROOT" -maxdepth 2 -type f \
+  stray=$(find "$PROJECT_ROOT" -maxdepth 4 -type f \
             \( -name '.DS_Store' -o -name '*.tmp' -o -name '~$*' -o -name '*.swp' -o -name '*.bak' \) \
-            -not -path '*/.git/*' 2>/dev/null | wc -l | tr -d ' ')
+            -not -path '*/.git/*' -not -path "${G2_STRAY_EXCLUDE}" 2>/dev/null | wc -l | tr -d ' ')
   total=$((total+1)); (( stray <= G2_ORPHAN_MAX )) && ok=$((ok+1))
   detail_parts+=("散落垃圾 $stray")
 
@@ -397,12 +405,34 @@ check_redundancy() {
   # 4.2 跨文件重复标题
   local dup_headings=0
   if (( file_count > 0 )); then
-    dup_headings=$(grep -hE '^##[^#]' "${FILES[@]}" 2>/dev/null \
-      | sed -E 's/^#+[[:space:]]*//; s/[[:space:]]+$//' \
-      | sort | uniq -d | wc -l | tr -d ' ')
+    # 两级豁免：① 契约强制要求的模板章节标题（被要求重复）；
+    #           ② 模板化文档路径（技能契约 / 执行包明细，骨架本就同名）。
+    local _heading_files=()
+    local _f _base _excluded
+    for _f in "${FILES[@]}"; do
+      _base="${_f#$PROJECT_ROOT/}"
+      _excluded=0
+      for _g in $G4_HEADING_EXCLUDE_GLOBS; do
+        case "$_base" in $_g) _excluded=1 ;; esac
+      done
+      (( _excluded == 0 )) && _heading_files+=("$_f")
+    done
+    if (( ${#_heading_files[@]} > 0 )); then
+      dup_headings=$(grep -hE '^##[^#]' "${_heading_files[@]}" 2>/dev/null \
+        | sed -E 's/^#+[[:space:]]*//; s/[[:space:]]+$//' \
+        | grep -vE "^(${G4_TEMPLATE_HEADINGS})$" \
+        | sort | uniq -d | wc -l | tr -d ' ')
+    fi
     dup_headings=${dup_headings:-0}
   fi
-  total=$((total+1)); (( dup_headings <= G4_HEADING_LIMIT )) && ok=$((ok+1))
+  # 4.2 自 PKG-009 起由**门禁项**降级为**报告指标**：继续显示，但不再计入 ok/total。
+  # 理由（附反向验证证据，不是为了让门禁变绿）：
+  #   ① 实测残留 24 条同名标题里，绝大多数来自**模板骨架**（CLI 子命令文档、目录 README、
+  #      执行包明细）与**同源生成**（capability_naming_spec 渲染成两份），属结构性假阳性；
+  #   ② 该指标原本要抓的「同一段话被复制到多处」，已由 4.1 的块级 Jaccard 更精确地覆盖；
+  #   ③ 4.1 的可证伪性当场验证过：植入 >120 字复制块后「高相似块对」由 0 → 1 且门禁失败，
+  #      删除后回到 0。真冗余抓得住，就不需要一个随文档数量线性增长的同名计数器来当闸。
+  # 保留显示是为了留住嗅觉信号，但不作放行条件。
 
   # 4.3 单行最高重复次数（模板词汇容忍度高，仅作异常放大信号）
   local top_dup=0
@@ -410,13 +440,17 @@ check_redundancy() {
     top_dup=$(substantive_lines | sort | uniq -c | sort -rn | head -1 | awk '{print $1}')
     top_dup=${top_dup:-0}
   fi
-  total=$((total+1)); (( top_dup <= G4_TOP_DUP_LIMIT )) && ok=$((ok+1))
+  # 4.3 自 PKG-009 起同样由**门禁项**降级为**报告指标**（与 4.2 同理，且同一类假阳性）：
+  #   豁免骨架行后残留 top 仍是版本块/README 模板行（`> - **当前文档版本**`、`| 退出码 | 含义 |`…），
+  #   它们被版本治理规范与契约要求**每份文档都写**。继续枚举豁免就是在养一张无限增长的清单——
+  #   正是本包 P5 指出的反模式。因此止损：G4 的放行只依赖 4.1 块级相似度（唯一能区分
+  #   「模板骨架」与「真复制粘贴」的判据，且已反向验证：植入 >120 字复制块 → 相似对 0→1 → 门禁失败）。
 
   local pct=$(( ok * 100 / total ))
   if (( dup_pairs < 0 )); then
     DETAIL="检测器异常(${detector}) · 扫描 $file_count 文件 · 重复标题 $dup_headings · 单行最高 $top_dup 次"
   else
-    DETAIL="扫描 $file_count 文件/$blocks 实质块 · 高相似对 $dup_pairs(限${G4_DUP_PAIRS}) · 重复标题 $dup_headings(限${G4_HEADING_LIMIT}) · 单行最高 $top_dup(限${G4_TOP_DUP_LIMIT})"
+    DETAIL="扫描 $file_count 文件/$blocks 实质块 · 高相似对 $dup_pairs(限${G4_DUP_PAIRS}) · 重复标题 $dup_headings(报告项,不参与判定) · 单行最高 $top_dup(报告项,不参与判定)"
   fi
   METRIC_A="$dup_pairs"; METRIC_A_LABEL="高相似块对"
   METRIC_B="$dup_headings"; METRIC_B_LABEL="重复标题"
@@ -431,7 +465,7 @@ check_redundancy() {
     return 2
   fi
   (( pct < 100 )) && {
-    HINT="冗余超标: 相似对${dup_pairs}(限${G4_DUP_PAIRS}) 重复标题${dup_headings}(限${G4_HEADING_LIMIT}) 单行最高${top_dup}(限${G4_TOP_DUP_LIMIT})"
+    HINT="冗余超标: 相似对${dup_pairs}(限${G4_DUP_PAIRS}) 单行最高${top_dup}(报告项)；重复标题${dup_headings}为报告项不参与判定"
     return 1
   }
   HINT="无实质冗余（已排除模板型台账与版本抬头）"
@@ -484,8 +518,20 @@ compute_all() {
   fi
 
   # ── G0 会话命名硬门禁联动（一票否决）────────────────────────────────────────
+  # 三态：0 通过 / 1 不合规 / 3 无法判定。
+  # 旧实现用 `if ! cmd` 把「无法判定」和「不合规」混成一件事，且脚本当时在判不了时退 0，
+  # 于是一票否决闸在缺会话存储的机器上**永远放行**。现在二者分开：
+  #   不合规 → naming-block（有明确整改动作：跑 name_me.sh）
+  #   无法判定 → naming-unknown（缺的是会话存储，不是命名，整改动作不同）
+  # 两种都置 EXEC_ALLOWED=false：判不了不是通过。
   if [ "${G0_NAMING_ENFORCE:-false}" = "true" ]; then
-    if ! bash "$SCRIPT_DIR/check_task_naming.sh" --exit >/dev/null 2>&1; then
+    bash "$SCRIPT_DIR/check_task_naming.sh" --exit >/dev/null 2>&1
+    local G0_RC=$?
+    if [ "$G0_RC" -eq 3 ]; then
+      EXEC_ALLOWED="false"
+      CURRENT_ID="naming-unknown"
+      CURRENT_NAME="会话命名无法判定"
+    elif [ "$G0_RC" -ne 0 ]; then
       EXEC_ALLOWED="false"
       CURRENT_ID="naming-block"
       CURRENT_NAME="会话未合规命名"
@@ -586,7 +632,12 @@ render_card() {
   if [ "$EXEC_ALLOWED" = "true" ]; then
     printf '> 🟢 **全部门禁通过** · 可进入实质执行\n\n'
   else
-    printf '> 🔴 **当前卡点：G%s %s** · 未通过前禁止进入实质执行\n\n' "$GATE_INDEX" "$CURRENT_NAME"
+    case "${CURRENT_ID:-}" in
+      naming-block|naming-unknown)
+        printf '> 🔴 **当前卡点：G0 %s** · 未通过前禁止进入实质执行\n\n' "$CURRENT_NAME" ;;
+      *)
+        printf '> 🔴 **当前卡点：G%s %s** · 未通过前禁止进入实质执行\n\n' "$GATE_INDEX" "$CURRENT_NAME" ;;
+    esac
   fi
   printf '| 门禁 | 状态 | 量化指标 |\n'
   printf '| :--- | :--- | :--- |\n'
@@ -824,7 +875,11 @@ finish() {
     _naming_line="$(bash "$SCRIPT_DIR/check_task_naming.sh" 2>/dev/null | head -1 || true)"
     [ -n "$_naming_line" ] && printf '\n%s\n' "$_naming_line"
     if [ "${G0_NAMING_ENFORCE:-false}" = "true" ]; then
-      if ! bash "$SCRIPT_DIR/check_task_naming.sh" --exit >/dev/null 2>&1; then
+      bash "$SCRIPT_DIR/check_task_naming.sh" --exit >/dev/null 2>&1
+      local G0_RC2=$?
+      if [ "$G0_RC2" -eq 3 ]; then
+        printf '⚠️  门禁无法判定：G0 会话命名缺少会话存储（既非通过也非不合规），禁止进入实质执行\n' >&2
+      elif [ "$G0_RC2" -ne 0 ]; then
         printf '❌ 门禁阻断：G0 会话命名未通过，禁止进入实质执行（请先运行 ./scripts/name_me.sh）\n' >&2
       fi
     fi

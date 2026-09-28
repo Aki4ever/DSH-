@@ -49,7 +49,7 @@ CLUSTER_MEMBERS = {
                      "execution-tree-guard", "zero-restart-guard", "decoupling-guard", "instance-pool-guard",
                      "layer-naming-guard", "plugin-control-guard"],
     "③ 冲突·冗余·质量": ["conflict-detector", "redundancy-detector", "qa-gatekeeper", "anti-pattern-guard",
-                     "one-shot-guard", "parallel-lock-guard", "atomic-lock-guard"],
+                     "one-shot-guard", "parallel-lock-guard", "atomic-lock-guard", "process-supervisor"],
     "④ 输出规约": ["standard-output-framework", "concise-chinese-bold-guard", "schema-guard",
                     "iconized-output-showcase", "tail-metrics-showcase", "milestone-progress-reporter",
                     "chinese-output-guard", "quantification-guard", "concretization-guard"],

@@ -33,6 +33,7 @@
   "one-shot-guard": "③ 冲突·冗余·质量",
   "parallel-lock-guard": "③ 冲突·冗余·质量",
   "plugin-control-guard": "② 契约与合规",
+  "process-supervisor": "③ 冲突·冗余·质量",
   "qa-gatekeeper": "③ 冲突·冗余·质量",
   "quantification-guard": "④ 输出规约",
   "redundancy-detector": "③ 冲突·冗余·质量",
@@ -48,12 +49,12 @@
   "zero-restart-guard": "② 契约与合规"
  },
  "counts": {
-  "agent": 3,
+  "agent": 4,
   "api": 0,
   "cli": 9,
   "mcp": 0,
   "plugin": 1,
-  "skill": 175
+  "skill": 182
  },
  "edges": [
   [
@@ -157,6 +158,10 @@
    "milestone-only-progress"
   ],
   [
+   "collect-process-evidence",
+   "process-conformance-policy"
+  ],
+  [
    "concise-chinese-bold-guard",
    "limit-words-under-10"
   ],
@@ -255,6 +260,10 @@
   [
    "dsh-butler",
    "detect-vague-modifier"
+  ],
+  [
+   "dsh-butler",
+   "retire-legacy-workspace"
   ],
   [
    "dual-lane-router",
@@ -517,6 +526,10 @@
    "enforce-atomic-granularity"
   ],
   [
+   "plan-process-rectification",
+   "process-conformance-policy"
+  ],
+  [
    "plugin-control-guard",
    "install-client-plugin"
   ],
@@ -527,6 +540,22 @@
   [
    "plugin-control-guard",
    "verify-plugin-control-button"
+  ],
+  [
+   "process-supervisor",
+   "collect-process-evidence"
+  ],
+  [
+   "process-supervisor",
+   "plan-process-rectification"
+  ],
+  [
+   "process-supervisor",
+   "process-conformance-policy"
+  ],
+  [
+   "process-supervisor",
+   "score-process-conformance"
   ],
   [
    "prune-redundant-context",
@@ -633,6 +662,10 @@
    "enforce-atomic-granularity"
   ],
   [
+   "retire-legacy-workspace",
+   "verify-workspace-retirement"
+  ],
+  [
    "schema-guard",
    "extract-json-payload"
   ],
@@ -643,6 +676,10 @@
   [
    "schema-guard",
    "strip-markdown-fence"
+  ],
+  [
+   "score-process-conformance",
+   "process-conformance-policy"
   ],
   [
    "score-task-lane",
@@ -1014,6 +1051,10 @@
   ],
   [
    "③ 冲突·冗余·质量",
+   "process-supervisor"
+  ],
+  [
+   "③ 冲突·冗余·质量",
    "qa-gatekeeper"
   ],
   [
@@ -1093,7 +1134,7 @@
  "layers": [
   {
    "auto": true,
-   "count": 175,
+   "count": 182,
    "entries": [
     {
      "cluster": null,
@@ -1282,6 +1323,13 @@
      "id": "classify-step-tier",
      "level": "L2",
      "path": "skills/classify-step-tier",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "collect-process-evidence",
+     "level": "L2",
+     "path": "skills/collect-process-evidence",
      "source": "registry"
     },
     {
@@ -1831,6 +1879,13 @@
      "source": "registry"
     },
     {
+     "cluster": null,
+     "id": "plan-process-rectification",
+     "level": "L2",
+     "path": "skills/plan-process-rectification",
+     "source": "registry"
+    },
+    {
      "cluster": "② 契约与合规",
      "id": "plugin-control-guard",
      "level": "L3",
@@ -1849,6 +1904,20 @@
      "id": "prefer-hot-reload-policy",
      "level": "L1",
      "path": "skills/prefer-hot-reload-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "process-conformance-policy",
+     "level": "L1",
+     "path": "skills/process-conformance-policy",
+     "source": "registry"
+    },
+    {
+     "cluster": "③ 冲突·冗余·质量",
+     "id": "process-supervisor",
+     "level": "L3",
+     "path": "skills/process-supervisor",
      "source": "registry"
     },
     {
@@ -1958,6 +2027,13 @@
     },
     {
      "cluster": null,
+     "id": "retire-legacy-workspace",
+     "level": "L2",
+     "path": "skills/retire-legacy-workspace",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
      "id": "run-test-cases-gate",
      "level": "L2",
      "path": "skills/run-test-cases-gate",
@@ -1968,6 +2044,13 @@
      "id": "schema-guard",
      "level": "L3",
      "path": "skills/schema-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "score-process-conformance",
+     "level": "L2",
+     "path": "skills/score-process-conformance",
      "source": "registry"
     },
     {
@@ -2293,6 +2376,13 @@
      "source": "registry"
     },
     {
+     "cluster": null,
+     "id": "verify-workspace-retirement",
+     "level": "L2",
+     "path": "skills/verify-workspace-retirement",
+     "source": "registry"
+    },
+    {
      "cluster": "⑤ 需求与透视",
      "id": "visual-interaction-guard",
      "level": "L3",
@@ -2415,7 +2505,7 @@
   },
   {
    "auto": false,
-   "count": 3,
+   "count": 4,
    "entries": [
     {
      "description": "宿主提供的子智能体能力（深度推导与并行拆解）",
@@ -2442,6 +2532,15 @@
      "parent": "dsh-butler",
      "path": null,
      "source": "host",
+     "status": "active"
+    },
+    {
+     "description": "流程监督员的独立复核者：不共享主上下文，只依据磁盘证据包逐项判定，看不到的就是没做",
+     "id": "process-supervisor-agent",
+     "layer": "agent",
+     "parent": "process-supervisor",
+     "path": "agents/process-supervisor-agent/PROMPT.md",
+     "source": "repo",
      "status": "active"
     }
    ],
@@ -3621,6 +3720,50 @@
         }
        ],
        "id": "parallel-lock-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "process-conformance-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "process-conformance-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "collect-process-evidence",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "process-conformance-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "score-process-conformance",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "process-conformance-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "plan-process-rectification",
+         "level": "L2"
+        }
+       ],
+       "id": "process-supervisor",
        "level": "L3"
       },
       {

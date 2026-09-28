@@ -168,3 +168,28 @@
 - 失败语义：**空检索不是通过**（合并后为空退 1）；**检索失败不是没找到**（限流/网络错误必须显式失败）。
 - 唯一口径源：`skills/multi-source-search-policy/SKILL.md`。
 
+## 19. 流程监督员（REQ-PROCESS-SUPERVISOR-040）
+- 出口自检（取证 → 打分 → 整改，可带独立复核）：`python3 skills/process-supervisor/scripts/supervise.py --evidence <证据目录> --json`
+- 单独取证 / 打分 / 整改：
+  ```bash
+  python3 skills/collect-process-evidence/scripts/collect_evidence.py --evidence <目录>
+  python3 skills/score-process-conformance/scripts/score_conformance.py --bundle <证据包>
+  python3 skills/plan-process-rectification/scripts/plan_rectification.py --bundle <证据包>
+  ```
+- 通过条件：**得分 ≥ 85 且全部必需项 pass**；必需项一票否决，不由加权稀释。
+- `na` 是独立第三态：**权重从分母扣除，绝不当 pass**；缺证据一律 `fail` + `unverifiable`。
+- 唯一真相源：`docs/operations/process-spec.json`（九步 / 权重 100 / 探针 / 整改命令）。
+- 独立复核由 **agent 层** `process-supervisor-agent` 承担（不共享上下文，只能看磁盘证据）；
+  未提供 `--agent-command` 时输出 `agent_review=skipped` 并提示分数偏松——知情降级，不静默。
+
+## 20. 工作区退役（REQ-REPO-MERGE-039）
+- 干跑：`python3 skills/retire-legacy-workspace/scripts/retire_workspace.py --source <源> --target <目标>`
+- 执行：加 `--apply`；断言：`python3 skills/verify-workspace-retirement/scripts/verify_retirement.py --all`
+- 安全顺序（不可调换）：**不丢文件 → 目标已入库 → 会话完整 → 写台账 → 摘注册 → 删目录 → 复核**。
+- 硬门只有一条：**源侧独有文件数 = 0**。源比目标旧、目标多出文件都属预期（`git` 不跟踪空目录）。
+- 台账写在新家 `docs/operations/retired-workspaces.json`；`workspace.json` 改动前必先备份。
+
+## 21. 空层是事实登记，不是待办
+执行层树中 `api 0 / mcp 0` 表示本机确实没有自建 API 与 MCP 服务。
+**不要为了「把层填满」而硬凑两层**——那属机制膨胀（`prune-bloated-prompts`）。
+它们是事实登记，不是缺口。
