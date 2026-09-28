@@ -1,0 +1,262 @@
+<svg width="1120" height="2935" viewBox="0 0 1120 2935" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1120" y2="2935" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#070B12"/>
+      <stop offset="50%" stop-color="#0E1522"/>
+      <stop offset="100%" stop-color="#05080D"/>
+    </linearGradient>
+    <linearGradient id="topbar" x1="0" y1="0" x2="1120" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D2FF"/>
+      <stop offset="45%" stop-color="#2EC4B6"/>
+      <stop offset="100%" stop-color="#F45B69"/>
+    </linearGradient>
+    <linearGradient id="cardbg" x1="0" y1="0" x2="1060" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#131C2B"/>
+      <stop offset="100%" stop-color="#0A1120"/>
+    </linearGradient>
+    <linearGradient id="bargreen" x1="0" y1="0" x2="665" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2EC4B6"/>
+      <stop offset="100%" stop-color="#19A08F"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1120" height="2935" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1120" height="6" fill="url(#topbar)"/>
+
+  <!-- ══ 头部 ══ -->
+  <text x="60" y="74" font-size="40" font-weight="700" fill="#EAF2FA">管控机制 · 当前实况总览</text>
+  <text x="60" y="110" font-size="15" fill="#8A98AC">不采信任何「已完成」的口头宣称 —— 只按磁盘上真实存在的东西，决定「能不能动手」</text>
+  <rect x="800" y="28" width="260" height="100" rx="10" fill="#101827" stroke="#233046" stroke-width="1.5"/>
+  <text x="818" y="54" font-size="12.5" fill="#7C8CA3">本轮实跑快照</text>
+  <text x="818" y="78" font-size="14" font-weight="700" fill="#EAF2FA">2026-09-29 03:58</text>
+  <text x="818" y="100" font-size="12" fill="#2EC4B6">门禁 4/4 · 物理锁 [2] · 触达 9/13</text>
+  <text x="818" y="118" font-size="12" fill="#F45B69">拦截层 ⛔ 未注册（唯一硬性红灯）</text>
+
+  <!-- ══ ① 五层管道 ══ -->
+  <rect x="60" y="160" width="6" height="24" rx="3" fill="#00D2FF"/>
+  <text x="80" y="181" font-size="22" font-weight="700" fill="#EAF2FA">① 五层管道：谁负责什么，现在是什么数</text>
+  <text x="760" y="181" font-size="13" fill="#7C8CA3">名称口径唯一出处：rules_index.md 第〇章</text>
+
+  <rect x="60" y="205" width="1000" height="485" rx="12" fill="url(#cardbg)" stroke="#233046" stroke-width="1.5"/>
+  <text x="82" y="236" font-size="14" font-weight="700" fill="#9FC3E0">一根主干往下走：注入 → 状态 → 判定 → 拦截 → 自证审计；前四层管「怎么判」，第五层管「证明它真活着」</text>
+
+  <!-- 层 1 注入 -->
+  <rect x="82" y="252" width="956" height="78" rx="8" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <rect x="82" y="252" width="5" height="78" rx="2.5" fill="#00D2FF"/>
+  <text x="104" y="278" font-size="15" font-weight="700" fill="#EAF2FA">注入层 · GCM-INJECT</text>
+  <text x="104" y="302" font-size="12.5" fill="#9FB3CC">AGENTS.md（宿主级 $DSH_HOME + 项目级）· indexes/shortcuts_index.md 高速干道 · rules_index.md 第〇章名称口径</text>
+  <text x="104" y="322" font-size="11.5" fill="#5F7189">只放红线与路由指针，细则按需加载；预算控制，避免把上下文挤爆。</text>
+  <text x="1018" y="290" font-size="13" font-weight="700" fill="#2EC4B6" text-anchor="end">常驻生效</text>
+
+  <!-- 层 2 状态 -->
+  <rect x="82" y="340" width="956" height="78" rx="8" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <rect x="82" y="340" width="5" height="78" rx="2.5" fill="#2EC4B6"/>
+  <text x="104" y="366" font-size="15" font-weight="700" fill="#EAF2FA">状态层 · GCM-STATE</text>
+  <text x="104" y="390" font-size="12.5" fill="#9FB3CC">scripts/control_gates.sh（check / card / badge / json / advance / reset）· ai-control/config/gates.conf 唯一调参入口</text>
+  <text x="104" y="410" font-size="11.5" fill="#5F7189">产出 $DSH_HOME/.dsh-control/status.json（供拦截层消费）· cache.env 30 秒秒回，不重复扫描。</text>
+  <text x="1018" y="378" font-size="13" font-weight="700" fill="#2EC4B6" text-anchor="end">看板 100%</text>
+
+  <!-- 层 3 判定 -->
+  <rect x="82" y="428" width="956" height="78" rx="8" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <rect x="82" y="428" width="5" height="78" rx="2.5" fill="#FFB900"/>
+  <text x="104" y="454" font-size="15" font-weight="700" fill="#EAF2FA">判定层 · GCM-GATE</text>
+  <text x="104" y="478" font-size="12.5" fill="#9FB3CC">门禁 G0~G4 + 冗余 / 冲突 / 存量 / 通道 / 新鲜度 / 双台账 六个检测器 + todo_gate.sh（S07）· physical_lock.sh（物理锁）</text>
+  <text x="104" y="498" font-size="11.5" fill="#5F7189">门禁回答「能不能动手」，双检回答「改得对不对、旧账还清没有」；检测器不可用一律判未通过。</text>
+  <text x="1018" y="466" font-size="13" font-weight="700" fill="#2EC4B6" text-anchor="end">双检 0 / 0 / 0</text>
+
+  <!-- 层 4 拦截 -->
+  <rect x="82" y="516" width="956" height="78" rx="8" fill="#231016" stroke="#5C2029" stroke-width="1.5"/>
+  <rect x="82" y="516" width="5" height="78" rx="2.5" fill="#F45B69"/>
+  <text x="104" y="542" font-size="15" font-weight="700" fill="#FFD5D9">拦截层 · GCM-GUARD（本轮唯一致命断点）</text>
+  <text x="104" y="566" font-size="12.5" fill="#C9A6AA">ai-control/plugin/index.mjs（常显看板 + 逐次否决）· loader.mjs（加载失败降级为空插件）· selftest.mjs（33 项自检）</text>
+  <text x="104" y="586" font-size="11.5" fill="#9E7276">注册载体 $DSH_HOME/profiles/desktop/cordis.patch.yml 条目缺失 → 本层整体空转；逃生舱 DSH_CONTROL_GUARD=off 常开。</text>
+  <text x="1018" y="554" font-size="13" font-weight="700" fill="#F45B69" text-anchor="end">⛔ isHost=false</text>
+
+  <!-- 层 5 自证 -->
+  <rect x="82" y="604" width="956" height="78" rx="8" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <rect x="82" y="604" width="5" height="78" rx="2.5" fill="#A17BFF"/>
+  <text x="104" y="630" font-size="15" font-weight="700" fill="#EAF2FA">自证与审计层 · GCM-PROOF</text>
+  <text x="104" y="654" font-size="12.5" fill="#9FB3CC">install_host_gate.sh verify（宿主到底加载没加载）· mechanism_audit.mjs（13 条机制的物理触达矩阵）</text>
+  <text x="104" y="674" font-size="11.5" fill="#5F7189">audit_execution.sh（0~100 分）· build_capabilities_index.mjs（执行层入索引）· restore_skill_pool.mjs（技能池归位）。</text>
+  <text x="1018" y="642" font-size="13" font-weight="700" fill="#A17BFF" text-anchor="end">触达 9/13</text>
+
+  <!-- ══ ② 触达清点 ══ -->
+  <rect x="60" y="715" width="6" height="24" rx="3" fill="#FFB900"/>
+  <text x="80" y="736" font-size="22" font-weight="700" fill="#EAF2FA">② 13 条登记机制的物理触达清点</text>
+  <text x="740" y="736" font-size="13" fill="#7C8CA3">判定口径：这条机制有没有「能跑起来的载体」</text>
+
+  <rect x="60" y="760" width="1000" height="130" rx="10" fill="url(#cardbg)" stroke="#233046" stroke-width="1.5"/>
+  <text x="82" y="790" font-size="13" fill="#9FB3CC">已触达 9 条 · 无物理载体 3 条 · 硬性未触达 1 条（瞬时未过 0 条）—— 登记 13 条，仅 9 条真能跑</text>
+  <rect x="82" y="804" width="664" height="28" rx="6" fill="url(#bargreen)"/>
+  <rect x="746" y="804" width="222" height="28" rx="6" fill="#7A5A18"/>
+  <rect x="968" y="804" width="74" height="28" rx="6" fill="#8E2F3C"/>
+  <text x="414" y="823" font-size="13" font-weight="700" fill="#04231F" text-anchor="middle">已触达 9 条</text>
+  <text x="857" y="823" font-size="13" font-weight="700" fill="#FFE9B0" text-anchor="middle">无载体 3</text>
+  <text x="1005" y="823" font-size="12.5" font-weight="700" fill="#FFD5D9" text-anchor="middle">硬缺 1</text>
+  <text x="82" y="858" font-size="11.5" fill="#5F7189">已触达 = 首动改名 S05 · G0~G4 累积门禁 · 底层物理锁 · S07 待办常显 · 双检扫描 · 执行效果打分 · 执行层入索引 · 技能池归位 · 任务列表面板</text>
+  <text x="82" y="878" font-size="11.5" fill="#5F7189">无载体 = 只有文字与契约文件，宿主里找不到能执行它的东西；硬缺 = 有载体源码却未被宿主注册，等于不在场。</text>
+
+  <rect x="60" y="906" width="1000" height="230" rx="10" fill="#141017" stroke="#3A2630" stroke-width="1.5"/>
+  <text x="82" y="936" font-size="14" font-weight="700" fill="#FFD5D9">需要处置的 4 条（命令实跑才暴露，文档自查查不出来）</text>
+  <circle cx="90" cy="964" r="4" fill="#F45B69"/>
+  <text x="104" y="969" font-size="12.5" fill="#E3BFC4">拦截层宿主注册（硬性）— cordis.patch.yml 条目缺失 + 无 isHost=true 凭据 → 硬门禁否决 / S07 常显 / 物理锁运行时拦截 三件事同时空转。</text>
+  <circle cx="90" cy="1000" r="4" fill="#FFB900"/>
+  <text x="104" y="1005" font-size="12.5" fill="#C7B08A">S11 写后必读回 — 规则写了（task_execution_flow 防线 4），拦截层没有对应判定 → 只有执行者自觉，没有物理拦截。</text>
+  <circle cx="90" cy="1036" r="4" fill="#FFB900"/>
+  <text x="104" y="1041" font-size="12.5" fill="#C7B08A">流程监督员 agent — 契约文件 skill-pool/agents/process-supervisor-agent/PROMPT.md 在位，但宿主无 agent 注册面，无可执行载体。</text>
+  <circle cx="90" cy="1072" r="4" fill="#FFB900"/>
+  <text x="104" y="1077" font-size="12.5" fill="#C7B08A">控制跳转插件 dsh-plugin-control-jump — 源码在位 · 注册状态「未注册」（插件不会加载）· 无宿主激活凭据。</text>
+  <text x="82" y="1114" font-size="11.5" fill="#5F7189">另有执行层 catalog 漂移 5 条（confirm-before-coding / track-task-progress / github / manage-problem-log / manage-requirements），索引 §3.2 已显式列出，处置待裁决。</text>
+
+  <!-- ══ ③ 核心反差 ══ -->
+  <rect x="60" y="1180" width="1000" height="210" rx="12" fill="#1A1008" stroke="#7A5A18" stroke-width="2"/>
+  <rect x="60" y="1180" width="6" height="210" rx="3" fill="#FFB900"/>
+  <text x="88" y="1214" font-size="20" font-weight="700" fill="#FFD166">⚠️ 本轮最该看的一条：看板 100% ≠ 机制在跑</text>
+  <text x="88" y="1248" font-size="13" fill="#B9E6DE">▸ 绿灯侧：门禁 4/4 · 高相似对 0 · 冲突 0 · 待对齐 0 · 通道 30 条 0 问题 —— 工程内文件之间完全自洽。</text>
+  <text x="88" y="1274" font-size="13" fill="#F0AEB6">▸ 红灯侧：install_host_gate.sh verify 实测 cordis.patch.yml 条目缺失，且无 isHost=true 激活凭据 —— 本次启动根本没挂载拦截层。</text>
+  <text x="88" y="1300" font-size="13" fill="#C7B08A">▸ 后果：规则要求的「待办常显 / 硬门禁 / 常显看板」在物理上全部不存在，而看板依旧 100% —— 它证明的只是文档自洽。</text>
+  <text x="88" y="1326" font-size="13" fill="#C7B08A">▸ 根因一：宿主 profile 已从 profiles/web 迁到 profiles/desktop，patch 文件 03:27 被重写 → 已注册的条目随之丢失。</text>
+  <text x="88" y="1348" font-size="13" fill="#C7B08A">▸ 根因二：isHost 判据未覆盖当前宿主 argv 形态（…/dsh-desktop-host/lib/index.js）→ 就算把条目写回，激活凭据仍是空白。</text>
+  <text x="88" y="1374" font-size="13" font-weight="700" fill="#FFD166">▸ 铁律：每条机制的判定都必须穿透到「载体是否活着」，否则 100% 只是一个好看的自我安慰。</text>
+
+  <!-- ══ ④ 实测数据矩阵 ══ -->
+  <rect x="60" y="1425" width="6" height="24" rx="3" fill="#2EC4B6"/>
+  <text x="80" y="1446" font-size="22" font-weight="700" fill="#EAF2FA">③ 本轮实跑数据矩阵（12 格，可逐条复现）</text>
+  <text x="740" y="1446" font-size="13" fill="#7C8CA3">绿灯 = 命令实跑通过；红灯 = 命令实跑未通过</text>
+
+  <!-- 行 1 -->
+  <rect x="60" y="1470" width="320" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="80" y="1498" font-size="13" font-weight="700" fill="#2EC4B6">G1 项目初始化 ✅</text>
+  <text x="80" y="1532" font-size="26" font-weight="700" fill="#EAF2FA">11/11</text>
+  <text x="80" y="1556" font-size="12" fill="#9FB3CC">骨架齐备 11/11 · 防丢覆盖 11/11</text>
+  <text x="80" y="1578" font-size="11.5" fill="#5F7189">仓库、目录骨架与防丢文件齐备，</text>
+  <text x="80" y="1597" font-size="11.5" fill="#5F7189">这是后面所有判定的地基。</text>
+
+  <rect x="400" y="1470" width="320" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="420" y="1498" font-size="13" font-weight="700" fill="#2EC4B6">G2 工程结构化 ✅</text>
+  <text x="420" y="1532" font-size="26" font-weight="700" fill="#EAF2FA">5/5</text>
+  <text x="420" y="1556" font-size="12" fill="#9FB3CC">合规项 5/5 · 孤儿目录 0</text>
+  <text x="420" y="1578" font-size="11.5" fill="#5F7189">目录有主 11/11 · 重复层级 0 · 标准</text>
+  <text x="420" y="1597" font-size="11.5" fill="#5F7189">子目录 4/4 · 无标题 0/493。</text>
+
+  <rect x="740" y="1470" width="320" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="760" y="1498" font-size="13" font-weight="700" fill="#2EC4B6">G3 台账同步 ✅</text>
+  <text x="760" y="1532" font-size="26" font-weight="700" fill="#EAF2FA">86 条</text>
+  <text x="760" y="1556" font-size="12" fill="#9FB3CC">未提交 0/30 · 缺号 0</text>
+  <text x="760" y="1578" font-size="11.5" fill="#5F7189">台账 v4.23.0 · A80/E3/D1 ·</text>
+  <text x="760" y="1597" font-size="11.5" fill="#5F7189">HEAD 267b861，工作树干净。</text>
+
+  <!-- 行 2 -->
+  <rect x="60" y="1634" width="320" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="80" y="1662" font-size="13" font-weight="700" fill="#2EC4B6">G4 冗余检测 ✅</text>
+  <text x="80" y="1696" font-size="26" font-weight="700" fill="#EAF2FA">0</text>
+  <text x="80" y="1720" font-size="12" fill="#9FB3CC">高相似块对 0（限 0）</text>
+  <text x="80" y="1742" font-size="11.5" fill="#5F7189">门禁口径扫 128 文件 / 551 实质块；</text>
+  <text x="80" y="1761" font-size="11.5" fill="#5F7189">重复标题 24 为报告项，不参与判定。</text>
+
+  <rect x="400" y="1634" width="320" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="420" y="1662" font-size="13" font-weight="700" fill="#2EC4B6">冲突检测 ✅</text>
+  <text x="420" y="1696" font-size="26" font-weight="700" fill="#EAF2FA">0</text>
+  <text x="420" y="1720" font-size="12" fill="#9FB3CC">高危 0 · 中危 0</text>
+  <text x="420" y="1742" font-size="11.5" fill="#5F7189">扫 74 文件 · 基准总版本 v4.23.0；</text>
+  <text x="420" y="1761" font-size="11.5" fill="#5F7189">同一事实无两种说法。</text>
+
+  <rect x="740" y="1634" width="320" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="760" y="1662" font-size="13" font-weight="700" fill="#2EC4B6">存量校准 ✅</text>
+  <text x="760" y="1696" font-size="26" font-weight="700" fill="#EAF2FA">0</text>
+  <text x="760" y="1720" font-size="12" fill="#9FB3CC">待对齐 0 · 高危 0</text>
+  <text x="760" y="1742" font-size="11.5" fill="#5F7189">扫 74 文件；另有 3 项已书面说明</text>
+  <text x="760" y="1761" font-size="11.5" fill="#5F7189">豁免，登记在 legacy_align_exempt。</text>
+
+  <!-- 行 3 -->
+  <rect x="60" y="1798" width="320" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="80" y="1826" font-size="13" font-weight="700" fill="#2EC4B6">通道审计 ✅</text>
+  <text x="80" y="1860" font-size="26" font-weight="700" fill="#EAF2FA">30 条</text>
+  <text x="80" y="1884" font-size="12" fill="#9FB3CC">问题 0 项</text>
+  <text x="80" y="1906" font-size="11.5" fill="#5F7189">死链 0 · 说法可命中 · 触发词无</text>
+  <text x="80" y="1925" font-size="11.5" fill="#5F7189">冲突，shortcuts_index 健康。</text>
+
+  <rect x="400" y="1798" width="320" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="420" y="1826" font-size="13" font-weight="700" fill="#2EC4B6">技能池归位 ✅</text>
+  <text x="420" y="1860" font-size="26" font-weight="700" fill="#EAF2FA">178</text>
+  <text x="420" y="1884" font-size="12" fill="#9FB3CC">未归位 0 · 面板可见</text>
+  <text x="420" y="1906" font-size="11.5" fill="#5F7189">skills/ 下 178 个技能，旧副本已清</text>
+  <text x="420" y="1925" font-size="11.5" fill="#5F7189">理，清单文件在位。</text>
+
+  <rect x="740" y="1798" width="320" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="760" y="1826" font-size="13" font-weight="700" fill="#2EC4B6">执行层入索引 ✅</text>
+  <text x="760" y="1860" font-size="26" font-weight="700" fill="#EAF2FA">228/228</text>
+  <text x="760" y="1884" font-size="12" fill="#9FB3CC">未收录 0 · catalog 漂移 5</text>
+  <text x="760" y="1906" font-size="11.5" fill="#5F7189">技能 178 + agent/plugin/cli 50；</text>
+  <text x="760" y="1925" font-size="11.5" fill="#5F7189">受管区间标记在位。</text>
+
+  <!-- 行 4 -->
+  <rect x="60" y="1962" width="320" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="80" y="1990" font-size="13" font-weight="700" fill="#2EC4B6">S07 待办常显 ✅</text>
+  <text x="80" y="2024" font-size="26" font-weight="700" fill="#EAF2FA">4/5 · 90%</text>
+  <text x="80" y="2048" font-size="12" fill="#9FB3CC">进行中 1 项 · 完成即打钩</text>
+  <text x="80" y="2070" font-size="11.5" fill="#5F7189">硬判定通过；但自动留痕依赖插</text>
+  <text x="80" y="2089" font-size="11.5" fill="#5F7189">件钩子，本轮靠官方通道补录。</text>
+
+  <rect x="400" y="1962" width="320" height="150" rx="10" fill="#1E1A0E" stroke="#4A3D14" stroke-width="1.5"/>
+  <text x="420" y="1990" font-size="13" font-weight="700" fill="#FFB900">底层物理锁 🔒</text>
+  <text x="420" y="2024" font-size="26" font-weight="700" fill="#EAF2FA">[2] LOCK-2</text>
+  <text x="420" y="2048" font-size="12" fill="#9FB3CC">筹策分解达成 · 凭据 2 条</text>
+  <text x="420" y="2070" font-size="11.5" fill="#5F7189">LOCK-1 凭据 = 门禁全绿；LOCK-2</text>
+  <text x="420" y="2089" font-size="11.5" fill="#5F7189">凭据 = 含进行中项的待办证据。</text>
+
+  <rect x="740" y="1962" width="320" height="150" rx="10" fill="#231016" stroke="#5C2029" stroke-width="1.5"/>
+  <text x="760" y="1990" font-size="13" font-weight="700" fill="#F45B69">拦截层宿主注册 ⛔</text>
+  <text x="760" y="2024" font-size="24" font-weight="700" fill="#FFD5D9">未注册</text>
+  <text x="760" y="2048" font-size="12" fill="#C9A6AA">条目缺失 · isHost 无凭据</text>
+  <text x="760" y="2070" font-size="11.5" fill="#9E7276">loader.mjs 与 index.mjs 语法自检</text>
+  <text x="760" y="2089" font-size="11.5" fill="#9E7276">均通过，唯独宿主没把它挂上。</text>
+
+  <!-- ══ ④ 断点与处置 ══ -->
+  <rect x="60" y="2150" width="6" height="24" rx="3" fill="#F45B69"/>
+  <text x="80" y="2171" font-size="22" font-weight="700" fill="#EAF2FA">④ 断点与处置：每条都给出可执行补课命令</text>
+  <text x="760" y="2171" font-size="13" fill="#7C8CA3">不修不改，机制与文字就一直是两套东西</text>
+
+  <rect x="60" y="2195" width="1000" height="345" rx="10" fill="url(#cardbg)" stroke="#233046" stroke-width="1.5"/>
+  <rect x="82" y="2216" width="956" height="80" rx="8" fill="#231016" stroke="#5C2029" stroke-width="1.5"/>
+  <text x="104" y="2242" font-size="13.5" font-weight="700" fill="#FFD5D9">① 拦截层未注册（硬性）→ ./scripts/install_host_gate.sh install</text>
+  <text x="104" y="2264" font-size="11.5" fill="#C9A6AA">根因：profile 从 profiles/web 迁到 profiles/desktop，patch 文件被重写 → 条目丢失；写入后须重载 profile 才会激活。</text>
+  <text x="104" y="2284" font-size="11.5" fill="#C9A6AA">未激活前，硬门禁否决、S07 常显、物理锁运行时拦截三件事同时不具备；且 isHost 判据还需覆盖当前宿主 argv 形态。</text>
+
+  <rect x="82" y="2306" width="956" height="60" rx="8" fill="#1E1A0E" stroke="#4A3D14" stroke-width="1.5"/>
+  <text x="104" y="2332" font-size="13.5" font-weight="700" fill="#FFD166">② S11 写后必读回无物理载体 → 需在拦截层补「写后读回」判定</text>
+  <text x="104" y="2354" font-size="11.5" fill="#C7B08A">当前只有规则文字与执行者自觉；没有判定逻辑，就等于没有这条机制，不能算已交付。</text>
+
+  <rect x="82" y="2376" width="956" height="60" rx="8" fill="#1E1A0E" stroke="#4A3D14" stroke-width="1.5"/>
+  <text x="104" y="2402" font-size="13.5" font-weight="700" fill="#FFD166">③ 流程监督员 agent 无宿主注册面 → 契约降级为「人工复核清单」或补注册面</text>
+  <text x="104" y="2424" font-size="11.5" fill="#C7B08A">在宿主没有 agent 注册能力之前，它只能是文档，不能当作独立复核机制引用。</text>
+
+  <rect x="82" y="2446" width="956" height="60" rx="8" fill="#101827" stroke="#233046" stroke-width="1.5"/>
+  <text x="104" y="2472" font-size="13.5" font-weight="700" fill="#9FC3E0">④ 控制跳转插件未注册 + 执行层 catalog 漂移 5 条 → 先裁决再迭代，禁止自行取舍</text>
+  <text x="104" y="2494" font-size="11.5" fill="#5F7189">冗余 → 合并为迭代版本；冲突 / 漂移 → 先出裁决方案，由用户确认后再动。</text>
+
+  <!-- ══ ⑤ 常跑命令 ══ -->
+  <rect x="60" y="2580" width="6" height="24" rx="3" fill="#00D2FF"/>
+  <text x="80" y="2601" font-size="22" font-weight="700" fill="#EAF2FA">⑤ 常跑命令：改动前看资格，收尾时证明机制活着</text>
+
+  <rect x="60" y="2625" width="490" height="150" rx="10" fill="#0F1622" stroke="#233046" stroke-width="1.5"/>
+  <text x="80" y="2653" font-size="14" font-weight="700" fill="#2EC4B6">开工前（改动型动作之前必跑）</text>
+  <text x="80" y="2681" font-size="12" fill="#9FB3CC">./scripts/control_gates.sh check</text>
+  <text x="80" y="2705" font-size="12" fill="#9FB3CC">./scripts/physical_lock.sh status　|　sync</text>
+  <text x="80" y="2729" font-size="12" fill="#9FB3CC">./scripts/todo_gate.sh check</text>
+  <text x="80" y="2753" font-size="11.5" fill="#5F7189">任一道未过 → 改动型调用应被拒；不采信口头「已通过」。</text>
+
+  <rect x="570" y="2625" width="490" height="150" rx="10" fill="#0F1622" stroke="#233046" stroke-width="1.5"/>
+  <text x="590" y="2653" font-size="14" font-weight="700" fill="#A17BFF">收尾与自证（穿透到载体层）</text>
+  <text x="590" y="2681" font-size="12" fill="#9FB3CC">./scripts/install_host_gate.sh verify</text>
+  <text x="590" y="2705" font-size="12" fill="#9FB3CC">node scripts/mechanism_audit.mjs</text>
+  <text x="590" y="2729" font-size="12" fill="#9FB3CC">node scripts/{redundancy,conflict,legacy_align}_scan.mjs --root .</text>
+  <text x="590" y="2753" font-size="11.5" fill="#5F7189">前两条答「机制在不在跑」，后一条答「改得对不对」。</text>
+
+  <!-- ══ 页脚 ══ -->
+  <rect x="60" y="2797" width="1000" height="1" fill="#1E2836"/>
+  <text x="60" y="2825" font-size="11.5" fill="#5F7189">数据来源（全部取本轮实跑输出，未采信任何文档复述）：control_gates.sh check / json · physical_lock.sh status · todo_gate.sh check · install_host_gate.sh verify</text>
+  <text x="60" y="2847" font-size="11.5" fill="#5F7189">mechanism_audit.mjs · redundancy_scan.mjs · conflict_scan.mjs · legacy_align_scan.mjs · channel_audit.mjs · build_capabilities_index.mjs --check · restore_skill_pool.mjs --check</text>
+  <text x="60" y="2869" font-size="11.5" fill="#4A5A70">资产位置：assets/generated_images/control_mechanism_live_overview_v4.svg + .png　|　规范依据：docs/diagram_generation_guide.md · docs/constraint_mechanism_spec.md</text>
+  <text x="60" y="2891" font-size="11.5" fill="#3E4C60">全局规则工程 · 管控机制（GCM）当前实况总览 v4 · 2026-09-29 实跑快照 · 数字随实况变化，引用前请重跑上述命令核对</text>
+</svg>

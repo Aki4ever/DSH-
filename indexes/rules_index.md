@@ -58,6 +58,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **基线版式** | [`assets/generated_images/gcm_gate_control_infographic.svg`](../assets/generated_images/gcm_gate_control_infographic.svg) + `.png` | REQ-044 原始产出，固化版式基准；**内含写死数字（如"23 条通道"）已非当前实况，不得当作现状引用** |
 | **现行实况版** | [`assets/generated_images/control_mechanism_infographic_v2.svg`](../assets/generated_images/control_mechanism_infographic_v2.svg) + `.png` | 复用基线版式、按实跑数据重绘；数字对应快照 2026-09-23 16:02（门禁 4/4 · 通道 24 条 · 双检与校准全 0）。**资产已落盘，台账条目尚未登记**，引用前先核对当轮实跑 |
 | **结构树实况版** | [`assets/generated_images/control_mechanism_structure_tree_v3.svg`](../assets/generated_images/control_mechanism_structure_tree_v3.svg) + `.png` | 走"五层分工 + 两把硬闸"的结构树口径（比 v2 多一层"自证与审计层"）；数字对应快照 2026-09-29（门禁 4/4 ↔ 3/4 闪烁 · 物理锁 [2] LOCK-2 · 拦截层宿主注册仍缺）。台账留痕见 [`docs/requirements.md`](../docs/requirements.md) 附录"资产变更留痕" |
+| **当前实况总览版（现行引用首选）** | [`assets/generated_images/control_mechanism_live_overview_v4.svg`](../assets/generated_images/control_mechanism_live_overview_v4.svg) + `.png` | 走"五层管道 + 13 条机制触达清点 + 实跑数据矩阵 + 断点处置"口径；数字对应快照 2026-09-29 03:58（门禁 4/4 · 触达 9/13 · 物理锁 [2] LOCK-2 · 拦截层未注册）。**引用现状一律以本版为准**，v2/v3 退为历史版本；台账留痕见 [`docs/requirements.md`](../docs/requirements.md) 附录"资产变更留痕" |
 
 ---
 

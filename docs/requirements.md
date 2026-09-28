@@ -2491,3 +2491,29 @@
 **5) 仍未闭环的一步**：需**重启桌面端**（profile patch 与插件 bundle 在宿主启动时读取）。
 重启后 `verify` 应为 exit 0（isHost=true），常显看板会出现用量行；
 在此之前，额度仍按"未配置 API Key"如实显示。
+
+### 管控机制当前实况总览信息图 v4（2026-09-29 · 通道"生成信息图"）
+
+- **触发**：用户口令"看看当前的管控机制 + 生成信息图"，命中 [`indexes/shortcuts_index.md`](../indexes/shortcuts_index.md) 已登记通道；
+- **新增资产**：`assets/generated_images/control_mechanism_live_overview_v4.svg` + `.png`（1120×2935）——
+  五层管道实况（注入 / 状态 / 判定 / 拦截 / 自证审计）+ 13 条机制触达清点 + 12 格实跑数据矩阵 + 断点与处置 + 常跑命令；
+- **版本分工**：唯一权威出处为 [`indexes/rules_index.md`](../indexes/rules_index.md) 第〇章"机制信息图"表，
+  本版登记为**现行实况总览版（引用现状首选）**，v2 与 v3 退为历史版本；本节不新增 `REQ-###` 条目，不影响 G3 计数口径；
+- **本次实跑数据**（信息图数据源，均可复跑）：门禁 4/4（骨架 11/11 · 防丢 11/11 · 合规 5/5 · 孤儿 0 · 无标题 0/493 ·
+  条目 86 = A80/E3/D1 · 缺号 0 · 未提交 0/30 · HEAD 267b861 · 高相似对 0，门禁口径 128 文件 / 551 实质块）·
+  冲突 0（74 文件）· 存量待对齐 0（74 文件，3 项书面豁免）· 通道 30 条 0 问题 · 技能池 178 未归位 0 ·
+  执行层 228（技能 178 + agent/plugin/cli 50）收录 228 未收录 0 catalog 漂移 5 · S07 待办 4/5 · 90% ·
+  物理锁 [2] LOCK-2（凭据 2 条）· mechanism_audit 13 条登记（已触达 9 · 无载体 3 · 硬性未触达 1）；
+- **本轮新取证的根因（v3 时只知"未注册"，本轮穿透到两层原因）**：
+  ① **profile 迁移丢条目**：宿主 profile 目录已由 `profiles/web/` 迁到 `profiles/desktop/`，
+  `cordis.patch.yml`（实测 mtime 03:27:58）被重写，其中的 `ai-execution-control` 条目随之丢失
+  （`grep -rl ai-execution-control ~/.dsh/profiles/` 全域无命中，`profiles/web/` 目录已不存在）；
+  ② **isHost 判据未覆盖当前宿主形态**：当前宿主进程 argv 为
+  `…/dsh-desktop-host/lib/index.js`，既不含 `DSH Desktop Helper`/`node.mojom.NodeService` 三件套，
+  也不含 `dsh/lib/bin.js`，故 `isHost` 恒为 false；`~/.dsh/.dsh-control/plugin-status.txt` 留存的
+  03:24 记录虽显示 `apply 执行`、`showCard=true`、`enforce=true`，但 `isHost=false` —— 即"加载过、但判据不认"。
+  **两层叠加**：写回条目仍需重载 profile，且判据不修则激活凭据依旧空白；
+- **本轮未动宿主**：仅取证与出图，**未**执行 `install_host_gate.sh install`（改宿主 profile 需重启桌面端，留待用户裁决）；
+- **改动后复跑**：冗余高相似对 0 · 冲突 0 · 存量待对齐 0（3 项书面豁免）· 门禁 4/4 · 物理锁 [2] LOCK-2；
+- **未验证项**：PNG 未在 Web GUI 页面内实点打开验证（仅文件工具读回 + 目视校验）；SVG 由手写坐标排版，
+  已按设计尺寸栅格化并逐段目视核对，但未做跨浏览器渲染差异比对。
