@@ -1,145 +1,154 @@
 {
- "entries": [
-  {
-   "description": "宿主提供的子智能体能力（深度推导与并行拆解）",
-   "id": "subagent",
-   "layer": "agent",
-   "parent": "dsh-butler",
-   "path": null,
-   "source": "host",
-   "status": "active"
+  "entries": [
+    {
+      "description": "宿主提供的子智能体能力（深度推导与并行拆解）",
+      "id": "subagent",
+      "layer": "agent",
+      "parent": "dsh-butler",
+      "path": null,
+      "source": "host",
+      "status": "active"
+    },
+    {
+      "description": "宿主提供的多子智能体编排能力",
+      "id": "workflow",
+      "layer": "agent",
+      "parent": "dsh-butler",
+      "path": null,
+      "source": "host",
+      "status": "active"
+    },
+    {
+      "description": "宿主提供的新鲜智能体迭代循环能力",
+      "id": "ralph",
+      "layer": "agent",
+      "parent": "dsh-butler",
+      "path": null,
+      "source": "host",
+      "status": "active"
+    },
+    {
+      "description": "技能池管理与门禁 CLI 入口",
+      "id": "skill-pool",
+      "layer": "cli",
+      "parent": "dsh-butler",
+      "path": "bin/skill-pool",
+      "source": "repo",
+      "status": "active"
+    },
+    {
+      "description": "列出技能与软链状态",
+      "id": "skill-pool:list",
+      "layer": "cli",
+      "parent": "skill-pool",
+      "path": "bin/skill-pool",
+      "source": "repo",
+      "status": "active"
+    },
+    {
+      "description": "校验技能规范合规性",
+      "id": "skill-pool:validate",
+      "layer": "cli",
+      "parent": "skill-pool",
+      "path": "bin/skill-pool",
+      "source": "repo",
+      "status": "active"
+    },
+    {
+      "description": "查看仓库状态统计概览",
+      "id": "skill-pool:status",
+      "layer": "cli",
+      "parent": "skill-pool",
+      "path": "bin/skill-pool",
+      "source": "repo",
+      "status": "active"
+    },
+    {
+      "description": "初始化新技能脚手架",
+      "id": "skill-pool:init",
+      "layer": "cli",
+      "parent": "skill-pool",
+      "path": "bin/skill-pool",
+      "source": "repo",
+      "status": "active"
+    },
+    {
+      "description": "软链技能到运行环境",
+      "id": "skill-pool:link",
+      "layer": "cli",
+      "parent": "skill-pool",
+      "path": "bin/skill-pool",
+      "source": "repo",
+      "status": "active"
+    },
+    {
+      "description": "安全解除技能软链",
+      "id": "skill-pool:unlink",
+      "layer": "cli",
+      "parent": "skill-pool",
+      "path": "bin/skill-pool",
+      "source": "repo",
+      "status": "active"
+    },
+    {
+      "description": "查询与同步全局技能编目",
+      "id": "skill-pool:catalog",
+      "layer": "cli",
+      "parent": "skill-pool",
+      "path": "bin/skill-pool",
+      "source": "repo",
+      "status": "active"
+    },
+    {
+      "description": "口径一致性门禁（受管区块刷新 + 三方对拍）",
+      "id": "skill-pool:consistency",
+      "layer": "cli",
+      "parent": "skill-pool",
+      "path": "bin/skill-pool",
+      "source": "repo",
+      "status": "active"
+    },
+    {
+      "description": "DSH 客户端插件：在插件市场已安装列表与设置→插件清单的每个条目注入常显「调控」按钮，一键直达该插件的详情控制页",
+      "id": "dsh-plugin-control-jump",
+      "layer": "plugin",
+      "parent": "dsh-butler",
+      "path": "plugins/dsh-plugin-control-jump",
+      "source": "repo",
+      "status": "active"
+    }
+  ],
+  "layers": {
+    "agent": {
+      "auto": false,
+      "source": "manual",
+      "title": "智能体层"
+    },
+    "api": {
+      "auto": false,
+      "source": "manual",
+      "title": "接口层"
+    },
+    "cli": {
+      "auto": false,
+      "source": "manual",
+      "title": "命令层"
+    },
+    "mcp": {
+      "auto": false,
+      "source": "manual",
+      "title": "协议层"
+    },
+    "plugin": {
+      "auto": false,
+      "source": "manual",
+      "title": "插件层"
+    },
+    "skill": {
+      "auto": true,
+      "source": "docs/operations/skill-catalog.json",
+      "title": "技能层"
+    }
   },
-  {
-   "description": "宿主提供的多子智能体编排能力",
-   "id": "workflow",
-   "layer": "agent",
-   "parent": "dsh-butler",
-   "path": null,
-   "source": "host",
-   "status": "active"
-  },
-  {
-   "description": "宿主提供的新鲜智能体迭代循环能力",
-   "id": "ralph",
-   "layer": "agent",
-   "parent": "dsh-butler",
-   "path": null,
-   "source": "host",
-   "status": "active"
-  },
-  {
-   "description": "技能池管理与门禁 CLI 入口",
-   "id": "skill-pool",
-   "layer": "cli",
-   "parent": "dsh-butler",
-   "path": "bin/skill-pool",
-   "source": "repo",
-   "status": "active"
-  },
-  {
-   "description": "列出技能与软链状态",
-   "id": "skill-pool:list",
-   "layer": "cli",
-   "parent": "skill-pool",
-   "path": "bin/skill-pool",
-   "source": "repo",
-   "status": "active"
-  },
-  {
-   "description": "校验技能规范合规性",
-   "id": "skill-pool:validate",
-   "layer": "cli",
-   "parent": "skill-pool",
-   "path": "bin/skill-pool",
-   "source": "repo",
-   "status": "active"
-  },
-  {
-   "description": "查看仓库状态统计概览",
-   "id": "skill-pool:status",
-   "layer": "cli",
-   "parent": "skill-pool",
-   "path": "bin/skill-pool",
-   "source": "repo",
-   "status": "active"
-  },
-  {
-   "description": "初始化新技能脚手架",
-   "id": "skill-pool:init",
-   "layer": "cli",
-   "parent": "skill-pool",
-   "path": "bin/skill-pool",
-   "source": "repo",
-   "status": "active"
-  },
-  {
-   "description": "软链技能到运行环境",
-   "id": "skill-pool:link",
-   "layer": "cli",
-   "parent": "skill-pool",
-   "path": "bin/skill-pool",
-   "source": "repo",
-   "status": "active"
-  },
-  {
-   "description": "安全解除技能软链",
-   "id": "skill-pool:unlink",
-   "layer": "cli",
-   "parent": "skill-pool",
-   "path": "bin/skill-pool",
-   "source": "repo",
-   "status": "active"
-  },
-  {
-   "description": "查询与同步全局技能编目",
-   "id": "skill-pool:catalog",
-   "layer": "cli",
-   "parent": "skill-pool",
-   "path": "bin/skill-pool",
-   "source": "repo",
-   "status": "active"
-  },
-  {
-   "description": "口径一致性门禁（受管区块刷新 + 三方对拍）",
-   "id": "skill-pool:consistency",
-   "layer": "cli",
-   "parent": "skill-pool",
-   "path": "bin/skill-pool",
-   "source": "repo",
-   "status": "active"
-  }
- ],
- "layers": {
-  "agent": {
-   "auto": false,
-   "source": "manual",
-   "title": "智能体层"
-  },
-  "api": {
-   "auto": false,
-   "source": "manual",
-   "title": "接口层"
-  },
-  "cli": {
-   "auto": false,
-   "source": "manual",
-   "title": "命令层"
-  },
-  "mcp": {
-   "auto": false,
-   "source": "manual",
-   "title": "协议层"
-  },
-  "plugin": {
-   "auto": false,
-   "source": "manual",
-   "title": "插件层"
-  },
-  "skill": {
-   "auto": true,
-   "source": "docs/operations/skill-catalog.json",
-   "title": "技能层"
-  }
- },
- "registry_version": "1.0.0"
+  "registry_version": "1.0.0"
 }

@@ -122,17 +122,17 @@ flowchart TD
 
 ## 下属编制 (L1~L3 Subordinate Clusters)
 
-管家当前纳管 6 个执行层，其中技能层 165 条（cli 9 / agent 3 / api 0 / mcp 0 / plugin 0）。
+管家当前纳管 6 个执行层，其中技能层 175 条（cli 9 / agent 3 / api 0 / mcp 0 / plugin 1）。
 
 完整树见 `docs/operations/execution-tree.md`（唯一真相源，禁止手写副本）。
 
 | 集群 | L3 总控 |
 | :--- | :--- |
 | ① 意图与路由 | `atomic-fastpath-router`、`dual-lane-router`、`google-style-skill-search-router`、`intent-detector`、`on-demand-dispatcher`、`skill-index-router` |
-| ② 契约与合规 | `atomic-fission-guard`、`catalog-consistency-guard`、`decoupling-guard`、`execution-tree-guard`、`full-spectrum-skill-auditor`、`index-body-contract`、`index-header-contract`、`instance-pool-guard`、`layer-naming-guard`、`token-economy-guard`、`zero-restart-guard` |
+| ② 契约与合规 | `atomic-fission-guard`、`catalog-consistency-guard`、`decoupling-guard`、`execution-tree-guard`、`full-spectrum-skill-auditor`、`index-body-contract`、`index-header-contract`、`instance-pool-guard`、`layer-naming-guard`、`plugin-control-guard`、`token-economy-guard`、`zero-restart-guard` |
 | ③ 冲突·冗余·质量 | `anti-pattern-guard`、`atomic-lock-guard`、`conflict-detector`、`one-shot-guard`、`parallel-lock-guard`、`qa-gatekeeper`、`redundancy-detector` |
 | ④ 输出规约 | `chinese-output-guard`、`concise-chinese-bold-guard`、`concretization-guard`、`iconized-output-showcase`、`milestone-progress-reporter`、`quantification-guard`、`schema-guard`、`standard-output-framework`、`tail-metrics-showcase` |
-| ⑤ 需求与透视 | `interactive-image-viewer`、`spec-driven-governance`、`visualize-governance-topology` |
+| ⑤ 需求与透视 | `interactive-image-viewer`、`spec-driven-governance`、`visual-interaction-guard`、`visualize-governance-topology` |
 | ⑥ 外部纳管 | `github`、`manage-problem-log`、`manage-requirements` |
 | ⑦ 技能引入与演进 | `skill-import-pipeline` |
 

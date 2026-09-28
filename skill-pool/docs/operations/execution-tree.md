@@ -7,12 +7,12 @@
 
 | 层级 | 名称 | 自动派生 | 条目数 |
 | :--- | :--- | :--- | ---: |
-| `skill` | 技能层 | 是 | 165 |
+| `skill` | 技能层 | 是 | 175 |
 | `cli` | 命令层 | 否 | 9 |
 | `agent` | 智能体层 | 否 | 3 |
 | `api` | 接口层 | 否 | 0 |
 | `mcp` | 协议层 | 否 | 0 |
-| `plugin` | 插件层 | 否 | 0 |
+| `plugin` | 插件层 | 否 | 1 |
 
 ## 2. 非技能执行层条目
 
@@ -30,6 +30,7 @@
 | `agent` | `subagent` | `dsh-butler` | `-` | host | 宿主提供的子智能体能力（深度推导与并行拆解） |
 | `agent` | `workflow` | `dsh-butler` | `-` | host | 宿主提供的多子智能体编排能力 |
 | `agent` | `ralph` | `dsh-butler` | `-` | host | 宿主提供的新鲜智能体迭代循环能力 |
+| `plugin` | `dsh-plugin-control-jump` | `dsh-butler` | `plugins/dsh-plugin-control-jump` | repo | DSH 客户端插件：在插件市场已安装列表与设置→插件清单的每个条目注入常显「调控」按钮，一键直达该插件的详情控制页 |
 
 ## 3. 技能层树（L4 → 集群 → L3 → 原子）
 
@@ -136,6 +137,13 @@
       - `render-capability-naming` (L2)
         - `capability-naming-policy` (L1)
         - `audit-layer-naming` (L2)
+    - `plugin-control-guard` (L3)
+      - `plugin-control-jump-policy` (L1)
+      - `install-client-plugin` (L2)
+        - `plugin-control-jump-policy` (L1)
+      - `verify-plugin-control-button` (L2)
+        - `plugin-control-jump-policy` (L1)
+        - `install-client-plugin` (L2)
     - `token-economy-guard` (L3)
       - `token-budget-policy` (L1)
       - `measure-token-budget` (L2)
@@ -262,6 +270,17 @@
       - `sync-requirements-lifecycle` (L2)
       - `reconcile-knowledge-specs` (L2)
       - `run-test-cases-gate` (L2)
+    - `visual-interaction-guard` (L3)
+      - `format-zoomable-visual` (L1)
+      - `zoom-level-policy` (L1)
+      - `build-image-viewer` (L2)
+        - `format-zoomable-visual` (L1)
+      - `verify-interactive-html` (L2)
+        - `format-zoomable-visual` (L1)
+      - `interactive-image-viewer` (L3)
+        - `format-zoomable-visual` (L1)
+        - `build-image-viewer` (L2)
+        - `verify-interactive-html` (L2)
     - `visualize-governance-topology` (L3)
       - `format-visual-inspection` (L1)
       - `extract-catalog-topology` (L2)
@@ -276,6 +295,15 @@
       - `audit-imported-skill` (L2)
       - `normalize-skill-contract` (L2)
       - `place-skill-into-cluster` (L2)
+      - `dispatch-skill-search` (L2)
+        - `multi-source-search-policy` (L1)
+        - `search-github-skill` (L2)
+        - `search-official-source` (L2)
+        - `merge-search-candidates` (L2)
+      - `search-official-source` (L2)
+        - `multi-source-search-policy` (L1)
+      - `merge-search-candidates` (L2)
+        - `multi-source-search-policy` (L1)
 
 ## 4. 一致性问题（由 verify-execution-tree 判定是否阻断）
 

@@ -1,11 +1,11 @@
 {
  "counts": {
-  "needs_lock": 5,
-  "safe_multi": 144,
+  "needs_lock": 6,
+  "safe_multi": 153,
   "single_only": 11
  },
  "issues": [],
- "scanned": 160,
+ "scanned": 170,
  "skills": [
   {
    "id": "anti-pattern-policy",
@@ -296,6 +296,18 @@
    }
   },
   {
+   "id": "multi-source-search-policy",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
    "id": "no-conversational-filler",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
@@ -345,6 +357,18 @@
   },
   {
    "id": "plain-analogy-explanation",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "plugin-control-jump-policy",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
    "resource_keys": [],
@@ -465,6 +489,18 @@
   },
   {
    "id": "tree-update-mandatory",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "zoom-level-policy",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
    "resource_keys": [],
@@ -893,6 +929,20 @@
    }
   },
   {
+   "id": "dispatch-skill-search",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "dispatch_search.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
    "id": "emit-search-snippet",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
@@ -997,6 +1047,26 @@
    }
   },
   {
+   "id": "install-client-plugin",
+   "instance_safety": "needs_lock",
+   "reason": "有写盘但目标路径非字面量（含 tempfile 唯一键），同一资源键上必须持锁",
+   "resource_keys": [
+    "skills/install-client-plugin"
+   ],
+   "scripts": [
+    "install_plugin.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": [
+     "json.dump",
+     "open-w",
+     "os.makedirs"
+    ]
+   }
+  },
+  {
    "id": "load-skill-contract",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
@@ -1070,6 +1140,20 @@
    "resource_keys": [],
    "scripts": [
     "measure_tokens.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "merge-search-candidates",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "merge_candidates.py"
    ],
    "signals": {
     "nondeterminism": [],
@@ -1363,6 +1447,20 @@
    "resource_keys": [],
    "scripts": [
     "search_skill.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "search-official-source",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "search_official.py"
    ],
    "signals": {
     "nondeterminism": [],
@@ -1734,6 +1832,20 @@
    }
   },
   {
+   "id": "verify-plugin-control-button",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [
+    "verify_plugin_button.py"
+   ],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
    "id": "verify-progress-budget",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
@@ -2090,6 +2202,18 @@
    }
   },
   {
+   "id": "plugin-control-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
    "id": "qa-gatekeeper",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
@@ -2203,6 +2327,18 @@
   },
   {
    "id": "token-economy-guard",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
+   }
+  },
+  {
+   "id": "visual-interaction-guard",
    "instance_safety": "safe_multi",
    "reason": "无写盘、无固定临时文件，可无锁并发",
    "resource_keys": [],

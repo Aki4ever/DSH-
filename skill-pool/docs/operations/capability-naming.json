@@ -48,56 +48,127 @@
     }
   ],
   "layer_classification": [
-    { "layer": "skill", "label": "技能", "what": "可被索引与路由的最小能力单元，本池主体", "id_rule": "受全部命名形态约束，目录位于 skills/<id>/" },
-    { "layer": "cli", "label": "命令行入口", "what": "产品对外的可执行命令入口", "id_rule": "末段必须是 -cli" },
-    { "layer": "agent", "label": "智能体", "what": "具备独立上下文的自治执行体", "id_rule": "末段必须是 -agent" },
-    { "layer": "api", "label": "接口", "what": "进程间或跨网络的调用契约", "id_rule": "末段必须是 -api" },
-    { "layer": "mcp", "label": "模型上下文服务", "what": "以 MCP 协议暴露的工具面", "id_rule": "末段必须是 -mcp" },
-    { "layer": "plugin", "label": "插件", "what": "宿主侧可装卸的能力扩展", "id_rule": "末段必须是 -plugin" }
+    {
+      "layer": "skill",
+      "label": "技能",
+      "what": "可被索引与路由的最小能力单元，本池主体",
+      "id_rule": "受全部命名形态约束，目录位于 skills/<id>/"
+    },
+    {
+      "layer": "cli",
+      "label": "命令行入口",
+      "what": "产品对外的可执行命令入口",
+      "id_rule": "末段必须是 -cli"
+    },
+    {
+      "layer": "agent",
+      "label": "智能体",
+      "what": "具备独立上下文的自治执行体",
+      "id_rule": "末段必须是 -agent"
+    },
+    {
+      "layer": "api",
+      "label": "接口",
+      "what": "进程间或跨网络的调用契约",
+      "id_rule": "末段必须是 -api"
+    },
+    {
+      "layer": "mcp",
+      "label": "模型上下文服务",
+      "what": "以 MCP 协议暴露的工具面",
+      "id_rule": "末段必须是 -mcp"
+    },
+    {
+      "layer": "plugin",
+      "label": "插件",
+      "what": "宿主侧可装卸的能力扩展",
+      "id_rule": "末段必须是 -plugin"
+    }
   ],
   "shapes": [
     {
       "shape": "action",
       "label": "动作形态",
       "rule": "首段必须落在动词词汇表内（见 verb_vocabulary），表达「做什么」",
-      "applies_to": ["L2"],
-      "allowed_at": ["L2", "L3", "L1"],
-      "examples": ["verify-layer-naming", "build-execution-tree", "rename-execution-layer"]
+      "applies_to": [
+        "L2"
+      ],
+      "allowed_at": [
+        "L2",
+        "L3",
+        "L1"
+      ],
+      "examples": [
+        "verify-layer-naming",
+        "build-execution-tree",
+        "rename-execution-layer"
+      ]
     },
     {
       "shape": "orchestration",
       "label": "编排形态",
       "rule": "末段必须落在编排名词表内，表达「是哪一类总控」",
-      "applies_to": ["L3"],
-      "allowed_at": ["L3"],
-      "examples": ["layer-naming-guard", "intent-detector", "skill-import-pipeline"]
+      "applies_to": [
+        "L3"
+      ],
+      "allowed_at": [
+        "L3"
+      ],
+      "examples": [
+        "layer-naming-guard",
+        "intent-detector",
+        "skill-import-pipeline"
+      ]
     },
     {
       "shape": "policy",
       "label": "规约形态",
       "rule": "末段为 policy / spec / standard / protocol，表达「这是一条口径基元」",
-      "applies_to": ["L1"],
-      "allowed_at": ["L1"],
-      "examples": ["atomic-lock-policy", "token-budget-policy"]
+      "applies_to": [
+        "L1"
+      ],
+      "allowed_at": [
+        "L1"
+      ],
+      "examples": [
+        "atomic-lock-policy",
+        "token-budget-policy"
+      ]
     },
     {
       "shape": "vendor",
       "label": "厂商边界形态",
       "rule": "整名为单段，且必须是已登记的厂商 / 平台名，用于外部工具边界技能；未登记的单段名一律违规",
-      "applies_to": ["vendor-boundary"],
-      "allowed_at": ["L2", "L3"],
-      "examples": ["github"]
+      "applies_to": [
+        "vendor-boundary"
+      ],
+      "allowed_at": [
+        "L2",
+        "L3"
+      ],
+      "examples": [
+        "github"
+      ]
     },
     {
       "shape": "cli",
       "label": "命令行形态",
       "rule": "layer=cli 时：产品主入口允许单段产品名（产品名即入口名）或末段为 -cli；子命令必须写成 <入口id>:<子命令>，冒号两侧各自是 kebab-case",
-      "applies_to": ["cli"],
+      "applies_to": [
+        "cli"
+      ],
       "allowed_at": [],
-      "examples": ["skill-pool", "skill-pool:validate", "skill-pool:catalog"]
+      "examples": [
+        "skill-pool",
+        "skill-pool:validate",
+        "skill-pool:catalog"
+      ]
     }
   ],
-  "exempt_sources": ["host", "external"],
+  "exempt_sources": [
+    "host",
+    "external"
+  ],
   "shape_assignment": {
     "L1": {
       "required": "free",
@@ -117,74 +188,278 @@
     }
   },
   "verb_vocabulary": [
-    { "verb": "acquire", "boundary": "获得占用权（锁、句柄、租约），不产生内容" },
-    { "verb": "arbitrate", "boundary": "在互斥规则之间做裁决，产出胜出方" },
-    { "verb": "assert", "boundary": "对既成事实做硬断言并给出退出码" },
-    { "verb": "audit", "boundary": "遍历全量对象做合规审查，产出违规清单与位置" },
-    { "verb": "build", "boundary": "由已有数据源生成产物，必须幂等可重跑" },
-    { "verb": "check", "boundary": "单点静态检测，只返回事实不做出放行裁决（与 verify 的边界见 synonym_groups）" },
-    { "verb": "classify", "boundary": "把对象划入已定义的少数几档之一" },
-    { "verb": "compare", "boundary": "对不同来源的口径做对拍并列出差异" },
-    { "verb": "concretize", "boundary": "把含糊表述补成具体实体与可核对判据" },
-    { "verb": "confirm", "boundary": "在动作前取得授权或确认" },
-    { "verb": "declare", "boundary": "把隐含信息显式声明成机器可读结构，不做检测" },
-    { "verb": "deploy", "boundary": "把产物发布到目标运行环境" },
-    { "verb": "detect", "boundary": "扫描并定位符合判据的命中项，产出命中清单" },
-    { "verb": "disambiguate", "boundary": "消除候选之间的歧义并收敛到唯一解" },
-    { "verb": "dispatch", "boundary": "按判据把任务派发到不同处理路径" },
-    { "verb": "emit", "boundary": "按契约产出单条结构化输出" },
-    { "verb": "enforce", "boundary": "把规约变成不可绕过的强制约束" },
-    { "verb": "ensure", "boundary": "保证某属性成立，不成立即阻断" },
-    { "verb": "extract", "boundary": "从混合输入中抽出目标结构" },
-    { "verb": "filter", "boundary": "按判据剔除不合格项" },
-    { "verb": "fold", "boundary": "把多条同类项折叠成一条汇总表达" },
-    { "verb": "format", "boundary": "把内容整理成规定的表现形式" },
-    { "verb": "generate", "boundary": "由参数或模板合成新内容（与 build 的边界：build 的输入是既有数据源，generate 的输入是参数）" },
-    { "verb": "govern", "boundary": "对一类对象施加持续约束与门禁" },
-    { "verb": "index", "boundary": "建立可检索的索引结构" },
-    { "verb": "init", "boundary": "建立初始骨架与登记项" },
-    { "verb": "link", "boundary": "建立挂载关系" },
-    { "verb": "load", "boundary": "按精确标识载入单一对象" },
-    { "verb": "log", "boundary": "把事件追加写入留痕存储" },
-    { "verb": "manage", "boundary": "对一个实体的完整生命周期做增删改查" },
-    { "verb": "match", "boundary": "按索引或关键词做候选匹配" },
-    { "verb": "measure", "boundary": "用确定性公式测算量化指标" },
-    { "verb": "merge", "boundary": "把两个及以上来源合并为一个" },
-    { "verb": "normalize", "boundary": "把外部形态改造为本池统一契约" },
-    { "verb": "parse", "boundary": "把输入解析成结构化字段" },
-    { "verb": "place", "boundary": "依据判据给出归属建议，不写文件" },
-    { "verb": "plan", "boundary": "产出待执行的分解清单，不执行" },
-    { "verb": "prune", "boundary": "按保守规则裁剪冗余内容" },
-    { "verb": "publish", "boundary": "把本地产物推到远端可获取位置" },
-    { "verb": "quantify", "boundary": "把程度词替换为可判定的数值区间" },
-    { "verb": "rank", "boundary": "对候选按评分做全序排序" },
-    { "verb": "reconcile", "boundary": "对拍多个规范并裁定冲突，让它们重新一致" },
-    { "verb": "record", "boundary": "把决断结果写成可追溯的四元组留痕" },
-    { "verb": "register", "boundary": "把新条目登记进登记表" },
-    { "verb": "release", "boundary": "释放占用权" },
-    { "verb": "render", "boundary": "把数据源渲染成受管区块或图表" },
-    { "verb": "rename", "boundary": "改名并同步全部引用" },
-    { "verb": "resolve", "boundary": "把冲突收敛到确定解" },
-    { "verb": "run", "boundary": "执行既有用例或流程并汇总结果" },
-    { "verb": "score", "boundary": "按固定维度打分" },
-    { "verb": "search", "boundary": "在候选空间中按查询检索（同义组的唯一保留词，见 synonym_groups）" },
-    { "verb": "select", "boundary": "从候选中收敛到受约束的选中清单" },
-    { "verb": "standardize", "boundary": "把形态统一到规定样式" },
-    { "verb": "strip", "boundary": "按固定顺序剥离非目标成分" },
-    { "verb": "summarize", "boundary": "抽取式压缩内容并保真" },
-    { "verb": "sync", "boundary": "让两处及以上状态保持一致" },
-    { "verb": "track", "boundary": "持续展示某过程的真实进度" },
-    { "verb": "unlink", "boundary": "解除挂载关系" },
-    { "verb": "validate", "boundary": "校验结构合法性（字段齐备、类型正确），不判定业务对错" },
-    { "verb": "verify", "boundary": "对放行条件做硬断言并以退出码裁决（与 check 的边界见 synonym_groups）" },
-    { "verb": "visualize", "boundary": "把抽象数据编译成可视化产物" }
+    {
+      "verb": "acquire",
+      "boundary": "获得占用权（锁、句柄、租约），不产生内容"
+    },
+    {
+      "verb": "arbitrate",
+      "boundary": "在互斥规则之间做裁决，产出胜出方"
+    },
+    {
+      "verb": "assert",
+      "boundary": "对既成事实做硬断言并给出退出码"
+    },
+    {
+      "verb": "audit",
+      "boundary": "遍历全量对象做合规审查，产出违规清单与位置"
+    },
+    {
+      "verb": "build",
+      "boundary": "由已有数据源生成产物，必须幂等可重跑"
+    },
+    {
+      "verb": "check",
+      "boundary": "单点静态检测，只返回事实不做出放行裁决（与 verify 的边界见 synonym_groups）"
+    },
+    {
+      "verb": "classify",
+      "boundary": "把对象划入已定义的少数几档之一"
+    },
+    {
+      "verb": "compare",
+      "boundary": "对不同来源的口径做对拍并列出差异"
+    },
+    {
+      "verb": "concretize",
+      "boundary": "把含糊表述补成具体实体与可核对判据"
+    },
+    {
+      "verb": "confirm",
+      "boundary": "在动作前取得授权或确认"
+    },
+    {
+      "verb": "declare",
+      "boundary": "把隐含信息显式声明成机器可读结构，不做检测"
+    },
+    {
+      "verb": "deploy",
+      "boundary": "把产物发布到目标运行环境"
+    },
+    {
+      "verb": "detect",
+      "boundary": "扫描并定位符合判据的命中项，产出命中清单"
+    },
+    {
+      "verb": "disambiguate",
+      "boundary": "消除候选之间的歧义并收敛到唯一解"
+    },
+    {
+      "verb": "dispatch",
+      "boundary": "按判据把任务派发到不同处理路径"
+    },
+    {
+      "verb": "emit",
+      "boundary": "按契约产出单条结构化输出"
+    },
+    {
+      "verb": "enforce",
+      "boundary": "把规约变成不可绕过的强制约束"
+    },
+    {
+      "verb": "ensure",
+      "boundary": "保证某属性成立，不成立即阻断"
+    },
+    {
+      "verb": "extract",
+      "boundary": "从混合输入中抽出目标结构"
+    },
+    {
+      "verb": "filter",
+      "boundary": "按判据剔除不合格项"
+    },
+    {
+      "verb": "fold",
+      "boundary": "把多条同类项折叠成一条汇总表达"
+    },
+    {
+      "verb": "format",
+      "boundary": "把内容整理成规定的表现形式"
+    },
+    {
+      "verb": "generate",
+      "boundary": "由参数或模板合成新内容（与 build 的边界：build 的输入是既有数据源，generate 的输入是参数）"
+    },
+    {
+      "verb": "govern",
+      "boundary": "对一类对象施加持续约束与门禁"
+    },
+    {
+      "verb": "index",
+      "boundary": "建立可检索的索引结构"
+    },
+    {
+      "verb": "init",
+      "boundary": "建立初始骨架与登记项"
+    },
+    {
+      "verb": "install",
+      "boundary": "把产物装配进目标运行环境并登记，可回滚（与 load 的区别：load 是按标识载入内存，install 是落到环境里）"
+    },
+    {
+      "verb": "link",
+      "boundary": "建立挂载关系"
+    },
+    {
+      "verb": "load",
+      "boundary": "按精确标识载入单一对象"
+    },
+    {
+      "verb": "log",
+      "boundary": "把事件追加写入留痕存储"
+    },
+    {
+      "verb": "manage",
+      "boundary": "对一个实体的完整生命周期做增删改查"
+    },
+    {
+      "verb": "match",
+      "boundary": "按索引或关键词做候选匹配"
+    },
+    {
+      "verb": "measure",
+      "boundary": "用确定性公式测算量化指标"
+    },
+    {
+      "verb": "merge",
+      "boundary": "把两个及以上来源合并为一个"
+    },
+    {
+      "verb": "normalize",
+      "boundary": "把外部形态改造为本池统一契约"
+    },
+    {
+      "verb": "parse",
+      "boundary": "把输入解析成结构化字段"
+    },
+    {
+      "verb": "place",
+      "boundary": "依据判据给出归属建议，不写文件"
+    },
+    {
+      "verb": "plan",
+      "boundary": "产出待执行的分解清单，不执行"
+    },
+    {
+      "verb": "prune",
+      "boundary": "按保守规则裁剪冗余内容"
+    },
+    {
+      "verb": "publish",
+      "boundary": "把本地产物推到远端可获取位置"
+    },
+    {
+      "verb": "quantify",
+      "boundary": "把程度词替换为可判定的数值区间"
+    },
+    {
+      "verb": "rank",
+      "boundary": "对候选按评分做全序排序"
+    },
+    {
+      "verb": "reconcile",
+      "boundary": "对拍多个规范并裁定冲突，让它们重新一致"
+    },
+    {
+      "verb": "record",
+      "boundary": "把决断结果写成可追溯的四元组留痕"
+    },
+    {
+      "verb": "register",
+      "boundary": "把新条目登记进登记表"
+    },
+    {
+      "verb": "release",
+      "boundary": "释放占用权"
+    },
+    {
+      "verb": "rename",
+      "boundary": "改名并同步全部引用"
+    },
+    {
+      "verb": "render",
+      "boundary": "把数据源渲染成受管区块或图表"
+    },
+    {
+      "verb": "resolve",
+      "boundary": "把冲突收敛到确定解"
+    },
+    {
+      "verb": "run",
+      "boundary": "执行既有用例或流程并汇总结果"
+    },
+    {
+      "verb": "score",
+      "boundary": "按固定维度打分"
+    },
+    {
+      "verb": "search",
+      "boundary": "在候选空间中按查询检索（同义组的唯一保留词，见 synonym_groups）"
+    },
+    {
+      "verb": "select",
+      "boundary": "从候选中收敛到受约束的选中清单"
+    },
+    {
+      "verb": "standardize",
+      "boundary": "把形态统一到规定样式"
+    },
+    {
+      "verb": "strip",
+      "boundary": "按固定顺序剥离非目标成分"
+    },
+    {
+      "verb": "summarize",
+      "boundary": "抽取式压缩内容并保真"
+    },
+    {
+      "verb": "sync",
+      "boundary": "让两处及以上状态保持一致"
+    },
+    {
+      "verb": "track",
+      "boundary": "持续展示某过程的真实进度"
+    },
+    {
+      "verb": "unlink",
+      "boundary": "解除挂载关系"
+    },
+    {
+      "verb": "validate",
+      "boundary": "校验结构合法性（字段齐备、类型正确），不判定业务对错"
+    },
+    {
+      "verb": "verify",
+      "boundary": "对放行条件做硬断言并以退出码裁决（与 check 的边界见 synonym_groups）"
+    },
+    {
+      "verb": "visualize",
+      "boundary": "把抽象数据编译成可视化产物"
+    }
   ],
   "orchestration_suffixes": [
-    "guard", "router", "detector", "dispatcher", "pipeline", "framework",
-    "gatekeeper", "auditor", "reporter", "viewer", "showcase", "governance",
-    "topology", "registry", "butler"
+    "guard",
+    "router",
+    "detector",
+    "dispatcher",
+    "pipeline",
+    "framework",
+    "gatekeeper",
+    "auditor",
+    "reporter",
+    "viewer",
+    "showcase",
+    "governance",
+    "topology",
+    "registry",
+    "butler"
   ],
-  "policy_suffixes": ["policy", "spec", "standard", "protocol"],
+  "policy_suffixes": [
+    "policy",
+    "spec",
+    "standard",
+    "protocol"
+  ],
   "level_prefixes": {
     "local-pool": {
       "L1": "微观原子规约：",
@@ -197,13 +472,34 @@
     }
   },
   "banned_words": [
-    "util", "utils", "helper", "helpers", "misc", "temp", "tmp", "new", "old",
-    "bak", "final", "copy", "test2", "data2", "stuff", "thing", "misc2", "v2"
+    "util",
+    "utils",
+    "helper",
+    "helpers",
+    "misc",
+    "temp",
+    "tmp",
+    "new",
+    "old",
+    "bak",
+    "final",
+    "copy",
+    "test2",
+    "data2",
+    "stuff",
+    "thing",
+    "misc2",
+    "v2"
   ],
   "synonym_groups": [
     {
       "keep": "search",
-      "aliases": ["find", "query", "lookup", "seek"],
+      "aliases": [
+        "find",
+        "query",
+        "lookup",
+        "seek"
+      ],
       "reason": "四词在检索语义上不可区分，全池只允许 search 作为首段出现，避免同一动作出现四种命名"
     },
     {
@@ -218,7 +514,11 @@
     }
   ],
   "single_token_vendors": [
-    { "id": "github", "vendor": "GitHub", "reason": "外部平台边界技能，名称即平台名，复数化或加后缀反而降低可识别性" }
+    {
+      "id": "github",
+      "vendor": "GitHub",
+      "reason": "外部平台边界技能，名称即平台名，复数化或加后缀反而降低可识别性"
+    }
   ],
   "single_token_note": "单段 id 只允许两类：① 本节登记的厂商 / 平台名；② layer=cli 的产品主入口（产品名即入口名，如 skill-pool）。其余单段名一律违规，因为单段名不回答「做什么」。",
   "uniqueness": {
@@ -228,12 +528,36 @@
   "contract_sync": {
     "rule": "改名不是只改目录名。一次改名必须同时同步下列六处，漏一处即判悬空引用",
     "targets": [
-      { "order": 1, "target": "目录名", "location": "skills/<id>/" },
-      { "order": 2, "target": "技能 ID", "location": "docs/operations/skill-catalog.json 的 id 与 name 字段" },
-      { "order": 3, "target": "契约头", "location": "skills/<id>/SKILL.md 的 YAML Frontmatter name 字段" },
-      { "order": 4, "target": "组装边", "location": "全池 composition 与 depends_on 引用" },
-      { "order": 5, "target": "树与索引", "location": "execution-tree.json / execution-tree.md / skill-index.json / layer-graph.json / instance-safety.json" },
-      { "order": 6, "target": "文档与登记", "location": "docs/** 受管区块与正文提及、docs/operations/execution-layers.json" }
+      {
+        "order": 1,
+        "target": "目录名",
+        "location": "skills/<id>/"
+      },
+      {
+        "order": 2,
+        "target": "技能 ID",
+        "location": "docs/operations/skill-catalog.json 的 id 与 name 字段"
+      },
+      {
+        "order": 3,
+        "target": "契约头",
+        "location": "skills/<id>/SKILL.md 的 YAML Frontmatter name 字段"
+      },
+      {
+        "order": 4,
+        "target": "组装边",
+        "location": "全池 composition 与 depends_on 引用"
+      },
+      {
+        "order": 5,
+        "target": "树与索引",
+        "location": "execution-tree.json / execution-tree.md / skill-index.json / layer-graph.json / instance-safety.json"
+      },
+      {
+        "order": 6,
+        "target": "文档与登记",
+        "location": "docs/** 受管区块与正文提及、docs/operations/execution-layers.json"
+      }
     ]
   },
   "outputs": {

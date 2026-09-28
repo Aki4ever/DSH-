@@ -4,7 +4,7 @@
   "docs/operations/execution-layers.json"
  ],
  "dangling_dependencies": [],
- "edge_count": 196,
+ "edge_count": 216,
  "edges": [
   {
    "from": "acquire-atomic-lock",
@@ -232,6 +232,26 @@
    "to": "build-quantifier-table"
   },
   {
+   "from": "dispatch-skill-search",
+   "kind": "composition",
+   "to": "merge-search-candidates"
+  },
+  {
+   "from": "dispatch-skill-search",
+   "kind": "composition",
+   "to": "multi-source-search-policy"
+  },
+  {
+   "from": "dispatch-skill-search",
+   "kind": "composition",
+   "to": "search-github-skill"
+  },
+  {
+   "from": "dispatch-skill-search",
+   "kind": "composition",
+   "to": "search-official-source"
+  },
+  {
    "from": "dsh-butler",
    "kind": "composition",
    "to": "detect-vague-modifier"
@@ -362,6 +382,11 @@
    "to": "validate-header-triggers"
   },
   {
+   "from": "install-client-plugin",
+   "kind": "composition",
+   "to": "plugin-control-jump-policy"
+  },
+  {
    "from": "instance-pool-guard",
    "kind": "composition",
    "to": "classify-instance-safety"
@@ -457,6 +482,11 @@
    "to": "token-budget-policy"
   },
   {
+   "from": "merge-search-candidates",
+   "kind": "composition",
+   "to": "multi-source-search-policy"
+  },
+  {
    "from": "milestone-progress-reporter",
    "kind": "composition",
    "to": "classify-step-tier"
@@ -550,6 +580,21 @@
    "from": "plan-fission",
    "kind": "composition",
    "to": "enforce-atomic-granularity"
+  },
+  {
+   "from": "plugin-control-guard",
+   "kind": "composition",
+   "to": "install-client-plugin"
+  },
+  {
+   "from": "plugin-control-guard",
+   "kind": "composition",
+   "to": "plugin-control-jump-policy"
+  },
+  {
+   "from": "plugin-control-guard",
+   "kind": "composition",
+   "to": "verify-plugin-control-button"
   },
   {
    "from": "prune-redundant-context",
@@ -702,6 +747,11 @@
    "to": "fastlane-redline-policy"
   },
   {
+   "from": "search-official-source",
+   "kind": "composition",
+   "to": "multi-source-search-policy"
+  },
+  {
    "from": "select-skills-for-task",
    "kind": "composition",
    "to": "lazy-load-policy"
@@ -719,6 +769,16 @@
   {
    "from": "skill-import-pipeline",
    "kind": "composition",
+   "to": "dispatch-skill-search"
+  },
+  {
+   "from": "skill-import-pipeline",
+   "kind": "composition",
+   "to": "merge-search-candidates"
+  },
+  {
+   "from": "skill-import-pipeline",
+   "kind": "composition",
    "to": "normalize-skill-contract"
   },
   {
@@ -730,6 +790,11 @@
    "from": "skill-import-pipeline",
    "kind": "composition",
    "to": "search-github-skill"
+  },
+  {
+   "from": "skill-import-pipeline",
+   "kind": "composition",
+   "to": "search-official-source"
   },
   {
    "from": "skill-index-router",
@@ -927,6 +992,16 @@
    "to": "classify-change-scope"
   },
   {
+   "from": "verify-plugin-control-button",
+   "kind": "composition",
+   "to": "install-client-plugin"
+  },
+  {
+   "from": "verify-plugin-control-button",
+   "kind": "composition",
+   "to": "plugin-control-jump-policy"
+  },
+  {
    "from": "verify-progress-budget",
    "kind": "composition",
    "to": "classify-step-tier"
@@ -955,6 +1030,31 @@
    "from": "verify-token-reduction",
    "kind": "composition",
    "to": "prune-redundant-context"
+  },
+  {
+   "from": "visual-interaction-guard",
+   "kind": "composition",
+   "to": "build-image-viewer"
+  },
+  {
+   "from": "visual-interaction-guard",
+   "kind": "composition",
+   "to": "format-zoomable-visual"
+  },
+  {
+   "from": "visual-interaction-guard",
+   "kind": "composition",
+   "to": "interactive-image-viewer"
+  },
+  {
+   "from": "visual-interaction-guard",
+   "kind": "composition",
+   "to": "verify-interactive-html"
+  },
+  {
+   "from": "visual-interaction-guard",
+   "kind": "composition",
+   "to": "zoom-level-policy"
   },
   {
    "from": "visualize-governance-topology",
@@ -989,9 +1089,9 @@
  ],
  "graph_version": "1.0.0",
  "layers": {
-  "L1": 39,
-  "L2": 85,
-  "L3": 40,
+  "L1": 42,
+  "L2": 90,
+  "L3": 42,
   "L4": 1
  },
  "nodes": [
@@ -1165,6 +1265,13 @@
   },
   {
    "composition": [],
+   "id": "multi-source-search-policy",
+   "layer": "skill",
+   "level": "L1",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [],
    "id": "no-conversational-filler",
    "layer": "skill",
    "level": "L1",
@@ -1194,6 +1301,13 @@
   {
    "composition": [],
    "id": "plain-analogy-explanation",
+   "layer": "skill",
+   "level": "L1",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [],
+   "id": "plugin-control-jump-policy",
    "layer": "skill",
    "level": "L1",
    "scope": "local-pool"
@@ -1264,6 +1378,13 @@
   {
    "composition": [],
    "id": "tree-update-mandatory",
+   "layer": "skill",
+   "level": "L1",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [],
+   "id": "zoom-level-policy",
    "layer": "skill",
    "level": "L1",
    "scope": "local-pool"
@@ -1492,6 +1613,18 @@
   },
   {
    "composition": [
+    "multi-source-search-policy",
+    "search-github-skill",
+    "search-official-source",
+    "merge-search-candidates"
+   ],
+   "id": "dispatch-skill-search",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
     "rank-skills-bm25"
    ],
    "id": "emit-search-snippet",
@@ -1545,6 +1678,15 @@
   },
   {
    "composition": [
+    "plugin-control-jump-policy"
+   ],
+   "id": "install-client-plugin",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
     "lazy-load-policy"
    ],
    "id": "load-skill-contract",
@@ -1580,6 +1722,15 @@
     "token-budget-policy"
    ],
    "id": "measure-token-budget",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
+    "multi-source-search-policy"
+   ],
+   "id": "merge-search-candidates",
    "layer": "skill",
    "level": "L2",
    "scope": "local-pool"
@@ -1736,6 +1887,15 @@
   {
    "composition": [],
    "id": "search-github-skill",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
+    "multi-source-search-policy"
+   ],
+   "id": "search-official-source",
    "layer": "skill",
    "level": "L2",
    "scope": "local-pool"
@@ -1950,6 +2110,16 @@
     "classify-change-scope"
    ],
    "id": "verify-no-unnecessary-restart",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
+    "plugin-control-jump-policy",
+    "install-client-plugin"
+   ],
+   "id": "verify-plugin-control-button",
    "layer": "skill",
    "level": "L2",
    "scope": "local-pool"
@@ -2290,6 +2460,17 @@
   },
   {
    "composition": [
+    "plugin-control-jump-policy",
+    "install-client-plugin",
+    "verify-plugin-control-button"
+   ],
+   "id": "plugin-control-guard",
+   "layer": "skill",
+   "level": "L3",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
     "verify-file-exists",
     "check-python-syntax",
     "ensure-utf8-encoding",
@@ -2339,7 +2520,10 @@
     "search-github-skill",
     "audit-imported-skill",
     "normalize-skill-contract",
-    "place-skill-into-cluster"
+    "place-skill-into-cluster",
+    "dispatch-skill-search",
+    "search-official-source",
+    "merge-search-candidates"
    ],
    "id": "skill-import-pipeline",
    "layer": "skill",
@@ -2407,6 +2591,19 @@
   },
   {
    "composition": [
+    "format-zoomable-visual",
+    "zoom-level-policy",
+    "build-image-viewer",
+    "verify-interactive-html",
+    "interactive-image-viewer"
+   ],
+   "id": "visual-interaction-guard",
+   "layer": "skill",
+   "level": "L3",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
     "format-visual-inspection",
     "extract-catalog-topology",
     "render-governance-mermaid"
@@ -2437,6 +2634,6 @@
    "scope": "local-pool"
   }
  ],
- "non_skill_nodes": 12,
+ "non_skill_nodes": 13,
  "skipped": []
 }

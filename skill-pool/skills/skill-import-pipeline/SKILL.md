@@ -6,7 +6,10 @@ composition:
   - audit-imported-skill
   - normalize-skill-contract
   - place-skill-into-cluster
-description: 复合流程级技能(L3)：GitHub 外部技能引入管线总控。五步串联检索→审计→归一→定级挂载→门禁验证，落点新集群「⑦ 技能引入与演进」，坚持引入即纳管、拒绝必留痕。
+  - dispatch-skill-search
+  - search-official-source
+  - merge-search-candidates
+description: 复合流程级技能(L3)：外部执行层引入管线总控。五步串联检索→审计→归一→定级挂载→门禁验证，落点新集群「⑦ 技能引入与演进」；检索步自 PKG-008 起绑脚本探针（四源调度：本地优先 / GitHub / 官网 / awesome 清单），坚持引入即纳管、拒绝必留痕。
 ---
 
 # Skill Import Pipeline (GitHub 技能引入管线总控)
@@ -32,6 +35,26 @@ description: 复合流程级技能(L3)：GitHub 外部技能引入管线总控�
 - 已明确要新增外部能力，且该能力不属于池内已有技能覆盖范围。
 
 **触发禁区**：本技能是**引入外部资产**的总控，不适用于池内已有技能的修改或重命名（交 `dsh-butler` 动态造物路径）、不适用于纯代码审阅（交 `mcp-implementation-security-review` / `security-best-practices`）、也不代替人工对含脚本候选的逐行安全审查。
+
+## 检索步（PKG-008 起绑脚本探针）
+
+改造前，本管线第一步「检索」**没有物理探针**：`search-github-skill` 的唯一输入是 `--from-json`
+或本地缓存，它自己不联网，实际把检索外包给了模型的即兴发挥。现已改为四源调度：
+
+```bash
+# 本地优先，命中即短路；未命中且确需外呼时才加 --allow-network
+python3 skills/dispatch-skill-search/scripts/dispatch_search.py --query "<能力关键词>" --json
+python3 skills/search-official-source/scripts/search_official.py --query "<词>" --domain <官方域名>
+python3 skills/merge-search-candidates/scripts/merge_candidates.py --from a.json --from b.json
+```
+
+| 口径 | 取值 |
+| :--- | :--- |
+| 源顺序 | `local` → `github` → `official-site` → `awesome-list` |
+| 本地命中 | **短路**，不再外呼，并留痕 `skipped_sources` |
+| 空检索 | **不是通过**，合并后为空一律退 1 |
+| 检索失败 | **不是没找到**，限流 / 网络错误必须显式失败 |
+| 唯一真相源 | `multi-source-search-policy`（L1） |
 
 ## Workflow
 

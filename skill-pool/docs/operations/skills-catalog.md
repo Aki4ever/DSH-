@@ -2,8 +2,8 @@
 
 > 本文档由 DSH 管家统一调度维护。严格遵循 **L1 原子规约 → L2 工序动作 → L3 复合流程 → L4 中枢编排** 四级能力模型，并基于微观原子操作做加法（Composition）。
 
-- **最后同步时间**：2026-09-28 07:49:23
-- **总纳管技能数**：165 个
+- **最后同步时间**：2026-09-28 08:10:41
+- **总纳管技能数**：175 个
 
 ---
 
@@ -35,11 +35,13 @@
 | **L1** | `limit-words-under-10` | 原子规约-长度基元 | `10字内`、`不超过10字`、`简短` | *(原子基元)* | `skills/limit-words-under-10` |
 | **L1** | `markdown-bold-only` | 原子规约-排版基元 | `全黑体`、`全加粗`、`Markdown粗体` | *(原子基元)* | `skills/markdown-bold-only` |
 | **L1** | `milestone-only-progress` | 原子规约-里程碑输出 | `里程碑`、`阶段目标`、`只报阶段` | *(原子基元)* | `skills/milestone-only-progress` |
+| **L1** | `multi-source-search-policy` | 原子规约-多源检索 | `检索源`、`本地优先`、`候选契约` | *(原子基元)* | `skills/multi-source-search-policy` |
 | **L1** | `no-conversational-filler` | 原子规约-风格基元 | `不要废话`、`零寒暄`、`免开场白` | *(原子基元)* | `skills/no-conversational-filler` |
 | **L1** | `one-shot-resolution-policy` | 原子规约-一次性解决 | `一次性解决`、`不反复提问`、`自行决断` | *(原子基元)* | `skills/one-shot-resolution-policy` |
 | **L1** | `output-chinese-only` | 原子规约-语言基元 | `纯中文`、`中文输出`、`不要英文` | *(原子基元)* | `skills/output-chinese-only` |
 | **L1** | `parallel-lock-policy` | 原子规约-并行调控锁 | `并行锁`、`锁粒度`、`字典序加锁` | *(原子基元)* | `skills/parallel-lock-policy` |
 | **L1** | `plain-analogy-explanation` | 原子规约-通俗比喻 | `通俗易懂`、`生活比喻`、`常识解释` | *(原子基元)* | `skills/plain-analogy-explanation` |
+| **L1** | `plugin-control-jump-policy` | 原子规约-插件调控入口 | `常显按钮`、`幂等去重`、`降级导航` | *(原子基元)* | `skills/plugin-control-jump-policy` |
 | **L1** | `prefer-hot-reload-policy` | 原子规约-不重启优先 | `能不重启就不重启`、`热更优先`、`重启证据` | *(原子基元)* | `skills/prefer-hot-reload-policy` |
 | **L1** | `prune-bloated-prompts` | 原子规约-防膨胀 | `防膨胀`、`裁剪提示词`、`去同义反复` | *(原子基元)* | `skills/prune-bloated-prompts` |
 | **L1** | `quantify-modifier-policy` | 原子规约-程度词量化 | `程度词量化`、`高大量化`、`四要素` | *(原子基元)* | `skills/quantify-modifier-policy` |
@@ -50,6 +52,7 @@
 | **L1** | `strip-whitespace-newlines` | 原子规约-排版基元 | `去空白`、`折叠空行`、`剥离空格` | *(原子基元)* | `skills/strip-whitespace-newlines` |
 | **L1** | `token-budget-policy` | 原子规约-token预算 | `token预算`、`上下文预算`、`裁剪顺序` | *(原子基元)* | `skills/token-budget-policy` |
 | **L1** | `tree-update-mandatory` | 原子规约-树同步强制 | `改能力必改树`、`同步索引`、`树及时更新` | *(原子基元)* | `skills/tree-update-mandatory` |
+| **L1** | `zoom-level-policy` | 原子规约-可视化交互 | `多级缩放`、`缩放档位`、`吸附` | *(原子基元)* | `skills/zoom-level-policy` |
 | **L2** | `acquire-atomic-lock` | 工序动作-物理原子锁 | `获取锁`、`释放锁`、`陈旧锁回收` | `atomic-lock-policy` | `skills/acquire-atomic-lock` |
 | **L2** | `assert-zero-exitcode` | 工序动作-退出码断言 | `退出码0`、`命令断言`、`执行成功断言` | *(原子基元)* | `skills/assert-zero-exitcode` |
 | **L2** | `audit-all-skills-compliance` | 工序动作-全量合规审计 | `全量审计`、`存量合规`、`契约体检` | *(原子基元)* | `skills/audit-all-skills-compliance` |
@@ -77,6 +80,7 @@
 | **L2** | `detect-target-entity` | 工序动作-实体提取 | `实体识别`、`操作对象`、`目标实体` | *(原子基元)* | `skills/detect-target-entity` |
 | **L2** | `detect-vague-modifier` | 工序动作-模糊词检测 | `模糊词检测`、`含糊词检测`、`程度词检测` | `build-quantifier-table` | `skills/detect-vague-modifier` |
 | **L2** | `disambiguate-candidates` | 工序动作-消歧打分 | `消除歧义`、`消歧`、`候选打分` | *(原子基元)* | `skills/disambiguate-candidates` |
+| **L2** | `dispatch-skill-search` | 工序动作-四源检索调度 | `四源调度`、`本地优先`、`短路留痕` | `multi-source-search-policy` + `search-github-skill` + `search-official-source` + `merge-search-candidates` | `skills/dispatch-skill-search` |
 | **L2** | `emit-search-snippet` | 工序动作-摘要片段 | `摘要片段`、`snippet`、`命中片段` | `rank-skills-bm25` | `skills/emit-search-snippet` |
 | **L2** | `ensure-utf8-encoding` | 工序动作-编码检测 | `UTF8检测`、`编码断言`、`防乱码` | *(原子基元)* | `skills/ensure-utf8-encoding` |
 | **L2** | `extract-catalog-topology` | 工序动作-拓扑提取 | `提取拓扑`、`读取Catalog`、`拓扑数据` | *(原子基元)* | `skills/extract-catalog-topology` |
@@ -84,11 +88,13 @@
 | **L2** | `extract-json-payload` | 工序动作-数据抽取 | `提取JSON`、`正则提取`、`JSON解析` | *(原子基元)* | `skills/extract-json-payload` |
 | **L2** | `fold-repeated-events` | 工序动作-事件折叠 | `事件折叠`、`计数折叠`、`重复合并` | `classify-step-tier` | `skills/fold-repeated-events` |
 | **L2** | `generate-fastpath-route` | 工序动作-快捷路由生成 | `快捷路由`、`提取直调命令`、`直达原子` | *(原子基元)* | `skills/generate-fastpath-route` |
+| **L2** | `install-client-plugin` | 工序动作-客户端插件装配 | `插件装配`、`幂等`、`备份回滚` | `plugin-control-jump-policy` | `skills/install-client-plugin` |
 | **L2** | `load-skill-contract` | 工序动作-单契约加载 | `加载技能`、`按需读取`、`单契约` | `lazy-load-policy` | `skills/load-skill-contract` |
 | **L2** | `log-query-events` | 工序动作-质量信号 | `检索日志`、`质量信号`、`query日志` | `rank-skills-bm25` | `skills/log-query-events` |
 | **L2** | `match-intent-keywords` | 工序动作-关键词索引 | `匹配关键词`、`检索技能`、`初筛候选` | *(原子基元)* | `skills/match-intent-keywords` |
 | **L2** | `measure-routing-metrics` | 工序动作-路由耗时测算 | `测算耗时`、`路由时长`、`索引命中测算` | *(原子基元)* | `skills/measure-routing-metrics` |
 | **L2** | `measure-token-budget` | 工序动作-token度量 | `统计token`、`token消耗`、`上下文统计` | `token-budget-policy` | `skills/measure-token-budget` |
+| **L2** | `merge-search-candidates` | 工序动作-候选去重归一 | `候选去重`、`统一契约`、`全序排序` | `multi-source-search-policy` | `skills/merge-search-candidates` |
 | **L2** | `normalize-skill-contract` | 工序动作-契约归一 | `契约归一`、`补齐Frontmatter`、`统一SOP` | *(原子基元)* | `skills/normalize-skill-contract` |
 | **L2** | `parse-query` | 工序动作-查询解析 | `查询解析`、`分词`、`同义词` | `build-inverted-index` | `skills/parse-query` |
 | **L2** | `place-skill-into-cluster` | 工序动作-定级挂载 | `定级挂载`、`集群归属`、`依赖边校验` | *(原子基元)* | `skills/place-skill-into-cluster` |
@@ -107,6 +113,7 @@
 | **L2** | `score-task-lane` | 工序动作-分流判定 | `分流判定`、`快车道`、`完整流程` | `fastlane-redline-policy` | `skills/score-task-lane` |
 | **L2** | `search-duplicate-rules` | 工序动作-重复比对 | `检测重复`、`冗余规则`、`相似度比对` | *(原子基元)* | `skills/search-duplicate-rules` |
 | **L2** | `search-github-skill` | 工序动作-外部技能检索 | `检索技能`、`GitHub候选`、`候选清单` | *(原子基元)* | `skills/search-github-skill` |
+| **L2** | `search-official-source` | 工序动作-官网源检索 | `官网检索`、`sitemap`、`来源可追溯` | `multi-source-search-policy` | `skills/search-official-source` |
 | **L2** | `select-skills-for-task` | 工序动作-选技清单 | `选技`、`技能清单`、`命中技能` | `rank-skills-bm25` + `lazy-load-policy` | `skills/select-skills-for-task` |
 | **L2** | `strip-non-prose-scope` | 工序动作-非散文剥离 | `剥离代码`、`剥离路径`、`剥离URL` | `chinese-end-to-end` | `skills/strip-non-prose-scope` |
 | **L2** | `sync-requirements-lifecycle` | 工序动作-需求生命周期同步 | `需求同步`、`需求版本`、`图纸检查` | *(原子基元)* | `skills/sync-requirements-lifecycle` |
@@ -132,6 +139,7 @@
 | **L2** | `verify-no-lock-violation` | 工序动作-锁违规断言 | `锁违规断言`、`并行派单门禁`、`死循环体检` | `detect-lock-conflict` + `detect-forbidden-state` | `skills/verify-no-lock-violation` |
 | **L2** | `verify-no-unnecessary-question` | 工序动作-反问检测断言 | `反问检测`、`提问次数断言`、`挤牙膏追问` | `record-assumptions` | `skills/verify-no-unnecessary-question` |
 | **L2** | `verify-no-unnecessary-restart` | 工序动作-重启必要性断言 | `不必要重启`、`重启证据`、`重建命令` | `classify-change-scope` | `skills/verify-no-unnecessary-restart` |
+| **L2** | `verify-plugin-control-button` | 工序动作-调控按钮断言 | `按钮断言`、`DOM打桩`、`幂等验证` | `plugin-control-jump-policy` + `install-client-plugin` | `skills/verify-plugin-control-button` |
 | **L2** | `verify-progress-budget` | 工序动作-进度预算断言 | `进度预算`、`里程碑覆盖`、`micro泄漏` | `fold-repeated-events` + `classify-step-tier` | `skills/verify-progress-budget` |
 | **L2** | `verify-quantified-output` | 工序动作-量化断言 | `未量化断言`、`量化门禁`、`同义替换拦截` | `quantify-modifier` + `detect-vague-modifier` | `skills/verify-quantified-output` |
 | **L2** | `verify-token-reduction` | 工序动作-降幅断言 | `降幅断言`、`token下降`、`能力不变` | `measure-token-budget` + `prune-redundant-context` | `skills/verify-token-reduction` |
@@ -163,16 +171,18 @@
 | **L3** | `on-demand-dispatcher` | 复合流程-按需调用总控 | `按需调用`、`派发下属`、`上下文成本` | `lazy-load-policy` + `select-skills-for-task` + `load-skill-contract` + `verify-context-payload` | `skills/on-demand-dispatcher` |
 | **L3** | `one-shot-guard` | 复合流程-一次性解决门禁 | `一次性门禁`、`不反复提问门禁`、`假设门禁` | `one-shot-resolution-policy` + `classify-decision-reversibility` + `record-assumptions` + `verify-no-unnecessary-question` | `skills/one-shot-guard` |
 | **L3** | `parallel-lock-guard` | 复合流程-并行锁门禁 | `并行锁门禁`、`派单前门禁`、`并行安全性` | `parallel-lock-policy` + `declare-lock-set` + `detect-lock-conflict` + `verify-no-lock-violation` | `skills/parallel-lock-guard` |
+| **L3** | `plugin-control-guard` | 复合流程-插件调控门禁 | `插件调控门禁`、`装配放行`、`31项断言` | `plugin-control-jump-policy` + `install-client-plugin` + `verify-plugin-control-button` | `skills/plugin-control-guard` |
 | **L3** | `qa-gatekeeper` | 复合流程-质量门禁 | `交付`、`终审`、`质量门禁` | `verify-file-exists` + `check-python-syntax` + `ensure-utf8-encoding` + `assert-zero-exitcode` | `skills/qa-gatekeeper` |
 | **L3** | `quantification-guard` | 复合流程-量化门禁 | `量化门禁`、`程度词门禁`、`交付前量化` | `quantify-modifier-policy` + `build-quantifier-table` + `detect-vague-modifier` + `quantify-modifier` + `verify-quantified-output` | `skills/quantification-guard` |
 | **L3** | `redundancy-detector` | 复合流程-冗余检测 | `冗余检测`、`去冗余`、`保持简洁` | `prune-bloated-prompts` + `search-duplicate-rules` | `skills/redundancy-detector` |
 | **L3** | `schema-guard` | 复合流程-格式守卫 | `纯JSON`、`严格YAML`、`Schema契约` | `no-conversational-filler` + `strip-markdown-fence` + `extract-json-payload` | `skills/schema-guard` |
-| **L3** | `skill-import-pipeline` | 复合流程-技能引入管线 | `技能引入`、`外部技能纳管`、`引入即纳管` | `search-github-skill` + `audit-imported-skill` + `normalize-skill-contract` + `place-skill-into-cluster` | `skills/skill-import-pipeline` |
+| **L3** | `skill-import-pipeline` | 复合流程-技能引入管线 | `技能引入`、`外部技能纳管`、`引入即纳管` | `search-github-skill` + `audit-imported-skill` + `normalize-skill-contract` + `place-skill-into-cluster` + `dispatch-skill-search` + `search-official-source` + `merge-search-candidates` | `skills/skill-import-pipeline` |
 | **L3** | `skill-index-router` | 复合流程-索引控制 | `控制索引`、`快速索引`、`技能路由` | `match-intent-keywords` + `disambiguate-candidates` | `skills/skill-index-router` |
 | **L3** | `spec-driven-governance` | 复合流程-规范驱动总控 | `规范驱动`、`需求驱动`、`测试闭环` | `sync-requirements-lifecycle` + `reconcile-knowledge-specs` + `run-test-cases-gate` | `skills/spec-driven-governance` |
 | **L3** | `standard-output-framework` | 复合流程-输出总控 | `输出框架`、`交付规范`、`标准输出` | `format-status-block` + `conditional-deliverable-router` + `verify-deliverable-paths` + `high-relevance-notes-only` | `skills/standard-output-framework` |
 | **L3** | `tail-metrics-showcase` | 复合流程-量化指标总控 | `量化指标`、`通俗交付`、`指标总控` | `output-chinese-only` + `concise-focused-output` + `plain-analogy-explanation` + `measure-routing-metrics` + `format-iconized-tail` + `validate-icon-syntax` | `skills/tail-metrics-showcase` |
 | **L3** | `token-economy-guard` | 复合流程-token门禁 | `token门禁`、`省token`、`token优化` | `token-budget-policy` + `measure-token-budget` + `prune-redundant-context` + `verify-token-reduction` | `skills/token-economy-guard` |
+| **L3** | `visual-interaction-guard` | 复合流程-可视化交互门禁 | `交互四件套`、`档位门禁`、`下载门禁` | `format-zoomable-visual` + `zoom-level-policy` + `build-image-viewer` + `verify-interactive-html` + `interactive-image-viewer` | `skills/visual-interaction-guard` |
 | **L3** | `visualize-governance-topology` | 复合流程-可视化透视 | `可视化`、`查看索引`、`调用链路` | `format-visual-inspection` + `extract-catalog-topology` + `render-governance-mermaid` | `skills/visualize-governance-topology` |
 | **L3** | `zero-restart-guard` | 复合流程-零重启门禁 | `零重启门禁`、`重启审批`、`热更门禁` | `prefer-hot-reload-policy` + `classify-change-scope` + `verify-no-unnecessary-restart` | `skills/zero-restart-guard` |
 | **L4** | `dsh-butler` | 中枢编排-全局管家 | `管家`、`统筹`、`调度` | `detect-vague-modifier` | `skills/dsh-butler` |

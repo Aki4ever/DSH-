@@ -1,12 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "catalog_version": "2.0.0",
-  "updated_at": "2026-09-28T07:49:23.859775",
-  "total_skills": 165,
+  "updated_at": "2026-09-28T08:10:41.502741",
+  "total_skills": 175,
   "levels_summary": {
-    "L1": 39,
-    "L2": 85,
-    "L3": 40,
+    "L1": 42,
+    "L2": 90,
+    "L3": 42,
     "L4": 1
   },
   "skills": [
@@ -308,7 +308,7 @@
       "level": "L1",
       "category_title": "原子规约-可缩放可视化",
       "scope": "local-pool",
-      "description": "微观原子规约：一切可视化产物（图片、图谱、拓扑图、示意图）必须提供「点击放大 + 放大/缩小按钮 + 复位」三件套交互，严禁只输出静态图，且查看器必须是零外部依赖的单文件 HTML。",
+      "description": "微观原子规约：一切可视化产物（图片、图谱、拓扑图、示意图）必须提供「点击放大 + 多级缩放按钮 + 复位 + 下载」四件套交互，严禁只输出静态图；缩放必须走离散档位表（口径见 zoom-level-policy），下载必须三段降级可选存储地址，且查看器必须是零外部依赖的单文件 HTML。",
       "triggers": [
         "可缩放",
         "点击放大",
@@ -445,6 +445,24 @@
       "path": "skills/milestone-only-progress"
     },
     {
+      "id": "multi-source-search-policy",
+      "name": "multi-source-search-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-多源检索",
+      "scope": "local-pool",
+      "description": "微观原子规约：执行层检索源判定基元。钉死四类源（本地 / GitHub / 官网 / awesome 清单）与「本地优先」硬规则、统一候选六字段契约、中英同义桥、以及「检索失败绝不等同于没找到」的诚实口径；规定官网源必须走站点自声明 sitemap 以保证来源可追溯，GitHub 未认证检索必须限流退避。",
+      "triggers": [
+        "检索源",
+        "本地优先",
+        "候选契约",
+        "失败语义"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/multi-source-search-policy"
+    },
+    {
       "id": "no-conversational-filler",
       "name": "no-conversational-filler",
       "layer": "skill",
@@ -533,6 +551,24 @@
       "composition": [],
       "has_scripts": false,
       "path": "skills/plain-analogy-explanation"
+    },
+    {
+      "id": "plugin-control-jump-policy",
+      "name": "plugin-control-jump-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-插件调控入口",
+      "scope": "local-pool",
+      "description": "微观原子规约：插件常显调控按钮判定基元。钉死按钮的唯一标识（data-control-jump=\"<plugin-id>\"）、常显位置（市场已安装列表与宿主插件清单的每个条目）、点击语义（定位到同 id 的配置项并高亮）、幂等去重键（容器|插件 id）、无 id 绝不注入，以及三级降级导航（宿主钩子 → 原生导航+高亮 → 复制 id 并提示）；并规定能力缺失与未探测的三态语义。",
+      "triggers": [
+        "常显按钮",
+        "幂等去重",
+        "降级导航",
+        "三态语义"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/plugin-control-jump-policy"
     },
     {
       "id": "prefer-hot-reload-policy",
@@ -714,6 +750,24 @@
       "composition": [],
       "has_scripts": false,
       "path": "skills/tree-update-mandatory"
+    },
+    {
+      "id": "zoom-level-policy",
+      "name": "zoom-level-policy",
+      "layer": "skill",
+      "level": "L1",
+      "category_title": "原子规约-可视化交互",
+      "scope": "local-pool",
+      "description": "微观原子规约：可视化产物交互判定基元。钉死三条硬口径——缩放必须走离散档位表（13 档，+/- 跳相邻档，滚轮连续微调后吸附，档位可枚举可复算）、下载必须三段降级（showSaveFilePicker / Blob 下载 / 就地提示，禁止静默无反应）、产物必须把档位表与下载文件名以机器可读属性暴露出来供探针断言。",
+      "triggers": [
+        "多级缩放",
+        "缩放档位",
+        "吸附",
+        "下载降级"
+      ],
+      "composition": [],
+      "has_scripts": false,
+      "path": "skills/zoom-level-policy"
     },
     {
       "id": "acquire-atomic-lock",
@@ -1233,6 +1287,29 @@
       "path": "skills/disambiguate-candidates"
     },
     {
+      "id": "dispatch-skill-search",
+      "name": "dispatch-skill-search",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-四源检索调度",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：四源检索调度器。按「本地优先」硬规则先扫本地技能池 catalog 与已装 DSH 插件，命中即短路且不向任何外部源发起检索并留痕 skipped_sources；未命中才在显式 --allow-network 下外呼 GitHub。内置中英同义桥（信息图→infographic/chart/diagram），把「未完成检索」与「没找到」严格区分。",
+      "triggers": [
+        "四源调度",
+        "本地优先",
+        "短路留痕",
+        "同义桥"
+      ],
+      "composition": [
+        "multi-source-search-policy",
+        "search-github-skill",
+        "search-official-source",
+        "merge-search-candidates"
+      ],
+      "has_scripts": true,
+      "path": "skills/dispatch-skill-search"
+    },
+    {
       "id": "emit-search-snippet",
       "name": "emit-search-snippet",
       "layer": "skill",
@@ -1362,6 +1439,26 @@
       "path": "skills/generate-fastpath-route"
     },
     {
+      "id": "install-client-plugin",
+      "name": "install-client-plugin",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-客户端插件装配",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：DSH client 插件幂等装配器。把本仓 plugins/ 下的自建 client 插件构建后复制进指定 profile 的 node_modules，登记 file: 依赖并追加进 dsh.profile.bundles；改动前备份 package.json 与 cordis.patch.yml，支持 --rollback 一键还原；幂等（已装即 changed=0），并显式声明新增插件需重启宿主才生效。",
+      "triggers": [
+        "插件装配",
+        "幂等",
+        "备份回滚",
+        "重启声明"
+      ],
+      "composition": [
+        "plugin-control-jump-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/install-client-plugin"
+    },
+    {
       "id": "load-skill-contract",
       "name": "load-skill-contract",
       "layer": "skill",
@@ -1457,6 +1554,26 @@
       ],
       "has_scripts": true,
       "path": "skills/measure-token-budget"
+    },
+    {
+      "id": "merge-search-candidates",
+      "name": "merge-search-candidates",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-候选去重归一",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：多源候选去重归一器。把四类源的候选合并成同一六字段契约，按「URL 归一 → 名称归一」两级去重，按 stars→name→url 全序排序；剔除字段缺失的候选并计入 skipped_incomplete，合并后为空一律退 1（空检索不是通过），连跑两次输出逐字节相同。",
+      "triggers": [
+        "候选去重",
+        "统一契约",
+        "全序排序",
+        "空检索不通过"
+      ],
+      "composition": [
+        "multi-source-search-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/merge-search-candidates"
     },
     {
       "id": "normalize-skill-contract",
@@ -1811,6 +1928,26 @@
       "composition": [],
       "has_scripts": true,
       "path": "skills/search-github-skill"
+    },
+    {
+      "id": "search-official-source",
+      "name": "search-official-source",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-官网源检索",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：官网 / 官方文档源检索器。从官方站点自声明的 sitemap 中按关键词检索可用执行层入口，产出统一六字段候选；只读、只用标准库、不携带凭据；支持 --from-file 读本地夹具做离线回归，全部域名不可达时显式失败而不是返回空清单。",
+      "triggers": [
+        "官网检索",
+        "sitemap",
+        "来源可追溯",
+        "官方文档"
+      ],
+      "composition": [
+        "multi-source-search-policy"
+      ],
+      "has_scripts": true,
+      "path": "skills/search-official-source"
     },
     {
       "id": "select-skills-for-task",
@@ -2296,6 +2433,27 @@
       ],
       "has_scripts": true,
       "path": "skills/verify-no-unnecessary-restart"
+    },
+    {
+      "id": "verify-plugin-control-button",
+      "name": "verify-plugin-control-button",
+      "layer": "skill",
+      "level": "L2",
+      "category_title": "工序动作-调控按钮断言",
+      "scope": "local-pool",
+      "description": "工序动作级技能(L2)：插件常显调控按钮断言器。第一层静态断言包结构符合宿主 client 插件契约（dsh.client.platform=web、client 入口、cordis.patch.yml、__ModuleLoader__ 注册、bundle 逐字内联内核、零外链）；第二层用 Node + DOM 打桩真实执行注入内核，断言每（容器,插件 id）恰 1 个按钮、重复扫描幂等、无 id 条目不注入、按钮属性与 id 逐字一致。缺 Node 即退 2，不降级为只做静态断言。",
+      "triggers": [
+        "按钮断言",
+        "DOM打桩",
+        "幂等验证",
+        "逐字内联"
+      ],
+      "composition": [
+        "plugin-control-jump-policy",
+        "install-client-plugin"
+      ],
+      "has_scripts": true,
+      "path": "skills/verify-plugin-control-button"
     },
     {
       "id": "verify-progress-budget",
@@ -2958,6 +3116,27 @@
       "path": "skills/parallel-lock-guard"
     },
     {
+      "id": "plugin-control-guard",
+      "name": "plugin-control-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-插件调控门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：插件常显调控按钮放行门禁。把「契约 → 装配 → 断言」串成一道不可跳步的门禁，挂载于管家「② 契约与合规」集群；放行的唯一合法证据是「包结构符合宿主 client 插件契约 + 注入内核运行时 31 项断言全过 + 无 id 条目不注入」三项齐备，任一缺失一律阻断。",
+      "triggers": [
+        "插件调控门禁",
+        "装配放行",
+        "31项断言"
+      ],
+      "composition": [
+        "plugin-control-jump-policy",
+        "install-client-plugin",
+        "verify-plugin-control-button"
+      ],
+      "has_scripts": false,
+      "path": "skills/plugin-control-guard"
+    },
+    {
       "id": "qa-gatekeeper",
       "name": "qa-gatekeeper",
       "layer": "skill",
@@ -3053,7 +3232,7 @@
       "level": "L3",
       "category_title": "复合流程-技能引入管线",
       "scope": "local-pool",
-      "description": "复合流程级技能(L3)：GitHub 外部技能引入管线总控。五步串联检索→审计→归一→定级挂载→门禁验证，落点新集群「⑦ 技能引入与演进」，坚持引入即纳管、拒绝必留痕。",
+      "description": "复合流程级技能(L3)：外部执行层引入管线总控。五步串联检索→审计→归一→定级挂载→门禁验证，落点新集群「⑦ 技能引入与演进」；检索步自 PKG-008 起绑脚本探针（四源调度：本地优先 / GitHub / 官网 / awesome 清单），坚持引入即纳管、拒绝必留痕。",
       "triggers": [
         "技能引入",
         "外部技能纳管",
@@ -3064,7 +3243,10 @@
         "search-github-skill",
         "audit-imported-skill",
         "normalize-skill-contract",
-        "place-skill-into-cluster"
+        "place-skill-into-cluster",
+        "dispatch-skill-search",
+        "search-official-source",
+        "merge-search-candidates"
       ],
       "has_scripts": false,
       "path": "skills/skill-import-pipeline"
@@ -3182,6 +3364,30 @@
       ],
       "has_scripts": false,
       "path": "skills/token-economy-guard"
+    },
+    {
+      "id": "visual-interaction-guard",
+      "name": "visual-interaction-guard",
+      "layer": "skill",
+      "level": "L3",
+      "category_title": "复合流程-可视化交互门禁",
+      "scope": "local-pool",
+      "description": "复合流程级技能(L3)：可视化交互四件套放行门禁。把「规约 → 档位 → 生成 → 断言」串成一道不可跳步的门禁，挂载于管家「⑤ 需求与透视」集群；放行的唯一合法证据是「档位表 ≥5 档且默认档在表内 + 吸附分支两种状态齐备 + 下载三段降级齐备 + 26 项断言 exit 0」四项实数齐备，任一缺失一律阻断。",
+      "triggers": [
+        "交互四件套",
+        "档位门禁",
+        "下载门禁",
+        "零外链"
+      ],
+      "composition": [
+        "format-zoomable-visual",
+        "zoom-level-policy",
+        "build-image-viewer",
+        "verify-interactive-html",
+        "interactive-image-viewer"
+      ],
+      "has_scripts": false,
+      "path": "skills/visual-interaction-guard"
     },
     {
       "id": "visualize-governance-topology",

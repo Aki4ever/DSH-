@@ -138,3 +138,33 @@
 - 顺序：`sync_catalog` → `build_layer_graph` → `build_inverted_index` → `classify_instance_safety` → `build_execution_tree`
 - 任何执行层新增 / 删除 / 改名之后必须按序全跑一遍，否则树与索引会与 catalog 漂移。
 
+## 16. 可视化交互四件套（REQ-VISUAL-ZOOMLEVELS-035 / REQ-VISUAL-DOWNLOAD-037）
+- 生成（自带 13 档档位表与下载按钮）：`python3 skills/build-image-viewer/scripts/build_viewer.py --image a.png --out viewer.html`
+- 放行判据（26 项断言）：`python3 skills/verify-interactive-html/scripts/verify_html.py --file viewer.html --json`
+- 唯一口径源：`skills/zoom-level-policy/SKILL.md`（档位表 / 吸附 / 三段降级 / 白名单）
+- 档位：`0.25 0.33 0.50 0.67 0.75 1.00 1.25 1.50 2.00 3.00 4.00 6.00 8.00`，默认 **100%**；`+`/`-` 跳相邻档，滚轮连续微调后按**对数距离**吸附。
+- 下载三段降级：`showSaveFilePicker` → Blob + `<a download>` → 就地提示（**禁止静默无反应**）。
+- 白名单按产物类型二分：图片型 `png/jpg/jpeg/svg/webp`；HTML 海报型 `html`。
+- 机器可读属性：`data-zoom-level` / `data-zoom-levels` / `data-zoom-default` / `data-zoom-snap` / `data-zoom-current` / `data-download` / `data-download-name`。
+
+## 17. 插件常显调控按钮（REQ-PLUGIN-QUICKCONTROL-036）
+- 构建 bundle（内联注入内核）：`python3 plugins/dsh-plugin-control-jump/build_client.py`
+- 干跑装配：`python3 skills/install-client-plugin/scripts/install_plugin.py --profile web`
+- 装配：`python3 skills/install-client-plugin/scripts/install_plugin.py --profile web --apply --json`
+- 回滚：`python3 skills/install-client-plugin/scripts/install_plugin.py --profile web --rollback`
+- 放行判据（静态 13 + 运行时 18 = 31 项）：`python3 skills/verify-plugin-control-button/scripts/verify_plugin_button.py --all --json`
+- 按钮契约：`data-control-jump="<plugin-id>"`；去重键 `容器标识|插件 id`；**无 id 绝不注入**。
+- 导航三级降级：宿主钩子 → 定位/点击原生导航 + 高亮 → 复制 id 并就地提示（第三级永远可用）。
+- **生效条件**：新增插件的 bundle 注册表在宿主启动时读取 → **需重启宿主，只刷新页面不够**。
+- 唯一口径源：`skills/plugin-control-jump-policy/SKILL.md`。
+
+## 18. 执行层多源检索（REQ-SEARCH-MULTISOURCE-038）
+- 四源调度（本地优先，推荐默认）：`python3 skills/dispatch-skill-search/scripts/dispatch_search.py --query "<词>" --json`
+- 本地未命中且确需外呼：加 `--allow-network`（未认证 GitHub Search API 实测 **10 次/分钟**）
+- GitHub 源：`python3 skills/search-github-skill/scripts/search_skill.py --online --query "<词>" --probe-scripts`
+- 官网源：`python3 skills/search-official-source/scripts/search_official.py --query "<词>" --domain <官方域名>`
+- 去重归一：`python3 skills/merge-search-candidates/scripts/merge_candidates.py --from a.json --from b.json`
+- 源顺序：`local` → `github` → `official-site` → `awesome-list`；**本地命中即短路**并留痕 `skipped_sources`。
+- 失败语义：**空检索不是通过**（合并后为空退 1）；**检索失败不是没找到**（限流/网络错误必须显式失败）。
+- 唯一口径源：`skills/multi-source-search-policy/SKILL.md`。
+

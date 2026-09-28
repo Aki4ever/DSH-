@@ -32,6 +32,7 @@
   "on-demand-dispatcher": "① 意图与路由",
   "one-shot-guard": "③ 冲突·冗余·质量",
   "parallel-lock-guard": "③ 冲突·冗余·质量",
+  "plugin-control-guard": "② 契约与合规",
   "qa-gatekeeper": "③ 冲突·冗余·质量",
   "quantification-guard": "④ 输出规约",
   "redundancy-detector": "③ 冲突·冗余·质量",
@@ -42,6 +43,7 @@
   "standard-output-framework": "④ 输出规约",
   "tail-metrics-showcase": "④ 输出规约",
   "token-economy-guard": "② 契约与合规",
+  "visual-interaction-guard": "⑤ 需求与透视",
   "visualize-governance-topology": "⑤ 需求与透视",
   "zero-restart-guard": "② 契约与合规"
  },
@@ -50,8 +52,8 @@
   "api": 0,
   "cli": 9,
   "mcp": 0,
-  "plugin": 0,
-  "skill": 165
+  "plugin": 1,
+  "skill": 175
  },
  "edges": [
   [
@@ -235,6 +237,22 @@
    "build-quantifier-table"
   ],
   [
+   "dispatch-skill-search",
+   "merge-search-candidates"
+  ],
+  [
+   "dispatch-skill-search",
+   "multi-source-search-policy"
+  ],
+  [
+   "dispatch-skill-search",
+   "search-github-skill"
+  ],
+  [
+   "dispatch-skill-search",
+   "search-official-source"
+  ],
+  [
    "dsh-butler",
    "detect-vague-modifier"
   ],
@@ -339,6 +357,10 @@
    "validate-header-triggers"
   ],
   [
+   "install-client-plugin",
+   "plugin-control-jump-policy"
+  ],
+  [
    "instance-pool-guard",
    "classify-instance-safety"
   ],
@@ -415,6 +437,10 @@
    "token-budget-policy"
   ],
   [
+   "merge-search-candidates",
+   "multi-source-search-policy"
+  ],
+  [
    "milestone-progress-reporter",
    "classify-step-tier"
   ],
@@ -489,6 +515,18 @@
   [
    "plan-fission",
    "enforce-atomic-granularity"
+  ],
+  [
+   "plugin-control-guard",
+   "install-client-plugin"
+  ],
+  [
+   "plugin-control-guard",
+   "plugin-control-jump-policy"
+  ],
+  [
+   "plugin-control-guard",
+   "verify-plugin-control-button"
   ],
   [
    "prune-redundant-context",
@@ -611,6 +649,10 @@
    "fastlane-redline-policy"
   ],
   [
+   "search-official-source",
+   "multi-source-search-policy"
+  ],
+  [
    "select-skills-for-task",
    "lazy-load-policy"
   ],
@@ -624,6 +666,14 @@
   ],
   [
    "skill-import-pipeline",
+   "dispatch-skill-search"
+  ],
+  [
+   "skill-import-pipeline",
+   "merge-search-candidates"
+  ],
+  [
+   "skill-import-pipeline",
    "normalize-skill-contract"
   ],
   [
@@ -633,6 +683,10 @@
   [
    "skill-import-pipeline",
    "search-github-skill"
+  ],
+  [
+   "skill-import-pipeline",
+   "search-official-source"
   ],
   [
    "skill-index-router",
@@ -791,6 +845,14 @@
    "classify-change-scope"
   ],
   [
+   "verify-plugin-control-button",
+   "install-client-plugin"
+  ],
+  [
+   "verify-plugin-control-button",
+   "plugin-control-jump-policy"
+  ],
+  [
    "verify-progress-budget",
    "classify-step-tier"
   ],
@@ -813,6 +875,26 @@
   [
    "verify-token-reduction",
    "prune-redundant-context"
+  ],
+  [
+   "visual-interaction-guard",
+   "build-image-viewer"
+  ],
+  [
+   "visual-interaction-guard",
+   "format-zoomable-visual"
+  ],
+  [
+   "visual-interaction-guard",
+   "interactive-image-viewer"
+  ],
+  [
+   "visual-interaction-guard",
+   "verify-interactive-html"
+  ],
+  [
+   "visual-interaction-guard",
+   "zoom-level-policy"
   ],
   [
    "visualize-governance-topology",
@@ -900,6 +982,10 @@
   ],
   [
    "② 契约与合规",
+   "plugin-control-guard"
+  ],
+  [
+   "② 契约与合规",
    "token-economy-guard"
   ],
   [
@@ -980,6 +1066,10 @@
   ],
   [
    "⑤ 需求与透视",
+   "visual-interaction-guard"
+  ],
+  [
+   "⑤ 需求与透视",
    "visualize-governance-topology"
   ],
   [
@@ -1003,7 +1093,7 @@
  "layers": [
   {
    "auto": true,
-   "count": 165,
+   "count": 175,
    "entries": [
     {
      "cluster": null,
@@ -1322,6 +1412,13 @@
     },
     {
      "cluster": null,
+     "id": "dispatch-skill-search",
+     "level": "L2",
+     "path": "skills/dispatch-skill-search",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
      "id": "dsh-butler",
      "level": "L4",
      "path": "skills/dsh-butler",
@@ -1503,6 +1600,13 @@
      "source": "registry"
     },
     {
+     "cluster": null,
+     "id": "install-client-plugin",
+     "level": "L2",
+     "path": "skills/install-client-plugin",
+     "source": "registry"
+    },
+    {
      "cluster": "② 契约与合规",
      "id": "instance-pool-guard",
      "level": "L3",
@@ -1616,6 +1720,13 @@
     },
     {
      "cluster": null,
+     "id": "merge-search-candidates",
+     "level": "L2",
+     "path": "skills/merge-search-candidates",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
      "id": "milestone-only-progress",
      "level": "L1",
      "path": "skills/milestone-only-progress",
@@ -1626,6 +1737,13 @@
      "id": "milestone-progress-reporter",
      "level": "L3",
      "path": "skills/milestone-progress-reporter",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "multi-source-search-policy",
+     "level": "L1",
+     "path": "skills/multi-source-search-policy",
      "source": "registry"
     },
     {
@@ -1710,6 +1828,20 @@
      "id": "plan-fission",
      "level": "L2",
      "path": "skills/plan-fission",
+     "source": "registry"
+    },
+    {
+     "cluster": "② 契约与合规",
+     "id": "plugin-control-guard",
+     "level": "L3",
+     "path": "skills/plugin-control-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "plugin-control-jump-policy",
+     "level": "L1",
+     "path": "skills/plugin-control-jump-policy",
      "source": "registry"
     },
     {
@@ -1857,6 +1989,13 @@
      "id": "search-github-skill",
      "level": "L2",
      "path": "skills/search-github-skill",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "search-official-source",
+     "level": "L2",
+     "path": "skills/search-official-source",
      "source": "registry"
     },
     {
@@ -2127,6 +2266,13 @@
     },
     {
      "cluster": null,
+     "id": "verify-plugin-control-button",
+     "level": "L2",
+     "path": "skills/verify-plugin-control-button",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
      "id": "verify-progress-budget",
      "level": "L2",
      "path": "skills/verify-progress-budget",
@@ -2148,6 +2294,13 @@
     },
     {
      "cluster": "⑤ 需求与透视",
+     "id": "visual-interaction-guard",
+     "level": "L3",
+     "path": "skills/visual-interaction-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": "⑤ 需求与透视",
      "id": "visualize-governance-topology",
      "level": "L3",
      "path": "skills/visualize-governance-topology",
@@ -2158,6 +2311,13 @@
      "id": "zero-restart-guard",
      "level": "L3",
      "path": "skills/zero-restart-guard",
+     "source": "registry"
+    },
+    {
+     "cluster": null,
+     "id": "zoom-level-policy",
+     "level": "L1",
+     "path": "skills/zoom-level-policy",
      "source": "registry"
     }
    ],
@@ -2304,8 +2464,18 @@
   },
   {
    "auto": false,
-   "count": 0,
-   "entries": [],
+   "count": 1,
+   "entries": [
+    {
+     "description": "DSH 客户端插件：在插件市场已安装列表与设置→插件清单的每个条目注入常显「调控」按钮，一键直达该插件的详情控制页",
+     "id": "dsh-plugin-control-jump",
+     "layer": "plugin",
+     "parent": "dsh-butler",
+     "path": "plugins/dsh-plugin-control-jump",
+     "source": "repo",
+     "status": "active"
+    }
+   ],
    "layer": "plugin",
    "title": "插件层"
   }
@@ -3056,6 +3226,50 @@
         }
        ],
        "id": "layer-naming-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
+         "id": "plugin-control-jump-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "plugin-control-jump-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "install-client-plugin",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "plugin-control-jump-policy",
+           "level": "L1"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "plugin-control-jump-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "install-client-plugin",
+           "level": "L2"
+          }
+         ],
+         "id": "verify-plugin-control-button",
+         "level": "L2"
+        }
+       ],
+       "id": "plugin-control-guard",
        "level": "L3"
       },
       {
@@ -3937,6 +4151,77 @@
        "children": [
         {
          "children": [],
+         "id": "format-zoomable-visual",
+         "level": "L1"
+        },
+        {
+         "children": [],
+         "id": "zoom-level-policy",
+         "level": "L1"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "format-zoomable-visual",
+           "level": "L1"
+          }
+         ],
+         "id": "build-image-viewer",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "format-zoomable-visual",
+           "level": "L1"
+          }
+         ],
+         "id": "verify-interactive-html",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "format-zoomable-visual",
+           "level": "L1"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "format-zoomable-visual",
+             "level": "L1"
+            }
+           ],
+           "id": "build-image-viewer",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "format-zoomable-visual",
+             "level": "L1"
+            }
+           ],
+           "id": "verify-interactive-html",
+           "level": "L2"
+          }
+         ],
+         "id": "interactive-image-viewer",
+         "level": "L3"
+        }
+       ],
+       "id": "visual-interaction-guard",
+       "level": "L3"
+      },
+      {
+       "children": [
+        {
+         "children": [],
          "id": "format-visual-inspection",
          "level": "L1"
         },
@@ -3999,6 +4284,66 @@
         {
          "children": [],
          "id": "place-skill-into-cluster",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "multi-source-search-policy",
+           "level": "L1"
+          },
+          {
+           "children": [],
+           "id": "search-github-skill",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "multi-source-search-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "search-official-source",
+           "level": "L2"
+          },
+          {
+           "children": [
+            {
+             "children": [],
+             "id": "multi-source-search-policy",
+             "level": "L1"
+            }
+           ],
+           "id": "merge-search-candidates",
+           "level": "L2"
+          }
+         ],
+         "id": "dispatch-skill-search",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "multi-source-search-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "search-official-source",
+         "level": "L2"
+        },
+        {
+         "children": [
+          {
+           "children": [],
+           "id": "multi-source-search-policy",
+           "level": "L1"
+          }
+         ],
+         "id": "merge-search-candidates",
          "level": "L2"
         }
        ],

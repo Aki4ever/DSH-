@@ -40,6 +40,11 @@ OPS = os.path.join(SKILL_POOL, "docs", "operations")
 DEFAULT_OUT = os.path.join(HERE, "gcm-infographic.html")
 
 EXTERNAL_PATTERNS = ["src=\"http", "href=\"http", "url(http", "<script src=", "<link"]
+
+# 多级缩放档位表（唯一口径来源：skills/zoom-level-policy/SKILL.md）
+ZOOM_LEVELS = [0.25, 0.33, 0.50, 0.67, 0.75, 1.00, 1.25, 1.50, 2.00, 3.00, 4.00, 6.00, 8.00]
+ZOOM_DEFAULT = 1.00
+DOWNLOAD_NAME = "gcm-infographic.html"
 REQUIRED_MARKERS = ["data-zoom-in", "data-zoom-out", "data-zoom-reset"]
 
 
@@ -262,7 +267,14 @@ def build_html(data):
         .replace("@@CLUSTERCARDS@@", "".join(cluster_cards)) \
         .replace("@@GATEROWS@@", "".join(gate_rows)) \
         .replace("@@PROBECARDS@@", probe_cards) \
-        .replace("@@GATE12@@", gate_cards)
+        .replace("@@GATE12@@", gate_cards) \
+        .replace("__ZOOM_LEVELS__", ",".join("%g" % v for v in ZOOM_LEVELS)) \
+        .replace("__ZOOM_LEVELS_JSON__", "[" + ",".join("%g" % v for v in ZOOM_LEVELS) + "]") \
+        .replace("__ZOOM_DEFAULT__", "%g" % ZOOM_DEFAULT) \
+        .replace("__ZOOM_DEFAULT_INDEX__", str(ZOOM_LEVELS.index(ZOOM_DEFAULT) + 1)) \
+        .replace("__ZOOM_TEXT__", "%d/%d \u00b7 %d%%" % (
+            ZOOM_LEVELS.index(ZOOM_DEFAULT) + 1, len(ZOOM_LEVELS), round(ZOOM_DEFAULT * 100))) \
+        .replace("__DOWNLOAD_NAME__", DOWNLOAD_NAME)
 
 
 TEMPLATE = r"""<!DOCTYPE html>
@@ -295,7 +307,9 @@ TEMPLATE = r"""<!DOCTYPE html>
     background:#1d2b46;color:var(--fg);font-size:17px;font-weight:700;cursor:pointer;
     display:flex;align-items:center;justify-content:center;transition:.15s}
   .toolbar button:hover{background:#27395c;transform:translateY(-1px)}
-  .toolbar .lvl{min-width:62px;font-size:12px;color:var(--dim);font-weight:600}
+  .toolbar .lvl{min-width:112px;font-size:12px;color:var(--fg);font-weight:700;
+    font-family:ui-monospace,Menlo,monospace;text-align:center;padding:0 6px}
+  .toolbar .toast{font-size:12px;color:var(--ok);max-width:220px}
   .hintbar{position:fixed;left:18px;bottom:16px;z-index:50;font-size:12px;color:var(--dim);
     background:rgba(18,28,49,.9);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
   header.top{display:flex;align-items:flex-end;justify-content:space-between;
@@ -383,10 +397,11 @@ TEMPLATE = r"""<!DOCTYPE html>
 </head>
 <body>
 <div class="toolbar">
-  <button data-zoom-in title="放大">＋</button>
-  <button data-zoom-out title="缩小">－</button>
-  <button data-zoom-reset title="复位到原始大小">⟲</button>
-  <button class="lvl" id="zoomLevel" title="当前缩放">100%</button>
+  <button data-zoom-in title="放大一档">＋</button>
+  <button data-zoom-out title="缩小一档">－</button>
+  <button data-zoom-reset title="复位到默认档">⟲</button>
+  <span class="lvl" id="zoomLevel" data-zoom-level data-zoom-levels="__ZOOM_LEVELS__" data-zoom-default="__ZOOM_DEFAULT__" data-zoom-snap="idle" data-zoom-current="__ZOOM_DEFAULT_INDEX__" title="当前档位">__ZOOM_TEXT__</span>
+  <button data-download data-download-name="__DOWNLOAD_NAME__" title="下载本图（可自选目录）">下载 ⤓</button>
 </div>
 <div class="hintbar">滚轮缩放 · 按住拖动平移 · ⟲ 一键复位</div>
 
@@ -546,40 +561,112 @@ TEMPLATE = r"""<!DOCTYPE html>
 
 <script>
 (function () {
-  var scale = 1, min = 0.35, max = 3.2;
-  var tx = 0, ty = 0, dragging = false, lx = 0, ly = 0;
+  "use strict";
+  var LEVELS = __ZOOM_LEVELS_JSON__;
+  var DEFAULT_LEVEL = __ZOOM_DEFAULT__;
+  var SNAP_IDLE_MS = 140;
+  var MIN_FIT = 0.35;
+
   var poster = document.getElementById('poster');
   var stage = document.getElementById('stage');
-  var level = document.getElementById('zoomLevel');
+  var levelEl = document.getElementById('zoomLevel');
   var lw = 1640;
+  var defaultIndex = LEVELS.indexOf(DEFAULT_LEVEL);
+  if (defaultIndex < 0) { defaultIndex = Math.floor(LEVELS.length / 2); }
 
-  function apply() {
+  var index = defaultIndex, scale = LEVELS[index];
+  var tx = 0, ty = 0, dragging = false, lx = 0, ly = 0, snapTimer = null;
+
+  function nearestIndex(value) {
+    var best = 0, bestGap = Infinity;
+    for (var i = 0; i < LEVELS.length; i++) {
+      var gap = Math.abs(Math.log(LEVELS[i]) - Math.log(value));
+      if (gap < bestGap) { bestGap = gap; best = i; }
+    }
+    return best;
+  }
+  function render() {
     poster.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
-    level.textContent = Math.round(scale * 100) + '%';
+    levelEl.textContent = (index + 1) + '/' + LEVELS.length + ' · ' + Math.round(scale * 100) + '%';
+    levelEl.setAttribute('data-zoom-current', String(index + 1));
+  }
+  function setLevel(next) {
+    if (next < 0) { next = 0; }
+    if (next > LEVELS.length - 1) { next = LEVELS.length - 1; }
+    index = next; scale = LEVELS[index];
+    levelEl.setAttribute('data-zoom-snap', 'idle');
+    render();
   }
   function fit() {
     var avail = stage.clientWidth - 80;
-    scale = Math.min(1, avail / lw);
-    if (scale < min) { scale = min; }
+    var ratio = Math.min(1, avail / lw);
+    if (ratio < MIN_FIT) { ratio = MIN_FIT; }
+    index = nearestIndex(ratio); scale = LEVELS[index];
     tx = Math.max(0, (stage.clientWidth - lw * scale) / 2);
     ty = 0;
-    apply();
+    render();
   }
   function zoom(factor, cx, cy) {
-    var next = Math.min(max, Math.max(min, scale * factor));
-    if (next === scale) { return; }
+    var next = Math.min(LEVELS[LEVELS.length - 1], Math.max(LEVELS[0], scale * factor));
     var rect = stage.getBoundingClientRect();
     var px = (cx === undefined ? rect.width / 2 : cx - rect.left) - tx;
     var py = (cy === undefined ? rect.height / 2 : cy - rect.top) - ty;
     tx -= px * (next / scale - 1);
     ty -= py * (next / scale - 1);
     scale = next;
-    apply();
+    levelEl.setAttribute('data-zoom-snap', 'pending');
+    render();
+    if (snapTimer) { clearTimeout(snapTimer); }
+    snapTimer = setTimeout(function () {
+      snapTimer = null;
+      setLevel(nearestIndex(scale));
+      levelEl.setAttribute('data-zoom-snap', 'snapped');
+    }, SNAP_IDLE_MS);
+  }
+  function toast(message) {
+    var el = document.querySelector('.toolbar .toast');
+    if (!el) {
+      el = document.createElement('span');
+      el.className = 'toast';
+      document.querySelector('.toolbar').appendChild(el);
+    }
+    el.textContent = message;
+    setTimeout(function () { if (el.textContent === message) { el.textContent = ''; } }, 4000);
+  }
+  function downloadPoster() {
+    var button = document.querySelector('[data-download]');
+    var filename = button.getAttribute('data-download-name') || 'infographic.html';
+    var blob = new Blob(['<!DOCTYPE html>\n' + document.documentElement.outerHTML],
+                        { type: 'text/html;charset=utf-8' });
+    if (typeof window.showSaveFilePicker === 'function') {
+      window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description: 'HTML 海报', accept: { 'text/html': ['.html'] } }]
+      }).then(function (handle) {
+        return handle.createWritable().then(function (w) {
+          return w.write(blob).then(function () { return w.close(); });
+        }).then(function () { toast('已保存：' + filename); });
+      }).catch(function (err) {
+        if (err && err.name === 'AbortError') { toast('已取消保存'); return; }
+        fallbackDownload(blob, filename);
+      });
+      return;
+    }
+    fallbackDownload(blob, filename);
+  }
+  function fallbackDownload(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url; link.download = filename; link.rel = 'noopener';
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    toast('已通过浏览器下载：' + filename);
   }
 
-  document.querySelector('[data-zoom-in]').addEventListener('click', function () { zoom(1.2); });
-  document.querySelector('[data-zoom-out]').addEventListener('click', function () { zoom(1 / 1.2); });
-  document.querySelector('[data-zoom-reset]').addEventListener('click', function () { fit(); });
+  document.querySelector('[data-zoom-in]').addEventListener('click', function () { setLevel(index + 1); });
+  document.querySelector('[data-zoom-out]').addEventListener('click', function () { setLevel(index - 1); });
+  document.querySelector('[data-zoom-reset]').addEventListener('click', function () { setLevel(defaultIndex); tx = 0; ty = 0; render(); });
+  document.querySelector('[data-download]').addEventListener('click', downloadPoster);
 
   stage.addEventListener('wheel', function (event) {
     event.preventDefault();
@@ -593,19 +680,18 @@ TEMPLATE = r"""<!DOCTYPE html>
   window.addEventListener('mousemove', function (event) {
     if (!dragging) { return; }
     tx += event.clientX - lx; ty += event.clientY - ly;
-    lx = event.clientX; ly = event.clientY;
-    apply();
+    lx = event.clientX; ly = event.clientY; render();
   });
   window.addEventListener('mouseup', function () {
     dragging = false; poster.classList.remove('dragging');
   });
   window.addEventListener('resize', fit);
   window.addEventListener('keydown', function (event) {
-    if (event.key === '+' || event.key === '=') { zoom(1.2); }
-    if (event.key === '-') { zoom(1 / 1.2); }
-    if (event.key === '0') { fit(); }
+    if (event.key === '+' || event.key === '=') { setLevel(index + 1); }
+    if (event.key === '-') { setLevel(index - 1); }
+    if (event.key === '0') { setLevel(defaultIndex); }
+    if (event.key === 's' || event.key === 'S') { downloadPoster(); }
   });
-  document.addEventListener('DOMContentLoaded', fit);
   fit();
 })();
 </script>

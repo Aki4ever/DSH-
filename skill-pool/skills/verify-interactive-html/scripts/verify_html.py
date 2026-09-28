@@ -7,6 +7,11 @@
 断言（全部通过才退出 0）：
     1. 文件存在且字节数 > 0；
     2. 含 data-zoom-in / data-zoom-out / data-zoom-reset 三个控制标识；
+    2b. 多级缩放档位（PKG-008）：含 data-zoom-level（档位指示器）与 data-zoom-snap（吸附分支），
+        data-zoom-levels 解析出的档位数 >= MIN_ZOOM_LEVELS，且 data-zoom-default 必须落在档位表内；
+    2c. 下载交互（PKG-008）：含 data-download 与 data-download-name（扩展名须在白名单内：
+        png/jpg/jpeg/svg/webp 为图片本体，html 为海报型产物导出自身），
+        且源码同时具备 showSaveFilePicker 主路径与 Blob 降级路径；
     3. 含 <!DOCTYPE html / <html / </html> / <body / </body> 且标签成对；
     4. 无外部资源引用：src="http / href="http / url(http / <script src= / <link
 
@@ -27,7 +32,20 @@ REQUIRED_MARKERS = [
     "data-zoom-in",
     "data-zoom-out",
     "data-zoom-reset",
+    "data-zoom-level",
+    "data-zoom-snap",
+    "data-download",
 ]
+
+# 多级缩放：档位表最少档数。少于该值说明仍是「连续乘法」而非「离散档位」。
+MIN_ZOOM_LEVELS = 5
+# 下载扩展名白名单：图片本体五类 + HTML 海报型产物一类。
+# 分开列是为了让「导出的是本体」这条约束可读：图片产品导图片，海报产品导它自己。
+DOWNLOAD_EXT_WHITELIST = ("png", "jpg", "jpeg", "svg", "webp", "html")
+
+LEVELS_ATTR_RE = re.compile(r'data-zoom-levels\s*=\s*"([^"]*)"')
+DEFAULT_ATTR_RE = re.compile(r'data-zoom-default\s*=\s*"([^"]*)"')
+DOWNLOAD_NAME_RE = re.compile(r'data-download-name\s*=\s*"([^"]*)"')
 
 REQUIRED_TAGS = [
     "<!DOCTYPE html",
@@ -133,6 +151,68 @@ def collect_checks(path):
                 "开标签 %d 个 / 闭标签 %d 个" % (opens, closes),
             )
         )
+
+    # 多级缩放档位：档位表非空、档数达标、默认档在表内
+    levels_raw = LEVELS_ATTR_RE.search(text)
+    levels = []
+    if levels_raw:
+        for piece in levels_raw.group(1).split(","):
+            piece = piece.strip()
+            if not piece:
+                continue
+            try:
+                value = float(piece)
+            except ValueError:
+                continue
+            if value > 0:
+                levels.append(value)
+    checks.append(
+        make_check(
+            "zoom_levels:count",
+            len(levels) >= MIN_ZOOM_LEVELS,
+            "解析到 %d 档（要求 >= %d）: %s"
+            % (len(levels), MIN_ZOOM_LEVELS, ",".join("%g" % v for v in levels) or "无"),
+        )
+    )
+    default_raw = DEFAULT_ATTR_RE.search(text)
+    default_ok = False
+    default_detail = "未找到 data-zoom-default"
+    if default_raw:
+        try:
+            default_value = float(default_raw.group(1))
+            default_ok = any(abs(default_value - v) < 1e-9 for v in levels)
+            default_detail = "默认档 %g，%s档位表" % (
+                default_value, "落在" if default_ok else "**不在**")
+        except ValueError:
+            default_detail = "data-zoom-default 不是数字: %s" % default_raw.group(1)
+    checks.append(make_check("zoom_default:in_table", default_ok, default_detail))
+
+    # 下载三段降级
+    checks.append(
+        make_check(
+            "api:showSaveFilePicker",
+            "showSaveFilePicker" in text,
+            "命中主路径" if "showSaveFilePicker" in text else "缺失主路径（无法弹出目录选择控件）",
+        )
+    )
+    has_blob = ("createObjectURL" in text) and ("download" in text)
+    checks.append(
+        make_check(
+            "fallback:blob-download",
+            has_blob,
+            "命中降级路径" if has_blob else "缺失 Blob 降级路径（无该 API 的浏览器上将无反应）",
+        )
+    )
+    name_raw = DOWNLOAD_NAME_RE.search(text)
+    extension_ok = False
+    extension_detail = "未找到 data-download-name"
+    if name_raw:
+        candidate = name_raw.group(1).strip()
+        ext = candidate.rsplit(".", 1)[-1].lower() if "." in candidate else ""
+        extension_ok = ext in DOWNLOAD_EXT_WHITELIST
+        extension_detail = "下载文件名 %s（扩展名 %s %s白名单）" % (
+            candidate, ext or "(无)", "在" if extension_ok else "**不在**")
+    checks.append(make_check("filename:extension-whitelist", extension_ok, extension_detail))
 
     hits = scan_external(text)
     for name, pattern in EXTERNAL_PATTERNS:

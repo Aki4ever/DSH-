@@ -1,0 +1,22 @@
+{
+  "name": "dsh-plugin-control-jump",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DSH 客户端插件：在插件市场已安装列表与设置→插件清单的每个条目上注入常显的「调控」按钮，一键直达该插件的详情控制页。",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "inject": ["@deepseek-ai/dsh-client-ui-settings"]
+    }
+  },
+  "files": ["lib", "src", "cordis.patch.yml", "package.json", "README.md"]
+}

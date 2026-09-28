@@ -7,7 +7,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 需求集编号 | REQ-BASE-001 |
-| 当前生效基线 | v0.3.0 |
+| 当前生效基线 | v0.4.0 |
 | 有效性 | 生效 |
 | 交付状态 | 开发中 |
 
@@ -51,6 +51,10 @@
 | REQ-LAYER-NAMINGAUDIT-032 | 执行层命名规范管理与存量整改（含树与索引同步） | 架构与智能体调度 | 生效 | 已交付 | [product.md#执行层命名规范管理与存量整改](./product.md) |
 | REQ-REPO-MERGE-033 | Skill池 并入 DSH/全局规则 并迁移任务会话 | 工程与仓库治理 | 生效 | 已交付 | [product.md#skill池与全局规则目录合并](./product.md) |
 | REQ-REPO-GITPUBLISH-034 | 完成后自动提交并推送 git | 工程与仓库治理 | 生效 | 已交付 | [product.md#自动提交与推送](./product.md) |
+| REQ-VISUAL-ZOOMLEVELS-035 | 可视化产物多级缩放档位（13 档，可枚举可复算） | 输出与表达规范 | 生效 | 已交付 | [product.md#可视化产物的多级缩放与可下载](./product.md) |
+| REQ-PLUGIN-QUICKCONTROL-036 | 插件市场下载的插件必须常显调控按钮，直达详情控制页 | 架构与智能体调度 | 生效 | 已交付 | [product.md#插件市场常显调控按钮](./product.md) |
+| REQ-VISUAL-DOWNLOAD-037 | 可视化产物可下载按钮与目录选择（三段降级） | 输出与表达规范 | 生效 | 已交付 | [product.md#可视化产物的多级缩放与可下载](./product.md) |
+| REQ-SEARCH-MULTISOURCE-038 | GitHub 与官网作为执行层检索源（本地优先四源调度） | 架构与智能体调度 | 生效 | 已交付 | [product.md#github-与官网作为执行层检索源](./product.md) |
 
 > 交付说明：PKG-004 已实施并通过六道门禁；`TC-ZHFLOW-019` 存在一处已知口径边界（命令参考文档不在中文门禁适用范围内，见 AMEND-11），其余 33 条用例均已实跑通过。
 >
@@ -66,6 +70,13 @@
 > **命名整改实测：合规率 0.9811（156/159）→ 1.0000（165/165），3 次改名同步 61 个文件，悬空引用 0，整改器幂等（二次运行 changed=0）。**
 > **本次同时修正两处既有检测器缺陷：旧名子串扫描导致 47 个假阳性（改词边界后归零）、唯一临时键被误判为共享写。**
 > **仓库合并：Skill池 以子树合并方式迁入 `/Users/linqiyu/Documents/DSH/全局规则/skill-pool/`，保留全部提交历史；源目录保留为只读镜像。**
+
+
+> PKG-008 已实施并通过十四道门禁（validate / consistency / audit / verify_tree / 依赖图 / 耦合检测 / 解耦断言 / 实例安全 / 命名断言 / 渲染漂移 / 交互查看器 26 项 / 插件按钮 31 项 / 检索评测 / 粒度门禁），技能池 165 → 175，**plugin 层 0 → 1**（全池第一个插件层执行层）。
+> **可视化交互实测：`verify-interactive-html` 26 项全过；档位 13 档、默认档在表内、下载主路径与 Blob 降级齐备、外链 0 处；4 个负向夹具各自只打中一条断言。**
+> **插件常显调控按钮实测：静态 13 项 + 运行时（Node + DOM 打桩）18 项 = 31 项全过；装配幂等（二次 `changed=0`）、有备份、可一键回滚；诚实声明需重启宿主才生效。**
+> **多源检索实测：查询「信息图」本地短路命中已装的 `@tt-a1i/archify-dsh`，零网络调用；零命中且未允许外呼时显式报「这是未完成检索」；GitHub 限流被正确区分为失败而非空结果。**
+> **实施中修掉两个自己的缺陷：联网后按带限定符的原始 query 二次过滤（把「检索成功但为空」伪装成「没人在做」）；`license` 对象直接 `str()` 导致 `has_scripts` 恒 false（假阴性），改为取 `spdx_id` 且 `has_scripts` 改三态。**
 
 ## 关联索引
 - 变更记录：[change-log.md](./change-log.md)
@@ -89,6 +100,10 @@
 - 能力层命名规范人读文档：[../operations/capability-naming.md](../operations/capability-naming.md)
 - 派生产物重建链：[../operations/rebuild-chain.json](../operations/rebuild-chain.json)
 - 改名台账：[../operations/retired-names.json](../operations/retired-names.json)
+- 可视化交互门禁明细：[execution/pkg-008-interaction-plugins.md](./execution/pkg-008-interaction-plugins.md)
+- 可视化交互测试用例：[execution/testcases-interaction-plugins.md](./execution/testcases-interaction-plugins.md)
+- 缩放档位与下载唯一口径源：[../operations/../skills/zoom-level-policy/SKILL.md](../skills/zoom-level-policy/SKILL.md)
+- 多源检索唯一口径源：[../skills/multi-source-search-policy/SKILL.md](../skills/multi-source-search-policy/SKILL.md)
 - 执行层树（唯一真相源）：[../operations/execution-tree.md](../operations/execution-tree.md)
 - CLI 规格：[../../docs/cli/index.md](../cli/index.md)
 - 操作规范：[../../docs/operations/workflows.md](../operations/workflows.md)

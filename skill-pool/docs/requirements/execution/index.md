@@ -11,6 +11,7 @@
 | PKG-005 | REQ-BUTLER-QUANTIFY-023 → CONCRETIZE-024 → ONESHOT-025 | 表达量化包：程度词四要素量化、含糊词具像化、一次性解决不反复提问（15 个新技能） | 已交付 | `dsh-butler` (L4) |
 | PKG-006 | REQ-BUTLER-DECOUPLE-027 → MULTIINSTANCE-028 → PARALLELLOCK-029 | 执行层解耦与并行治理包：依赖图与隐式耦合检测、实例安全准入、并行锁与死锁检测（14 个新技能） | 已交付 | `dsh-butler` (L4) |
 | PKG-007 | REQ-BUTLER-ATOMICLOCK-030 → KB-CAPABILITYNAMING-031 → LAYER-NAMINGAUDIT-032 → REPO-MERGE-033 → REPO-GITPUBLISH-034 | 原子锁、能力层命名规范与存量整改、目录合并与任务会话迁移、git 推送（10 个新技能 + 6 项产物） | 已交付 | `dsh-butler` (L4) |
+| PKG-008 | REQ-VISUAL-ZOOMLEVELS-035 → VISUAL-DOWNLOAD-037 → SEARCH-MULTISOURCE-038 → PLUGIN-QUICKCONTROL-036 | 可视化多级缩放与下载、四源检索、插件常显调控按钮（11 个新执行层，含全池第一个 plugin 层） | 已交付 | `dsh-butler` (L4) |
 
 ## 执行明细
 
@@ -22,3 +23,4 @@
 | PKG-005 | [pkg-005-butler-quantify.md](./pkg-005-butler-quantify.md) | [testcases-butler-quantify.md](./testcases-butler-quantify.md) |
 | PKG-006 | [pkg-006-butler-parallel.md](./pkg-006-butler-parallel.md) | [testcases-butler-parallel.md](./testcases-butler-parallel.md) |
 | PKG-007 | [pkg-007-naming-merge.md](./pkg-007-naming-merge.md) | [testcases-naming-merge.md](./testcases-naming-merge.md) |
+| PKG-008 | [pkg-008-interaction-plugins.md](./pkg-008-interaction-plugins.md) | [testcases-interaction-plugins.md](./testcases-interaction-plugins.md) |

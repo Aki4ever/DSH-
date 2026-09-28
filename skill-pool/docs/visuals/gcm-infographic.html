@@ -28,7 +28,9 @@
     background:#1d2b46;color:var(--fg);font-size:17px;font-weight:700;cursor:pointer;
     display:flex;align-items:center;justify-content:center;transition:.15s}
   .toolbar button:hover{background:#27395c;transform:translateY(-1px)}
-  .toolbar .lvl{min-width:62px;font-size:12px;color:var(--dim);font-weight:600}
+  .toolbar .lvl{min-width:112px;font-size:12px;color:var(--fg);font-weight:700;
+    font-family:ui-monospace,Menlo,monospace;text-align:center;padding:0 6px}
+  .toolbar .toast{font-size:12px;color:var(--ok);max-width:220px}
   .hintbar{position:fixed;left:18px;bottom:16px;z-index:50;font-size:12px;color:var(--dim);
     background:rgba(18,28,49,.9);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
   header.top{display:flex;align-items:flex-end;justify-content:space-between;
@@ -116,10 +118,11 @@
 </head>
 <body>
 <div class="toolbar">
-  <button data-zoom-in title="放大">＋</button>
-  <button data-zoom-out title="缩小">－</button>
-  <button data-zoom-reset title="复位到原始大小">⟲</button>
-  <button class="lvl" id="zoomLevel" title="当前缩放">100%</button>
+  <button data-zoom-in title="放大一档">＋</button>
+  <button data-zoom-out title="缩小一档">－</button>
+  <button data-zoom-reset title="复位到默认档">⟲</button>
+  <span class="lvl" id="zoomLevel" data-zoom-level data-zoom-levels="0.25,0.33,0.5,0.67,0.75,1,1.25,1.5,2,3,4,6,8" data-zoom-default="1" data-zoom-snap="idle" data-zoom-current="6" title="当前档位">6/13 · 100%</span>
+  <button data-download data-download-name="gcm-infographic.html" title="下载本图（可自选目录）">下载 ⤓</button>
 </div>
 <div class="hintbar">滚轮缩放 · 按住拖动平移 · ⟲ 一键复位</div>
 
@@ -197,10 +200,10 @@
     <h3 style="margin:0 0 12px;font-size:15px">G0 一票否决 + G1~G4 累积门禁（实时实况）</h3>
     <table class="gcm">
       <tr><th>闸</th><th>查什么</th><th>状态</th><th>量到的实数</th></tr>
-      <tr><td class="g-id veto">G0</td><td>会话命名 <span class="veto-tag">一票否决</span></td><td class="g-state ok">通过</td><td class="g-detail">⚠️  找不到会话存储，无法判定当前任务命名</td></tr><tr><td class="g-id">G1</td><td>项目初始化</td><td class="g-state ok">通过</td><td class="g-detail">骨架 11/11 (100%) · 防丢覆盖 10/10 (100%)</td></tr><tr><td class="g-id">G2</td><td>工程结构化</td><td class="g-state ok">通过</td><td class="g-detail">目录有主 10/10 散落垃圾 0 重复层级 0 标准子目录 4/4 无标题 0/453</td></tr><tr><td class="g-id">G3</td><td>需求文档同步</td><td class="g-state ok">通过</td><td class="g-detail">条目 79 (A73/E3/D1) · 台账版本 v4.21.0 · 缺号 0 · 未提交 2/30 · HEAD e6525e9</td></tr><tr><td class="g-id">G4</td><td>冗余检测</td><td class="g-state ok">通过</td><td class="g-detail">扫描 71 文件/545 实质块 · 高相似对 0(限0) · 重复标题 10(限12) · 单行最高 53(限65)</td></tr>
+      <tr><td class="g-id veto">G0</td><td>会话命名 <span class="veto-tag">一票否决</span></td><td class="g-state ok">通过</td><td class="g-detail">⚠️  找不到会话存储，无法判定当前任务命名</td></tr><tr><td class="g-id">G1</td><td>项目初始化</td><td class="g-state ok">通过</td><td class="g-detail">骨架 11/11 (100%) · 防丢覆盖 10/10 (100%)</td></tr><tr><td class="g-id">G2</td><td>工程结构化</td><td class="g-state ok">通过</td><td class="g-detail">目录有主 10/10 散落垃圾 0 重复层级 0 标准子目录 4/4 无标题 0/454</td></tr><tr><td class="g-id">G3</td><td>需求文档同步</td><td class="g-state ok">通过</td><td class="g-detail">条目 79 (A73/E3/D1) · 台账版本 v4.21.0 · 缺号 0 · 未提交 4/30 · HEAD e6525e9</td></tr><tr><td class="g-id">G4</td><td>冗余检测</td><td class="g-state ok">通过</td><td class="g-detail">扫描 71 文件/545 实质块 · 高相似对 0(限0) · 重复标题 10(限12) · 单行最高 53(限65)</td></tr>
     </table>
     <p style="color:var(--dim);font-size:12.5px;line-height:1.8;margin:12px 0 0">
-      状态时间：2026-09-28 07:53:57　·　口径：<b>G0 会话命名是一票否决</b>（未过则 execAllowed 直接置 false），
+      状态时间：2026-09-28 07:55:39　·　口径：<b>G0 会话命名是一票否决</b>（未过则 execAllowed 直接置 false），
       <b>G1~G4 是累积闸</b>（脚本内核 <code>GATE_IDS=(init structure sync redundancy)</code>，必须依次全过）。
       调参入口 <code>ai-control/config/gates.conf</code>，改完即时生效。
     </p>
@@ -279,40 +282,112 @@
 
 <script>
 (function () {
-  var scale = 1, min = 0.35, max = 3.2;
-  var tx = 0, ty = 0, dragging = false, lx = 0, ly = 0;
+  "use strict";
+  var LEVELS = [0.25,0.33,0.5,0.67,0.75,1,1.25,1.5,2,3,4,6,8];
+  var DEFAULT_LEVEL = 1;
+  var SNAP_IDLE_MS = 140;
+  var MIN_FIT = 0.35;
+
   var poster = document.getElementById('poster');
   var stage = document.getElementById('stage');
-  var level = document.getElementById('zoomLevel');
+  var levelEl = document.getElementById('zoomLevel');
   var lw = 1640;
+  var defaultIndex = LEVELS.indexOf(DEFAULT_LEVEL);
+  if (defaultIndex < 0) { defaultIndex = Math.floor(LEVELS.length / 2); }
 
-  function apply() {
+  var index = defaultIndex, scale = LEVELS[index];
+  var tx = 0, ty = 0, dragging = false, lx = 0, ly = 0, snapTimer = null;
+
+  function nearestIndex(value) {
+    var best = 0, bestGap = Infinity;
+    for (var i = 0; i < LEVELS.length; i++) {
+      var gap = Math.abs(Math.log(LEVELS[i]) - Math.log(value));
+      if (gap < bestGap) { bestGap = gap; best = i; }
+    }
+    return best;
+  }
+  function render() {
     poster.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
-    level.textContent = Math.round(scale * 100) + '%';
+    levelEl.textContent = (index + 1) + '/' + LEVELS.length + ' · ' + Math.round(scale * 100) + '%';
+    levelEl.setAttribute('data-zoom-current', String(index + 1));
+  }
+  function setLevel(next) {
+    if (next < 0) { next = 0; }
+    if (next > LEVELS.length - 1) { next = LEVELS.length - 1; }
+    index = next; scale = LEVELS[index];
+    levelEl.setAttribute('data-zoom-snap', 'idle');
+    render();
   }
   function fit() {
     var avail = stage.clientWidth - 80;
-    scale = Math.min(1, avail / lw);
-    if (scale < min) { scale = min; }
+    var ratio = Math.min(1, avail / lw);
+    if (ratio < MIN_FIT) { ratio = MIN_FIT; }
+    index = nearestIndex(ratio); scale = LEVELS[index];
     tx = Math.max(0, (stage.clientWidth - lw * scale) / 2);
     ty = 0;
-    apply();
+    render();
   }
   function zoom(factor, cx, cy) {
-    var next = Math.min(max, Math.max(min, scale * factor));
-    if (next === scale) { return; }
+    var next = Math.min(LEVELS[LEVELS.length - 1], Math.max(LEVELS[0], scale * factor));
     var rect = stage.getBoundingClientRect();
     var px = (cx === undefined ? rect.width / 2 : cx - rect.left) - tx;
     var py = (cy === undefined ? rect.height / 2 : cy - rect.top) - ty;
     tx -= px * (next / scale - 1);
     ty -= py * (next / scale - 1);
     scale = next;
-    apply();
+    levelEl.setAttribute('data-zoom-snap', 'pending');
+    render();
+    if (snapTimer) { clearTimeout(snapTimer); }
+    snapTimer = setTimeout(function () {
+      snapTimer = null;
+      setLevel(nearestIndex(scale));
+      levelEl.setAttribute('data-zoom-snap', 'snapped');
+    }, SNAP_IDLE_MS);
+  }
+  function toast(message) {
+    var el = document.querySelector('.toolbar .toast');
+    if (!el) {
+      el = document.createElement('span');
+      el.className = 'toast';
+      document.querySelector('.toolbar').appendChild(el);
+    }
+    el.textContent = message;
+    setTimeout(function () { if (el.textContent === message) { el.textContent = ''; } }, 4000);
+  }
+  function downloadPoster() {
+    var button = document.querySelector('[data-download]');
+    var filename = button.getAttribute('data-download-name') || 'infographic.html';
+    var blob = new Blob(['<!DOCTYPE html>\n' + document.documentElement.outerHTML],
+                        { type: 'text/html;charset=utf-8' });
+    if (typeof window.showSaveFilePicker === 'function') {
+      window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description: 'HTML 海报', accept: { 'text/html': ['.html'] } }]
+      }).then(function (handle) {
+        return handle.createWritable().then(function (w) {
+          return w.write(blob).then(function () { return w.close(); });
+        }).then(function () { toast('已保存：' + filename); });
+      }).catch(function (err) {
+        if (err && err.name === 'AbortError') { toast('已取消保存'); return; }
+        fallbackDownload(blob, filename);
+      });
+      return;
+    }
+    fallbackDownload(blob, filename);
+  }
+  function fallbackDownload(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url; link.download = filename; link.rel = 'noopener';
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    toast('已通过浏览器下载：' + filename);
   }
 
-  document.querySelector('[data-zoom-in]').addEventListener('click', function () { zoom(1.2); });
-  document.querySelector('[data-zoom-out]').addEventListener('click', function () { zoom(1 / 1.2); });
-  document.querySelector('[data-zoom-reset]').addEventListener('click', function () { fit(); });
+  document.querySelector('[data-zoom-in]').addEventListener('click', function () { setLevel(index + 1); });
+  document.querySelector('[data-zoom-out]').addEventListener('click', function () { setLevel(index - 1); });
+  document.querySelector('[data-zoom-reset]').addEventListener('click', function () { setLevel(defaultIndex); tx = 0; ty = 0; render(); });
+  document.querySelector('[data-download]').addEventListener('click', downloadPoster);
 
   stage.addEventListener('wheel', function (event) {
     event.preventDefault();
@@ -326,19 +401,18 @@
   window.addEventListener('mousemove', function (event) {
     if (!dragging) { return; }
     tx += event.clientX - lx; ty += event.clientY - ly;
-    lx = event.clientX; ly = event.clientY;
-    apply();
+    lx = event.clientX; ly = event.clientY; render();
   });
   window.addEventListener('mouseup', function () {
     dragging = false; poster.classList.remove('dragging');
   });
   window.addEventListener('resize', fit);
   window.addEventListener('keydown', function (event) {
-    if (event.key === '+' || event.key === '=') { zoom(1.2); }
-    if (event.key === '-') { zoom(1 / 1.2); }
-    if (event.key === '0') { fit(); }
+    if (event.key === '+' || event.key === '=') { setLevel(index + 1); }
+    if (event.key === '-') { setLevel(index - 1); }
+    if (event.key === '0') { setLevel(defaultIndex); }
+    if (event.key === 's' || event.key === 'S') { downloadPoster(); }
   });
-  document.addEventListener('DOMContentLoaded', fit);
   fit();
 })();
 </script>

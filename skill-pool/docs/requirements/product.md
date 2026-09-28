@@ -629,8 +629,8 @@
 
 ## 附录 A. 组装关系受管区块（自动生成）
 
-- 数据源：`docs/operations/skill-catalog.json`（catalog_version 2.0.0，total_skills 165）
-- 级别分布：L1 39 / L2 85 / L3 40 / L4 1
+- 数据源：`docs/operations/skill-catalog.json`（catalog_version 2.0.0，total_skills 175）
+- 级别分布：L1 42 / L2 90 / L3 42 / L4 1
 
 | 级别 | Skill ID | 组装依赖 (Composition) |
 | :--- | :--- | :--- |
@@ -650,11 +650,14 @@
 | **L2** | `detect-layer-coupling` | `build-layer-graph` |
 | **L2** | `detect-lock-conflict` | `declare-lock-set` |
 | **L2** | `detect-vague-modifier` | `build-quantifier-table` |
+| **L2** | `dispatch-skill-search` | `multi-source-search-policy` + `search-github-skill` + `search-official-source` + `merge-search-candidates` |
 | **L2** | `emit-search-snippet` | `rank-skills-bm25` |
 | **L2** | `fold-repeated-events` | `classify-step-tier` |
+| **L2** | `install-client-plugin` | `plugin-control-jump-policy` |
 | **L2** | `load-skill-contract` | `lazy-load-policy` |
 | **L2** | `log-query-events` | `rank-skills-bm25` |
 | **L2** | `measure-token-budget` | `token-budget-policy` |
+| **L2** | `merge-search-candidates` | `multi-source-search-policy` |
 | **L2** | `parse-query` | `build-inverted-index` |
 | **L2** | `plan-fission` | `enforce-atomic-granularity` + `detect-vague-modifier` |
 | **L2** | `prune-redundant-context` | `measure-token-budget` |
@@ -666,6 +669,7 @@
 | **L2** | `render-capability-naming` | `capability-naming-policy` + `audit-layer-naming` |
 | **L2** | `render-catalog-docs` | `enforce-atomic-granularity` |
 | **L2** | `score-task-lane` | `fastlane-redline-policy` |
+| **L2** | `search-official-source` | `multi-source-search-policy` |
 | **L2** | `select-skills-for-task` | `rank-skills-bm25` + `lazy-load-policy` |
 | **L2** | `strip-non-prose-scope` | `chinese-end-to-end` |
 | **L2** | `verify-atomic-mutual-exclusion` | `atomic-lock-policy` + `acquire-atomic-lock` |
@@ -683,6 +687,7 @@
 | **L2** | `verify-no-lock-violation` | `detect-lock-conflict` + `detect-forbidden-state` |
 | **L2** | `verify-no-unnecessary-question` | `record-assumptions` |
 | **L2** | `verify-no-unnecessary-restart` | `classify-change-scope` |
+| **L2** | `verify-plugin-control-button` | `plugin-control-jump-policy` + `install-client-plugin` |
 | **L2** | `verify-progress-budget` | `fold-repeated-events` + `classify-step-tier` |
 | **L2** | `verify-quantified-output` | `quantify-modifier` + `detect-vague-modifier` |
 | **L2** | `verify-token-reduction` | `measure-token-budget` + `prune-redundant-context` |
@@ -711,16 +716,18 @@
 | **L3** | `on-demand-dispatcher` | `lazy-load-policy` + `select-skills-for-task` + `load-skill-contract` + `verify-context-payload` |
 | **L3** | `one-shot-guard` | `one-shot-resolution-policy` + `classify-decision-reversibility` + `record-assumptions` + `verify-no-unnecessary-question` |
 | **L3** | `parallel-lock-guard` | `parallel-lock-policy` + `declare-lock-set` + `detect-lock-conflict` + `verify-no-lock-violation` |
+| **L3** | `plugin-control-guard` | `plugin-control-jump-policy` + `install-client-plugin` + `verify-plugin-control-button` |
 | **L3** | `qa-gatekeeper` | `verify-file-exists` + `check-python-syntax` + `ensure-utf8-encoding` + `assert-zero-exitcode` |
 | **L3** | `quantification-guard` | `quantify-modifier-policy` + `build-quantifier-table` + `detect-vague-modifier` + `quantify-modifier` + `verify-quantified-output` |
 | **L3** | `redundancy-detector` | `prune-bloated-prompts` + `search-duplicate-rules` |
 | **L3** | `schema-guard` | `no-conversational-filler` + `strip-markdown-fence` + `extract-json-payload` |
-| **L3** | `skill-import-pipeline` | `search-github-skill` + `audit-imported-skill` + `normalize-skill-contract` + `place-skill-into-cluster` |
+| **L3** | `skill-import-pipeline` | `search-github-skill` + `audit-imported-skill` + `normalize-skill-contract` + `place-skill-into-cluster` + `dispatch-skill-search` + `search-official-source` + `merge-search-candidates` |
 | **L3** | `skill-index-router` | `match-intent-keywords` + `disambiguate-candidates` |
 | **L3** | `spec-driven-governance` | `sync-requirements-lifecycle` + `reconcile-knowledge-specs` + `run-test-cases-gate` |
 | **L3** | `standard-output-framework` | `format-status-block` + `conditional-deliverable-router` + `verify-deliverable-paths` + `high-relevance-notes-only` |
 | **L3** | `tail-metrics-showcase` | `output-chinese-only` + `concise-focused-output` + `plain-analogy-explanation` + `measure-routing-metrics` + `format-iconized-tail` + `validate-icon-syntax` |
 | **L3** | `token-economy-guard` | `token-budget-policy` + `measure-token-budget` + `prune-redundant-context` + `verify-token-reduction` |
+| **L3** | `visual-interaction-guard` | `format-zoomable-visual` + `zoom-level-policy` + `build-image-viewer` + `verify-interactive-html` + `interactive-image-viewer` |
 | **L3** | `visualize-governance-topology` | `format-visual-inspection` + `extract-catalog-topology` + `render-governance-mermaid` |
 | **L3** | `zero-restart-guard` | `prefer-hot-reload-policy` + `classify-change-scope` + `verify-no-unnecessary-restart` |
 | **L4** | `dsh-butler` | `detect-vague-modifier` |
@@ -1189,3 +1196,181 @@
 | 命名语法 | `<verb>-<object>[-<qualifier>]` kebab-case | 对齐池内 165 个存量名的实际主流形态，整改面最小（仅 3 个真违规） | 改词表 JSON 一处即全量生效 |
 | 知识库规范路径 | `knowledge/common/capability_naming_spec.md` | 与既有 `task_naming_spec.md` 同目录同层级 | 文件重命名 |
 | 提交推送范围 | 仅上述两个仓库 | 需求 R5 授权范围 | `git reset --hard <sha>` |
+
+---
+
+## 45. 可视化产物的多级缩放与可下载 (REQ-VISUAL-ZOOMLEVELS-035 / REQ-VISUAL-DOWNLOAD-037)
+
+**需求原文**：「生成的图片需要有 +- 按钮可以点击后放大或者缩小进行查看，并且可以多级放大和缩小」
+「生成的图片必须有可下载的按钮，点击后可以拉开目录控件选择存储地址进行存储」。
+
+### 45.1 缺口：连续缩放的档位是算出来的，不是定义出来的
+
+改造前 `+` / `−` 走**连续乘法**（每次 ×1.2）。「多级」在物理上**不可枚举**：
+点三次得到 `1.728` 倍，这个数字既不可复算也不可断言，用户也无法回答「我现在在第几级」。
+断言只能写成「大于 1」，那等于没断言。
+
+### 45.2 离散档位表（13 档）
+
+| 序 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 倍率 | 0.25 | 0.33 | 0.50 | 0.67 | 0.75 | **1.00** | 1.25 | 1.50 | 2.00 | 3.00 | 4.00 | 6.00 | 8.00 |
+
+- `+` / `−` **跳相邻档**，到端点即停（不越界、不回绕）；
+- 滚轮/触摸为**连续微调**，松手后**吸附到最近档位**（按对数距离，缩放是对数感知的）；
+- 产物暴露 `data-zoom-level` / `data-zoom-levels` / `data-zoom-default` / `data-zoom-snap` / `data-zoom-current` 五个机器可读属性。
+
+**可复算断言**：连点 `+` N 次后的倍率必须逐次等于档位表第 `默认序 + N` 档。
+
+### 45.3 下载三段降级
+
+| 序 | 条件 | 行为 |
+| :---: | :--- | :--- |
+| ① | 支持 `showSaveFilePicker` | 弹出**原生保存控件**，用户自选目录与文件名 |
+| ② | 不支持但支持 `Blob` + `createObjectURL` | `<a download="<有意义的名字>.<扩展名>">` 程序化点击 |
+| ③ | 都没有 | **就地可见提示**，禁止静默无反应 |
+
+白名单按产物类型二分：**图片型** → `png/jpg/jpeg/svg/webp`；**HTML 海报型** → `html`（导出它自己）。
+
+### 45.4 验收实数
+
+| 项 | 实测 |
+| :--- | :--- |
+| `verify-interactive-html` 断言数 | **26 项全过** |
+| 档位解析 | 13 档（要求 ≥ 5） |
+| 默认档 | 1.00，落在档位表内 |
+| 下载主路径 / 降级路径 | 均命中 |
+| 外链 | `<link>` / `<script src=>` / `http` 各 0 处 |
+
+**可证伪性**：4 个负向夹具各自只打中一条断言并 exit 1 —— 档数缩到 3 档 → `zoom_levels:count` 失败；
+移除 `showSaveFilePicker` → `api:showSaveFilePicker` 失败；扩展名改成 `.exe` → `filename:extension-whitelist` 失败；
+去掉档位与吸附标识 → `marker:data-zoom-snap` 失败。
+
+---
+
+## 46. 插件市场常显调控按钮 (REQ-PLUGIN-QUICKCONTROL-036)
+
+**需求原文**：「每个插件市场下载的插件必须常显按钮，这个按钮可以直接点击就进入到对应插件的详情控制页面，方便进行调控」。
+
+### 46.1 落点判定
+
+| 候选 | 事实 | 结论 |
+| :--- | :--- | :--- |
+| 宿主应用包 `/Applications/DSH Desktop.app` | 已签名 | **改它即破签名**（PKG-006 已有结论）→ 不可用 |
+| 插件市场本体 `dshmarket` v1.65.1 | 社区第三方包，装在 `.generations/live/` | **重装即覆盖** → 不可用 |
+| 宿主详情控制页 | **本来就存在**：`settings.plugins` / `settings.pluginInventory`，含 `data-plugin-entry` 与 `plugin-config-*` | 缺的只是**直达它的常显按钮** |
+| 宿主扩展机制 | `package.json` 的 `dsh.client.inject` + `platform: web` + `dsh.bundle.patch` | **自建 client 插件是唯一合规落点** |
+
+**这是「颗粒度过大不能物理触达」的教科书案例**：需求说的是 UI 行为，若只在 skill 层写一段
+「请给插件加个按钮」的说明，它 100% 无法被物理执行——没有可断言对象、没有可安装产物、没有可回滚动作。
+
+**因此引入全池第一个 plugin 层执行层**：`dsh-plugin-control-jump`。
+
+### 46.2 按钮契约
+
+| 项 | 取值 |
+| :--- | :--- |
+| 唯一标识 | `data-control-jump="<plugin-id>"` |
+| 常显位置 | 市场「已安装」列表与宿主插件清单的**每个条目** |
+| 点击语义 | 定位同 id 配置项 + 滚动进视口 + 高亮 |
+| 去重键 | `容器标识\|插件 id` |
+| 无 id 条目 | **绝不注入**（造不出正确跳转目标，比没有按钮更糟） |
+| 导航降级 | 宿主钩子 → 定位/点击原生导航 → 复制 id 并就地提示（**第三级永远可用**） |
+
+### 46.3 验收实数
+
+| 层 | 断言数 | 内容 |
+| :--- | ---: | :--- |
+| 静态 | 13 | 平台 web、client 入口、patch 一致、`__ModuleLoader__` 注册、bundle 逐字内联内核、零外链 |
+| 运行时（Node + DOM 打桩） | 18 | 每容器每 id 恰 1 个按钮、二次扫描幂等、跨容器隔离、同容器同名去重、id 解析三级回退 |
+| 合计 | **31 全过** | `verdict = control_button_verified` |
+
+**为什么必须有运行时层**：静态断言证明不了「重复渲染之后按钮不会翻倍」——那类缺陷只在真的跑一遍注入逻辑时才暴露。
+因此用 Node + DOM 打桩**真实执行** `inject-core.cjs`，而不是只 grep 字符串。
+
+**装配是幂等且可回滚的**：装配前备份 `package.json` 与 `cordis.patch.yml`；二次运行 `already_installed`、`changed=0`；
+`--rollback` 一键还原。实测装配后 `bundles` 由 20 项变 21 项。
+
+**生效条件（诚实声明）**：新增插件的 bundle 注册表在宿主启动时读取，**需重启宿主才生效，只刷新页面不够**。
+装配脚本输出 `restart_required=true`，绝不假装热更成功。
+
+---
+
+## 47. GitHub 与官网作为执行层检索源 (REQ-SEARCH-MULTISOURCE-038)
+
+**需求原文**：「图片可以去 github 去搜索，当要求找执行层的时候，github 以及官网可以作为搜索源，
+例如生成信息图的 skill github 上就有比较不错的 skill；可以去使用这个 skill」。
+
+### 47.1 缺口（实测确认，比需求描述的更大）
+
+查 `skills/search-github-skill/scripts/search_skill.py` 的实现：`load_candidates()` 的唯一输入是
+`--from-json` 或本地缓存 —— **它自己不联网、不检索 GitHub**。
+
+也就是说管线第一步「检索」**没有物理探针**，实际把工作外包给了模型的即兴发挥：
+既不可复现、也不可断言、更无法回答「搜了几个源、搜到几条」。这是典型的粒度过粗。
+
+### 47.2 四类源与本地优先
+
+| 序 | `source` | 物理手段 | 关键约束 |
+| :---: | :--- | :--- | :--- |
+| 1 | `local` | 读 catalog + 扫已装插件 `generation.json` | **命中即短路**，留痕 `skipped_sources` |
+| 2 | `github` | GitHub Search API（标准库 urllib，无凭据） | 未认证实测 **10 次/分钟**，超出 403 |
+| 3 | `official-site` | 官方站点自声明的 `sitemap.xml` | 来源可追溯、结果可复现 |
+| 4 | `awesome-list` | 由 github 源内清单型结果识别标注 | 与真实工具分开标注 |
+
+**为什么官网走 sitemap 而不是搜索引擎**：sitemap 是站点自己声明的页面全集；
+搜索引擎结果随排序策略漂移——同一查询今天第 1 名明天第 7 名，写不进可复算的判据。
+
+**中英同义桥**：用户说「信息图」，GitHub 上叫 `infographic`/`chart`/`diagram`。
+没有这座桥，中文查询在英文生态里的召回率接近 0。
+
+### 47.3 需求举的例子已经装在本机
+
+用户点名「生成信息图的 skill」——本机已装 `@tt-a1i/archify-dsh`（DSH 插件，同时在会话技能目录可见）。
+**本地优先原则当场生效**：查询「信息图」命中 `@tt-a1i/archify-dsh` 与 `@changfenhuang/dsh-genui`，
+`short_circuit=local`、`network_used=false`、一个网络请求都没发。**先复用不重造。**
+
+### 47.4 验收实数
+
+| 项 | 实测 |
+| :--- | :--- |
+| 本地短路（信息图） | `short_circuit=local`、`network_used=false`、2 条命中 |
+| 本地短路（命名） | `short_circuit=local`、3 条命中 |
+| 零命中且未允许外呼 | `success=false` + `network_skipped=true` +「这是未完成检索」 |
+| 允许外呼 | 真实 GitHub 检索命中（`showdown` ★14868 等） |
+| 限流 | `HTTP 403: rate limit exceeded` → `success=false` + `rate_limited` + 退 1（**不当作空结果**） |
+| 去重归一 | 5 条原始 → 去重 1 + 剔除 1 缺字段 → 3 条；连跑两次逐字节相同 |
+
+**两个实测踩出来的缺陷**（都已修）：
+① 联网后仍按原始 query 二次过滤 —— 而 query 带 `in:name,description` 限定符，必然全部落空，
+把「检索成功但结果为空」伪装成「没人在做这件事」；
+② `license` 拿到的是 GitHub 的 license **对象**，直接 `str()` 会把一坨 dict repr 写进候选，
+并让 `has_scripts` 恒为 `false`（假阴性）——改为取 `spdx_id`，且 `has_scripts` 改**三态**（`null` = 未探测）。
+
+---
+
+## 48. 本次演进带来的编制变化
+
+| 级别 | 新增数 | 总览 |
+| :--- | :--- | :--- |
+| L1 原子规约 | +3 | `zoom-level-policy`、`multi-source-search-policy`、`plugin-control-jump-policy` |
+| L2 工序动作 | +5 | `search-official-source`、`merge-search-candidates`、`dispatch-skill-search`、`install-client-plugin`、`verify-plugin-control-button` |
+| L3 复合流程 | +2 | `visual-interaction-guard`、`plugin-control-guard` |
+| **plugin 插件** | **+1** | `dsh-plugin-control-jump`（**全池第一个 plugin 层执行层**） |
+| 改造（不新增） | — | `format-zoomable-visual`、`build-image-viewer`、`verify-interactive-html`、`search-github-skill`、`skill-import-pipeline` |
+| **合计** | **+11** | skill 165 → 175，plugin 0 → 1，执行层总数 177 → **188** |
+
+### 48.1 自行拍定的默认值（依 §32 一次性原则）
+
+| 项 | 取值 | 依据 | 回滚方式 |
+| :--- | :--- | :--- | :--- |
+| 缩放档位 | 13 档（0.25 → 8.00），默认 100% | 覆盖「整体看全」到「看清单个像素块」，全部有限小数便于断言 | 改 `zoom-level-policy` 一处即全量生效 |
+| 吸附距离 | 对数距离最近档 | 缩放是对数感知的；算术距离会让低位档吸附偏移 | 同上 |
+| 下载主路径 | `showSaveFilePicker`，降级 Blob | 前者才是「拉开目录控件选地址」 | 规约改一处 |
+| 下载扩展名白名单 | 图片型 5 类 + 海报型 `html` | 按产物类型二分，避免「图片产物导出 HTML」 | 改探针白名单 |
+| 插件按钮落点 | 自建 client 插件（plugin 层） | 宿主已签名、市场是第三方包 | 装配脚本 `--rollback` |
+| 注入方式 | DOM 增强（MutationObserver + 属性锚点），不用 React | 注入目标在市场卡片内部，不是宿主 slot | 内核改一处 |
+| 本地优先 | 硬规则，命中即短路 | 用户示例（信息图 skill）本机已装 `archify-dsh`，重造无收益 | 规约改一处 |
+| 是否引入 archify 为新技能 | **否**，登记为已装外部能力 | 已在机器上且会话可见，重复引入会产生两份真相 | `skill-import-pipeline` 留痕 |
+| 官网源技术路线 | 站点自声明 sitemap | 来源可追溯、结果可复现；搜索引擎排序会漂移 | 规约改一处 |
+
