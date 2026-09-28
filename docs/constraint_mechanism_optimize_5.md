@@ -65,7 +65,42 @@
 **①硬门禁 ②常显看板 ③S07 待办常显 ④物理锁运行时拦截，四件事在物理层全部没在跑**，
 而 `control_gates.sh` 依旧报 4/4 门禁通过——它证明的只是"工程内文件自洽"，证明不了"机制活着"。
 
-### 3.3 结论（写入需求的硬要求）
+### 3.3 同一根因的第二条证据链：S07 待办常显"永远判不过"
+
+本次实测（**已挂载 `todo_write` 任务列表之后**复跑 `node scripts/mechanism_audit.mjs`，S07 仍判 `exit=1`）：
+
+```text
+./scripts/todo_gate.sh status
+会话标识: session-6d61aa3e-...
+待办常显：⛔ 无证据（未挂载任务列表）      # 已挂载仍无证据
+```
+
+穿透取证（grep 全库，谁写证据）：
+
+| 事实 | 证据 |
+| :--- | :--- |
+| 证据路径 | `$DSH_HOME/.dsh-control/todos/<会话ID>.json`（`scripts/lib/todo_gate_cli.mjs:15`） |
+| **运行时唯一的写入者** | `ai-control/plugin/index.mjs:965` → `recordTodoWriteSync(...)`（拦截层插件） |
+| 磁盘实况 | 该目录只有 **1 个旧会话**（`session-33f12493-…`，01:48）的证据，本会话无 |
+| 判定链 | 插件未加载 → 无人写证据 → 判定器永远拿不到证据 → **S07 永远 `NO_TODO` 阻断** |
+
+**即：`todo_write` 这个动作本身在物理层是"只显示、不落盘"** —— 表面看任务列表挂上了，
+判定器那头永远是空白。这正是"空架子"最典型的形态：**不是没写规则，而是写证据的那个人没在跑**。
+
+### 3.4 附带取证：状态快照目录在当前沙箱模式下不可写
+
+```text
+./scripts/control_gates.sh check
+./scripts/control_gates.sh: line 557: ~/.dsh/.dsh-control/status.json.tmp: Operation not permitted
+touch: ~/.dsh/.dsh-control/cache.env: Operation not permitted
+```
+
+`~/.dsh/.dsh-control/` 的 mtime 冻结在 **04:00**（`touch` 探针实测 `WRITE DENIED`）。
+即：**门禁看板的状态快照与物理锁凭据的落盘通道，在 `workspace-write` 策略下物理不通**——
+看板数字仍能算出来（读的是工程内文件），但"机制活着"的状态无法留存为跨会话凭据。
+本项与 3.2 同属"判定层 vs 载体"脱节，列入 R1 清单。
+
+### 3.5 结论（写入需求的硬要求）
 
 1. **判定必须穿透到"载体是否活着"**，不能止于"文件是否存在"（存在性检查抓不到语法错误、抓不到条目丢失、抓不到宿主未加载）；
 2. 有实物但宿主无扩展面的（如 `process-supervisor-agent`），**只许标 `BLOCKED` 并写明缺哪种宿主面**，不许写"已优化"含糊过去；
@@ -216,5 +251,8 @@ node scripts/conflict_scan.mjs --root .              # 冲突 = 0
 | `./scripts/control_gates.sh check` | 4/4 通过（骨架 11/11 · 防丢 11/11 · 合规 5/5 · 孤儿 0 · 条目 86 · 高相似对 0） |
 | `node scripts/mechanism_audit.mjs` | 13 条 · 已触达 7 · 硬性未触达 3 · 无载体 3 |
 | `./scripts/physical_lock.sh status` | 锁阶 `[0] LOCK-0`，已签署凭据 0 条（本会话首次探境态） |
-| `./scripts/todo_gate.sh check` | 首次报"无任务列表证据"→ 挂载 `todo_write` 后复跑通过（探针顺序导致，非缺陷） |
+| `./scripts/todo_gate.sh check` | 首次报"无任务列表证据"→ 挂载 `todo_write` 后**复跑仍报同一结论**（根因见 §3.3，非探针顺序问题） |
 | `./scripts/install_host_gate.sh verify` | 条目缺失 + 载体语法通过 + 无 isHost 凭据（exit 1） |
+| `./scripts/control_gates.sh check` | 4/4 通过，但 stderr 报 `status.json.tmp / cache.env: Operation not permitted`（状态快照落盘被沙箱拦下，见 §3.4） |
+| `./scripts/audit_execution.sh` | 补 `node` 进 PATH 后 80/100（扣 12 分待办常显 = §3.3 根因；扣 8 分输出度量未采集）；不补 PATH 时误报 36/100 |
+| grep 全库 `recordTodoWrite` | 运行时唯一写入者 = `ai-control/plugin/index.mjs:965`（即那条没被加载的拦截层插件） |

@@ -2352,8 +2352,14 @@
 - **本轮实测依据（可复跑）**：
   - `node scripts/mechanism_audit.mjs` → 登记 13 条 · 已触达 7 · 硬性未触达 3 · 无载体 3；
   - `./scripts/install_host_gate.sh verify` → profile 条目缺失 + 载体语法通过 + 无 `isHost=true` 凭据（exit 1）；
-  - `./scripts/control_gates.sh check` → 4/4（骨架 11/11 · 防丢 11/11 · 合规 5/5 · 条目 86 · 高相似对 0）；
-  - `./scripts/physical_lock.sh status` → 锁阶 `[0] LOCK-0`，已签署凭据 0 条。
+  - `./scripts/control_gates.sh check` → 4/4（骨架 11/11 · 防丢 11/11 · 合规 5/5 · 条目 87 · 高相似对 0），
+    但 stderr 报 `~/.dsh/.dsh-control/status.json.tmp / cache.env: Operation not permitted`（状态快照落盘物理不通，见文案 §3.4）；
+  - `./scripts/physical_lock.sh status` → 锁阶 `[0] LOCK-0`，已签署凭据 0 条；
+  - **S07 待办常显"永远判不过"的根因（本轮穿透取证）**：证据路径 `$DSH_HOME/.dsh-control/todos/<会话ID>.json`，
+    全库 grep 确认运行时**唯一写入者是 `ai-control/plugin/index.mjs:965`**（即那条未被宿主加载的拦截层插件）——
+    插件不跑 → 无人写证据 → 判定器永远 `NO_TODO` 阻断；磁盘上仅有 1 个旧会话证据文件，
+    **挂载 `todo_write` 后复跑 `mechanism_audit` 仍判 exit=1**，证明不是探针顺序问题（见文案 §3.3）；
+  - `./scripts/audit_execution.sh` → 补 `node` 进 PATH 后 80/100（扣 12 分待办常显 = 上述同根因；扣 8 分输出度量未采集）。
 - **验收标准**：
   - [ ] `node scripts/mechanism_audit.mjs --exit` 硬性未触达 = 0（exit 0）；
   - [ ] `node scripts/build_capabilities_index.mjs --check` 叶子层未收录 = 0；
