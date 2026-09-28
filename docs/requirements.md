@@ -1,9 +1,9 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.21.0`
+> - **当前系统实施总版本**：`v4.22.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
-> - **最后同步时间**：2026-09-24
+> - **最后同步时间**：2026-09-28
 > - **版本状态**：`[Release 稳定生效]`
 
 本文档是本项目唯一的**独立核心需求管理台账**。按照系统元规则，所有规则的提出、变动与注销都必须在此记录，杜绝没有需求依据的规则变更。
@@ -2173,6 +2173,62 @@
   - [x] 全域存量工程脚本实跑完成，5 个工程 100% 规范化；
   - [x] 全局需求台账与管控台账同步跃迁至 v4.21.0；
   - [x] 双检扫描（冗余、冲突、存量校准）100% 绿灯通过。
+
+### REQ-080: S07 待办常显物理化治理（任务列表硬约束 · 原子证据层 · 物理锁一跳解锁）
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.22.0`
+- **提出时间**：2026-09-28
+- **最新更新**：2026-09-28
+- **核心诉求与交付物**：
+  1. **根因治理**：「任务必须常显在输入框上方」此前只是 `task_execution_flow.md` 防线 3 里的一句话——拦截层只看 `status.json` 与物理锁，从不看待办证据，无一脚本可判定，属于"无客观判定即无约束"；
+  2. **原子证据层**：新增 `scripts/lib/todo_tracker.mjs`，每次 `todo_write` 落盘一条带时间戳的证据（含 total / completed / inProgress / percent），任何一方都能在不采信自述的前提下判定；
+  3. **可判定入口**：新增 `scripts/todo_gate.sh`（`status` / `check` / `json` / `record` / `selftest`），退出码即判定，三态自检（无证据 / 假收尾 / 合规）全绿；
+  4. **运行时硬门禁**：拦截层对改动型调用（write / edit / bash / pwsh / render_ui / present）前置判定——无任务列表或列表无 `in_progress` 项一律拒绝，并给出自救动作；逃生开关 `DSH_CONTROL_TODO=off`；
+  5. **物理锁一跳解锁**：修复"todo_write 只放行、却没有任何代码把它推到 LOCK-2 → write/edit 永久阻断"的历史死锁，新增 `advanceLockTo` 逐阶带凭据晋升；`physical_lock.sh sync` 按磁盘实况（门禁全绿 + 待办证据）自动对齐锁阶。
+- **关联文件**：`scripts/lib/todo_tracker.mjs`、`scripts/lib/todo_gate_cli.mjs`、`scripts/todo_gate.sh`、`scripts/lib/physical_lock.mjs`、`scripts/physical_lock.sh`、`ai-control/plugin/index.mjs`、`ai-control/plugin/selftest.mjs`
+- **验收标准**：
+  - [x] `./scripts/todo_gate.sh selftest` 三态自检 3/3 通过；
+  - [x] 拦截层自检 `node ai-control/plugin/selftest.mjs` 69/69 全绿（含 7 条 S07 专项用例）；
+  - [x] 宿主实测：无待办证据时 `bash` 调用被真实拒绝，`todo_write` 后证据落盘、`todo_gate.sh check` 退出码 0；
+  - [x] `./scripts/physical_lock.sh sync` 依据磁盘实况逐阶晋升至 LOCK-2 并留痕凭据。
+
+---
+
+### REQ-081: 输出精简客观度量（体量 + 文末五联装结构 · 审计第 8 维）
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.22.0`
+- **提出时间**：2026-09-28
+- **最新更新**：2026-09-28
+- **核心诉求与交付物**：
+  1. **根因治理**：`meta_rules.md` 第二十五条等处的"极简高信噪比"此前**没有任何判定手段**——门禁只数文件，审计六维全是过程合规，没有一维回答"这次回复啰不啰嗦"；
+  2. **客观度量**：新增 `scripts/lib/output_compactness.mjs`，把"废话多不多"降为两个可测数字：正文字符数/行数（代码块与表格行不计入，避免把交付物误判成废话）与文末五联装标头齐备度；
+  3. **零成本采集**：拦截层订阅 `session/event` 的 `assistant/message`，逐条落盘到 `$DSH_HOME/.dsh-control/compact/<会话ID>.json`，不额外增加模型往返；
+  4. **审计第 8 维**：`audit_execution.sh` 新增"输出精简"8 分；未采集或未达标一律扣分——把缺失记为通过等于给机制开永久免检口。
+- **关联文件**：`scripts/lib/output_compactness.mjs`、`ai-control/plugin/index.mjs`、`scripts/audit_execution.sh`
+- **验收标准**：
+  - [x] 度量模块可独立运行（纯函数，无副作用）；
+  - [x] 审计脚本实跑输出 8 个维度、总分 100；
+  - [x] 度量报告在真实回复后落盘可读，且缺失时被明确判为扣分而非默认通过。
+
+---
+
+### REQ-082: 管控拦截层宿主注册根因治理（规则与物理运行时断层清零）
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.22.0`
+- **提出时间**：2026-09-28
+- **最新更新**：2026-09-28
+- **核心诉求与交付物**：
+  1. **实测根因**：`profiles/web/cordis.patch.yml` 中从来没有 AI 执行流程管控的注册条目，`plugin-status.txt` 的 `isHost=false`（最后一次激活来自自检脚本）——"待办常显 / 硬门禁 / 常显看板 / 自动命名"在物理运行时**全部不存在**：规则在，机制不在，这正是"硬要求却没有实现"的直接答案；
+  2. **注册动作**：写入 `file://…/ai-control/plugin/loader.mjs` 条目（走 loader 以保留"加载失败降级为空插件"的故障安全），并配套新增幂等脚本 `scripts/install_host_gate.sh`（`verify` / `install` / `uninstall`）；
+  3. **可验证**：`verify` 以"条目在位 + 加载器存在 + `isHost=true`"三重证据判定，未激活一律退出码 1，**不把"我写了配置"谎称为"机制在运行"**；
+  4. **抗覆盖**：桌面端插件管理器重写 profile 配置后，重跑 `install` 即可恢复（幂等、自动备份）。
+- **关联文件**：`scripts/install_host_gate.sh`、`ai-control/plugin/loader.mjs`、`ai-control/plugin/index.mjs`、`profiles/web/cordis.patch.yml`（宿主侧，不入本仓版本控制）
+- **验收标准**：
+  - [x] `./scripts/install_host_gate.sh verify` 退出码 0，且 `plugin-status.txt` 显示 `isHost=true`；
+  - [x] 常显看板在真实会话中每步刷新（系统提示中的"🎛️ 管控看板"）；
+  - [x] 宿主实测硬门禁真实拒绝（bash 被 S07 拒止），证明拦截层已在运行时生效。
+
+---
 
 ---
 

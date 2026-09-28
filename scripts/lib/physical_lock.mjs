@@ -124,6 +124,48 @@ export async function advanceLock(sessionId, targetStage, proofData, dshHome) {
   return { success: true, stage: state.stage, changed: true }
 }
 
+/**
+ * 逐阶推进到目标阶梯（可跨多阶，但**每一阶都必须带真实凭据**）。
+ *
+ * 为什么必须提供这个函数（2026-09-28 实测缺陷）：
+ *   `advanceLock` 刻意禁止跨阶跳步（targetStage > stage + 1 即拒绝）。
+ *   但"门禁全绿 + 已挂任务列表"这两个条件**可能在一次调用里同时成立**——
+ *   例如会话在插件尚未加载时就已经完成命名与门禁，之后第一次 todo_write
+ *   直接同时满足 LOCK-1 与 LOCK-2 的凭据。此时若只调一次 advanceLock(2)，
+ *   会被"不可跨阶"拒绝，锁永远停在 0，write/edit 被**永久**阻断——
+ *   一个永远解不开的锁，与没有锁在结果上是一样的：都只是把工作停掉。
+ *
+ * 语义边界：逐阶推进不等于跳步检查失效——每一阶仍要求调用方给出该阶凭据
+ * （`proofs[stage]`），无凭据的阶梯不会凭空晋升。
+ *
+ * @param {string} sessionId
+ * @param {number} targetStage 目标阶梯
+ * @param {Record<number, object>} proofs 形如 `{1:{...},2:{...}}`，逐阶凭据
+ * @param {string} [dshHome]
+ * @returns {Promise<{success:boolean, stage:number, advanced:number[], error?:string}>}
+ */
+export async function advanceLockTo(sessionId, targetStage, proofs = {}, dshHome) {
+  const advanced = []
+  let state = await getLockState(sessionId, dshHome)
+  while (state.stage < targetStage) {
+    const next = state.stage + 1
+    const proof = proofs[next]
+    if (!proof) {
+      return {
+        success: false,
+        stage: state.stage,
+        advanced,
+        error: `缺少 LOCK-${next} (${STAGE_NAMES[next]}) 的客观凭据，拒绝无凭据晋升`,
+      }
+    }
+    const res = await advanceLock(sessionId, next, proof, dshHome)
+    if (!res.success) return { success: false, stage: res.stage, advanced, error: res.error }
+    advanced.push(next)
+    state = await getLockState(sessionId, dshHome)
+  }
+  return { success: true, stage: state.stage, advanced }
+}
+
 /** 重置锁状态 */
 export async function resetLock(sessionId, dshHome) {
   const state = {

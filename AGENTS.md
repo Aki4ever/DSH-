@@ -13,10 +13,18 @@
 任何改动型动作（写文件、改配置、跑构建）之前，先运行管控看板与物理锁状态：
 
 ```bash
-./scripts/control_gates.sh check     # 输出量化看板（进度/卡点/指标）
-./scripts/control_gates.sh badge     # 一行式徽标
-./scripts/physical_lock.sh status    # 查看底层物理锁阶梯与凭据
+./scripts/control_gates.sh check      # 输出量化看板（进度/卡点/指标）
+./scripts/control_gates.sh badge      # 一行式徽标
+./scripts/physical_lock.sh status     # 查看底层物理锁阶梯与凭据
+./scripts/physical_lock.sh sync       # 按磁盘实况逐阶对齐物理锁（带凭据，不跳阶）
+./scripts/todo_gate.sh check          # S07 待办常显判定：未挂任务列表 → 改动型调用被拒
+./scripts/install_host_gate.sh verify # 机制载体自证：宿主是否真的加载了拦截层（isHost=true）
 ```
+
+> **为什么后两条必须常跑（REQ-080 / REQ-082 实测根因）**：门禁看板只能证明"工程内文件对不对"，
+> 证明不了"规则要求的机制在不在运行"。实测发现拦截层插件从未被宿主加载（`isHost=false`），
+> 于是"待办常显/硬门禁/常显看板"物理上全部不存在，而看板依旧 100%。
+> 判定必须穿透到**载体是否活着**，否则它证明的只是文档自洽。
 
 | 门禁 | 含义 | 量化指标 |
 | :--- | :--- | :--- |

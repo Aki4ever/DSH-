@@ -32,7 +32,9 @@ import { homedir } from 'node:os'
 import { execFile } from 'node:child_process'
 import { existsSync, writeFileSync, readFileSync } from 'node:fs'
 import { autoNameOnce, parseTitle as parseNamingTitle } from '../../scripts/lib/auto_naming.mjs'
-import { evaluatePhysicalLock, getLockState } from '../../scripts/lib/physical_lock.mjs'
+import { evaluatePhysicalLock, getLockState, advanceLockTo, STAGES } from '../../scripts/lib/physical_lock.mjs'
+import { checkTodoGate, recordTodoWriteSync } from '../../scripts/lib/todo_tracker.mjs'
+import { buildCompactReport, writeCompactReport } from '../../scripts/lib/output_compactness.mjs'
 
 /** Cordis 插件名（用于诊断与事件来源标注）。 */
 export const name = 'ai-execution-control'
@@ -97,10 +99,41 @@ export const Config = {
     // 物理锁 CLI 工具：用于查看、推进或重置物理锁
     'scripts/physical_lock.sh',
     'scripts/name_me.sh',
+    // 归卷入仓入口：**门禁 G3 自己要求"未提交变更不能超阈值"，而唯一的提交动作
+    // 恰好会被门禁拦住**——2026-09-28 实测死锁：68 个待提交文件 > 阈值 30 →
+    // execAllowed=false → `git add`/`git_sync_remote.sh` 全被拒 → 永远无法提交。
+    // 这与本文件开头 2026-09-23 修掉的那次死锁**是同一类问题**：
+    // "门禁要求 X，而做 X 的工具被门禁拦住"。
+    // 该脚本只做 add / commit / push，不改工程内容，且其提交信息由调用方显式给出。
+    'scripts/git_sync_remote.sh',
   ],
   escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
   /** 是否在拒绝理由中附带看板摘要。 */
   verbose: false,
+  /**
+   * ── S07 待办常显硬门禁（REQ-080）────────────────────────────────────────────
+   * 为什么需要它：`task_execution_flow.md` 把"任务必须常显在输入框上方"列为防线 3，
+   * 但历史上没有任何客观判定——拦截层只看 status.json 与物理锁，从不看待办证据。
+   * 于是"必须有任务列表"只是一句 Markdown 愿望（实测：整条拦截层从未被宿主加载）。
+   *
+   * 现在把它降为运行时硬约束：受控工具（改动型）被调用前，磁盘上必须存在
+   * 本会话的待办证据，且其中至少 1 项 in_progress。
+   *   · 无列表       → 阻断（防黑盒盲动）
+   *   · 全 completed → 阻断（防"全部标完成"式假收尾）
+   *
+   * 逃生舱：环境变量 `DSH_CONTROL_TODO=off` 关闭本门禁（与全局逃生舱独立）。
+   */
+  enforceTodo: true,
+  /** 需要在挂载任务列表之后才允许调用的工具（改动型 + 交付型）。 */
+  todoGuardedTools: ['write', 'edit', 'bash', 'pwsh', 'render_ui', 'present'],
+  /** 待办证据阈值：in_progress 至少几项（1 即"执行途中必须有正在推进的步骤"）。 */
+  todoMinInProgress: 1,
+  /**
+   * ── 输出压缩阈值（REQ-081）──────────────────────────────────────────────────
+   * 正文字符数与行数上限。超过即判 sizeOk=false，审计维度据此扣分。
+   * 口径刻意取宽松值：宁可漏判"略啰嗦"，也不要逼出"为凑字数而砍掉关键信息"。
+   */
+  compactThresholds: { maxChars: 1800, maxLines: 60 },
 }
 
 // ── 内部状态 ─────────────────────────────────────────────────────────────────
@@ -174,16 +207,23 @@ function resolveStateDir(config) {
  */
 async function readStatus(stateDir, force = false) {
   const now = Date.now()
-  if (!force && cached.data && now - cached.at < CACHE_MS) return cached.data
+  const file = join(stateDir, 'status.json')
+  // 缓存必须绑定"读的是哪个文件"，不能只绑时间。
+  // 历史缺陷（2026-09-28 自检实测发现）：冷启动自举用例会传一个空的 stateDir，
+  // 而模块级缓存在此之前已被真实 DSH_HOME 的 status.json 填满；旧实现只看时间戳，
+  // 于是直接返回了**另一个目录**的缓存值，`needsBootstrap()` 判为 false、
+  // 自举永不触发，`status.json` 始终不存在 —— 而真实宿主里这会表现为
+  // "换了 stateDir 却一直读到旧目录的状态"。多目录场景下这是实质错误，不是测试洁癖。
+  if (!force && cached.data && cached.file === file && now - cached.at < CACHE_MS) return cached.data
   try {
-    const raw = await readFile(join(stateDir, 'status.json'), 'utf8')
+    const raw = await readFile(file, 'utf8')
     const data = JSON.parse(raw)
     if (!data || typeof data !== 'object' || typeof data.gateTotal !== 'number') return null
-    cached = { at: now, data }
+    cached = { at: now, data, file }
     return data
   } catch {
     // 状态文件尚不存在（尚未运行过门禁脚本）或损坏
-    cached = { at: 0, data: null }
+    cached = { at: 0, data: null, file }
     return null
   }
 }
@@ -495,6 +535,59 @@ function renderBadge(s) {
 }
 
 /**
+ * 解析本次调用所属的会话 ID。
+ *
+ * 为什么不能只读 `process.env.DSH_SESSION_ID`：宿主是多会话进程，环境变量属于
+ * 宿主进程而非某个具体会话；一旦有并发会话，用环境变量会把 A 会话的待办证据
+ * 判给 B 会话。因此优先取执行对象自带的 agent 身份（dsh-tools 会把 `agent`
+ * 挂在 execution 上），环境变量只作为最后兜底。
+ */
+function resolveSessionId(execution) {
+  const a = execution?.agent
+  const id = a?.session?.id ?? a?.sessionId ?? a?.id
+  if (typeof id === 'string' && id) return id
+  return process.env.DSH_SESSION_ID || 'global_session'
+}
+
+/**
+ * S07 待办常显硬门禁判定（REQ-080）。
+ *
+ * 判什么：受控工具被调用时，磁盘上必须已有本会话的待办证据，且至少
+ * `config.todoMinInProgress` 项处于 in_progress。
+ * 判不了什么：它不保证前端 TodoPanel 一定被渲染（那属于宿主 UI 契约），
+ * 它保证的是"没有任务列表就动不了工程"——把"过程可见"变成动作前置条件。
+ *
+ * @returns {string|undefined} 拒绝理由；undefined 表示放行。
+ */
+function evaluateTodoGate(execution, config) {
+  if (config.enforceTodo === false) return undefined
+  if (process.env.DSH_CONTROL_TODO === 'off') return undefined
+  const toolName = String(execution?.name || '')
+  if (!(config.todoGuardedTools || []).includes(toolName)) return undefined
+
+  const sid = resolveSessionId(execution)
+  // 必须与"记录证据"时用同一个 dshHome：读写两端若各自回退默认值，
+  // 多目录/多环境场景下就会出现"刚写完却读不到"的假阴性（自检实测踩过）。
+  const home = config.dshHome || process.env.DSH_HOME
+  const verdict = checkTodoGate(sid, home)
+  if (verdict.ok) return undefined
+
+  const minInProgress = config.todoMinInProgress ?? 1
+  const fix = verdict.code === 'NO_TODO'
+    ? '自救动作：先调用 `todo_write` 挂载结构化任务分解（至少 1 项 in_progress），再执行本次动作。'
+    : `自救动作：调用 \`todo_write\` 把当前真正在推进的步骤标为 in_progress（至少 ${minInProgress} 项），再执行本次动作。`
+
+  return [
+    `⛔ 流程管控硬门禁【S07 待办常显】：拒绝本次 \`${toolName}\` 调用。`,
+    `判定依据（磁盘证据，非模型自述）：${verdict.message}`,
+    `证据文件：\`~/.dsh-control/todos/${String(sid).replace(/[^a-zA-Z0-9_-]/g, '_')}.json\``,
+    fix,
+    '只读工具（read/grep/glob）与 todo_write 始终可用；`./scripts/todo_gate.sh status` 可查看实况。',
+    '若确需绕过：设置环境变量 DSH_CONTROL_TODO=off（仅关闭本门禁）或 DSH_CONTROL_GUARD=off（关闭全部管控）。',
+  ].join('\n')
+}
+
+/**
  * 判定是否应拦截该工具调用。
  * 导出以便自检脚本在不启动 DSH 的情况下验证判定逻辑。
  * @returns 拒绝理由字符串；`undefined` 表示放行。
@@ -553,7 +646,15 @@ export function evaluate(execution, status, config, cacheAgeMs = 0, lockState = 
   }
 
   // 6) 全部门禁通过且物理锁未阻断 → 放行
-  if (status.execAllowed) return undefined
+  if (status.execAllowed) {
+    // 6b) S07 待办常显硬门禁（REQ-080）刻意放在这里，而不是最前面：
+    //     顺序语义是"先证明自己有资格执行（门禁/物理锁），再证明执行过程可见"。
+    //     若放在最前，status.json 缺失时会先报待办缺失，把真正的根因（依据不可证实）
+    //     盖掉——历史教训是同类的"错误归因"（见 STALE_MS 那段注释）。
+    const todoDenied = evaluateTodoGate(execution, config)
+    if (todoDenied) return todoDenied
+    return undefined
+  }
 
   // 6) 拒绝，并给出可执行的修复路径
   const blockedGate = (status.gates || []).find((g) => g.status !== 'pass')
@@ -697,6 +798,28 @@ export function apply(ctx, config = {}) {
     }
   }
 
+  // ── 输出压缩度量（REQ-081）：订阅会话事件流，给每次回复算体量与结构 ─────────
+  // 为什么挂在这里而不是新增一个插件：度量必须与拦截层用同一个 dshHome / stateDir，
+  // 否则"度量写到 A、审计读 B"又是一次读写错位（本项目历史上踩过同类坑）。
+  // 容错口径：任何解析失败只记一条 warn 一次，绝不影响对话。
+  if (cfg.enforce) {
+    try {
+      ctx.on('session/event', (session, event) => {
+        try {
+          if (!event || event.type !== 'assistant/message') return
+          const sid = session?.id
+          if (typeof sid !== 'string' || !sid) return
+          const text = extractText(event.data?.message)
+          if (!text) return
+          const report = buildCompactReport(text, cfg.compactThresholds || {})
+          writeCompactReport(sid, report, cfg.dshHome || process.env.DSH_HOME)
+        } catch { /* 度量失败绝不影响对话 */ }
+      })
+    } catch (err) {
+      console.warn('[ai-execution-control] 输出压缩度量未挂载（管控降级）：', err?.message || err)
+    }
+  }
+
   // ── 硬门禁：拒绝门禁未通过时的改动型调用 ──────────────────────────────────
   if (cfg.enforce) {
     if (process.env.DSH_CONTROL_GUARD === 'off') return
@@ -711,6 +834,41 @@ export function apply(ctx, config = {}) {
 
     try {
       ctx.tools.guard((execution) => {
+        // ── S07 证据落盘 + 物理锁自动晋升（REQ-080）──────────────────────────
+        // 为什么必须在守卫里做（而不是另挂一个 hook）：
+        //   1) 这是**唯一**能在"工具真正执行前"同步拿到 `execution.arguments` 的地方；
+        //   2) `todo_write` 恒定放行（alwaysAllowed），守卫是它唯一会经过的关卡；
+        //   3) 历史缺陷：物理锁 STAGE1(SPEC_PASSED) 要求"必须先 todo_write"，
+        //      但 todo_write 之后**没有任何代码把它推到 STAGE2(PLAN_PASSED)**，
+        //      于是锁永远停在 STAGE1、write/edit 被永久阻断 —— 判定形同死锁。
+        //      现在由这里补上自动晋升，让"待办常显"从口号变成解锁条件。
+        if (String(execution?.name || '') === 'todo_write') {
+          try {
+            const sid = resolveSessionId(execution)
+            const home = cfg.dshHome || process.env.DSH_HOME || join(homedir(), '.dsh')
+            const ev = recordTodoWriteSync(sid, execution.arguments, home, { source: 'guard' })
+            if (ev && ev.inProgress > 0 && ev.total > 0) {
+              // 物理锁晋升是异步旁路：绝不阻塞守卫（守卫契约是同步的）。
+              // 逐阶给凭据：LOCK-1 的凭据是"门禁全绿"（此刻 status.execAllowed 为真），
+              // LOCK-2 的凭据就是本次真实落盘的待办证据。两阶都可能在同一次调用里
+              // 首次同时成立，因此必须用 advanceLockTo 逐阶带凭据推进，
+              // 而不是单次 advanceLock(2)——那会被"不可跨阶"拒绝，锁永远停在 0。
+              const gatesGreen = cached.data?.execAllowed === true
+              const proofs = {}
+              if (gatesGreen) proofs[STAGES.SPEC_PASSED] = { trigger: 'gates_green', source: 'guard' }
+              proofs[STAGES.PLAN_PASSED] = {
+                trigger: 'todo_write_guard',
+                todos: ev.total,
+                inProgress: ev.inProgress,
+              }
+              getLockState(sid, home)
+                .then((s) => advanceLockTo(sid, STAGES.PLAN_PASSED, proofs, home))
+                .catch(() => {})
+            }
+          } catch { /* 证据落盘失败绝不影响放行：todo_write 本身无害 */ }
+          return undefined
+        }
+
         // 守卫必须是同步的；用缓存值判定。
         const status = cached.data
         const age = Date.now() - cached.at
@@ -718,7 +876,9 @@ export function apply(ctx, config = {}) {
         if (status && age >= STALE_MS) fireRefresh(stateDir)
         let currentLockState = null
         try {
-          const sid = process.env.DSH_SESSION_ID || 'global_session'
+          // 与待办证据、物理锁晋升共用同一个会话解析：三处若各读各的会话 ID，
+          // 会出现"证据记在 A、锁判在 B"的错位（多会话宿主下必然发生）。
+          const sid = resolveSessionId(execution)
           const home = cfg.dshHome || process.env.DSH_HOME || join(homedir(), '.dsh')
           const lockFile = join(home, '.dsh-control', 'physical_locks', `${sid.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`)
           if (existsSync(lockFile)) {

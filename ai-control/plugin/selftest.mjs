@@ -48,6 +48,18 @@ const statusClear = { ...statusBlocked, gatePassed: 4, percent: 100, execAllowed
 const FRESH = 0        // 缓存刚刷新
 const STALE = 999999   // 缓存过期
 
+/**
+ * 关闭 S07 待办常显门禁的配置。
+ *
+ * 为什么自检里必须用它：本文件第 1~6 组用例只检验"门禁状态 → 放行/拒绝"这条链路，
+ * 而 S07 门禁在**门禁全绿之后**还会追加一道"必须已有任务列表"的判定。
+ * 若不放开关，桩件场景里从未真实经历 todo_write，用例会全部被 S07 拒绝，
+ * 把"门禁状态判定本身是否失效"这个真正要测的东西掩盖掉——
+ * 一个被无关条件污染的自检，只会给出虚假的绿。
+ * S07 自身的判定在第 7 组单独覆盖。
+ */
+const ConfigNoTodo = { ...Config, enforceTodo: false }
+
 // ── 用例 ─────────────────────────────────────────────────────────────────────
 // 1) 门禁未通过 → 改动型工具必须被拒
 check('门禁未过 · write 被拒', evaluate({ name: 'write', ...args({ path: 'a.md', content: 'x' }) }, statusBlocked, Config, FRESH) !== undefined, true)
@@ -117,7 +129,7 @@ check('无状态 · write 失败关闭', evaluate({ name: 'write', ...args({ pat
 //   注意区分两件事：陈旧只影响"要不要因新鲜度而拒"，**不改变门禁本身的结论**。
 //   门禁确实未过时，陈旧状态下照样要拒（陈旧不是免死金牌）。
 check('状态陈旧 · 门禁未过时仍被拒', evaluate({ name: 'write', ...args({ path: 'note.md' }) }, statusBlocked, Config, STALE) !== undefined, true)
-check('状态陈旧 · 门禁全过时放行', evaluate({ name: 'write', ...args({ path: 'note.md' }) }, statusClear, Config, STALE), undefined)
+check('状态陈旧 · 门禁全过时放行', evaluate({ name: 'write', ...args({ path: 'note.md' }) }, statusClear, ConfigNoTodo, STALE), undefined)
 check('无状态 · read 仍放行', evaluate({ name: 'read' }, null, Config, STALE), undefined)
 
 // 4b) 形状非法的状态不得放行（历史缺陷：`g.status` 抛错被外层 catch 吞掉 → 畸形状态反而放行）
@@ -126,12 +138,55 @@ check('形状非法 · write 失败关闭', evaluate({ name: 'write', ...args({ 
 check('形状非法 · gates 缺失也失败关闭', evaluate({ name: 'write', ...args({ path: 'note.md' }) }, { gateTotal: 4, execAllowed: false }, Config, FRESH) !== undefined, true)
 
 // 5) 全部门禁通过 → 完全放行
-check('门禁全过 · write 放行', evaluate({ name: 'write', ...args({ path: 'a.md' }) }, statusClear, Config, FRESH), undefined)
-check('门禁全过 · bash 放行', evaluate({ name: 'bash', ...args({ command: 'npm test' }) }, statusClear, Config, FRESH), undefined)
+check('门禁全过 · write 放行', evaluate({ name: 'write', ...args({ path: 'a.md' }) }, statusClear, ConfigNoTodo, FRESH), undefined)
+check('门禁全过 · bash 放行', evaluate({ name: 'bash', ...args({ command: 'npm test' }) }, statusClear, ConfigNoTodo, FRESH), undefined)
 
 // 6) 非受控工具不受影响
 check('非受控 · subagent 放行', evaluate({ name: 'subagent' }, statusBlocked, Config, FRESH), undefined)
 check('非受控 · goal 工具放行', evaluate({ name: 'create_goal' }, statusBlocked, Config, FRESH), undefined)
+
+// 6b) S07 待办常显硬门禁（REQ-080）：门禁全绿也不再等于"可以直接动手"
+//     判据只有磁盘证据：本会话没有任务列表证据 / 有列表但无 in_progress → 拒绝改动型调用。
+//     为什么必须单独覆盖：这是"任务列表必须常显"从口号变成物理约束的唯一判定点。
+{
+  const { mkdtemp, rm } = await import('node:fs/promises')
+  const { join } = await import('node:path')
+  const { tmpdir } = await import('node:os')
+  const { recordTodoWriteSync } = await import('../../scripts/lib/todo_tracker.mjs')
+
+  const home = await mkdtemp(join(tmpdir(), 'dsh-todo-selftest-'))
+  const sid = 'session-s07-selftest'
+  const cfgTodo = { ...Config, dshHome: home, enforceTodo: true }
+  const cfgTodoOff = { ...Config, dshHome: home, enforceTodo: false }
+  const exec = { name: 'write', arguments: { path: 'a.md' }, agent: { session: { id: sid } } }
+
+  // 态 1：还没有任何任务列表证据 → 拒绝
+  const r1 = evaluate(exec, statusClear, cfgTodo, FRESH)
+  check('S07 · 无任务列表时改动被拒', typeof r1 === 'string' && r1.includes('S07'), true)
+  check('S07 · 拒绝理由给出自救动作', typeof r1 === 'string' && r1.includes('todo_write'), true)
+
+  // 态 2：列表全 completed（假收尾）→ 拒绝
+  recordTodoWriteSync(sid, { todos: [{ content: '步骤一', status: 'completed' }] }, home, { source: 'selftest' })
+  const r2 = evaluate(exec, statusClear, cfgTodo, FRESH)
+  check('S07 · 全完成无进行中时改动被拒', typeof r2 === 'string' && r2.includes('S07'), true)
+
+  // 态 3：列表含 in_progress → 放行
+  recordTodoWriteSync(sid, {
+    todos: [{ content: '步骤一', status: 'completed' }, { content: '步骤二', status: 'in_progress' }],
+  }, home, { source: 'selftest' })
+  check('S07 · 有进行中项时放行', evaluate(exec, statusClear, cfgTodo, FRESH), undefined)
+
+  // 态 4：逃生开关关掉门禁后不再拦（保证"新门禁自己可被绕过，不会造成死锁"）
+  const homeEmpty = await mkdtemp(join(tmpdir(), 'dsh-todo-selftest-off-'))
+  check('S07 · enforceTodo=false 时不拦',
+    evaluate(exec, statusClear, { ...cfgTodoOff, dshHome: homeEmpty }, FRESH), undefined)
+  // 态 5：只读工具与 todo_write 自身永不被 S07 拦（否则模型无法自救）
+  check('S07 · todo_write 不被拦', evaluate({ name: 'todo_write', arguments: {}, agent: { session: { id: 'never-wrote' } } }, statusClear, cfgTodo, FRESH), undefined)
+  check('S07 · read 不被拦', evaluate({ name: 'read', arguments: {}, agent: { session: { id: 'never-wrote' } } }, statusClear, cfgTodo, FRESH), undefined)
+
+  await rm(home, { recursive: true, force: true })
+  await rm(homeEmpty, { recursive: true, force: true })
+}
 
 // 7) 拒绝理由必须可操作：包含卡点名与修复命令
 const reason = evaluate({ name: 'write', ...args({ path: 'a.md' }) }, statusBlocked, Config, FRESH)
@@ -168,13 +223,25 @@ check('极端参数 · 不抛出异常', threw, false)
 
   // 用桩件 ctx 触发 apply，验证自举链路
   const mod = await import('./index.mjs')
-  const mounts = { preStep: 0, guard: 0 }
+  const mounts = { preStep: 0, guard: 0, sessionEvent: 0 }
   mod.apply(
-    { on(evt) { if (evt === 'agent/pre-step') mounts.preStep++ }, tools: { guard() { mounts.guard++ } } },
+    {
+      on(evt) {
+        if (evt === 'agent/pre-step') mounts.preStep++
+        if (evt === 'session/event') mounts.sessionEvent++
+      },
+      tools: { guard() { mounts.guard++ } },
+    },
     { stateDir: tmp, projectRoot: '/Users/linqiyu/Documents/DSH/全局规则' },
   )
-  // 等待异步自举（execFile 子进程）
-  await new Promise((r) => setTimeout(r, 5000))
+  // 等待异步自举（execFile 子进程）。
+  // 为什么要轮询而不是固定睡 5 秒：自举要拉起 bash + node 子进程并跑完 G1~G4
+  // 全库扫描，实测冷启动耗时 5~12 秒不等；固定等待会在机器忙时假失败，
+  // 而"偶发失败的自检"最终一定会被无视——这正是本项目反复强调的失效模式。
+  const deadline = Date.now() + 30000
+  while (!existsSync(statusPath) && Date.now() < deadline) {
+    await new Promise((r) => setTimeout(r, 500))
+  }
 
   const bootstrapped = existsSync(statusPath)
   check('冷启动 · 自举成功产出状态', bootstrapped, true)
@@ -185,6 +252,8 @@ check('极端参数 · 不抛出异常', threw, false)
     check('冷启动 · 自举状态含门禁明细', Array.isArray(s.gates) && s.gates.length > 0, true)
   }
   check('冷启动 · 看板与门禁均已挂载', mounts.preStep === 1 && mounts.guard === 1, true)
+  // 输出压缩度量（REQ-081）也必须挂上：否则"回复是否啰嗦"永远采集不到
+  check('冷启动 · 输出压缩度量已挂载', mounts.sessionEvent === 1, true)
   await rm(tmp, { recursive: true, force: true })
 }
 

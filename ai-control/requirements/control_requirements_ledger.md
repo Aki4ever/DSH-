@@ -1,8 +1,8 @@
 # 管控机制专属需求台账 (Control Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前管控机制版本**：`v4.21.0`
-> - **最后同步时间**：2026-09-24
+> - **当前管控机制版本**：`v4.22.0`
+> - **最后同步时间**：2026-09-28
 > - **全局主台账对照**：[`docs/requirements.md`](../../docs/requirements.md)
 > - **状态**：`[ACTIVE 生效中]`
 
@@ -46,6 +46,9 @@
 | **CR-032** | REQ-077 | `v4.19.0` | DSH 全域工程执行基线（全工程物理锁 · 五维知识库驱动 · 框架式留白初始化）规约 | `[ACTIVE]` |
 | **CR-033** | REQ-078 | `v4.20.0` | 全域工程管控机制永久固化与尾部四联装极简交付收尾契约 | `[ACTIVE]` |
 | **CR-034** | REQ-079 | `v4.21.0` | 管控机制五维深化治理、存量工程全域批量规范化与带说明视觉强化交付契约 | `[ACTIVE]` |
+| **CR-035** | REQ-080 | `v4.22.0` | S07 待办常显物理化治理（原子证据层 · 运行时硬门禁 · 物理锁一跳解锁） | `[ACTIVE]` |
+| **CR-036** | REQ-081 | `v4.22.0` | 输出精简客观度量（体量与文末五联装结构 · 审计第 8 维） | `[ACTIVE]` |
+| **CR-037** | REQ-082 | `v4.22.0` | 管控拦截层宿主注册根因治理（规则与物理运行时断层清零） | `[ACTIVE]` |
 
 ---
 
@@ -730,22 +733,65 @@
   - [x] 全局需求台账与管控台账同步跃迁至 v4.21.0；
   - [x] 双检扫描（冗余、冲突、存量校准）100% 绿灯通过。
 
+### CR-035: S07 待办常显物理化治理（原子证据层 · 运行时硬门禁 · 物理锁一跳解锁）
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.22.0`
+- **对应全局台账**：`REQ-080`
+- **提出时间**：2026-09-28
+- **核心诉求与目标**：
+  1. **根因治理**：把「任务必须常显」从防线表格里的一句话，降为可判定、可阻断、可审计的物理事实；
+  2. **原子证据层**：`scripts/lib/todo_tracker.mjs` 每次 `todo_write` 落盘证据（同步写，适配守卫的同步契约）；
+  3. **可判定入口**：`scripts/todo_gate.sh` 五动作 + 三态自检，退出码即判定；
+  4. **运行时硬门禁**：改动型调用前置校验"有列表 + 有进行中项"，否则拒绝并给自救动作；
+  5. **物理锁一跳解锁**：`advanceLockTo` 逐阶带凭据晋升，修复"todo_write 之后锁永不前进 → write/edit 永久阻断"的死锁。
+- **关联产出物**：
+  - `scripts/lib/todo_tracker.mjs`、`scripts/lib/todo_gate_cli.mjs`、`scripts/todo_gate.sh`
+  - `scripts/lib/physical_lock.mjs`、`scripts/physical_lock.sh`
+  - `ai-control/plugin/index.mjs`、`ai-control/plugin/selftest.mjs`
+  - `docs/requirements.md`（`REQ-080`）
+- **验收标准**：
+  - [x] `./scripts/todo_gate.sh selftest` 3/3 通过；
+  - [x] 拦截层自检 69/69 通过（含 S07 专项 7 条）；
+  - [x] 宿主实测拒绝与放行均真实发生（bash 被拒 → todo_write 落证 → check 退出码 0）；
+  - [x] `physical_lock.sh sync` 依据磁盘实况晋升 LOCK-2 并留凭据。
 
+### CR-036: 输出精简客观度量（体量与文末五联装结构 · 审计第 8 维）
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.22.0`
+- **对应全局台账**：`REQ-081`
+- **提出时间**：2026-09-28
+- **核心诉求与目标**：
+  1. 把"极简高信噪比"从无判定口号，降为两个客观量：正文字符数/行数、文末五联装齐备度；
+  2. 代码块与表格行不计入体量，避免把交付物误判成废话；
+  3. 拦截层订阅会话事件流零成本采集，报告落盘 `.dsh-control/compact/`；
+  4. 审计新增第 8 维（8 分），未采集与未达标同权扣分。
+- **关联产出物**：
+  - `scripts/lib/output_compactness.mjs`
+  - `ai-control/plugin/index.mjs`
+  - `scripts/audit_execution.sh`
+  - `docs/requirements.md`（`REQ-081`）
+- **验收标准**：
+  - [x] 审计实跑输出 8 维度、总分 100（实测扣分项逐条可读）；
+  - [x] 度量报告在真实回复后落盘；
+  - [x] 缺失度量被明确判为扣分而非默认通过。
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### CR-037: 管控拦截层宿主注册根因治理（规则与物理运行时断层清零）
+- **当前状态**：`[ACTIVE]` 生效中
+- **实施版本**：`v4.22.0`
+- **对应全局台账**：`REQ-082`
+- **提出时间**：2026-09-28
+- **核心诉求与目标**：
+  1. 查清"硬要求却没有实现"的物理根因：拦截层插件从未被宿主加载（`cordis.patch.yml` 无条目、`isHost=false`）；
+  2. 写入 `file://` loader 注册条目并保留故障安全降级；
+  3. 交付幂等注册脚本 `scripts/install_host_gate.sh`（verify / install / uninstall），verify 以三重证据判定，绝不把"写了配置"当成"机制在跑"；
+  4. 抗覆盖：profile 被插件管理器重写后重跑 install 即可恢复。
+- **关联产出物**：
+  - `scripts/install_host_gate.sh`
+  - `ai-control/plugin/loader.mjs`、`ai-control/plugin/index.mjs`
+  - 宿主侧 `profiles/web/cordis.patch.yml`（不在本仓版本控制内）
+  - `docs/requirements.md`（`REQ-082`）
+- **验收标准**：
+  - [x] `install_host_gate.sh verify` 退出码 0，`plugin-status.txt` 显示 `isHost=true`；
+  - [x] 常显看板在真实会话逐步刷新；
+  - [x] 硬门禁在宿主真实生效（实测拒绝发生的物理凭据已留痕）。
 

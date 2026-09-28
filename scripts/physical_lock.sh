@@ -16,7 +16,7 @@ ACTION="${1:-status}"
 ARG2="${2:-}"
 
 node -e '
-import { getLockState, advanceLock, resetLock, STAGE_NAMES, STAGES } from "./scripts/lib/physical_lock.mjs"
+import { getLockState, advanceLock, advanceLockTo, resetLock, STAGE_NAMES, STAGES } from "./scripts/lib/physical_lock.mjs"
 import { readFileSync, existsSync } from "node:fs"
 import { join } from "node:path"
 import { homedir } from "node:os"
@@ -67,11 +67,34 @@ async function main() {
       } catch {}
     }
 
-    if (gatesOk && s.stage === STAGES.INIT) {
-      await advanceLock(sid, STAGES.SPEC_PASSED, { trigger: "auto_sync_gates_ok" })
-      console.log("✅ 检测到开工门禁全绿，物理锁已自动推进至 LOCK-1 (探境定标达成)")
+    // 逐阶凭据：LOCK-1 = 门禁全绿；LOCK-2 = 磁盘上真实存在且含进行中项的待办证据。
+    // 为什么不只看门禁：门禁全绿只证明"有资格动手"，不证明"过程可见"。
+    const proofs = {}
+    if (gatesOk) proofs[STAGES.SPEC_PASSED] = { trigger: "sync_gates_ok" }
+    let todoEvidence = null
+    try {
+      const todoFile = join(home, ".dsh-control", "todos", `${sid.replace(/[^a-zA-Z0-9_-]/g, "_")}.json`)
+      if (existsSync(todoFile)) {
+        const t = JSON.parse(readFileSync(todoFile, "utf8"))
+        if (t && Array.isArray(t.items) && t.total > 0 && t.inProgress > 0) {
+          todoEvidence = t
+          proofs[STAGES.PLAN_PASSED] = { trigger: "sync_todo_evidence", todos: t.total, inProgress: t.inProgress }
+        }
+      }
+    } catch {}
+
+    const target = proofs[STAGES.PLAN_PASSED] ? STAGES.PLAN_PASSED
+      : proofs[STAGES.SPEC_PASSED] ? STAGES.SPEC_PASSED
+      : STAGES.INIT
+    const res = await advanceLockTo(sid, target, proofs, home)
+    if (res.advanced && res.advanced.length > 0) {
+      console.log(`✅ 依据磁盘实况逐阶晋升：${res.advanced.map((n) => `LOCK-${n}`).join(" → ")}（当前 [${res.stage}] ${STAGE_NAMES[res.stage]}）`)
+      if (!gatesOk) console.log("ℹ️ 门禁未全绿：LOCK-1 凭据不足，暂不晋升。")
+      if (!todoEvidence) console.log("ℹ️ 待办证据缺失或无进行中项：LOCK-2 凭据不足，暂不晋升。")
     } else {
-      console.log(`ℹ️ 当前物理锁状态保持: [${s.stage}] ${s.stageName}`)
+      console.log(`ℹ️ 当前物理锁状态保持: [${res.stage}] ${STAGE_NAMES[res.stage]}`)
+      if (!gatesOk) console.log("   · 缺少 LOCK-1 凭据：门禁未全绿")
+      if (!todoEvidence) console.log("   · 缺少 LOCK-2 凭据：待办证据缺失或无进行中项")
     }
   } else {
     console.error(`❌ 未知动作: ${action}`)
