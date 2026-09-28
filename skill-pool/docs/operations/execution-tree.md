@@ -7,12 +7,12 @@
 
 | 层级 | 名称 | 自动派生 | 条目数 |
 | :--- | :--- | :--- | ---: |
-| `skill` | 技能层 | 是 | 182 |
+| `skill` | 技能层 | 是 | 183 |
 | `cli` | 命令层 | 否 | 9 |
 | `agent` | 智能体层 | 否 | 4 |
 | `api` | 接口层 | 否 | 0 |
 | `mcp` | 协议层 | 否 | 0 |
-| `plugin` | 插件层 | 否 | 1 |
+| `plugin` | 插件层 | 否 | 2 |
 
 ## 2. 非技能执行层条目
 
@@ -32,6 +32,7 @@
 | `agent` | `ralph` | `dsh-butler` | `-` | host | 宿主提供的新鲜智能体迭代循环能力 |
 | `agent` | `process-supervisor-agent` | `process-supervisor` | `agents/process-supervisor-agent/PROMPT.md` | repo | 流程监督员的独立复核者：不共享主上下文，只依据磁盘证据包逐项判定，看不到的就是没做 |
 | `plugin` | `dsh-plugin-control-jump` | `dsh-butler` | `plugins/dsh-plugin-control-jump` | repo | DSH 客户端插件：在插件市场已安装列表与设置→插件清单的每个条目注入常显「调控」按钮，一键直达该插件的详情控制页 |
+| `plugin` | `dsh-plugin-usage-bar` | `dsh-butler` | `plugins/dsh-plugin-usage-bar` | repo | DSH 客户端插件：在输入坞常显 DeepSeek 时段状态（高峰/空闲）与下次价格切换倒计时；时段为本地纯计算，额度栏在宿主通道确认前如实显示「未接入」，不显示假数字 |
 
 ## 3. 技能层树（L4 → 集群 → L3 → 原子）
 
@@ -294,6 +295,8 @@
       - `format-visual-inspection` (L1)
       - `extract-catalog-topology` (L2)
       - `render-governance-mermaid` (L2)
+      - `check-deepseek-usage` (L2)
+        - `multi-source-search-policy` (L1)
   - ⑥ 外部纳管
     - `github` (L3)
     - `manage-problem-log` (L3)

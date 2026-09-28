@@ -5,6 +5,7 @@ composition:
   - format-visual-inspection
   - extract-catalog-topology
   - render-governance-mermaid
+  - check-deepseek-usage
 description: 复合流程级技能(L3)：全景索引与管家调度链路可视化透视。基于物理数据源提取与图表编译，向用户直观呈现静态资产金字塔与动态管控调用轨迹。
 ---
 

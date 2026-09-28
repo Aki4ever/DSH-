@@ -27,8 +27,30 @@ set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-DSH_HOME_DIR="${DSH_HOME:-$HOME/Library/Application Support/dsh-desktop/harness}"
-PATCH_FILE="$DSH_HOME_DIR/profiles/web/cordis.patch.yml"
+DSH_HOME_DIR="${DSH_HOME:-$HOME/.dsh}"
+# ── profile 解析（2026-09-29 修 F3）────────────────────────────────────────────
+# 原实现把 profile 硬编码成 `profiles/web/`。实测本机 `~/.dsh/profiles/` 下**只有 desktop**，
+# `profiles/web/` 目录根本不存在 —— 于是 install 直接"找不到 profile 配置"、
+# verify 永远报"条目缺失"，这个自证工具本身失去判定力（机制没坏，是工具查错了地方）。
+# 现在按「显式环境变量 → 磁盘上真实存在的 profile 目录」解析，并把结果打印出来，绝不猜。
+resolve_profile_dir() {
+  if [ -n "${DSH_PROFILE_DIR:-}" ] && [ -d "$DSH_PROFILE_DIR" ]; then printf '%s' "$DSH_PROFILE_DIR"; return 0; fi
+  if [ -n "${DSH_PROFILE:-}" ] && [ -d "$DSH_HOME_DIR/profiles/${DSH_PROFILE}" ]; then
+    printf '%s' "$DSH_HOME_DIR/profiles/${DSH_PROFILE}"; return 0
+  fi
+  local d
+  for d in "$DSH_HOME_DIR"/profiles/*/; do
+    [ -f "${d}cordis.patch.yml" ] && { printf '%s' "${d%/}"; return 0; }
+  done
+  return 1
+}
+PROFILE_DIR="$(resolve_profile_dir || true)"
+PROFILE_RESOLVED=1
+if [ -z "$PROFILE_DIR" ]; then
+  PROFILE_DIR="$DSH_HOME_DIR/profiles/web"   # 兼容旧布局：不崩，但下面会明确报"目录不存在"
+  PROFILE_RESOLVED=0
+fi
+PATCH_FILE="$PROFILE_DIR/cordis.patch.yml"
 STATUS_FILE="$DSH_HOME_DIR/.dsh-control/plugin-status.txt"
 ENTRY_ID="ai-execution-control"
 LOADER_ABS="$ROOT/ai-control/plugin/loader.mjs"
@@ -68,6 +90,12 @@ case "$ACTION" in
   verify)
     echo "🔎 管控拦截层宿主注册核查"
     echo "-----------------------------------------"
+    echo "DSH 家目录: $DSH_HOME_DIR"
+    if [ "$PROFILE_RESOLVED" -eq 1 ]; then
+      echo "目标 profile: $PROFILE_DIR（已解析）"
+    else
+      echo "目标 profile: $PROFILE_DIR ⛔ 目录不存在（DSH_HOME 下未找到任何含 cordis.patch.yml 的 profile）"
+    fi
     echo "注册文件: $PATCH_FILE"
     local_ok=0
     if has_entry; then echo "条目存在: ✅ id=$ENTRY_ID"; local_ok=1; else echo "条目存在: ⛔ 缺失"; fi

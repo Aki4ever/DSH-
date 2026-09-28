@@ -166,6 +166,36 @@ def main() -> int:
                    "detail": f"{len(drift)} 处漂移" if drift else "无手写集群枚举"})
     issues.extend(drift)
 
+    # C8 catalog/树的条目必须在磁盘上真实存在（system-builtin 豁免并单独计数）
+    #
+    # 补这道检查的原因（2026-09-29 实测）：C1~C7 只比对「树 ↔ catalog ↔ 登记表 ↔ 受管区块」
+    # 四方是否**互相同步**，却从不问一句"这些条目在磁盘上真的存在吗"。于是 catalog 里 5 条
+    # 无对应目录的登记（其中 3 条已进入唯一真相源执行层树）从未被任何一道校验碰到，
+    # 而本脚本仍然输出"一致性问题：无" —— 四方自洽但集体脱离物理层，属判定盲区。
+    #
+    # 口径说明：catalog 把宿主/系统级能力标为 `scope: system-builtin` + `path: @system/<id>`，
+    # 它们本就不是本仓技能，故**豁免**（只计数、不失败）；只有"非 system-builtin 却查无目录"
+    # 才算真缺失。两者分开报，避免把设计意图判成违规（判据与 docs/requirements.md 的冲突裁决一致）。
+    missing_repo_entries = []
+    system_builtin_entries = []
+    for s in catalog.get("skills", []):
+        sid = s.get("id")
+        scope = s.get("scope") or "repo"
+        path = s.get("path") or ""
+        if scope == "system-builtin" or path.startswith("@system/"):
+            system_builtin_entries.append(sid)
+            continue
+        if not os.path.isdir(os.path.join(SKILLS_ROOT, sid)):
+            missing_repo_entries.append(sid)
+    c8_ok = not missing_repo_entries
+    checks.append({"name": "C8_catalog_entries_exist_on_disk", "pass": c8_ok,
+                   "detail": (f"磁盘缺失 {missing_repo_entries}" if missing_repo_entries
+                              else f"本仓条目全部在盘 · 系统内置豁免 {len(system_builtin_entries)} 条")})
+    for sid in missing_repo_entries:
+        issues.append({"check": "C8", "kind": "catalog_entry_missing_on_disk", "id": sid,
+                       "file": "skill-catalog.json", "line": 0,
+                       "detail": "非 system-builtin 条目在 skills/ 下不存在"})
+
     success = all(c["pass"] for c in checks)
     print(json.dumps({"success": success, "checks": checks, "issue_count": len(issues),
                       "issues": issues}, ensure_ascii=False, indent=2))

@@ -147,8 +147,8 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：224**（技能 177 · 其他执行层 47）
-**catalog 分级口径**：L1 43 · L2 95 · L3 43 · L4 1
+**执行层条目总数：227**（技能 178 · 其他执行层 49）
+**catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
 
@@ -173,6 +173,7 @@
 | L2 | 工序动作-量化映射表 | `skill.pool.build-quantifier-table` | `skills/build-quantifier-table` |
 | L1 | 原子规约-能力层命名 | `skill.pool.capability-naming-policy` | `skills/capability-naming-policy` |
 | L3 | 复合流程-口径一致性门禁 | `skill.pool.catalog-consistency-guard` | `skills/catalog-consistency-guard` |
+| L2 | 业务定制技能 | `skill.pool.check-deepseek-usage` | `skills/check-deepseek-usage` |
 | L2 | 工序动作-语法编译 | `skill.pool.check-python-syntax` | `skills/check-python-syntax` |
 | L2 | 工序动作-脚本可执行检测 | `skill.pool.check-script-executable` | `skills/check-script-executable` |
 | L1 | 原子规约-全流程中文 | `skill.pool.chinese-end-to-end` | `skills/chinese-end-to-end` |
@@ -355,6 +356,7 @@
 | 技能 (Skill) | `skill.pool.build-quantifier-table` | `skills/build-quantifier-table` | 工序动作级技能(L2)：生成并维护场景量化映射表 docs/operations/quantifier-table.json。内置种子映射不少于 20 条，覆盖高/大/快/多/好/严重/频繁等词且每词至少 3 个场景；每条必须含 term/ |
 | 技能 (Skill) | `skill.pool.capability-naming-policy` | `skills/capability-naming-policy` | 微观原子规约：能力层命名判定基元。钉死「归属 / 分类 / 做什么 / 命名」四要素与四种已登记命名形态（动作 / 编排 / 规约 / 厂商边界），规定语法约束、禁词、同义归一、唯一性与改名的六处同步契约；词表与形态的唯一真相源是 docs |
 | 技能 (Skill) | `skill.pool.catalog-consistency-guard` | `skills/catalog-consistency-guard` | 复合流程级技能(L3)：口径一致性门禁。串联受管区块生成与三方对拍，是技能池任何写入动作的前置门禁。 |
+| 技能 (Skill) | `skill.pool.check-deepseek-usage` | `skills/check-deepseek-usage` | 工序动作级技能(L2)：DeepSeek 用量探针。以北京时间本地判定高峰/空闲时段并算出下次切换倒计时，真实调用官方余额接口取额度，并对官方定价页做 sha256 指纹巡检（每日一次语义）；铁律是「取不到就如实报错，绝不编造余额/时段/指 |
 | 技能 (Skill) | `skill.pool.check-python-syntax` | `skills/check-python-syntax` | 工序动作级技能：对指定的 Python 源码文件执行静态编译语法验证，防止引入 SyntaxError。 |
 | 技能 (Skill) | `skill.pool.check-script-executable` | `skills/check-script-executable` | 工序动作级技能：物理检测指定技能目录中的配套脚本是否存在且具备可执行权限 (chmod +x)。 |
 | 技能 (Skill) | `skill.pool.chinese-end-to-end` | `skills/chinese-end-to-end` | 微观原子规约：全流程中文输出。回复正文、进度播报、报错信息、解释说明与脚本注释一律中文；技术标识符与英文缩写保留原文但首现必须紧跟中文释义与中文全称。 |
@@ -515,6 +517,7 @@
 | 技能 (Skill) | `skill.pool.zoom-level-policy` | `skills/zoom-level-policy` | 微观原子规约：可视化产物交互判定基元。钉死三条硬口径——缩放必须走离散档位表（13 档，+/- 跳相邻档，滚轮连续微调后吸附，档位可枚举可复算）、下载必须三段降级（showSaveFilePicker / Blob 下载 / 就地提示，禁止 |
 | 智能体 (Agent) | `agent.skillpool.process-supervisor-agent` | `skill-pool/agents/process-supervisor-agent` | --- |
 | 插件 (Plugin) | `plugin.skillpool.dsh-plugin-control-jump` | `skill-pool/plugins/dsh-plugin-control-jump` | — |
+| 插件 (Plugin) | `plugin.skillpool.dsh-plugin-usage-bar` | `skill-pool/plugins/dsh-plugin-usage-bar` | — |
 | 脚本 (CLI) | `cli.rules.agent_life` | `scripts/agent_life.mjs` | agent_life.mjs |
 | 脚本 (CLI) | `cli.rules.align_version` | `scripts/align_version.mjs` | 全库受管文档版本归位（把受管文档头部版本统一改到当前总版本） |
 | 脚本 (CLI) | `cli.rules.audit_execution` | `scripts/audit_execution.sh` | 对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片 |
@@ -527,6 +530,7 @@
 | 脚本 (CLI) | `cli.rules.check_unique_identifiers` | `scripts/check_unique_identifiers.mjs` | check_unique_identifiers.mjs |
 | 脚本 (CLI) | `cli.rules.conflict_scan` | `scripts/conflict_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.control_gates` | `scripts/control_gates.sh` | — |
+| 脚本 (CLI) | `cli.rules.deepseek_usage_probe` | `scripts/deepseek_usage_probe.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.disk_check_and_cleanup` | `scripts/disk_check_and_cleanup.sh` | DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位) |
 | 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
 | 脚本 (CLI) | `cli.rules.generate_image` | `scripts/generate_image.py` | — |

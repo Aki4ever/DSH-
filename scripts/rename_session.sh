@@ -56,11 +56,15 @@ if ! printf '%s' "$CODE" | grep -qE '^((新需|调研|优规|修漏|重构|巡�
 fi
 
 # R4 难度分：1~100 整数，可带或不带"分"字
-if ! printf '%s' "$SCORE" | grep -qE '^[0-9]{1,3}分?$'; then
+# 实测坑（2026-09-29 修）：原写法 `grep -qE '^[0-9]{1,3}分?$'` 在 BSD grep + 空 locale 下，
+# 因为模式里含多字节字符「分」，整个 ERE 退化成匹配不到任何输入 —— 表现是 [5]、[90] 这类
+# **纯数字难度分被误判为非法**，而 [90分] 反而通过。故改为纯 ASCII 校验：
+# 先剥掉可选的「分」后缀，再用只含 ASCII 的 bash 正则判定，彻底绕开多字节歧义。
+SCORE_NUM="${SCORE%分}"
+if [[ ! "$SCORE_NUM" =~ ^[0-9]{1,3}$ ]]; then
   echo "❌ 命名不合规：难度分必须是 1~100 的整数（如 [90] 或 [90分]）。" >&2
   echo "   收到： [${SCORE}]" >&2; exit 1
 fi
-SCORE_NUM="${SCORE%分}"
 # 用 10# 前缀强制十进制，避免 "008" 被 bash 当成八进制字面量解析而报错
 if (( 10#$SCORE_NUM < 1 || 10#$SCORE_NUM > 100 )); then
   echo "❌ 命名不合规：难度分必须在 1~100 之间，收到 [${SCORE}]。" >&2; exit 1
@@ -96,15 +100,30 @@ fi
 RPC_ID="rename-$(date +%s%N 2>/dev/null || date +%s)"
 
 # 1. 尝试从 Electron SQLite Cookies 中提取宿主 Web 鉴权凭据
+# 实测坑（2026-09-29 修）：原实现只认旧的 `~/Library/Application Support/dsh-desktop/Cookies`，
+# 而当前宿主（DeepSeek Harness）的 Electron userData 目录是
+# `~/Library/Application Support/@deepseek-ai/dsh-desktop`。查错目录的后果是：
+# sqlite3 读到一个**过期令牌** → RPC 返回 unauthorized → 脚本仍然打印"本地存储双写落盘完成"，
+# 于是标题**从未真正改过**，而执行者以为改成功了。故改为多候选目录逐个尝试，取第一个拿到凭据的。
 CNAME=""
 CVAL=""
-COOKIES_DB="$HOME/Library/Application Support/dsh-desktop/Cookies"
-if [[ -f "$COOKIES_DB" ]] && command -v sqlite3 >/dev/null 2>&1; then
-  RAW_COOKIE=$(sqlite3 "$COOKIES_DB" "SELECT name, value FROM cookies WHERE name LIKE 'dsh-auth-%' ORDER BY creation_utc DESC LIMIT 1;" 2>/dev/null || true)
-  if [[ -n "$RAW_COOKIE" ]]; then
-    CNAME=$(printf '%s' "$RAW_COOKIE" | cut -d'|' -f1)
-    CVAL=$(printf '%s' "$RAW_COOKIE" | cut -d'|' -f2)
-  fi
+COOKIES_CANDIDATES=(
+  "${DSH_ELECTRON_USERDATA:-}/Cookies"
+  "$HOME/Library/Application Support/@deepseek-ai/dsh-desktop/Cookies"
+  "$HOME/Library/Application Support/dsh-desktop/Cookies"
+  "$HOME/Library/Application Support/com.yeagoo.dsh-desktop/Cookies"
+)
+if command -v sqlite3 >/dev/null 2>&1; then
+  for CAND in "${COOKIES_CANDIDATES[@]}"; do
+    [[ -n "$CAND" && -f "$CAND" ]] || continue
+    RAW_COOKIE=$(sqlite3 "$CAND" "SELECT name, value FROM cookies WHERE name LIKE 'dsh-auth-%' ORDER BY creation_utc DESC LIMIT 1;" 2>/dev/null || true)
+    if [[ -n "$RAW_COOKIE" ]]; then
+      CNAME=$(printf '%s' "$RAW_COOKIE" | cut -d'|' -f1)
+      CVAL=$(printf '%s' "$RAW_COOKIE" | cut -d'|' -f2)
+      COOKIES_DB_USED="$CAND"
+      break
+    fi
+  done
 fi
 
 # 2. 构造正确的 RPC 请求体 (规范契约：session/rename，含 args.request 封装)
@@ -134,6 +153,7 @@ if [[ -n "$CNAME" && -n "$CVAL" ]]; then
   if echo "$RESPONSE" | grep -q '"ok":true'; then
     RPC_OK=1
     echo "✅ [前端任务栏]：RPC 广播成功，标题已在前端任务栏肉眼可见即时更新"
+    echo "   · 凭据来源：${COOKIES_DB_USED:-未知}"
   fi
 fi
 
@@ -198,6 +218,17 @@ if [[ "$RPC_OK" -eq 1 ]]; then
   echo "🎉 改名全链路闭环达成: ${TITLE}"
   exit 0
 else
-  echo "⚠️ 前端 RPC 未直接返回成功，但本地存储已落盘保全: ${TITLE}"
-  exit 0
+  # 实测结论（2026-09-29）：本地 projcache 不是权威存储 —— 宿主会用它内存里的标题把它覆盖回去，
+  # 所以"本地落盘成功"不等于"改名成功"。旧实现此时仍然 exit 0，等于向调用方谎报成功；
+  # 现在改为明确报错并非零退出，符合"不采信自我宣称"的口径。
+  echo "❌ 改名未生效：宿主 RPC 未返回 ok:true，本地存储的写入会被宿主覆盖，标题实际未变更。" >&2
+  if [[ -z "$CNAME" || -z "$CVAL" ]]; then
+    echo "   原因：未找到宿主鉴权凭据。已尝试的候选目录：" >&2
+    for CAND in "${COOKIES_CANDIDATES[@]}"; do [[ -n "$CAND" ]] && echo "     - $CAND" >&2; done
+    echo "   可设置 DSH_ELECTRON_USERDATA 指向 Electron userData 目录后重试。" >&2
+  else
+    echo "   原因：凭据来源 ${COOKIES_DB_USED:-未知} 可能已过期；可重开宿主或改用前端手工改名。" >&2
+  fi
+  echo "   目标标题： ${TITLE}" >&2
+  exit 1
 fi

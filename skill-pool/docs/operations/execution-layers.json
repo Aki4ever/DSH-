@@ -125,6 +125,15 @@
       "path": "agents/process-supervisor-agent/PROMPT.md",
       "source": "repo",
       "status": "active"
+    },
+    {
+      "description": "DSH 客户端插件：在输入坞常显 DeepSeek 时段状态（高峰/空闲）与下次价格切换倒计时；时段为本地纯计算，额度栏在宿主通道确认前如实显示「未接入」，不显示假数字",
+      "id": "dsh-plugin-usage-bar",
+      "layer": "plugin",
+      "parent": "dsh-butler",
+      "path": "plugins/dsh-plugin-usage-bar",
+      "source": "repo",
+      "status": "active"
     }
   ],
   "layers": {

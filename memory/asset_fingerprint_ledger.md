@@ -3,7 +3,7 @@
 > ### 🏷️ **版本信息与实施追踪**
 > - **当前台账版本**：`v4.23.0`
 > - **基线对齐版本**：`v4.23.0`
-> - **最后全盘扫描时间**：2026-09-28 08:46
+> - **最后全盘扫描时间**：2026-09-29 02:33
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)
 
 本文档记录工程全域受管资产（规则、知识库、架构索引、工程模板、自动化脚本与需求台账）的**数字指纹（SHA-256 8位短哈希）**、**最后修改时间**与**新鲜度等级**，为全域资产对齐与防止暗中代码漂移提供唯一客观事实依据。
@@ -73,11 +73,11 @@
 | `knowledge/worldview_background.md` | `075b4ce3` | 2026-09-16 18:01 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `indexes/.gitkeep` | `e3b0c442` | 2026-09-16 15:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `indexes/README.md` | `fdcd7814` | 2026-09-16 15:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `indexes/capabilities_index.md` | `0ef6fb6d` | 2026-09-28 08:46 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/capabilities_index.md` | `7f66ac18` | 2026-09-29 02:33 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/dsh_capabilities.md` | `3ce178b6` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/extension_ecosystem.md` | `022e80fb` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/navigation_router.md` | `5a811810` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
-| `indexes/rules_index.md` | `20c84779` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/rules_index.md` | `3eb7438c` | 2026-09-29 02:01 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/shortcuts_index.md` | `3628c63b` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/tool_interfaces.md` | `a1876b41` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `templates/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
@@ -88,6 +88,7 @@
 | `templates/project_dsh_bootstrap_template.md` | `600f1a5b` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `templates/requirement_template.md` | `ba39c3a9` | 2026-09-28 08:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `templates/risk_assessment_template.md` | `84777cc3` | 2026-09-16 18:22 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/.DS_Store` | `0cc46258` | 2026-09-29 02:25 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/.gitkeep` | `e3b0c442` | 2026-09-16 14:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/agent_life.mjs` | `9a8dd623` | 2026-09-23 18:35 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/align_version.mjs` | `6410c6c5` | 2026-09-23 15:56 | `-` | ⚪ TIER-2 | 指纹监控中 |
@@ -97,10 +98,11 @@
 | `scripts/build_capabilities_index.mjs` | `1260b71c` | 2026-09-28 08:46 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/channel_audit.mjs` | `eaf40879` | 2026-09-22 22:33 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/check_freshness.mjs` | `ba47c082` | 2026-09-24 13:27 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/check_task_naming.sh` | `18e98bdb` | 2026-09-28 08:18 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/check_task_naming.sh` | `dd0c4068` | 2026-09-29 02:27 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/check_unique_identifiers.mjs` | `debfb819` | 2026-09-23 18:34 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/conflict_scan.mjs` | `cfc907bd` | 2026-09-23 09:30 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/control_gates.sh` | `fa507119` | 2026-09-28 08:18 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/control_gates.sh` | `c965bd9c` | 2026-09-29 02:26 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/deepseek_usage_probe.mjs` | `ac69bf1d` | 2026-09-29 02:26 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/disk_check_and_cleanup.sh` | `c3671af0` | 2026-09-24 16:38 | `v4.15.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/fingerprint_audit.sh` | `2d0ee459` | 2026-09-23 09:50 | `v3.1.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/generate_image.py` | `5733c6d9` | 2026-09-22 21:10 | `-` | ⚪ TIER-2 | 指纹监控中 |
@@ -109,15 +111,17 @@
 | `scripts/global_scheduler_lock.sh` | `b51f5deb` | 2026-09-23 09:50 | `v3.1.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/init_dir.sh` | `26de8e54` | 2026-09-24 18:15 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/init_project.sh` | `80abc55d` | 2026-09-24 16:27 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/install_host_gate.sh` | `d8f79a7c` | 2026-09-28 08:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/install_host_gate.sh` | `b7ac47ff` | 2026-09-29 02:31 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/legacy_align_scan.mjs` | `f4fa47d9` | 2026-09-28 08:46 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/lib/auto_naming.mjs` | `f17076b2` | 2026-09-24 15:02 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/lib/deepseek_balance.mjs` | `58f44292` | 2026-09-29 02:25 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/lib/output_compactness.mjs` | `db0b635e` | 2026-09-28 08:29 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/lib/physical_lock.mjs` | `76c47f80` | 2026-09-28 08:32 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/lib/pricing_fingerprint.mjs` | `7a0c7b4f` | 2026-09-29 02:25 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/lib/todo_gate_cli.mjs` | `dc30f7a7` | 2026-09-28 08:28 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/lib/todo_tracker.mjs` | `ccff3d91` | 2026-09-28 08:29 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/lib/workspace_resolve.mjs` | `4e118a67` | 2026-09-23 14:59 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/mechanism_audit.mjs` | `e8e6a111` | 2026-09-28 08:45 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/mechanism_audit.mjs` | `a8202633` | 2026-09-28 08:52 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/name_me.sh` | `73379dcc` | 2026-09-23 15:46 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/naming_watchdog.mjs` | `58df7b3f` | 2026-09-23 15:46 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/normalize_all_projects.mjs` | `54b2a758` | 2026-09-24 18:44 | `-` | ⚪ TIER-2 | 指纹监控中 |
@@ -127,7 +131,7 @@
 | `scripts/probe_long_output_stream.mjs` | `34445721` | 2026-09-23 15:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/probe_max_tokens.mjs` | `6be3205d` | 2026-09-23 15:11 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/redundancy_scan.mjs` | `66e7d395` | 2026-09-23 07:57 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/rename_session.sh` | `0f9da4e0` | 2026-09-24 17:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/rename_session.sh` | `0ff4c5c1` | 2026-09-29 02:24 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/restore_skill_pool.mjs` | `959ebea4` | 2026-09-28 08:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/route_navigate.mjs` | `f12eda97` | 2026-09-23 18:01 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/session_naming_audit.mjs` | `fe353407` | 2026-09-24 18:55 | `-` | ⚪ TIER-2 | 指纹监控中 |
@@ -149,22 +153,23 @@ v3.2.0` | 🟡 TIER-1 | 待升级对齐 |
 | `docs/constraint_mechanism_spec.md` | `24e0f9e3` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `docs/diagram_generation_guide.md` | `581b784f` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `docs/memory_architecture.md` | `a35e10e8` | 2026-09-16 16:17 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `docs/requirements.md` | `57a5acfd` | 2026-09-28 08:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `docs/requirements.md` | `b500d224` | 2026-09-29 02:33 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/rules_tutorial.md` | `f71ad4d9` | 2026-09-16 14:41 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `docs/visual_learning_research.md` | `1e9d9b4f` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
+| `ai-control/.DS_Store` | `3b3aa788` | 2026-09-29 02:29 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/README.md` | `7efc9b71` | 2026-09-24 18:00 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `ai-control/config/gates.conf` | `11ca010c` | 2026-09-28 08:18 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `ai-control/config/gates.conf` | `99001310` | 2026-09-29 02:24 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/config/legacy_align_exempt.txt` | `4acab986` | 2026-09-23 09:32 | `v3.1.0` | 🟡 TIER-1 | 待升级对齐 |
 | `ai-control/config/naming_overrides.json` | `bfbbbe56` | 2026-09-23 15:43 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/lib/host_identity.mjs` | `5107cc24` | 2026-09-28 08:46 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `ai-control/plugin/index.mjs` | `6ca7b5e4` | 2026-09-28 08:46 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `ai-control/plugin/index.mjs` | `4e4b3bb7` | 2026-09-28 08:48 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/plugin/loader.mjs` | `6290a5f4` | 2026-09-28 08:46 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/plugin/selftest.mjs` | `f7bf3f9e` | 2026-09-28 08:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `ai-control/requirements/README.md` | `e7f88307` | 2026-09-23 16:52 | `v3.3.0` | 🟡 TIER-1 | 待升级对齐 |
 | `ai-control/requirements/control_requirements_ledger.md` | `26be8742` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `memory/.gitkeep` | `e3b0c442` | 2026-09-16 15:37 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `memory/README.md` | `2778de38` | 2026-09-16 15:37 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `memory/asset_fingerprint_ledger.md` | `a0690470` | 2026-09-28 08:46 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
+| `memory/asset_fingerprint_ledger.md` | `70d6ffe9` | 2026-09-29 02:33 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `memory/context_memory.md` | `9a54428f` | 2026-09-23 15:04 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `memory/efficiency_audit_log.md` | `3b177d57` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |
 | `memory/error_ledger.md` | `cb21292d` | 2026-09-28 08:43 | `v4.23.0` | 🟢 TIER-0 | 最新基线 |

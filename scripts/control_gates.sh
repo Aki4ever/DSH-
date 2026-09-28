@@ -47,7 +47,7 @@ G4_BLOCK_LIMIT=5
 G4_MIN_LINE_LEN=12
 G4_DUP_PAIRS=0
 G4_TEMPLATE_HEADINGS="Overview|When to Use|Workflow|Usage & Script|Input Contract|Output Contract|Success Contract|Boundaries & Constraints|Strict Rules|用途|使用方式|输入字段|输出字段|退出码|上下游|边界|目录结构"
-G2_STRAY_EXCLUDE="*/bundle_backups/*"
+G2_STRAY_EXCLUDE="*/bundle_backups/* */.DS_Store"
 G4_HEADING_EXCLUDE_GLOBS="skill-pool/skills/*/*.md skill-pool/docs/requirements/execution/*.md"
 G4_TEMPLATE_LINES="flowchart TD|flowchart LR|composition:|graph TD|sequenceDiagram"
 G4_TOP_DUP_LIMIT=45
@@ -218,10 +218,23 @@ check_structure() {
 
   # 2.2 无散落垃圾文件
   # 深度 4：合并进来的 skill-pool 内容位于 depth 3+，只扫 depth 2 会漏掉它
+  # 排除表支持**空格分隔的多个 glob**（2026-09-29 修）：原实现只吃单个 -path，
+  # 导致 `.DS_Store` 这类"系统每秒回填"的文件无法豁免 —— 实测清理后 10~20 秒即被
+  # macOS 重建，门禁在 4/4 与 3/4 之间反复闪烁，反而掩盖真正的垃圾文件。
   local stray
+  local -a stray_excl=()
+  local -a _pats=()
+  local _pat
+  # 必须用 `read -ra` 切词，不能用 `for _pat in ${VAR}`：后者会对 `*/.DS_Store` 触发
+  # **路径名展开**，把模式替换成磁盘上真实存在的文件路径，于是排除表变成一串死路径，
+  # 一个也匹配不上（实测：门禁照旧报"散落垃圾 3"）。
+  read -r -a _pats <<< "${G2_STRAY_EXCLUDE}"
+  for _pat in "${_pats[@]}"; do
+    [[ -n "$_pat" ]] && stray_excl+=( -not -path "$_pat" )
+  done
   stray=$(find "$PROJECT_ROOT" -maxdepth 4 -type f \
             \( -name '.DS_Store' -o -name '*.tmp' -o -name '~$*' -o -name '*.swp' -o -name '*.bak' \) \
-            -not -path '*/.git/*' -not -path "${G2_STRAY_EXCLUDE}" 2>/dev/null | wc -l | tr -d ' ')
+            -not -path '*/.git/*' "${stray_excl[@]}" 2>/dev/null | wc -l | tr -d ' ')
   total=$((total+1)); (( stray <= G2_ORPHAN_MAX )) && ok=$((ok+1))
   detail_parts+=("散落垃圾 $stray")
 

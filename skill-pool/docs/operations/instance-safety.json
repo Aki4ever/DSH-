@@ -1,11 +1,11 @@
 {
  "counts": {
   "needs_lock": 8,
-  "safe_multi": 157,
+  "safe_multi": 158,
   "single_only": 12
  },
  "issues": [],
- "scanned": 177,
+ "scanned": 178,
  "skills": [
   {
    "id": "anti-pattern-policy",
@@ -614,6 +614,7 @@
     "docs/operations/execution-tree.json",
     "docs/operations/execution-tree.md",
     "docs/operations/skill-catalog.json",
+    "dsh-butler/SKILL.md",
     "skills/dsh-butler/SKILL.md"
    ],
    "scripts": [
@@ -702,6 +703,18 @@
      "open-w",
      "os.makedirs"
     ]
+   }
+  },
+  {
+   "id": "check-deepseek-usage",
+   "instance_safety": "safe_multi",
+   "reason": "无写盘、无固定临时文件，可无锁并发",
+   "resource_keys": [],
+   "scripts": [],
+   "signals": {
+    "nondeterminism": [],
+    "temp": [],
+    "write": []
    }
   },
   {

@@ -45,7 +45,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # 而 skills/ 仍在 <项目根>。以下先探测技能池根，探测不到时回退旧的「三级上溯」写法。
 _POOL_CANDIDATE = os.path.abspath(os.path.join(HERE, "../../../skill-pool"))
 POOL_ROOT = _POOL_CANDIDATE if os.path.isdir(os.path.join(_POOL_CANDIDATE, "docs", "operations")) else os.path.abspath(os.path.join(HERE, "..", "..", ".."))
-PLUGIN_ID = "dsh-plugin-control-jump"
+# 目标插件（2026-09-29 泛化）：原实现把插件 id 写死成 dsh-plugin-control-jump，
+# 于是"幂等装配器"实际上只能装那一个插件 —— 第二个自建插件只能靠手抄命令装配，
+# 而手抄必然漏掉备份/回滚/幂等这三件事。现在改为 `--plugin <id>` 可选，默认值保持向后兼容。
+DEFAULT_PLUGIN_ID = "dsh-plugin-control-jump"
+PLUGIN_ID = DEFAULT_PLUGIN_ID
 PLUGIN_SRC = os.path.join(POOL_ROOT, "plugins", PLUGIN_ID)
 BUILD_SCRIPT = os.path.join(PLUGIN_SRC, "build_client.py")
 ROOT = os.path.join(POOL_ROOT, "..", "..")
@@ -82,11 +86,23 @@ def main(argv):
         description="把自建 DSH client 插件幂等装配进 profile（可回滚）",
     )
     parser.add_argument("--profile", default="web", help="profile 名，默认 web")
+    parser.add_argument("--plugin", default=DEFAULT_PLUGIN_ID,
+                        help="要装配的本仓插件 id（对应 skill-pool/plugins/<id>），默认 %s" % DEFAULT_PLUGIN_ID)
     parser.add_argument("--root", default=None, help="profiles 根目录覆盖")
     parser.add_argument("--apply", action="store_true", help="真正写入；缺省为干跑")
     parser.add_argument("--rollback", action="store_true", help="回滚最近一次装配")
     parser.add_argument("--json", action="store_true", help="兼容开关；脚本恒输出 JSON")
     args = parser.parse_args(argv)
+
+    global PLUGIN_ID, PLUGIN_SRC, BUILD_SCRIPT
+    PLUGIN_ID = args.plugin
+    PLUGIN_SRC = os.path.join(POOL_ROOT, "plugins", PLUGIN_ID)
+    BUILD_SCRIPT = os.path.join(PLUGIN_SRC, "build_client.py")
+    if not os.path.isdir(PLUGIN_SRC):
+        emit({"success": False, "error": "plugin_missing", "plugin": PLUGIN_ID,
+              "detail": "本仓不存在该插件目录（只允许装配 skill-pool/plugins/<id>）",
+              "source": PLUGIN_SRC})
+        return EXIT_INPUT
 
     root = profiles_root(args.root)
     profile_dir = os.path.join(root, args.profile)
@@ -206,7 +222,7 @@ def main(argv):
           "restart_required": True,
           "restart_note": "需重新加载 dsh web（重启宿主）后按钮才会出现；只刷新页面不够。",
           "rollback_command": "python3 skills/install-client-plugin/scripts/install_plugin.py "
-                              "--profile %s --rollback" % args.profile})
+                              "--profile %s --plugin %s --rollback" % (args.profile, PLUGIN_ID)})
     return EXIT_OK
 
 

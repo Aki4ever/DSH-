@@ -4,7 +4,7 @@
   "docs/operations/execution-layers.json"
  ],
  "dangling_dependencies": [],
- "edge_count": 225,
+ "edge_count": 227,
  "edges": [
   {
    "from": "acquire-atomic-lock",
@@ -95,6 +95,11 @@
    "from": "catalog-consistency-guard",
    "kind": "composition",
    "to": "verify-catalog-consistency"
+  },
+  {
+   "from": "check-deepseek-usage",
+   "kind": "composition",
+   "to": "multi-source-search-policy"
   },
   {
    "from": "chinese-output-guard",
@@ -1104,6 +1109,11 @@
   {
    "from": "visualize-governance-topology",
    "kind": "composition",
+   "to": "check-deepseek-usage"
+  },
+  {
+   "from": "visualize-governance-topology",
+   "kind": "composition",
    "to": "extract-catalog-topology"
   },
   {
@@ -1135,7 +1145,7 @@
  "graph_version": "1.0.0",
  "layers": {
   "L1": 43,
-  "L2": 95,
+  "L2": 96,
   "L3": 43,
   "L4": 1
  },
@@ -1519,6 +1529,15 @@
     "quantify-modifier-policy"
    ],
    "id": "build-quantifier-table",
+   "layer": "skill",
+   "level": "L2",
+   "scope": "local-pool"
+  },
+  {
+   "composition": [
+    "multi-source-search-policy"
+   ],
+   "id": "check-deepseek-usage",
    "layer": "skill",
    "level": "L2",
    "scope": "local-pool"
@@ -2713,7 +2732,8 @@
    "composition": [
     "format-visual-inspection",
     "extract-catalog-topology",
-    "render-governance-mermaid"
+    "render-governance-mermaid",
+    "check-deepseek-usage"
    ],
    "id": "visualize-governance-topology",
    "layer": "skill",
@@ -2742,6 +2762,6 @@
    "scope": "local-pool"
   }
  ],
- "non_skill_nodes": 14,
+ "non_skill_nodes": 15,
  "skipped": []
 }

@@ -1,0 +1,191 @@
+<svg width="1120" height="1560" viewBox="0 0 1120 1560" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1120" y2="1560" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#070B12"/>
+      <stop offset="50%" stop-color="#0E1522"/>
+      <stop offset="100%" stop-color="#05080D"/>
+    </linearGradient>
+    <linearGradient id="topbar" x1="0" y1="0" x2="1120" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D2FF"/>
+      <stop offset="50%" stop-color="#2EC4B6"/>
+      <stop offset="100%" stop-color="#8A2BE2"/>
+    </linearGradient>
+    <linearGradient id="cardbg" x1="0" y1="0" x2="1060" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#131C2B"/>
+      <stop offset="100%" stop-color="#0A1120"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1120" height="1560" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1120" height="6" fill="url(#topbar)"/>
+
+  <!-- ══ 头部 ══ -->
+  <text x="60" y="70" font-size="38" font-weight="700" fill="#EAF2FA">执行层盘点仪表盘</text>
+  <text x="60" y="103" font-size="15" fill="#8A98AC">六层闭集口径 · 全部数字来自 5 个登记 JSON 与 2 条实跑命令，无一处人工估计</text>
+  <rect x="790" y="28" width="270" height="88" rx="10" fill="#101827" stroke="#233046" stroke-width="1.5"/>
+  <text x="810" y="54" font-size="13" fill="#7C8CA3">实测快照</text>
+  <text x="810" y="78" font-size="15" font-weight="700" fill="#EAF2FA">2026-09-29 · v4.23.0</text>
+  <text x="810" y="99" font-size="12" fill="#2EC4B6">catalog 2.0.0 · tree 1.0.0</text>
+
+  <!-- ══ ① 六层分布 ══ -->
+  <rect x="60" y="140" width="6" height="24" rx="3" fill="#00D2FF"/>
+  <text x="80" y="161" font-size="22" font-weight="700" fill="#EAF2FA">① 六层闭集分布（执行层的全部家底）</text>
+  <text x="640" y="161" font-size="13" fill="#7C8CA3">层名出处：capability_naming_spec.md §二 · 登记：execution-layers.json</text>
+
+  <rect x="60" y="185" width="157" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="76" y="213" font-size="13" font-weight="700" fill="#2EC4B6">skill 技能层</text>
+  <text x="76" y="262" font-size="40" font-weight="700" fill="#EAF2FA">182</text>
+  <text x="76" y="290" font-size="11.5" fill="#9FB3CC">自动派生自 catalog</text>
+  <text x="76" y="312" font-size="11.5" fill="#5F7189">执行层主体，唯一实</text>
+  <text x="76" y="328" font-size="11.5" fill="#5F7189">体超百的一层。</text>
+
+  <rect x="228" y="185" width="157" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="244" y="213" font-size="13" font-weight="700" fill="#2EC4B6">cli 命令层</text>
+  <text x="244" y="262" font-size="40" font-weight="700" fill="#EAF2FA">9</text>
+  <text x="244" y="290" font-size="11.5" fill="#9FB3CC">手工登记</text>
+  <text x="244" y="312" font-size="11.5" fill="#5F7189">skill-pool 主入口 +</text>
+  <text x="244" y="328" font-size="11.5" fill="#5F7189">8 个子命令。</text>
+
+  <rect x="396" y="185" width="157" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="412" y="213" font-size="13" font-weight="700" fill="#2EC4B6">agent 智能体层</text>
+  <text x="412" y="262" font-size="40" font-weight="700" fill="#EAF2FA">4</text>
+  <text x="412" y="290" font-size="11.5" fill="#9FB3CC">手工登记</text>
+  <text x="412" y="312" font-size="11.5" fill="#5F7189">宿主 3（subagent /</text>
+  <text x="412" y="328" font-size="11.5" fill="#5F7189">workflow / ralph）+ 仓库 1。</text>
+
+  <rect x="564" y="185" width="157" height="150" rx="10" fill="#1E1A0E" stroke="#4A3D14" stroke-width="1.5"/>
+  <text x="580" y="213" font-size="13" font-weight="700" fill="#FFB900">api 接口层</text>
+  <text x="580" y="262" font-size="40" font-weight="700" fill="#FFB900">0</text>
+  <text x="580" y="290" font-size="11.5" fill="#9FB3CC">空层</text>
+  <text x="580" y="312" font-size="11.5" fill="#5F7189">闭集里存在、实体为</text>
+  <text x="580" y="328" font-size="11.5" fill="#5F7189">零：只靠脚本入口承载。</text>
+
+  <rect x="732" y="185" width="157" height="150" rx="10" fill="#1E1A0E" stroke="#4A3D14" stroke-width="1.5"/>
+  <text x="748" y="213" font-size="13" font-weight="700" fill="#FFB900">mcp 协议层</text>
+  <text x="748" y="262" font-size="40" font-weight="700" fill="#FFB900">0</text>
+  <text x="748" y="290" font-size="11.5" fill="#9FB3CC">空层</text>
+  <text x="748" y="312" font-size="11.5" fill="#5F7189">暂无 MCP 协议面，</text>
+  <text x="748" y="328" font-size="11.5" fill="#5F7189">生态索引中为规划项。</text>
+
+  <rect x="900" y="185" width="160" height="150" rx="10" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="916" y="213" font-size="13" font-weight="700" fill="#2EC4B6">plugin 插件层</text>
+  <text x="916" y="262" font-size="40" font-weight="700" fill="#EAF2FA">1</text>
+  <text x="916" y="290" font-size="11.5" fill="#9FB3CC">手工登记</text>
+  <text x="916" y="312" font-size="11.5" fill="#5F7189">dsh-plugin-control-</text>
+  <text x="916" y="328" font-size="11.5" fill="#5F7189">jump（调控按钮）。</text>
+
+  <text x="60" y="360" font-size="12" fill="#5F7189">注：执行层树声明 skill 层「自动派生」，故 execution-layers.json 只手工登记非技能层 14 条（cli 9 + agent 4 + plugin 1）—— 这是避免双登记的设计，不是漏登记。</text>
+
+  <!-- ══ ② 四口径对照 + 覆盖率环 ══ -->
+  <rect x="60" y="392" width="6" height="24" rx="3" fill="#2EC4B6"/>
+  <text x="80" y="413" font-size="22" font-weight="700" fill="#EAF2FA">② 四个口径对照（对不上账都发生在这里）</text>
+  <text x="700" y="413" font-size="13" fill="#7C8CA3">先分清口径，再谈缺口</text>
+
+  <rect x="60" y="437" width="310" height="120" rx="10" fill="url(#cardbg)" stroke="#233046" stroke-width="1.5"/>
+  <rect x="60" y="437" width="5" height="120" rx="2.5" fill="#00D2FF"/>
+  <text x="80" y="465" font-size="14" font-weight="700" fill="#EAF2FA">磁盘实物口径</text>
+  <text x="80" y="508" font-size="34" font-weight="700" fill="#00D2FF">178</text>
+  <text x="152" y="508" font-size="13" fill="#9FB3CC">个技能目录</text>
+  <text x="80" y="534" font-size="11.5" fill="#5F7189">含 _template 脚手架 1 个（索引已显式排除）</text>
+
+  <rect x="386" y="437" width="310" height="120" rx="10" fill="url(#cardbg)" stroke="#233046" stroke-width="1.5"/>
+  <rect x="386" y="437" width="5" height="120" rx="2.5" fill="#A17BFF"/>
+  <text x="406" y="465" font-size="14" font-weight="700" fill="#EAF2FA">catalog 登记口径</text>
+  <text x="406" y="508" font-size="34" font-weight="700" fill="#A17BFF">182</text>
+  <text x="478" y="508" font-size="13" fill="#9FB3CC">条技能</text>
+  <text x="406" y="534" font-size="11.5" fill="#5F7189">L1 43 · L2 95 · L3 43 · L4 1</text>
+
+  <rect x="712" y="437" width="348" height="120" rx="10" fill="url(#cardbg)" stroke="#233046" stroke-width="1.5"/>
+  <rect x="712" y="437" width="5" height="120" rx="2.5" fill="#2EC4B6"/>
+  <text x="732" y="465" font-size="14" font-weight="700" fill="#EAF2FA">索引口径（执行层 → 索引层）</text>
+  <text x="732" y="508" font-size="34" font-weight="700" fill="#2EC4B6">224</text>
+  <text x="806" y="508" font-size="13" fill="#9FB3CC">条 = 技能 177 + agent/plugin/cli 47</text>
+  <text x="732" y="534" font-size="11.5" fill="#5F7189">由 build_capabilities_index.mjs --check 认定</text>
+
+  <rect x="60" y="573" width="1000" height="98" rx="10" fill="#17110A" stroke="#5A3A12" stroke-width="1.5"/>
+  <rect x="60" y="573" width="5" height="98" rx="2.5" fill="#FFB900"/>
+  <text x="82" y="600" font-size="14" font-weight="700" fill="#FFD166">口径落差公式：catalog 182 − 索引 177 = 5（幽灵条目）　·　索引 177 + 脚手架 1 = 磁盘 178（自洽）</text>
+  <text x="82" y="626" font-size="12" fill="#BFAE8E">三个总数不是三个错误，而是三种统计范围：磁盘数目录、catalog 数登记、索引数被索引层收纳的能力条目。真正的缺口只有一个 —— 那 5 条幽灵。</text>
+  <text x="82" y="650" font-size="12" fill="#BFAE8E">覆盖率判定：224 条执行层 · 已收录 224 · 未收录 0 —— 索引层没有漏掉任何在盘能力。</text>
+
+  <!-- ══ ③ 结构健康三卡 ══ -->
+  <rect x="60" y="702" width="6" height="24" rx="3" fill="#A17BFF"/>
+  <text x="80" y="723" font-size="22" font-weight="700" fill="#EAF2FA">③ 结构健康度（图 / 锁 / 脚本）</text>
+  <text x="700" y="723" font-size="13" fill="#7C8CA3">三个维度各有独立 JSON 证据</text>
+
+  <rect x="60" y="747" width="320" height="170" rx="10" fill="url(#cardbg)" stroke="#233046" stroke-width="1.5"/>
+  <rect x="60" y="747" width="5" height="170" rx="2.5" fill="#00D2FF"/>
+  <text x="80" y="777" font-size="14" font-weight="700" fill="#EAF2FA">依赖图 layer-graph.json</text>
+  <text x="80" y="818" font-size="30" font-weight="700" fill="#00D2FF">225</text>
+  <text x="146" y="818" font-size="13" fill="#9FB3CC">条组装边</text>
+  <text x="80" y="846" font-size="12" fill="#9FB3CC">悬空依赖 0 条（dangling_dependencies 空）</text>
+  <text x="80" y="870" font-size="12" fill="#9FB3CC">七大簇：契约合规 12 · 输出规约 9 · 冲突冗余 8 ·</text>
+  <text x="80" y="890" font-size="12" fill="#9FB3CC">意图路由 6 · 需求透视 4 · 外部纳管 3 · 引入演进 1</text>
+
+  <rect x="396" y="747" width="320" height="170" rx="10" fill="url(#cardbg)" stroke="#233046" stroke-width="1.5"/>
+  <rect x="396" y="747" width="5" height="170" rx="2.5" fill="#2EC4B6"/>
+  <text x="416" y="777" font-size="14" font-weight="700" fill="#EAF2FA">实例安全 instance-safety.json</text>
+  <text x="416" y="800" font-size="12" fill="#9FB3CC">扫描 177 个实例 · 发现问题 0 条</text>
+  <rect x="416" y="812" width="280" height="16" rx="8" fill="#3A1519"/>
+  <rect x="416" y="812" width="248" height="16" rx="8" fill="#2EC4B6"/>
+  <text x="416" y="850" font-size="12" fill="#2EC4B6">safe_multi 157</text>
+  <text x="560" y="850" font-size="12" fill="#FFB900">single_only 12 · needs_lock 8</text>
+  <text x="416" y="878" font-size="11.5" fill="#5F7189">可无锁并发占 88.7%；需独占锁的 8 条必须走</text>
+  <text x="416" y="898" font-size="11.5" fill="#5F7189">全局调度锁，禁止并发脏写。</text>
+
+  <rect x="732" y="747" width="328" height="170" rx="10" fill="url(#cardbg)" stroke="#233046" stroke-width="1.5"/>
+  <rect x="732" y="747" width="5" height="170" rx="2.5" fill="#A17BFF"/>
+  <text x="752" y="777" font-size="14" font-weight="700" fill="#EAF2FA">脚本与树规模</text>
+  <text x="752" y="818" font-size="30" font-weight="700" fill="#A17BFF">103</text>
+  <text x="818" y="818" font-size="13" fill="#9FB3CC">个技能内嵌脚本</text>
+  <text x="752" y="846" font-size="12" fill="#9FB3CC">树条目 196 = skill 182 + cli 9 + agent 4 + plugin 1</text>
+  <text x="752" y="870" font-size="12" fill="#9FB3CC">树形态：L4 → 集群 → L3 → 原子 四段式</text>
+  <text x="752" y="894" font-size="11.5" fill="#5F7189">由 build-execution-tree 生成，禁止人工编辑。</text>
+
+  <!-- ══ ④ 漂移与空洞 ══ -->
+  <rect x="60" y="948" width="6" height="24" rx="3" fill="#F45B69"/>
+  <text x="80" y="969" font-size="22" font-weight="700" fill="#EAF2FA">④ 漂移与空洞清单（盘点真正要盯的部分）</text>
+  <text x="720" y="969" font-size="13" fill="#7C8CA3">只列事实，处置留给裁决</text>
+
+  <rect x="60" y="993" width="1000" height="152" rx="10" fill="#1A0F13" stroke="#5C2029" stroke-width="1.5"/>
+  <rect x="60" y="993" width="5" height="152" rx="2.5" fill="#F45B69"/>
+  <text x="82" y="1020" font-size="14" font-weight="700" fill="#F45B69">⛔ 幽灵条目 5 条：catalog 登记了、磁盘上不存在</text>
+  <text x="82" y="1046" font-size="12.5" fill="#C9A7AD">confirm-before-coding　track-task-progress　github　manage-problem-log　manage-requirements</text>
+  <text x="82" y="1072" font-size="12.5" fill="#C9A7AD">其中 3 条（github / manage-problem-log / manage-requirements）已穿透进「唯一真相源」执行层树，成为树上的幽灵节点。</text>
+  <text x="82" y="1098" font-size="12.5" fill="#F45B69">而同一份树的 §4 一致性自检写着「一致性问题：无」—— verify-execution-tree 对「磁盘不存在」这一类没有校验，属判定盲区。</text>
+  <text x="82" y="1126" font-size="12" fill="#9FB3CC">另有空洞：api 层 0 条、mcp 层 0 条（闭集内的两个空层）；磁盘 178 目录中 1 个是脚手架 _template，按口径不算能力。</text>
+
+  <!-- ══ ⑤ 红绿灯 ══ -->
+  <rect x="60" y="1176" width="6" height="24" rx="3" fill="#FFB900"/>
+  <text x="80" y="1197" font-size="22" font-weight="700" fill="#EAF2FA">⑤ 盘点结论红绿灯（5 项体检）</text>
+  <text x="720" y="1197" font-size="13" fill="#7C8CA3">✅ 健康 · ⚠️ 需关注 · ⛔ 必须处理</text>
+
+  <rect x="60" y="1221" width="1000" height="44" rx="8" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="80" y="1249" font-size="13" fill="#2EC4B6">✅ 索引覆盖率</text>
+  <text x="240" y="1249" font-size="13" fill="#EAF2FA">224 / 224 收录 · 未收录 0 · 退出码 0</text>
+  <text x="846" y="1249" font-size="11.5" fill="#5F7189">build_capabilities_index --check</text>
+
+  <rect x="60" y="1273" width="1000" height="44" rx="8" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="80" y="1301" font-size="13" fill="#2EC4B6">✅ 依赖图健康</text>
+  <text x="240" y="1301" font-size="13" fill="#EAF2FA">225 条组装边 · 悬空依赖 0 · 无环（七簇封闭）</text>
+  <text x="846" y="1301" font-size="11.5" fill="#5F7189">layer-graph.json</text>
+
+  <rect x="60" y="1325" width="1000" height="44" rx="8" fill="#0F1A24" stroke="#1F4A44" stroke-width="1.5"/>
+  <text x="80" y="1353" font-size="13" fill="#2EC4B6">✅ 实例安全</text>
+  <text x="240" y="1353" font-size="13" fill="#EAF2FA">扫描 177 · 发现问题 0 · 加锁需求已显式分类</text>
+  <text x="846" y="1353" font-size="11.5" fill="#5F7189">instance-safety.json</text>
+
+  <rect x="60" y="1377" width="1000" height="44" rx="8" fill="#1E1A0E" stroke="#4A3D14" stroke-width="1.5"/>
+  <text x="80" y="1405" font-size="13" fill="#FFB900">⚠️ 六层完整性</text>
+  <text x="240" y="1405" font-size="13" fill="#EAF2FA">api 0 · mcp 0 —— 两个空层，闭集有定义但无实体</text>
+  <text x="846" y="1405" font-size="11.5" fill="#5F7189">execution-layers.json</text>
+
+  <rect x="60" y="1429" width="1000" height="44" rx="8" fill="#231016" stroke="#5C2029" stroke-width="1.5"/>
+  <text x="80" y="1457" font-size="13" fill="#F45B69">⛔ 树一致性</text>
+  <text x="240" y="1457" font-size="13" fill="#EAF2FA">自检报「无问题」，但树内含 3 条磁盘不存在的幽灵节点</text>
+  <text x="846" y="1457" font-size="11.5" fill="#5F7189">execution-tree.md §4</text>
+
+  <rect x="60" y="1500" width="1000" height="1" fill="#1E2836"/>
+  <text x="60" y="1528" font-size="12" fill="#5F7189">数据源：execution-layers.json · execution-tree.json/.md · skill-catalog.json · layer-graph.json · instance-safety.json ｜命令：node scripts/build_capabilities_index.mjs --check</text>
+  <text x="60" y="1550" font-size="12" fill="#4A5A70">全局规则工程 · 执行层盘点仪表盘 v1 · 2026-09-29 实跑快照 · 数字随实况变化，引用前请重跑命令核对</text>
+</svg>

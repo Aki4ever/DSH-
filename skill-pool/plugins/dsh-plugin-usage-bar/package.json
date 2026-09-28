@@ -1,0 +1,22 @@
+{
+  "name": "dsh-plugin-usage-bar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DSH 客户端插件：在输入坞常显 DeepSeek 时段状态（高峰/空闲）与下次价格切换倒计时；额度栏在宿主通道确认前如实显示「未接入」。",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "inject": ["@deepseek-ai/dsh-client-ui-conversation"]
+    }
+  },
+  "files": ["lib", "src", "cordis.patch.yml", "package.json", "README.md"]
+}

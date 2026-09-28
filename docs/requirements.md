@@ -2349,3 +2349,106 @@
 - **改动后复跑**：冗余 0 · 冲突 0 · 待对齐 0 · 通道 0 问题；
 - **未验证项**：`README.md`、`indexes/rules_index.md`、`docs/constraint_mechanism_spec.md` 中的新指针**尚未推送远程**；
   信息图 PNG 未在 Web GUI 页面内实点打开验证（仅以文件工具读回与目视校验）。
+
+### 结构树图谱与执行层仪表盘（2026-09-29 · 通道"管控机制结构"与"执行层盘点"）
+
+- **触发**：用户口令"当前管控机制是怎样的结构，输出树状结构 + 信息图"、"看看执行层都有什么 + 仪表盘盘点"；
+- **新增资产 1**：`assets/generated_images/control_mechanism_structure_tree_v3.svg` + `.png`（1120×2170）——
+  管控机制五层分工（注入/状态/判定/拦截/自证审计）+ 两把硬闸（G0~G4 累积门禁、LOCK-0~4 物理锁）结构树；
+- **新增资产 2**：`assets/generated_images/execution_layer_dashboard_v1.svg` + `.png`（1120×1560）——
+  执行层六层闭集盘点仪表盘（六层分布 / 四口径对照 / 结构健康 / 漂移空洞 / 五项体检红绿灯）；
+- **数据源**（均可复跑）：`control_gates.sh check` · `physical_lock.sh status` · `install_host_gate.sh verify` ·
+  `mechanism_audit.mjs`（13 条登记机制 · 已触达 8 · 硬性未触达 1 · 无载体 3）·
+  `build_capabilities_index.mjs --check`（224 执行层 / 收录 224 / 未收录 0 / 漂移 5）·
+  `skill-pool/docs/operations/` 下 5 个登记 JSON（树 196 条 · 依赖边 225 / 悬空 0 · 实例安全 177 扫描 / 问题 0）；
+- **本轮新发现（非重复登记）**：§3.2 已登记的 5 条 catalog 漂移中，`github`、`manage-problem-log`、
+  `manage-requirements` **3 条已穿透进执行层树**（`execution-tree.md` §3），而该树 §4 自检仍报"一致性问题：无"
+  —— `verify-execution-tree` 对"磁盘不存在"这一类缺校验，属判定盲区；已在本节留痕，处置留待裁决；
+- **本轮实修（非本资产）**：G0 改名 RPC 凭据目录错位（`dsh-desktop` → `@deepseek-ai/dsh-desktop`）已用正确凭据改名成功；
+  G2 因 `.DS_Store` 被 macOS 秒级回填而在 4/4 与 3/4 间闪烁，已在本节留痕；
+- **改动后复跑**：冗余高相似对 0 · 冲突 0 · 存量待对齐 0（3 项书面豁免）· 门禁 4/4 · 物理锁 [2] LOCK-2；
+- **未验证项**：两张 PNG 与 SVG 未推送远程；`rename_session.sh` 的凭据路径缺陷当时**只记录未修**（已在下一节完成修复）。
+
+### 体检修复 + DeepSeek 用量探针（2026-09-29 · 阶段 A · 纯本地零宿主风险）
+
+> 触发：用户提出三条全局规则需求（① 修体检问题 ② 底部常显 DeepSeek 时段与额度 ③ 管家续任评估），
+> 并明确"颗粒度过大就继续细分成执行层直到触达物理层"。经确认先执行**阶段 A（纯本地、不改宿主 profile）**。
+
+**1) 判定层与命名层的三处真缺陷（均实测复现后修复）**
+
+| 编号 | 载体 | 缺陷 | 修法 | 复跑证据 |
+| :--- | :--- | :--- | :--- | :--- |
+| F1 | `scripts/rename_session.sh` | 只读旧 Electron 目录 `dsh-desktop/Cookies`，而宿主实为 `@deepseek-ai/dsh-desktop` → RPC `unauthorized`，标题**从未真正改过**却仍报"已落盘"并 `exit 0` | 改为多候选目录逐个尝试 + 打印凭据来源；RPC 失败时**明确报错并退 1** | `name_me.sh "[新需013][75] 用量常显与修复"` → `ok:true`，退出码 0 |
+| F2 | `scripts/check_task_naming.sh`、`scripts/rename_session.sh` | 正则用多字节量词 `分?` 表达"分字可选"，空 locale 下退化为"**必须有**分" → 合规标题 `[新需013][75]` 被判非法 | 先用纯字符串运算剥掉可选「分」，再跑只含 ASCII 的正则 | `check_task_naming.sh --exit` → 0；`[75]` 与 `[75分]` 双双通过 |
+| F5 | `scripts/control_gates.sh`、`ai-control/config/gates.conf` | G2 把 macOS 秒级回填的 `.DS_Store` 当"散落垃圾"，门禁 4/4↔3/4 闪烁；且豁免表只支持**单个** glob，`for _pat in ${VAR}` 还会触发**路径名展开**把模式吃成真实文件路径 | 豁免表升级为空格分隔多 glob（`read -ra` 切词）+ 排除 `*/.DS_Store` | 含 `.DS_Store` 的情况下连续 3 次 `check` 均 **4/4 · exit 0** |
+
+**2) 判定盲区补强（F6）**：`skills/verify-execution-tree/scripts/verify_tree.py` 新增第 8 项检查
+`C8_catalog_entries_exist_on_disk`（原 C1~C7 只比对四方**互相同步**，从不问"磁盘上真的存在吗"）。
+口径：`scope: system-builtin` / `path: @system/*` 豁免并**显式报数**，只有"非 system-builtin 却查无目录"才判失败。
+实测：加豁免前磁盘缺失 5 条、加豁免后真缺失 0 条、豁免 5 条 —— 判别力已验证。
+
+**3) 新增执行层能力（U1~U4，对应需求 ②的物理层）**
+
+- `scripts/lib/deepseek_balance.mjs`（api 层，276 行）：官方 `GET https://api.deepseek.com/user/balance`，多来源凭据解析（仅接受 `sk-` 前缀，**不解析** `~/.dsh/.credentials.yaml`，因实测那里只有账号令牌）；
+- `scripts/lib/pricing_fingerprint.mjs`（273 行）：官方定价页 sha256 + ETag/Last-Modified 指纹，状态落 `$DSH_HOME/.dsh-control/pricing_fingerprint.json`，**同日幂等**（二跑只改 `lastCheckedAt`/`lastFetchedAt`）；
+- `scripts/deepseek_usage_probe.mjs`（491 行，CLI 层）：`--json/--check/--price-sync`；时段**按北京时间本地计算**（官方明确无时段接口），节假日表内置 2026（来源：国办发明电〔2025〕7 号），未覆盖年份在 `reason` 显式降级；
+- `skills/check-deepseek-usage/`（skill 层）：L2 技能。**按 naming spec 改名**：初版 `probe-deepseek-usage` 的首段动词 `probe` 不在 64 条动词表内 → 改为 `check-`（在表内）；
+- **实测硬约束**：本机只有 `deepseek-account-platform` 账号令牌，官方余额接口要求 `Bearer sk-...`（实测 401：`auth header format should be Bearer sk-...`）→ 余额栏如实报 `errorKind=no-credential`，**不显示任何假数字**；要显示真实额度需另行提供 `sk-` API Key。
+
+**4) 依规范执行的派生重建**：新增/改名执行层后按 `skill-pool/docs/operations/rebuild-chain.json` 跑完 5 步
+（sync_catalog → layer_graph → inverted_index → instance_safety → execution_tree），
+并将新技能挂到 L3 `visualize-governance-topology` 的 composition 下以消除孤儿原子；
+另跑 `fingerprint_audit.sh --scan`（151 个受管资产）与 `build_capabilities_index.mjs --apply`。
+
+**5) 本次复跑结果**：门禁 4/4（连续 3 次稳定）· catalog 183 条 · 树校验 8/8 通过（issue 0）·
+索引 226 条 100% 收录 · 冗余高相似对 0 · 冲突 0 · 存量待对齐 0 · 指纹台账已更新。
+
+**6) 待裁决（未自行取舍）**：`skill-catalog.json` 中 5 条 `scope: system-builtin` 记录（`confirm-before-coding`、
+`track-task-progress`、`github`、`manage-problem-log`、`manage-requirements`）与
+`indexes/capabilities_index.md` §3.2 的"漂移，必须补齐文件或注销"表述**口径冲突**。
+按元规则"冲突先出裁决方案、由用户确认后再迭代"，本轮只让 C8 把两类分开报数，**未删记录、未建空壳技能**。
+
+**7) 阶段 B 前的状态**：宿主拦截层注册与底部栏 UI 插件当时均未做（均需改宿主 profile 并重载）—— 已在下一节完成。
+
+### 阶段 B：宿主注册 + 用量常显底栏插件（2026-09-29 · 需重启宿主生效）
+
+**1) F3 修 profile 解析**：`scripts/install_host_gate.sh` 原把 profile 硬编码成 `profiles/web/`，
+而本机 `~/.dsh/profiles/` 下**只有 desktop** → install 报"找不到 profile"、verify 永远报"条目缺失"，
+这个自证工具本身失去判定力。现按「`DSH_PROFILE_DIR` → `DSH_PROFILE` → 磁盘上真实含 `cordis.patch.yml` 的 profile」解析，
+并把解析结果打印出来。实测：`目标 profile: /Users/linqiyu/.dsh/profiles/desktop（已解析）`。
+
+**2) F4 宿主注册（已写入，待重载）**：`./scripts/install_host_gate.sh install` 已把拦截层条目写入
+`~/.dsh/profiles/desktop/cordis.patch.yml`（写入前自动备份）。`verify` 现返回 **exit 2 = 已注册但宿主尚未落运行时凭据**
+（三态语义：0 已激活 / 1 载体坏了 / 2 待重载）—— 这是**诚实的中间态**，不是失败。
+
+**3) U5 新增底部用量栏插件** `skill-pool/plugins/dsh-plugin-usage-bar/`：
+- 挂载点 `conversation.input.dock`（`order=20`，排在 TodoPanel 0 / GoalBar 10 之后），走 `ctx.slots.inject/register` 标准插槽；
+- **时段与下次切换倒计时为纯前端本地计算**（官方确认无时段接口）；客户端 bundle 内联 `src/usage-core.cjs`，
+  由 `build_client.py` 构建并以 sha256 摘要锁死"两份实现"；
+- **额度栏在宿主通道与 `sk-` 凭据就位前一律显示「未接入」**，不显示任何假数字；
+- 宿主半体只做一件事：每 5 分钟调 `scripts/deepseek_usage_probe.mjs --json` 并原子落盘
+  `$DSH_HOME/.dsh-control/usage-bar.json`（+ `usage-bar-host.json` 诊断）；
+- 红线遵守：宿主未提供 slots 或 React seed 时**只记诊断、不做 DOM 穿透**；任何异常只写日志、不抛出。
+- **实测（桩件，不需宿主 App）**：`node skill-pool/plugins/dsh-plugin-usage-bar/verify_stub.cjs` → **9/9 通过**
+  （含"注册到正确插槽 / order=20 / 渲染含真实时段与倒计时 / 无假额度 / 无 slots 与无 React 两种降级都不抛"）；
+  时段逻辑对拍 **9/9 正确**，其中修掉一个真 bug：首版把周末的 18:00 也算成"下次切换"（周末全天空闲、价格并不变），
+  已改为按"当前波段终点"推导（周末→下周一 09:00，国庆→10-09 09:00）。
+- **装配器泛化**：`skills/install-client-plugin/scripts/install_plugin.py` 原来把插件 id 写死，
+  只能装 `dsh-plugin-control-jump` 一个；新增 `--plugin <id>`（默认值保持向后兼容，目录缺失即退 2）。
+  实测装配 `dsh-plugin-usage-bar` → `installed`，复跑 → `already_installed / changed=0`（幂等成立）。
+
+**4) F8 无载体机制处置**：`dsh-plugin-control-jump` 已由同一装配器装入 desktop profile（原"未注册"状态解除）；
+`process-supervisor-agent`（宿主无 agent 注册面）与 S11（写后必读回，拦截层无判定）**本轮无合规载体可挂**，
+按"禁止虚无缥缈"改为**书面降级待办**，待宿主提供相应扩展面后再做，不以"已优化"含糊带过。
+
+**5) 派生同步**：新 plugin 执行层已登记进 `skill-pool/docs/operations/execution-layers.json`（14→15 条），
+并按 `rebuild-chain.json` 重建全部派生产物；`verify-execution-tree` **8/8 通过**（C6 校验 15 条登记合法）；
+`skill-pool/docs/operations/workflows.md` 新增 §17.1 登记本插件全部命令（构建 / 新鲜度 / 桩件 / 干跑 / 装配 / 回滚）。
+
+**6) 生效条件（必须说清）**：新增插件的 bundle 注册表与 profile patch **在宿主启动时读取**
+→ 需**重启桌面端**，仅刷新页面不够。重启后按 `./scripts/install_host_gate.sh verify` 验收（期望 exit 0）。
+
+**7) 已知冗余（未合并，已书面说明）**：时段规则目前在 `scripts/deepseek_usage_probe.mjs`（CLI）与
+`skill-pool/plugins/dsh-plugin-usage-bar/src/usage-core.cjs`（客户端内核）**各有一份实现**；
+原因是浏览器 bundle 不能 require 仓库文件、必须内联。两者行为已对拍一致（各 9/9），
+但存在漂移风险，后续应让 CLI 复用该内核（`createRequire` 加载）；本轮为控制改动半径未动已审计的 CLI。

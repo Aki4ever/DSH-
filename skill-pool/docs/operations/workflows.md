@@ -157,6 +157,20 @@
 - 导航三级降级：宿主钩子 → 定位/点击原生导航 + 高亮 → 复制 id 并就地提示（第三级永远可用）。
 - **生效条件**：新增插件的 bundle 注册表在宿主启动时读取 → **需重启宿主，只刷新页面不够**。
 - 唯一口径源：`skills/plugin-control-jump-policy/SKILL.md`。
+- 装第二个插件起请加 `--plugin <id>`（装配器已泛化，默认值仍是本插件，向后兼容）。
+
+## 17.1 DeepSeek 用量常显底栏（REQ-USAGE-BAR-087）
+- 构建 bundle（内联时段内核）：`python3 plugins/dsh-plugin-usage-bar/build_client.py`
+- 构建新鲜度判定：`python3 plugins/dsh-plugin-usage-bar/build_client.py --check`
+- 桩件实测（不需要宿主 App，9 项）：`node plugins/dsh-plugin-usage-bar/verify_stub.cjs`
+- 干跑装配：`python3 skills/install-client-plugin/scripts/install_plugin.py --profile desktop --plugin dsh-plugin-usage-bar`
+- 装配：`python3 skills/install-client-plugin/scripts/install_plugin.py --profile desktop --plugin dsh-plugin-usage-bar --apply --json`
+- 回滚：`python3 skills/install-client-plugin/scripts/install_plugin.py --profile desktop --plugin dsh-plugin-usage-bar --rollback`
+- 数据源探针（宿主侧每 5 分钟调一次）：`node scripts/deepseek_usage_probe.mjs --json`
+- 落盘产物：`$DSH_HOME/.dsh-control/usage-bar.json`（前端展示数据）与 `usage-bar-host.json`（宿主诊断）。
+- 挂载点：`conversation.input.dock`（`order=20`，排在 TodoPanel 0 / GoalBar 10 之后）。
+- **诚实边界**：时段与倒计时为纯前端本地计算（官方无该接口）；**额度栏在宿主通道与 `sk-` 凭据就位前一律显示「未接入」，不显示任何数字**；宿主未提供 slots 或 React seed 时只记诊断、**不做 DOM 穿透**。
+- **生效条件**：同 §17 —— 新增插件需**重启宿主**，刷新页面不够。
 
 ## 18. 执行层多源检索（REQ-SEARCH-MULTISOURCE-038）
 - 四源调度（本地优先，推荐默认）：`python3 skills/dispatch-skill-search/scripts/dispatch_search.py --query "<词>" --json`

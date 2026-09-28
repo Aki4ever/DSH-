@@ -2,8 +2,8 @@
 
 > 本文档由 DSH 管家统一调度维护。严格遵循 **L1 原子规约 → L2 工序动作 → L3 复合流程 → L4 中枢编排** 四级能力模型，并基于微观原子操作做加法（Composition）。
 
-- **最后同步时间**：2026-09-28 08:21:45
-- **总纳管技能数**：182 个
+- **最后同步时间**：2026-09-29 02:33:05
+- **总纳管技能数**：183 个
 
 ---
 
@@ -64,6 +64,7 @@
 | **L2** | `build-inverted-index` | 工序动作-倒排索引 | `倒排索引`、`建索引`、`term检索` | *(原子基元)* | `skills/build-inverted-index` |
 | **L2** | `build-layer-graph` | 工序动作-层间依赖图 | `层间依赖图`、`建图`、`层级关系` | `layer-decoupling-policy` | `skills/build-layer-graph` |
 | **L2** | `build-quantifier-table` | 工序动作-量化映射表 | `量化映射表`、`建量化表`、`场景阈值` | `quantify-modifier-policy` | `skills/build-quantifier-table` |
+| **L2** | `check-deepseek-usage` | 业务定制技能 | `check-deepseek-usage` | `multi-source-search-policy` | `skills/check-deepseek-usage` |
 | **L2** | `check-python-syntax` | 工序动作-语法编译 | `Python语法`、`编译校验`、`代码检查` | *(原子基元)* | `skills/check-python-syntax` |
 | **L2** | `check-script-executable` | 工序动作-脚本可执行检测 | `执行权限检测`、`可执行检查`、`脚本存在` | *(原子基元)* | `skills/check-script-executable` |
 | **L2** | `classify-change-scope` | 工序动作-变更处置判定 | `变更判定`、`热更判定`、`是否需要重启` | `prefer-hot-reload-policy` | `skills/classify-change-scope` |
@@ -190,7 +191,7 @@
 | **L3** | `tail-metrics-showcase` | 复合流程-量化指标总控 | `量化指标`、`通俗交付`、`指标总控` | `output-chinese-only` + `concise-focused-output` + `plain-analogy-explanation` + `measure-routing-metrics` + `format-iconized-tail` + `validate-icon-syntax` | `skills/tail-metrics-showcase` |
 | **L3** | `token-economy-guard` | 复合流程-token门禁 | `token门禁`、`省token`、`token优化` | `token-budget-policy` + `measure-token-budget` + `prune-redundant-context` + `verify-token-reduction` | `skills/token-economy-guard` |
 | **L3** | `visual-interaction-guard` | 复合流程-可视化交互门禁 | `交互四件套`、`档位门禁`、`下载门禁` | `format-zoomable-visual` + `zoom-level-policy` + `build-image-viewer` + `verify-interactive-html` + `interactive-image-viewer` | `skills/visual-interaction-guard` |
-| **L3** | `visualize-governance-topology` | 复合流程-可视化透视 | `可视化`、`查看索引`、`调用链路` | `format-visual-inspection` + `extract-catalog-topology` + `render-governance-mermaid` | `skills/visualize-governance-topology` |
+| **L3** | `visualize-governance-topology` | 复合流程-可视化透视 | `可视化`、`查看索引`、`调用链路` | `format-visual-inspection` + `extract-catalog-topology` + `render-governance-mermaid` + `check-deepseek-usage` | `skills/visualize-governance-topology` |
 | **L3** | `zero-restart-guard` | 复合流程-零重启门禁 | `零重启门禁`、`重启审批`、`热更门禁` | `prefer-hot-reload-policy` + `classify-change-scope` + `verify-no-unnecessary-restart` | `skills/zero-restart-guard` |
 | **L4** | `dsh-butler` | 中枢编排-全局管家 | `管家`、`统筹`、`调度` | `detect-vague-modifier` + `retire-legacy-workspace` | `skills/dsh-butler` |
 
