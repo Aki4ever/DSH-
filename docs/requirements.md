@@ -2329,6 +2329,42 @@
 
 ---
 
+### REQ-087: 物理触达改造（细分到底 · 自证进度 · 流程管控层）
+- **当前状态**：`[EVOLVING]` 演进中（**仅登记需求文案，尚未实施，未改任何机制载体**）
+- **实施版本**：`未实施`（文案见 [`docs/constraint_mechanism_optimize_5.md`](constraint_mechanism_optimize_5.md)，任务代号 `GCM-PHY`）
+- **提出时间**：2026-09-29
+- **最新更新**：2026-09-29
+- **核心诉求与交付物**：
+  1. **空架子清零（R1 / R1b）**：逐条机制核「载体 + 判定命令 + 退出码」，把宣称"必须/强制"的规则全部物理化；
+     颗粒度大到单个执行层资产（agent / api / skill / cli / mcp / 插件）无法直触物理层的，
+     **按「叶子测试 L1~L4」递归裂分**（单入口 / 单职责 / 可判定 / 可直调），直至每个叶子层可被一条命令直接调起并判真假；
+     裂分产物登记进 `skill-pool/docs/operations/execution-layers.json` 并 100% 入 `indexes/capabilities_index.md`；
+  2. **迭代检测（R2）**：新增 `scripts/progress_ledger.mjs`，每次改动追加机器可读记录
+     （文件 sha256 + 判定命令 + 实跑退出码 + 时间/任务名）；`--report` 一屏答完"做了什么 / 做到哪一步 / 还差什么"；
+     `--check` 以"漂移 = 0、无记录改动 = 0"判定，**只认磁盘哈希与退出码，不认自我宣称**；
+  3. **流程管控层（R3）**：新增规则章节（唯一权威源）+ `scripts/flow_control.mjs`（`--plan/--check/--diff/--graph`），
+     按依赖拓扑排序 + 关键路径把现有流程排在执行效率最高处；每次机制更新后重算顺序并出一致性校验；
+     重排受**不变式 I1~I5** 约束（物理锁单向递增 · G0→G4 累积门禁顺序 · 首动改名第 0 步 · 写后必读回就近 · 双检先于推送），
+     **可重排、不可跳步**。
+- **关联文件**：`docs/constraint_mechanism_optimize_5.md`（本需求文案）· `rules/workflow/task_execution_flow.md`（R3 权威源，待新增章节）·
+  `scripts/mechanism_audit.mjs`（R1 判定）· `scripts/progress_ledger.mjs`（R2 新建）· `scripts/flow_control.mjs`（R3 新建）·
+  `skill-pool/docs/operations/execution-layers.json`（裂分登记）
+- **本轮实测依据（可复跑）**：
+  - `node scripts/mechanism_audit.mjs` → 登记 13 条 · 已触达 7 · 硬性未触达 3 · 无载体 3；
+  - `./scripts/install_host_gate.sh verify` → profile 条目缺失 + 载体语法通过 + 无 `isHost=true` 凭据（exit 1）；
+  - `./scripts/control_gates.sh check` → 4/4（骨架 11/11 · 防丢 11/11 · 合规 5/5 · 条目 86 · 高相似对 0）；
+  - `./scripts/physical_lock.sh status` → 锁阶 `[0] LOCK-0`，已签署凭据 0 条。
+- **验收标准**：
+  - [ ] `node scripts/mechanism_audit.mjs --exit` 硬性未触达 = 0（exit 0）；
+  - [ ] `node scripts/build_capabilities_index.mjs --check` 叶子层未收录 = 0；
+  - [ ] `node scripts/progress_ledger.mjs --check` 漂移 = 0 且无记录改动 = 0；
+  - [ ] `node scripts/flow_control.mjs --check` 跳步 / 乱序 = 0；顺序变更经 `change_flow.md` 并由用户确认后留痕；
+  - [ ] `./scripts/install_host_gate.sh verify` exit 0（`isHost=true`，拦截层真的在跑；需重启桌面端）；
+  - [ ] 无法挂载物理载体的（如宿主无 agent 注册面）显式标 `BLOCKED` 并写明缺失的宿主扩展面，不以"已优化"盖过；
+  - [ ] 台账登记 + 双检全绿 + 提交推送。
+
+---
+
 ---
 
 ## 📎 附：不计入条目数的资产变更留痕
