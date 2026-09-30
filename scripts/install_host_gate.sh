@@ -96,7 +96,7 @@ case "$ACTION" in
     echo "-----------------------------------------"
     echo "DSH 家目录: $DSH_HOME_DIR"
     if [ "$PROFILE_RESOLVED" -eq 1 ]; then
-      echo "目标 profile: $PROFILE_DIR（已解析）"
+      echo "目标 profile: ${PROFILE_DIR}（已解析）"
     else
       echo "目标 profile: $PROFILE_DIR ⛔ 目录不存在（DSH_HOME 下未找到任何含 cordis.patch.yml 的 profile）"
     fi
@@ -174,7 +174,7 @@ EOF
       exit 1
     fi
     if ! has_entry; then
-      echo "❌ 写入后复核失败：文件中仍找不到条目 $ENTRY_ID，拒绝报成功"
+      echo "❌ 写入后复核失败：文件中仍找不到条目 ${ENTRY_ID}，拒绝报成功"
       exit 1
     fi
     echo "✅ 注册条目已写入并复核在位：$PATCH_FILE"

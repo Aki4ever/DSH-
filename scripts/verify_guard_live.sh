@@ -55,7 +55,7 @@ L_INJ=$(norm "$(grep -m1 -E "export const inject" "$LOADER" 2>/dev/null)")
 I_INJ=$(norm "$(grep -m1 -E "inject[[:space:]]*=" "$INDEX" 2>/dev/null)")
 if [ -n "$L_INJ" ] && [ -n "$I_INJ" ]; then
   if [ "$L_INJ" = "$I_INJ" ]; then
-    ok "loader 与 index 的 inject 一致（$L_INJ）"
+    ok "loader 与 index 的 inject 一致（${L_INJ}）"
   else
     bad "loader 与 index 的 inject 不一致（宿主只读模型自己导出的那个）"
     info "loader: $L_INJ"

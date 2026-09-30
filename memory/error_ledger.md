@@ -41,6 +41,7 @@
 | **ERR-003** | `fatal: not a git repository` 或远程被拒 | 跨工程执行时工作目录与当前仓库环境漂移 | 统一使用绝对路径或在命令前显式校验 `git status` | 🟢 稳定 |
 | **ERR-004** | `tool denied` / `sandbox escalation rejection` | 免审批环境下错误触发审批流或超出沙箱边界 | 遵守免审批白名单，禁止下发越界破坏性指令 | 🟢 稳定 |
 | **ERR-005** | `bash: node: command not found [exit code: 127]` | 子shell缺少 Homebrew 或额外 bin 路径环境变量 | 执行前显式注入 `export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"` | 🟢 稳定 |
+| **ERR-006** | `line N: VAR<乱码>: unbound variable`（`$VAR` 紧跟中文全角字符） | `$VAR` 未加花括号，后接全角标点时，在**非 UTF-8 locale** 下 bash 会把该多字节字符的首字节并入变量名 → 引用到一个不存在的变量名。与 ERR-005 同属"环境相关的静默/直接失效" | 全库探针（必须为 0）：`grep -rnP '\$[A-Za-z_][A-Za-z0-9_]*(?=[^\x00-\x7F])' scripts ai-control --include='*.sh'`；写脚本时**后接非 ASCII 一律用 `${VAR}`** | 🟢 已清零（2026-10-01 修 4 处：`install_host_gate.sh`×2 · `verify_guard_live.sh` · `deepseek_key_setup.sh`） |
 
 ---
 

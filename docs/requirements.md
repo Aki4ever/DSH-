@@ -2399,6 +2399,11 @@
     其中 T5/T6/T8 三条"反向验证"用例在两版下都通过 —— 证明这套用例是**判别性**的，不是凑数的绿勾；
   - **修复后**：`./scripts/gate_selftest.sh` → **9/9 通过**；
   - **真实工程未误伤**：`./scripts/control_gates.sh check` → 仍 `4/4`、退出码 0。
+  - **连带发现（非本缺陷本体，已一并清零）**：跑 `./scripts/install_host_gate.sh verify` 时崩溃
+    `line 99: PROFILE_DIR<乱码>: unbound variable` —— `$VAR` 后紧跟中文全角括号时，
+    非 UTF-8 locale 下 bash 把多字节首字节并入变量名。全库探针扫出 **4 处同类**并全部改为 `${VAR}`
+    （`install_host_gate.sh`×2 · `verify_guard_live.sh` · `deepseek_key_setup.sh`），复扫 0 处；
+    已登记 [`memory/error_ledger.md`](../memory/error_ledger.md) **ERR-006** 并附可复跑探针命令。
 - **验收标准**：
   - [x] `check_redundancy` 解析不出 `duplicatePairs` / `blocksScanned` → `rc=2`（不再默认 0）；
   - [x] 检测器自报 0 实质块而外壳扫到文件 → `rc=2`（证据自相矛盾）；

@@ -115,7 +115,7 @@ umask 077
 printf '%s\n' "$KEY" > "$KEY_FILE"
 chmod 600 "$KEY_FILE"
 unset KEY
-echo "✅ 已写入 $KEY_FILE（权限 600，内容不回显）"
+echo "✅ 已写入 ${KEY_FILE}（权限 600，内容不回显）"
 
 verify_live
 rc=$?
