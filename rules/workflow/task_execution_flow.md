@@ -1,8 +1,8 @@
 # 任务执行结构化流程与双轨分流法典 (Task Execution Flow)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.23.0`
-> - **对应实施版本**：`v4.23.0`
+> - **当前文档版本**：`v4.24.0`
+> - **对应实施版本**：`v4.24.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](versioning_standard.md)
 > - **生效状态**：`[Release 稳定生效]`
 
@@ -295,6 +295,59 @@
   2. **路由层 (`shortcuts_index.md` / `navigation_router.md`)**：增补或对齐自然语言快速触发词通道，更新地图导航路径；
   3. **索引层 (`capabilities_index.md`)**：上架/刷新能力唯一标识符（Identifier），并补齐正面使用范例与反面踩坑红线；
 - **机器拦截硬门禁**：改动后必须运行 `node scripts/channel_audit.mjs`，通道冲突或死链未归零前，门禁系统判定为不合格，禁止关闭任务。
+
+---
+
+## 🧭 二之五、流程管控层：效率最优排列与更新后一致性 (REQ-087 · R3)
+
+> **一句话**：流程顺序不再是手抄的表格，而是**算出来的、能校验的、有留痕的**物理对象。
+
+### 1. 唯一权威源与载体分工
+
+| 层 | 载体 | 只放什么 |
+| :--- | :--- | :--- |
+| **依赖声明（权威源）** | `ai-control/config/flow_graph.json` | 步骤清单、依赖边、耗时估计、不变式、已批准顺序 |
+| **判定器（执行层）** | `scripts/flow_control.mjs` | 拓扑分层、关键路径、一致性与不变式校验、变更提案 |
+| **规则层（本章）** | 本节 | 分工说明 + 受管步骤清单（机器可读区间），**不重复写细则** |
+
+### 2. 四个子命令
+
+| 命令 | 作用 | 通过标准 |
+| :--- | :--- | :--- |
+| `node scripts/flow_control.mjs --plan` | 拓扑分层出"效率最高排列"（同批即可并行）+ 关键路径 | 输出批次与耗时对比 |
+| `node scripts/flow_control.mjs --check` | 图合法 / 载体在位 / 不变式成立 / 与本节同步 / 已批准顺序 == 重算顺序 / 轨迹合法 | 退出码 0 |
+| `node scripts/flow_control.mjs --diff` | 机制更新后重算，出**顺序变化提案**（不改文件） | 无变更或出提案 |
+| `node scripts/flow_control.mjs --apply-order` | 确认提案后重新批准当前规划 | 写回 `order` 字段 |
+
+### 3. 不变式（重排的硬边界，永不可被重排破坏）
+
+| 编号 | 不变式 | 类型 |
+| :--- | :--- | :--- |
+| **I1** | 底层物理锁 `LOCK-0 → LOCK-4` 单向严格递增，不可跳阶 | sequence |
+| **I2** | `G0→G4` 累积门禁必须先于任何改动型动作 | before |
+| **I3** | 首动改名必须是第 0 步（零豁免） | first |
+| **I4** | 写后必读回属 `per-write` 步骤，紧跟每一次写，不得攒到收尾 | immediate |
+| **I5** | 双检与存量校准必须早于提交推送 | before |
+
+### 4. 更新协议（保证"每次更新后既一致又高效"）
+
+```text
+机制更新 → node scripts/flow_control.mjs --diff      （算出新顺序提案）
+        → 用户确认（顺序变更属规则变更，走 change_flow.md 六步）
+        → node scripts/flow_control.mjs --apply-order （重新批准）
+        → node scripts/flow_control.mjs --check       （必须 exit 0）
+        → 进程台账留痕（progress_ledger）+ 台账附节登记
+```
+
+**铁律**：流程**可以重排，不可跳步**。重排只改"非锁步"的先后/并行关系；`--diff` 出提案前不得改动本节的受管区间。
+
+### 5. 受管步骤清单（与依赖图逐 id 一致，机器校验）
+
+> 本区间由 `scripts/flow_control.mjs --check` 强制比对；增删步骤必须同步依赖图，否则判定不通过。
+
+<!-- FLOW-CONTROL-STEPS:BEGIN -->
+`S05` `LOCK0` `G0G4` `S02` `S03` `S07` `LOCK1` `S08` `LOCK2` `S09S10` `S11` `S12` `S13a` `S13b` `S13c` `S13d` `S14` `S15` `S16`
+<!-- FLOW-CONTROL-STEPS:END -->
 
 ---
 

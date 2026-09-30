@@ -13,6 +13,11 @@ set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+# Node 运行时解析（REQ-087 R1 修复）：原先用裸 `node`，PATH 里没有时判定静默降级，
+# 实测把本应 80/100 的审计误报成 36/100。统一走单一权威实现。
+. "$SCRIPT_DIR/lib/find_node.sh"
+NODE_BIN="$(find_node || true)"
+
 JSON_MODE=0
 EXIT_MODE=0
 
@@ -59,8 +64,8 @@ fi
 
 # ── 维度 3：冗余双检扫描 (12分) ────────────────────────────────────────────
 REDUNDANCY_PASS=0
-if command -v node >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/redundancy_scan.mjs" ]; then
-  if node "$SCRIPT_DIR/redundancy_scan.mjs" --root "$ROOT" >/dev/null 2>&1; then
+if [ -n "$NODE_BIN" ] && [ -f "$SCRIPT_DIR/redundancy_scan.mjs" ]; then
+  if "$NODE_BIN" "$SCRIPT_DIR/redundancy_scan.mjs" --root "$ROOT" >/dev/null 2>&1; then
     REDUNDANCY_PASS=1
     CHECKS+=("✅ 冗余检测通过：高相似重复块对为 0 (+12)")
   fi
@@ -74,8 +79,8 @@ fi
 
 # ── 维度 4：冲突双检扫描 (12分) ────────────────────────────────────────────
 CONFLICT_PASS=0
-if command -v node >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/conflict_scan.mjs" ]; then
-  if node "$SCRIPT_DIR/conflict_scan.mjs" --root "$ROOT" >/dev/null 2>&1; then
+if [ -n "$NODE_BIN" ] && [ -f "$SCRIPT_DIR/conflict_scan.mjs" ]; then
+  if "$NODE_BIN" "$SCRIPT_DIR/conflict_scan.mjs" --root "$ROOT" >/dev/null 2>&1; then
     CONFLICT_PASS=1
     CHECKS+=("✅ 冲突排查通过：无事实矛盾、版本撕裂与死链 (+12)")
   fi
@@ -89,8 +94,8 @@ fi
 
 # ── 维度 5：存量校准与漏登记检测 (12分) ──────────────────────────────────
 LEGACY_PASS=0
-if command -v node >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/legacy_align_scan.mjs" ]; then
-  if node "$SCRIPT_DIR/legacy_align_scan.mjs" --root "$ROOT" >/dev/null 2>&1; then
+if [ -n "$NODE_BIN" ] && [ -f "$SCRIPT_DIR/legacy_align_scan.mjs" ]; then
+  if "$NODE_BIN" "$SCRIPT_DIR/legacy_align_scan.mjs" --root "$ROOT" >/dev/null 2>&1; then
     LEGACY_PASS=1
     CHECKS+=("✅ 存量校准通过：遇碰即对齐清单清零 (+12)")
   fi
@@ -105,8 +110,8 @@ fi
 # ── 维度 6：台账与版本双向强同步 (8分) ────────────────────────────────────
 CURRENT_VERSION=$(grep -m1 '当前系统实施总版本' "$ROOT/docs/requirements.md" 2>/dev/null | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' || echo "最新")
 SYNC_PASS=0
-if command -v node >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/sync_control_requirements.mjs" ]; then
-  if node "$SCRIPT_DIR/sync_control_requirements.mjs" >/dev/null 2>&1; then
+if [ -n "$NODE_BIN" ] && [ -f "$SCRIPT_DIR/sync_control_requirements.mjs" ]; then
+  if "$NODE_BIN" "$SCRIPT_DIR/sync_control_requirements.mjs" >/dev/null 2>&1; then
     SYNC_PASS=1
     CHECKS+=("✅ 台账同步通过：全局台账与管控台账原子同步 (+8)")
   fi
@@ -149,8 +154,8 @@ fi
 COMPACT_PASS=0
 COMPACT_LINE="未采集到回复度量报告"
 COMPACT_JSON="null"
-if command -v node >/dev/null 2>&1; then
-  COMPACT_OUT="$(node -e '
+if [ -n "$NODE_BIN" ]; then
+  COMPACT_OUT="$("$NODE_BIN" -e '
 const { readFileSync, existsSync } = require("node:fs")
 const { join } = require("node:path")
 const home = process.env.DSH_HOME || join(process.env.HOME || "", ".dsh")
@@ -168,7 +173,7 @@ try {
     COMPACT_PASS=1
     CHECKS+=("✅ 输出精简合规：体量与文末五联装结构均达标 (+8)")
   else
-    COMPACT_LINE="$(echo "$COMPACT_OUT" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);process.stdout.write(r.reason==="missing"?"尚无回复度量报告（本会话首次答复前必然如此）":`${r.chars} 字/${r.lines} 行（限 ${r.maxChars}/${r.maxLines}）· 缺失标头 ${(r.missingTail||[]).join("/")||"无"}`)}catch{process.stdout.write("度量报告不可解析")}})')"
+    COMPACT_LINE="$(echo "$COMPACT_OUT" | "$NODE_BIN" -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);process.stdout.write(r.reason==="missing"?"尚无回复度量报告（本会话首次答复前必然如此）":`${r.chars} 字/${r.lines} 行（限 ${r.maxChars}/${r.maxLines}）· 缺失标头 ${(r.missingTail||[]).join("/")||"无"}`)}catch{process.stdout.write("度量报告不可解析")}})')"
   fi
 fi
 

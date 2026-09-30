@@ -18,7 +18,7 @@
  * ==============================================================================
  */
 
-import { checkTodoGate, formatTodoLine, readTodoEvidence, recordTodoWrite } from './todo_tracker.mjs'
+import { checkTodoGate, formatTodoLine, recordTodoWrite, resolveTodoEvidenceSync } from './todo_tracker.mjs'
 
 const action = process.argv[2] || 'status'
 const arg2 = process.argv[3] || ''
@@ -29,7 +29,7 @@ async function status() {
   console.log('-----------------------------------------')
   console.log(`会话标识: ${sid}`)
   console.log(formatTodoLine(sid))
-  const ev = await readTodoEvidence(sid)
+  const ev = resolveTodoEvidenceSync(sid)
   if (ev) {
     console.log(`证据时间: ${ev.updatedAt} · 落盘次数: ${ev.writes}`)
     for (const it of ev.items) {
@@ -41,8 +41,8 @@ async function status() {
 }
 
 async function json() {
-  const ev = await readTodoEvidence(sid)
   const r = checkTodoGate(sid)
+  const ev = r.evidence || resolveTodoEvidenceSync(sid)
   console.log(JSON.stringify({ pass: r.ok, code: r.code, message: r.message, evidence: ev }, null, 2))
 }
 

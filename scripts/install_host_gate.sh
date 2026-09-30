@@ -51,6 +51,10 @@ if [ -z "$PROFILE_DIR" ]; then
   PROFILE_RESOLVED=0
 fi
 PATCH_FILE="$PROFILE_DIR/cordis.patch.yml"
+
+# Node 运行时解析（REQ-087 R1 修复）：统一走单一权威实现，不依赖外部 PATH。
+. "$SCRIPT_DIR/lib/find_node.sh"
+NODE_BIN="$(find_node || true)"
 STATUS_FILE="$DSH_HOME_DIR/.dsh-control/plugin-status.txt"
 ENTRY_ID="ai-execution-control"
 LOADER_ABS="$ROOT/ai-control/plugin/loader.mjs"
@@ -59,7 +63,7 @@ ACTION="${1:-verify}"
 
 # file:// URL 需要把空格与中文百分号编码，否则 YAML 里的 name 指向不存在的路径
 url_encode_path() {
-  node -e 'const p=process.argv[1];process.stdout.write("file://"+p.split("/").map(s=>encodeURIComponent(s)).join("/"))' "$1"
+  "${NODE_BIN:-node}" -e 'const p=process.argv[1];process.stdout.write("file://"+p.split("/").map(s=>encodeURIComponent(s)).join("/"))' "$1"
 }
 
 has_entry() { [ -f "$PATCH_FILE" ] && grep -q "id: $ENTRY_ID" "$PATCH_FILE"; }
@@ -106,8 +110,6 @@ case "$ACTION" in
     # （try 块少一个闭括号）并被正常提交，而 verify 只检查"文件存在"就报在位 ——
     # 结果是"文件在、机制不在"：import 抛异常 → loader 降级为空插件 → 门禁与看板全都不存在，
     # 外观症状却与"插件没注册"一模一样。存在性检查抓不到这一类，必须真的解析一遍。
-    NODE_BIN="${DSH_NODE_BIN:-$(command -v node 2>/dev/null || true)}"
-    [ -n "$NODE_BIN" ] || NODE_BIN="/opt/homebrew/bin/node"
     if [ -x "$NODE_BIN" ]; then
       for f in "$LOADER_ABS" "$ROOT/ai-control/plugin/index.mjs"; do
         if "$NODE_BIN" --check "$f" >/dev/null 2>&1; then
@@ -147,9 +149,16 @@ case "$ACTION" in
   install)
     if [ ! -f "$PATCH_FILE" ]; then echo "❌ 找不到 profile 配置：$PATCH_FILE"; exit 2; fi
     if has_entry; then echo "ℹ️ 条目已存在，无需重复写入（幂等）"; exit 0; fi
-    cp "$PATCH_FILE" "$PATCH_FILE.bak-$(date +%Y%m%d-%H%M%S)-install-gate"
+    if ! cp "$PATCH_FILE" "$PATCH_FILE.bak-$(date +%Y%m%d-%H%M%S)-install-gate" 2>/dev/null; then
+      echo "❌ 备份失败（profile 目录不可写）：$PATCH_FILE"
+      echo "   处置：给宿主 profile 目录写权限，或以更高权限重跑本命令；未备份前不改配置。"
+      exit 1
+    fi
     URL="$(url_encode_path "$LOADER_ABS")"
-    cat >> "$PATCH_FILE" <<EOF
+    # 落盘结果必须复核（REQ-087 R1 实测根因）：
+    # 旧实现无条件 `cat >>` 后直接打印"✅ 已写入"，而沙箱/权限拒绝时
+    # 写入静默失败也照样报成功、退出码 0 —— 自证工具自己说谎，比没有工具更糟。
+    if ! cat >> "$PATCH_FILE" <<EOF
 
 # ── AI 执行流程管控 · 拦截层（由 scripts/install_host_gate.sh 写入）────────────
 # 为什么必须在这里插一行：本插件是宿主运行时的硬门禁与过程可见性来源。
@@ -159,14 +168,23 @@ case "$ACTION" in
     - id: $ENTRY_ID
       name: "$URL"
 EOF
-    echo "✅ 注册条目已写入：$PATCH_FILE"
+    then
+      echo "❌ 写入失败（profile 配置文件不可写）：$PATCH_FILE"
+      echo "   处置：给该文件写权限后重跑；未写入前宿主不会加载拦截层，硬门禁不生效。"
+      exit 1
+    fi
+    if ! has_entry; then
+      echo "❌ 写入后复核失败：文件中仍找不到条目 $ENTRY_ID，拒绝报成功"
+      exit 1
+    fi
+    echo "✅ 注册条目已写入并复核在位：$PATCH_FILE"
     echo "▶ 下一步：重载 profile（重启 DSH 或触发 HMR）后运行：./scripts/install_host_gate.sh verify"
     ;;
   uninstall)
     if ! has_entry; then echo "ℹ️ 条目不存在，无需回滚"; exit 0; fi
-    cp "$PATCH_FILE" "$PATCH_FILE.bak-$(date +%Y%m%d-%H%M%S)-uninstall-gate"
+    cp "$PATCH_FILE" "$PATCH_FILE.bak-$(date +%Y%m%d-%H%M%S)-uninstall-gate" 2>/dev/null || { echo "❌ 备份失败，拒绝改动配置"; exit 1; }
     # 只删本条目的插入块：从注释行到 name 行，避免误伤其它插件配置
-    node -e '
+    "$NODE_BIN" -e '
 const fs=require("node:fs")
 const file=process.argv[1], id=process.argv[2]
 const lines=fs.readFileSync(file,"utf8").split("\n")

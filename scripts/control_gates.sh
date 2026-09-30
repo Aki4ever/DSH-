@@ -31,6 +31,19 @@ CACHE_FILE="$STATE_DIR/cache.env"
 REPORT_DIR="$PROJECT_ROOT/ai-control/reports"
 mkdir -p "$STATE_DIR" "$REPORT_DIR"
 
+# ── 状态快照降级落盘（REQ-087 R1-b，2026-09-29 实测根因）──────────────────────
+# 现象：`~/.dsh/.dsh-control/` 在工作区沙箱（workspace-write）下 `WRITE DENIED`，
+#       `status.json.tmp` 与 `cache.env` 双双写不进 → 看板数字照算，但"机制活着"的
+#       状态**留不下任何跨会话凭据**，且 stderr 只吐两行裸报错、看板照旧 100%。
+# 处置：宿主控制目录写不进时，把同一份快照**降级写到工程内**，绝不静默丢弃；
+#       读取端（load_from_status / cache_fresh）双源取新。
+# 命名约束：临时文件不用 `.tmp` 后缀——G2 门禁把 `*.tmp` 判为散落垃圾。
+STATE_DIR_FALLBACK="$REPORT_DIR/state"
+STATUS_JSON_FALLBACK="$STATE_DIR_FALLBACK/status.json"
+CACHE_FILE_FALLBACK="$STATE_DIR_FALLBACK/cache.env"
+mkdir -p "$STATE_DIR_FALLBACK"
+STATUS_WRITE_NOTE=""
+
 # ── 可编辑阈值（seed 默认值）──────────────────────────────────────────────────
 # 注意：seed 必须覆盖"实现真正用到的每一个键"。历史缺陷：G4_DUP_PAIRS 与
 # G4_TOP_DUP_LIMIT 只在 gates.conf 里定义，seed 里没有；一旦 gates.conf 缺失，
@@ -60,6 +73,37 @@ if [ -f "$CONFIG_FILE" ]; then
   # shellcheck disable=SC1090
   source "$CONFIG_FILE"
 fi
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 证据可证性铁律（V4 修复 · 2026-10-01）
+# ══════════════════════════════════════════════════════════════════════════════
+# 缺陷原文（docs/constraint_mechanism_optimize_3.md 3.2 · 编号 V4）：
+#   「检测器『退出码 0 + 空输出』即算通过」——判定层用 `${x:-0}` 兜底为 0。
+#
+# 后果：检测器崩了 / 输出为空 / JSON 缺键 / 值非数值，一律被折算成
+#       "0 个高相似块对" = **通过**。即"越是没产出证据，看板越绿"，
+#       与元规则"不采信自我宣称、状态由磁盘实况推导"直接相反。
+#
+# 铁律（此后新增任何外部指标必须遵守，回归自检见 scripts/gate_selftest.sh）：
+#   ① 外部命令"跑成了"只认**退出码**；输出为空本身不是证据，也不等于失败；
+#   ② 指标解析不出**合法数值** → 证据不可得 → 该门禁必须返回 2（⛔ 硬阻断）；
+#      **严禁**回退成 0 或任何"健康"默认值；
+#   ③ 调用方必须显式处置"不可得"，不得让默认值直接流进比较式。
+#
+# 同源实现（可直接对照）：ai-control/plugin/index.mjs 第 223 行
+#   `if (!data || typeof data !== 'object' || typeof data.gateTotal !== 'number') return null`
+#   —— 拦截层早就是"形状非法即拒绝"，判定层此前没有对齐，本函数即为此补齐。
+
+# 从 JSON 文本中**严格**取一个整数字段。
+# 只接受 `"<key>" : 整数` 的字面形状；null / 缺键 / 非数值 / 空文本一律 return 1。
+json_int_strict() { # $1=JSON 文本 $2=键名
+  local text="$1" key="$2" v
+  v="$(printf '%s' "$text" | tr -d '\n\r' \
+        | grep -oE "\"${key}\"[[:space:]]*:[[:space:]]*-?[0-9]+" \
+        | head -1 | grep -oE -- '-?[0-9]+$')"
+  [ -n "$v" ] || return 1
+  printf '%s' "$v"
+}
 
 # ── 门禁定义（顺序即依赖链）──────────────────────────────────────────────────
 GATE_IDS=(init structure sync redundancy)
@@ -333,21 +377,33 @@ check_sync() {
   fi
   total=$((total+1)); (( gaps == 0 )) && ok=$((ok+1))
 
-  local dirty=0 last_commit="无"
-  if [ -d "$PROJECT_ROOT/.git" ]; then
-    dirty=$(git -C "$PROJECT_ROOT" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+  # V4 同族修复：旧实现 `git status | wc -l` 在 git 失败时同样给出 **0**，
+  # 而"0 个未提交变更"正是"已同步"这个健康结论 —— 于是"git 读不出来"被显示成
+  # "文档已入库"。现在以**退出码**分界（空输出 + 退出码 0 才算真的 0 个变更）：
+  #   退出码 0 → 计数有效；退出码非 0（git 缺失 / 仓库损坏 / 无权限）→ 证据不可得。
+  local dirty=0 dirty_known=0 last_commit="无" _st
+  if _st="$(git -C "$PROJECT_ROOT" status --porcelain 2>/dev/null)"; then
+    dirty_known=1
+    dirty=$(printf '%s' "$_st" | grep -c . || true)
     last_commit=$(git -C "$PROJECT_ROOT" log -1 --format='%h' 2>/dev/null || echo "无")
   fi
   dirty=${dirty:-0}
-  total=$((total+1)); (( dirty <= G3_DIRTY_LIMIT )) && ok=$((ok+1))
+  total=$((total+1)); (( dirty_known == 1 && dirty <= G3_DIRTY_LIMIT )) && ok=$((ok+1))
 
-  local pct=$(( ok * 100 / total ))
-  DETAIL="条目 $req_count (A$active/E$evolv/D$depre) · 台账版本 $ledger_ver · 缺号 $gaps · 未提交 $dirty/$G3_DIRTY_LIMIT · HEAD $last_commit"
+  local pct=$(( ok * 100 / total )) _dirty_txt="$dirty"
+  (( dirty_known == 0 )) && _dirty_txt="不可证"
+  DETAIL="条目 $req_count (A$active/E$evolv/D$depre) · 台账版本 $ledger_ver · 缺号 $gaps · 未提交 ${_dirty_txt}/$G3_DIRTY_LIMIT · HEAD $last_commit"
   METRIC_A="$req_count"; METRIC_A_LABEL="需求条目"
   METRIC_B="$dirty"; METRIC_B_LABEL="未提交变更"
 
   if (( pct < 100 )); then
-    if (( dirty > G3_DIRTY_LIMIT )); then
+    if (( dirty_known == 0 )); then
+      HINT="无法读取 Git 工作树状态（git 不可用 / 仓库损坏），未提交变更数**不可证实**"
+      # 返回 2 = ⛔ 硬阻断，与 G4 的语义保持一致：
+      #   "工具读不出证据"是**故障**（要立刻修环境），不是"还没轮到这一关"（只需做前序）。
+      # 旧实现一律 return 1，于是故障被渲染成 ⏸️ 待前序，处置动作完全指错方向。
+      return 2
+    elif (( dirty > G3_DIRTY_LIMIT )); then
       HINT="未提交变更 $dirty 超阈值 ${G3_DIRTY_LIMIT}，文档未同步入库"
     elif (( gaps > 0 )); then
       HINT="需求编号存在 $gaps 处缺号"
@@ -388,14 +444,30 @@ check_redundancy() {
   total=$((total+1)); (( file_count > 0 )) && ok=$((ok+1))
 
   # 4.1 真冗余：块级归一化 + 词级 Jaccard 相似度（由 Node 检测器完成）
-  local dup_pairs=0 blocks=0 detector="ok"
+  local dup_pairs=0 blocks=0 detector="ok" raw=""
   DUP_PAIRS_JSON="$REPORT_DIR/redundancy.json"
   if NODE_BIN="$(find_node)"; then
     if "$NODE_BIN" "$SCRIPT_DIR/redundancy_scan.mjs" --root "$PROJECT_ROOT" --json \
         > "$DUP_PAIRS_JSON" 2>/dev/null; then
-      dup_pairs=$(grep -m1 '"duplicatePairs"' "$DUP_PAIRS_JSON" | grep -oE '[0-9]+')
-      blocks=$(grep -m1 '"blocksScanned"' "$DUP_PAIRS_JSON" | grep -oE '[0-9]+')
-      dup_pairs=${dup_pairs:-0}; blocks=${blocks:-0}
+      # ── V4 修复点（原为 `dup_pairs=${dup_pairs:-0}`）────────────────────────
+      # 旧写法把"没解析到"折算成 0，而 0 = 无高相似块对 = **通过**。
+      # 实测：把检测器换成 `process.exit(0)`（零输出），门禁照报
+      # "✅ G4 通过 · 0 高相似块对 · 扫描 1 文件/0 实质块"。
+      # 现在：退出码 0 只说明"命令跑成了"，还必须**解析出全部必需字段**才算有证据。
+      raw="$(cat "$DUP_PAIRS_JSON" 2>/dev/null || true)"
+      if dup_pairs="$(json_int_strict "$raw" duplicatePairs)" \
+         && blocks="$(json_int_strict "$raw" blocksScanned)"; then
+        # 交叉校验：外壳自己数到的文件数 vs 检测器自报的实质块数。
+        # 有文件却 0 实质块 → 检测器"什么都没看"（它自己的 unknowable 分支本该退 2），
+        # 属**证据自相矛盾**，不能当作"0 重复 = 健康"。
+        if (( file_count > 0 && blocks == 0 )); then
+          detector="自报 0 实质块，但外壳扫到 $file_count 个文件（证据自相矛盾）"
+          dup_pairs=-1
+        fi
+      else
+        detector="退出码 0 但输出不可解析（空输出 / 缺键 / 值非数值）"
+        dup_pairs=-1
+      fi
     else
       # 退出码 2 = 检测器明确报告"不可判定"（有文件却零实质块），
       # 与"脚本崩了"必须区分开：前者提示阈值/范围问题，后者提示环境问题。
@@ -569,6 +641,8 @@ write_status() {
     printf '  "currentGate": "%s",\n' "$CURRENT_ID"
     printf '  "currentGateName": "%s",\n' "$CURRENT_NAME"
     printf '  "gateIndex": %s,\n' "$GATE_INDEX"
+    printf '  "snapshotPrimary": "%s",\n' "$(json_escape "$STATUS_JSON")"
+    printf '  "snapshotFallback": "%s",\n' "$(json_escape "$STATUS_JSON_FALLBACK")"
     printf '  "gates": [\n'
     for i in "${!GATE_IDS[@]}"; do
       printf '    { "id": "%s", "name": "%s", "status": "%s", "detail": "%s", "hint": "%s", "metricA": "%s", "metricALabel": "%s", "metricB": "%s", "metricBLabel": "%s" }%s\n' \
@@ -579,14 +653,38 @@ write_status() {
         "$( (( i < TOTAL_GATES-1 )) && printf ',' )"
     done
     printf '  ]\n}\n'
-  } > "$STATUS_JSON.tmp" 2>/dev/null && mv -f "$STATUS_JSON.tmp" "$STATUS_JSON"
+  } > "$STATUS_JSON_FALLBACK.new" 2>/dev/null || return 1
+  # ① 工程内快照：永远可写，作为"机制确实跑过"的跨会话凭据（降级底座）
+  mv -f "$STATUS_JSON_FALLBACK.new" "$STATUS_JSON_FALLBACK" 2>/dev/null
+  # ② 宿主控制目录：能写则写（宿主侧插件读它）；写不进就如实记一行，不静默
+  if cp -f "$STATUS_JSON_FALLBACK" "$STATUS_JSON.new" 2>/dev/null \
+     && mv -f "$STATUS_JSON.new" "$STATUS_JSON" 2>/dev/null; then
+    STATUS_WRITE_NOTE=""
+  else
+    rm -f "$STATUS_JSON.new" 2>/dev/null
+    STATUS_WRITE_NOTE="宿主状态目录不可写，快照已降级落盘 ai-control/reports/state/status.json"
+  fi
 }
 
 CACHE_TTL="${DSH_CONTROL_TTL:-30}"
+
+# 缓存时间戳落盘：同样双源——宿主目录写不进时退到工程内，绝不让 `touch` 裸报错。
+mark_cache() {
+  if touch "$CACHE_FILE" 2>/dev/null; then
+    rm -f "$CACHE_FILE_FALLBACK" 2>/dev/null
+  else
+    touch "$CACHE_FILE_FALLBACK" 2>/dev/null
+  fi
+}
+
 cache_fresh() {
-  [ -f "$CACHE_FILE" ] || return 1
+  local f="$CACHE_FILE"
+  if [ -f "$CACHE_FILE_FALLBACK" ] && { [ ! -f "$CACHE_FILE" ] || [ "$CACHE_FILE_FALLBACK" -nt "$CACHE_FILE" ]; }; then
+    f="$CACHE_FILE_FALLBACK"
+  fi
+  [ -f "$f" ] || return 1
   local ts now
-  ts=$(stat -f %m "$CACHE_FILE" 2>/dev/null || stat -c %Y "$CACHE_FILE" 2>/dev/null || echo 0)
+  ts=$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null || echo 0)
   now=$(date +%s)
   (( now - ts < CACHE_TTL ))
 }
@@ -595,6 +693,10 @@ cache_fresh() {
 # 看板渲染（Markdown：DSH GUI 原生渲染，无需依赖等宽字体对齐）
 # ══════════════════════════════════════════════════════════════════════════════
 load_from_status() {
+  # 双源取新（REQ-087 R1-b）：宿主控制目录被沙箱拦下时，读工程内降级快照
+  if [ -f "$STATUS_JSON_FALLBACK" ] && { [ ! -f "$STATUS_JSON" ] || [ "$STATUS_JSON_FALLBACK" -nt "$STATUS_JSON" ]; }; then
+    STATUS_JSON="$STATUS_JSON_FALLBACK"
+  fi
   [ -f "$STATUS_JSON" ] || return 1
   PASSED=$(grep -m1 '"gatePassed"' "$STATUS_JSON" | grep -oE '[0-9]+')
   TOTAL_GATES=$(grep -m1 '"gateTotal"' "$STATUS_JSON" | grep -oE '[0-9]+')
@@ -603,6 +705,12 @@ load_from_status() {
   CURRENT_NAME=$(grep -m1 '"currentGateName"' "$STATUS_JSON" | sed -E 's/.*: "([^"]*)".*/\1/')
   GATE_INDEX=$(grep -m1 '"gateIndex"' "$STATUS_JSON" | grep -oE '[0-9]+')
   GENERATED_AT=$(grep -m1 '"generatedAt"' "$STATUS_JSON" | sed -E 's/.*: "([^"]*)".*/\1/')
+  # V4 同族修复：快照字段解析不出来时，旧实现把空值一路带进渲染与 finish()，
+  # 于是"损坏/被截断的快照"照样被当成可用依据（`PASSED` 空 → 显示 0/0，但退出码来自
+  # 空的 execAllowed，语义已不可信）。现在**形状非法即判不可用**，由调用方回退到真实重算。
+  # 判据与拦截层 ai-control/plugin/index.mjs:223 同源：必需字段缺失/非数值 → 拒绝。
+  [ -n "$PASSED" ] && [ -n "$TOTAL_GATES" ] && [ -n "$PCT" ] && [ -n "$GATE_INDEX" ] || return 1
+  case "$EXEC_ALLOWED" in true|false) : ;; *) return 1 ;; esac
   pass_at=$(( GATE_INDEX - 1 ))
   RESULTS=(); DETAILS=(); HINTS=(); MA=(); MAL=(); MB=(); MBL=()
   local l cnt=0 raws
@@ -619,7 +727,9 @@ load_from_status() {
     MBL+=("$(printf '%s' "$l" | sed -E 's/.*"metricBLabel": "([^"]*)".*/\1/')")
     cnt=$((cnt+1))
   done < <(grep -E '^    \{ "id"' "$STATUS_JSON")
-  [ "$cnt" -gt 0 ] || return 1
+  # 门禁条目数必须与 totalGates 自洽；否则是**半截快照**（例如写入过程被打断），
+  # 按"证据不足"处理并回退重算，而不是拿残缺数组渲染看板。
+  [ "$cnt" -eq "${TOTAL_GATES:-0}" ] || return 1
   return 0
 }
 
@@ -672,6 +782,10 @@ render_card() {
     printf '▶ **下一步**：完成【%s】，再运行 `./scripts/control_gates.sh check`\n' "$CURRENT_NAME"
   else
     printf '\n▶ 全部门禁通过，可进入实质执行。\n'
+  fi
+  # 降级落盘必须可见（REQ-087 R1-b）：机制"跑过但没留下状态"不许静默
+  if [ -n "${STATUS_WRITE_NOTE:-}" ]; then
+    printf '\n> ℹ️ **状态快照降级**：%s\n' "$STATUS_WRITE_NOTE"
   fi
 }
 
@@ -913,7 +1027,7 @@ CMD="${1:-check}"
 
 case "${1:-check}" in
   reset)
-    rm -f "$CACHE_FILE" "$STATUS_JSON"
+    rm -f "$CACHE_FILE" "$STATUS_JSON" "$CACHE_FILE_FALLBACK" "$STATUS_JSON_FALLBACK"
     echo "🧹 已清空管控进度缓存，下次 check 将强制重算。"
     exit 0
     ;;
@@ -924,7 +1038,7 @@ case "${1:-check}" in
     for i in "${!GATE_IDS[@]}"; do
       if [ "${GATE_IDS[$i]}" = "$TARGET" ]; then
         if [ "${RESULTS[$i]}" = "pass" ]; then
-          write_status; touch "$CACHE_FILE"
+          write_status; mark_cache
           echo "✅ 门禁【${GATE_NAMES[$i]}】已真实通过，允许记账推进。"
           exit 0
         else
@@ -941,12 +1055,12 @@ case "${1:-check}" in
       render_card
       finish
     fi
-    compute_all; write_status; touch "$CACHE_FILE"; render_card
+    compute_all; write_status; mark_cache; render_card
     finish
     ;;
   badge)
     if cache_fresh && load_from_status; then render_badge; finish; fi
-    compute_all; write_status; touch "$CACHE_FILE"; render_badge
+    compute_all; write_status; mark_cache; render_badge
     finish
     ;;
   json)
@@ -956,7 +1070,7 @@ case "${1:-check}" in
   graph)
     # 状态驱动出图：刻意**不**复用缓存 —— 图必须与本次实况一致，
     # 若复用 30 秒缓存，刚修完门禁却画出一张旧图，比没有图更误导。
-    compute_all; write_status; touch "$CACHE_FILE"
+    compute_all; write_status; mark_cache
     GENERATED_AT="$(date '+%Y-%m-%d %H:%M:%S')"
     GRAPH_OUT="${DSH_CONTROL_GRAPH_OUT:-$REPORT_DIR/gate_graph.svg}"
     render_graph "$GRAPH_OUT"
@@ -972,7 +1086,7 @@ case "${1:-check}" in
     finish
     ;;
   check|*)
-    compute_all; write_status; touch "$CACHE_FILE"; render_card
+    compute_all; write_status; mark_cache; render_card
     {
       echo "# AI 流程管控快照"
       echo

@@ -21,6 +21,10 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+# Node 运行时解析（REQ-087 R1 修复）：裸 `node` 在 PATH 缺失时会让判定静默降级。
+. "$SCRIPT_DIR/lib/find_node.sh"
+NODE_BIN="$(find_node || true)"
+
 MODE="set"
 TITLE=""
 case "${1:-}" in
@@ -42,7 +46,7 @@ fi
 # 但没有时要用端口反查兜底，否则会静默打到错端口（历史缺陷：默认值是写死的旧端口）。
 WEB="${DSH_WEB_URL:-}"
 if [[ -z "$WEB" ]]; then
-  WEB="$(node -e '
+  WEB="$("$NODE_BIN" -e '
     import(process.argv[1]).then(async (m) => {
       const u = await m.resolveHostWebUrl()
       process.stdout.write(u ?? "")
@@ -61,7 +65,7 @@ case "$MODE" in
     ;;
   auto)
     # 复用看门狗：它内部就是"生成合规标题并改名"，且已幂等（合规时不动）
-    exec node "$ROOT/scripts/naming_watchdog.mjs" --apply --sid "$SID"
+    exec "$NODE_BIN" "$ROOT/scripts/naming_watchdog.mjs" --apply --sid "$SID"
     ;;
   set)
     # 交给既有脚本做 R1~R7 硬校验，避免两处实现走样

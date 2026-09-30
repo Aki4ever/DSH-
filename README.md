@@ -1,7 +1,7 @@
 # 全局规则工程 (Global Rules Project)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.23.0`
+> - **当前系统实施总版本**：`v4.24.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -85,6 +85,7 @@
 │   ├── batch_rename_sessions.mjs    # 批量规范改名（预校验 + 自动备份 + 自动回滚方案）
 │   ├── init_dir.sh                  # 目录一键自动化初始化脚本
 │   ├── control_gates.sh             # 【管控机制·状态层】四项门禁判定与量化看板
+│   ├── gate_selftest.sh             # 【管控机制·判定层】证据可证性回归（V4 缺陷锁定，行为级）
 │   ├── redundancy_scan.mjs          # 【管控机制·判定层】冗余检测（词级相似度 + 元数据过滤）
 │   ├── conflict_scan.mjs            # 【管控机制·判定层】冲突检测（版本/计数/指标/标识/死链）
 │   ├── legacy_align_scan.mjs        # 【管控机制·判定层】存量校准（遇碰即对齐清单，脚本漏登记可自动检出）
@@ -126,6 +127,7 @@
 ```bash
 ./scripts/control_gates.sh check                      # 状态层：输出量化看板（进度/卡点/指标）
 ./scripts/control_gates.sh badge                      # 状态层：一行式进度徽标
+./scripts/gate_selftest.sh                             # 判定层：证据可证性回归自检（V4：空输出/缺键不得算通过）
 node scripts/redundancy_scan.mjs --root .              # 判定层：冗余检测（重复内容 → 合并为迭代版本）
 node scripts/conflict_scan.mjs --root .                # 判定层：冲突检测（同一事实两种说法 → 先裁决再迭代）
 node scripts/legacy_align_scan.mjs --root .            # 判定层：存量校准（遇碰即对齐清单，含脚本漏登记）

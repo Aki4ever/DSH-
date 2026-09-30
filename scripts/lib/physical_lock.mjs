@@ -20,7 +20,10 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { homedir } from 'node:os'
+import { fileURLToPath } from 'node:url'
 import { parseTitle } from './auto_naming.mjs'
+
+const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 
 export const STAGES = {
   INIT: 0,
@@ -51,20 +54,39 @@ export function getLockFilePath(sessionId, dshHome) {
   return join(getLockDir(dshHome), `${safeSid}.json`)
 }
 
+/**
+ * 降级锁文件路径（REQ-087 R1-b，2026-09-29 实测根因）。
+ *
+ * 现象：`$DSH_HOME/.dsh-control/physical_locks/` 在工作区沙箱下写入被拒，
+ *       而 `saveLockState` 又把写失败**吞掉**，`advanceLock` 也不看返回值
+ *       → `advanceLockTo` 的 while 永远看不到 stage 变化 → **死循环**，
+ *       审计器 90s 超时后把物理锁误判成"未触达"（真因其实只是写不进）。
+ *
+ * 处置：宿主控制目录写不进时，把锁状态降级落到工程内，读取端双源取有 stage 者。
+ * 语义不变：**阶梯仍然单向严格递增，掉盘失败一律如实报错，绝不假装晋升成功**。
+ */
+export function getLockFallbackPath(sessionId) {
+  const sid = sessionId || process.env.DSH_SESSION_ID || 'global_session'
+  const safeSid = sid.replace(/[^a-zA-Z0-9_-]/g, '_')
+  return join(REPO_ROOT, 'ai-control', 'reports', 'state', 'physical_locks', `${safeSid}.json`)
+}
+
 /** 初始化或读取当前锁状态 */
 export async function getLockState(sessionId, dshHome) {
-  const file = getLockFilePath(sessionId, dshHome)
-  try {
-    if (existsSync(file)) {
-      const raw = await readFile(file, 'utf8')
-      const data = JSON.parse(raw)
-      if (typeof data.stage === 'number') {
-        return data
-      }
+  // 双源：主路径优先；写不进时用工程内降级副本（见 getLockFallbackPath 注释）
+  const candidates = [getLockFilePath(sessionId, dshHome), getLockFallbackPath(sessionId)]
+  let best = null
+  for (const file of candidates) {
+    try {
+      if (!existsSync(file)) continue
+      const data = JSON.parse(await readFile(file, 'utf8'))
+      if (typeof data.stage !== 'number') continue
+      if (!best || data.stage > best.stage) best = data
+    } catch {
+      // 单源损坏不影响另一源
     }
-  } catch {
-    // 降级使用默认
   }
+  if (best) return best
 
   return {
     version: '1.0.0',
@@ -81,15 +103,24 @@ export async function getLockState(sessionId, dshHome) {
 
 /** 持久化锁状态 */
 export async function saveLockState(state, dshHome) {
-  const file = getLockFilePath(state.sessionId, dshHome)
+  state.updatedAt = new Date().toISOString()
+  state.stageName = STAGE_NAMES[state.stage] || `STAGE_${state.stage}`
+  const payload = JSON.stringify(state, null, 2)
+  const primary = getLockFilePath(state.sessionId, dshHome)
   try {
-    await mkdir(dirname(file), { recursive: true })
-    state.updatedAt = new Date().toISOString()
-    state.stageName = STAGE_NAMES[state.stage] || `STAGE_${state.stage}`
-    await writeFile(file, JSON.stringify(state, null, 2), 'utf8')
+    await mkdir(dirname(primary), { recursive: true })
+    await writeFile(primary, payload, 'utf8')
     return true
-  } catch (err) {
-    return false
+  } catch {
+    // 宿主控制目录不可写（沙箱/权限）→ 降级到工程内，绝不静默丢状态
+    try {
+      const fb = getLockFallbackPath(state.sessionId)
+      await mkdir(dirname(fb), { recursive: true })
+      await writeFile(fb, payload, 'utf8')
+      return true
+    } catch {
+      return false
+    }
   }
 }
 
@@ -120,7 +151,14 @@ export async function advanceLock(sessionId, targetStage, proofData, dshHome) {
   state.proofs[targetStage] = { ...(proofData || {}), at: new Date().toISOString() }
   state.history.push({ stage: targetStage, at: new Date().toISOString(), note: `阶梯晋升至 ${STAGE_NAMES[targetStage]}` })
 
-  await saveLockState(state, dshHome)
+  // 落盘失败必须如实报错（REQ-087 R1 实测根因）：
+  // 旧实现忽略 saveLockState 的返回值，于是"没写进去"被报成 success:true，
+  // 调用方 advanceLockTo 的 while 又看不到 stage 变化 → 死循环直到超时。
+  const saved = await saveLockState(state, dshHome)
+  if (!saved) {
+    state.stage = targetStage - 1 // 内存态回滚，避免调用方拿到假晋升
+    return { success: false, stage: state.stage, error: `锁状态落盘失败（宿主控制目录与工程内降级路径均不可写），拒绝假装晋升` }
+  }
   return { success: true, stage: state.stage, changed: true }
 }
 
@@ -147,7 +185,14 @@ export async function advanceLock(sessionId, targetStage, proofData, dshHome) {
 export async function advanceLockTo(sessionId, targetStage, proofs = {}, dshHome) {
   const advanced = []
   let state = await getLockState(sessionId, dshHome)
+  // 死循环护栏（REQ-087 R1 实测根因）：若某一轮"成功"之后 stage 没有真的前进，
+  // 说明落盘没生效。旧实现会在此无限打转，把"写不进"表现成"卡死 + 超时"。
+  let guard = 0
+  const maxRounds = Object.keys(STAGES).length + 2
   while (state.stage < targetStage) {
+    if (++guard > maxRounds) {
+      return { success: false, stage: state.stage, advanced, error: `阶梯推进未能落盘（已尝试 ${guard} 轮仍停在 LOCK-${state.stage}），拒绝继续空转` }
+    }
     const next = state.stage + 1
     const proof = proofs[next]
     if (!proof) {

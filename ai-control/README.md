@@ -57,8 +57,15 @@ ai-control/
 | `scripts/channel_audit.mjs` | 快速通道表是否可用（死通道/说法能否命中/触发词冲突） | 通道表必须无死链；退役通道必须删行 |
 | `scripts/check_freshness.mjs` | 全量存量与新增能力健康探活与时效新鲜度检测 | 确保所有能力 100% 最新可用 |
 | `scripts/sync_control_requirements.mjs` | 管控专属需求与全局需求台账双向同步校验 | 双向台账与版本必须完全一致 |
+| `scripts/progress_ledger.mjs` | **迭代检测台账**（REQ-087 R2）：每条改动记「文件 sha256 + 判定命令 + 实跑退出码 + 回读断言」 | 漂移 = 0 且未记录改动 = 0；改了没登记即判不通过 |
+| `scripts/lib/session_transcript.mjs` | **宿主会话转录读取**（REQ-087 R1-a）：多帧 zstd 逐帧解压，取宿主权威的 `todo/write` 记录 | 待办证据不再依赖拦截层插件是否加载 |
+| `scripts/flow_control.mjs` | **流程管控层判定器**（REQ-087 R3）：拓扑分层出效率最优排列 + 五条不变式 + 与规则层同步校验 | 退出码 0；`--diff` 出顺序变更提案，`--apply-order` 重新批准 |
+| `scripts/process_supervisor.mjs` | **流程监督员（判定器形态）**：独立重跑全部客观判定，不采信执行者自述 | 硬项全绿才允许结项，否则整单驳回 |
 
 **硬要求**：检测器不可用时一律判"未通过"，**不允许以"检测失效"充当通过**。
+
+**流程管控层权威源**：[`ai-control/config/flow_graph.json`](config/flow_graph.json) —— 步骤、依赖边、不变式、已批准顺序的唯一出处；
+规则层（[`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) §二之五）只放指针与受管步骤清单，不重复写细则。
 
 ---
 
@@ -95,7 +102,7 @@ node scripts/test_physical_lock.mjs             # 底层物理锁全量自检（
 | 门禁阈值、扫描范围、排除表 | `ai-control/config/gates.conf`（改完即时生效） |
 | 临时关闭硬门禁（全局） | 环境变量 `DSH_CONTROL_GUARD=off` |
 | 临时关闭硬门禁（单次） | 环境变量 `DSH_CONTROL_BYPASS=all` |
-| 彻底停用插件 | 注释 `$DSH_HOME/profiles/web/cordis.patch.yml` 中的 `ai-execution-control` 行并重启 |
+| 彻底停用插件 | 注释 `$DSH_HOME/profiles/<当前 profile>/cordis.patch.yml` 中的 `ai-execution-control` 行并重启（profile 目录用 `./scripts/install_host_gate.sh verify` 查） |
 
 ---
 

@@ -24,13 +24,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ACTION="${1:-status}"
 ARG2="${2:-}"
 
+# Node 运行时解析（REQ-087 R1 修复）：裸 `node` 在 PATH 缺失时会让判定静默降级
+# （实测 audit_execution 误报 36/100、todo_gate 直接 command not found）。
+. "$SCRIPT_DIR/lib/find_node.sh"
+NODE_BIN="$(find_node || true)"
+if [ -z "$NODE_BIN" ]; then echo "❌ 找不到 Node 运行时（可设 DSH_NODE_BIN 指定）" >&2; exit 2; fi
+
 if [ "$ACTION" = "selftest" ]; then
   # 自检必须隔离：绝不污染真实会话证据
   TMPHOME="$(mktemp -d)"
   trap 'rm -rf "$TMPHOME"' EXIT
-  DSH_TODO_SELFTEST_HOME="$TMPHOME" node "$SCRIPT_DIR/lib/todo_gate_cli.mjs" selftest
+  DSH_TODO_SELFTEST_HOME="$TMPHOME" "$NODE_BIN" "$SCRIPT_DIR/lib/todo_gate_cli.mjs" selftest
   exit $?
 fi
 
-node "$SCRIPT_DIR/lib/todo_gate_cli.mjs" "$ACTION" "$ARG2"
+"$NODE_BIN" "$SCRIPT_DIR/lib/todo_gate_cli.mjs" "$ACTION" "$ARG2"
 exit $?

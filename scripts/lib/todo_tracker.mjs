@@ -25,6 +25,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { homedir } from 'node:os'
+import { latestTodoWrite } from './session_transcript.mjs'
 
 /** 允许的待办状态（与 DSH 原生 todo_write 契约一致）。 */
 export const TODO_STATUSES = ['pending', 'in_progress', 'completed']
@@ -162,6 +163,62 @@ export async function readTodoEvidence(sessionId, dshHome) {
 }
 
 /**
+ * 从**宿主会话转录**里取证据（REQ-087 R1-a 新增的独立证据源）。
+ *
+ * 与插件落盘文件的区别（这是本次修复的核心）：
+ *   · 插件文件：由 `ai-control/plugin/index.mjs` 在守卫里同步写；
+ *     拦截层未加载时**一个字节都不会有** → 判定器永远 `NO_TODO`；
+ *   · 会话转录：由宿主核心在每次 `todo_write` 时自己写，
+ *     **不依赖任何插件**，只要会话在跑就存在。
+ *
+ * 自检隔离：设置了 `DSH_TODO_SELFTEST_HOME` 时一律不读宿主转录，
+ * 保证 `todo_gate.sh selftest` 的三态判定不受真实会话干扰。
+ *
+ * @returns {object|null} 与文件证据同构的对象；无记录返回 null。
+ */
+export function evidenceFromTranscript(sessionId, dshHome) {
+  if (process.env.DSH_TODO_SELFTEST_HOME) return null
+  let hit
+  try {
+    hit = latestTodoWrite(sessionId, dshHome)
+  } catch {
+    return null
+  }
+  if (!hit) return null
+  const items = hit.todos.map(normalizeItem).filter(Boolean)
+  const updatedAt = hit.time ? new Date(hit.time).toISOString() : new Date().toISOString()
+  return {
+    version: '1.0.0',
+    sessionId: sessionId || process.env.DSH_SESSION_ID || 'global_session',
+    firstWrittenAt: updatedAt,
+    updatedAt,
+    updatedAtMs: hit.time || 0,
+    writes: items.length ? 1 : 0,
+    items,
+    ...summarize(items),
+    lastSource: 'host-transcript',
+    transcriptSeq: hit.seq,
+  }
+}
+
+/**
+ * 证据源合一：插件文件与宿主转录取**较新**者。
+ *
+ * 为什么不是"转录优先"：守卫在 `todo_write` 的**同一次调用内**要读证据，
+ * 此刻宿主可能尚未把事件刷进转录，插件文件反而更新；反过来，
+ * 插件没加载时转录是唯一来源。按时间戳取新者，两种形态都对。
+ */
+export function resolveTodoEvidenceSync(sessionId, dshHome) {
+  const fileEv = readTodoEvidenceSync(sessionId, dshHome)
+  const trEv = evidenceFromTranscript(sessionId, dshHome)
+  if (!trEv) return fileEv
+  if (!fileEv) return trEv
+  const tFile = Date.parse(fileEv.updatedAt) || 0
+  const tTr = trEv.updatedAtMs || 0
+  return tFile >= tTr ? fileEv : trEv
+}
+
+/**
  * S07 待办常显硬判定（纯函数，可单测）。
  *
  * 判定分两级，刻意区分"完全没有列表"与"列表假收尾"：
@@ -172,7 +229,7 @@ export async function readTodoEvidence(sessionId, dshHome) {
  * @returns {{ok:boolean, code:string, message:string, evidence:object|null}}
  */
 export function checkTodoGate(sessionId, dshHome) {
-  const evidence = readTodoEvidenceSync(sessionId, dshHome)
+  const evidence = resolveTodoEvidenceSync(sessionId, dshHome)
   if (!evidence || evidence.total === 0) {
     return {
       ok: false,
@@ -203,9 +260,10 @@ export function checkTodoGate(sessionId, dshHome) {
 
 /** 一行式状态串（终端与审计卡片复用）。 */
 export function formatTodoLine(sessionId, dshHome) {
-  const evidence = readTodoEvidenceSync(sessionId, dshHome)
+  const evidence = resolveTodoEvidenceSync(sessionId, dshHome)
   if (!evidence) return '待办常显：⛔ 无证据（未挂载任务列表）'
   if (evidence.total === 0) return '待办常显：⛔ 清单为空'
   const mark = evidence.inProgress > 0 ? '✅' : '⛔'
-  return `待办常显：${mark} ${evidence.percent}% (${evidence.completed + evidence.inProgress * 0.5}/${evidence.total}) · 进行中 ${evidence.inProgress} 项`
+  const src = evidence.lastSource === 'host-transcript' ? '宿主转录' : '插件文件'
+  return `待办常显：${mark} ${evidence.percent}% (${evidence.completed + evidence.inProgress * 0.5}/${evidence.total}) · 进行中 ${evidence.inProgress} 项 · 证据源 ${src}`
 }

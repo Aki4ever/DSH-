@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.23.0`
-> - **对应实施版本**：`v4.23.0`
+> - **当前文档版本**：`v4.24.0`
+> - **对应实施版本**：`v4.24.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -23,7 +23,8 @@
 | :--- | :--- | :--- |
 | **注入层** | 只放红线与路由指针，按需加载细则 | [`AGENTS.md`](../AGENTS.md)（项目级）、`$DSH_HOME/AGENTS.md`（宿主级）、[`indexes/shortcuts_index.md`](shortcuts_index.md) |
 | **状态层** | 由磁盘实况推导真值，产出 `status.json` | [`scripts/control_gates.sh`](../scripts/control_gates.sh)、[`ai-control/config/gates.conf`](../ai-control/config/gates.conf) |
-| **判定层** | 门禁判定 + 冗余与冲突双检 + 存量校准 + 通道审计 | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs) |
+| **判定层** | 门禁判定 + 冗余与冲突双检 + 存量校准 + 通道审计 + **迭代检测 + 物理触达审计** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs)、[`scripts/progress_ledger.mjs`](../scripts/progress_ledger.mjs)、[`scripts/mechanism_audit.mjs`](../scripts/mechanism_audit.mjs) |
+| **流程管控层** | 流程依赖唯一权威源 + 效率最优排列 + 更新后一致性判定（REQ-087 R3） | [`ai-control/config/flow_graph.json`](../ai-control/config/flow_graph.json)（权威源）、[`scripts/flow_control.mjs`](../scripts/flow_control.mjs)（判定器）、[`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) §二之五（规则层）、[`scripts/process_supervisor.mjs`](../scripts/process_supervisor.mjs)（独立复核） |
 | **拦截层** | 门禁未过时拒绝改动型工具调用 | [`ai-control/plugin/index.mjs`](../ai-control/plugin/index.mjs) |
 
 **四道基础门禁（累积语义，须按序全部通过）**：
@@ -39,6 +40,7 @@
 
 ```bash
 ./scripts/control_gates.sh check                                   # 计算并输出门禁看板
+./scripts/gate_selftest.sh                                          # 门禁证据可证性回归自检（V4：空输出不得算通过）
 node scripts/redundancy_scan.mjs --root .                           # 冗余检测（重复内容）
 node scripts/conflict_scan.mjs --root .                             # 冲突检测（同一事实两种说法）
 node scripts/legacy_align_scan.mjs --root .                         # 存量校准（遇碰即对齐清单）
@@ -150,6 +152,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **自动化脚本** | [`scripts/agent_life.mjs`](../scripts/agent_life.mjs) | 全局流程调度中枢 Agent PP & Agent Life(N) 辅助引擎（并发管理、生命周期推进与消亡） |
 | **自动化脚本** | [`scripts/check_unique_identifiers.mjs`](../scripts/check_unique_identifiers.mjs) | 全域能力 (Agent/MCP/CLI/Skill/Plugin) 唯一标识符与命名空间规范审计器 |
 | **管控机制** | [`scripts/control_gates.sh`](../scripts/control_gates.sh) | 状态层：由磁盘实况推导 G1~G4 并输出量化看板与状态快照 |
+| **管控机制** | [`scripts/gate_selftest.sh`](../scripts/gate_selftest.sh) | 证据可证性回归：9 用例（含反向验证）断言"检测器空输出/缺键/自相矛盾/git 不可用/半截快照"一律不得算通过（V4 缺陷锁定） |
 | **管控机制** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs) | 冗余检测：词级相似度识别真复制粘贴（内置自检） |
 | **管控机制** | [`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs) | 冲突检测：五类冲突（版本/计数/指标/标识/死链）识别与裁决建议 |
 | **管控机制** | [`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs) | 存量校准：输出命名/入口/版本/指纹/台账五类待对齐清单；脚本漏登记可自动检出 |

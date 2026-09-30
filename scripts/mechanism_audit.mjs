@@ -33,8 +33,48 @@ import { execFileSync } from 'node:child_process'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const HOME = process.env.HOME || ''
-const DSH_HOME = process.env.DSH_HOME || join(HOME, 'Library', 'Application Support', 'dsh-desktop', 'harness')
-const PROFILE_PATCH = join(DSH_HOME, 'profiles', 'web', 'cordis.patch.yml')
+const DSH_HOME = process.env.DSH_HOME || join(HOME, '.dsh')
+/** 降级快照路径（REQ-087 R1-b：宿主控制目录不可写时，门禁把快照落到工程内）。 */
+const STATUS_FALLBACK = join(ROOT, 'ai-control', 'reports', 'state', 'status.json')
+
+/**
+ * 解析宿主 profile 目录。
+ * 历史缺陷（实测）：这里曾把 `profiles/web` 写死，而本机 profile 已迁到 `profiles/desktop`
+ * → 判定读的是不存在的文件，`控制跳转插件`/宿主注册类条目得出与事实相反的结论。
+ * 现在按「DSH_PROFILE_DIR → DSH_PROFILE → 磁盘上真实含 cordis.patch.yml 的 profile」解析。
+ */
+function resolveProfileDir() {
+  const cands = []
+  if (process.env.DSH_PROFILE_DIR) cands.push(process.env.DSH_PROFILE_DIR)
+  if (process.env.DSH_PROFILE) cands.push(join(DSH_HOME, 'profiles', process.env.DSH_PROFILE))
+  for (const c of cands) if (existsSync(join(c, 'cordis.patch.yml'))) return c
+  try {
+    const base = join(DSH_HOME, 'profiles')
+    for (const n of readdirSync(base)) {
+      const d = join(base, n)
+      if (existsSync(join(d, 'cordis.patch.yml'))) return d
+    }
+  } catch { /* 无 profiles 目录 */ }
+  return join(DSH_HOME, 'profiles', 'desktop')
+}
+const PROFILE_DIR = resolveProfileDir()
+const PROFILE_PATCH = join(PROFILE_DIR, 'cordis.patch.yml')
+
+/** 读门禁快照：宿主机控制目录与工程内降级副本**取新者**（REQ-087 R1-b）。 */
+function readStatusSnapshot() {
+  const cands = [join(DSH_HOME, '.dsh-control', 'status.json'), STATUS_FALLBACK]
+  let best = null
+  let bestText = ''
+  for (const p of cands) {
+    if (!existsSync(p)) continue
+    let t
+    try { t = readFileSync(p, 'utf8') } catch { continue }
+    let j
+    try { j = JSON.parse(t) } catch { continue }
+    if (!best || String(j.generatedAt || '') >= String(best.generatedAt || '')) { best = j; bestText = t }
+  }
+  return { status: best, text: bestText, primary: cands[0], fallback: STATUS_FALLBACK }
+}
 
 /** 安全执行只读判定命令，返回 { ok, out }。 */
 function run(cmd, args, opts = {}) {
@@ -76,7 +116,7 @@ function buildRegistry() {
     // .sh 用 bash，.mjs/.cjs/.js 用 node，.py 用 python3。
     let cmd
     if (rel.endsWith('.sh')) cmd = ['bash', [rel, ...args]]
-    else if (/\.(mjs|cjs|js)$/.test(rel)) cmd = ['node', [rel, ...args]]
+    else if (/\.(mjs|cjs|js)$/.test(rel)) cmd = [process.execPath, [rel, ...args]]
     else if (rel.endsWith('.py')) cmd = ['python3', [rel, ...args]]
     else cmd = [rel, args]
     const r = run(cmd[0], cmd[1], { timeout: 90000 })
@@ -104,10 +144,9 @@ function buildRegistry() {
         // 而门禁失败最常见的成因是"工作树有未提交改动"这类**瞬时**状态。
         // 混在一起报，就会把"马上要提交"误报成"机制坏了"。
         const r = run('bash', ['scripts/control_gates.sh', 'check'])
-        const statusFile = join(DSH_HOME, '.dsh-control', 'status.json')
-        let s = null
-        try { s = JSON.parse(readFileSync(statusFile, 'utf8')) } catch { /* 读不到按未验证 */ }
-        if (!s) return { ok: false, detail: `status.json 不可读（退出码 ${r.exitCode}）`, carrier: 'scripts/control_gates.sh' }
+        const snap = readStatusSnapshot()
+        const s = snap.status
+        if (!s) return { ok: false, detail: `status.json 两处均不可读（退出码 ${r.exitCode}）`, carrier: 'scripts/control_gates.sh' }
         const blocked = (s.gates || []).filter((g) => g.status !== 'pass').map((g) => g.name)
         if (s.execAllowed) {
           return { ok: true, detail: `${s.gatePassed}/${s.gateTotal} 通过 · ${s.metricSummary || ''}`.trim(), carrier: 'scripts/control_gates.sh' }
@@ -130,7 +169,88 @@ function buildRegistry() {
     {
       name: 'S07 待办常显（证据 + 硬判定）',
       claim: 'task_execution_flow.md 防线 3 / meta_rules 第三十六条',
-      check: scriptRuns('scripts/todo_gate.sh', ['check']),
+      check: () => {
+        // REQ-087 R1-a 修复后，证据源不再只依赖拦截层插件：
+        // 主源 = 宿主会话转录里的 `todo/write` 事件（宿主自己写，插件不跑也在）。
+        const r = run('bash', ['scripts/todo_gate.sh', 'check'])
+        let src = '未知'
+        try {
+          const j = JSON.parse(run('bash', ['scripts/todo_gate.sh', 'json']).out)
+          src = j?.evidence?.lastSource === 'host-transcript' ? '宿主转录' : (j?.evidence ? '插件文件' : '无证据')
+        } catch { /* 保持未知 */ }
+        const first = (r.out.split('\n').filter(Boolean).pop() || '').slice(0, 110)
+        return { ok: r.ok, detail: `exit=${r.exitCode} · 证据源 ${src} · ${first}`, carrier: 'scripts/todo_gate.sh' }
+      },
+    },
+    {
+      name: 'R1-b 状态快照降级落盘（不静默丢状态）',
+      claim: 'REQ-087 R1-b',
+      check: () => {
+        // 判据：快照必须**至少有一处**真实落盘；宿主目录写不进时，工程内降级副本必须存在。
+        const snap = readStatusSnapshot()
+        if (!snap.status) {
+          return { ok: false, detail: '两处快照均不存在（机制跑过但状态留不下）', carrier: 'ai-control/reports/state/status.json' }
+        }
+        const hasFallback = existsSync(STATUS_FALLBACK)
+        return {
+          ok: hasFallback,
+          detail: `快照时间 ${snap.status.generatedAt} · 降级副本${hasFallback ? '在位' : '缺失'} · 门禁 ${snap.status.gatePassed}/${snap.status.gateTotal}`,
+          carrier: 'ai-control/reports/state/status.json',
+        }
+      },
+    },
+    {
+      name: 'S11 写后必读回（迭代台账载体）',
+      claim: 'task_execution_flow.md 防线 4',
+      check: () => {
+        // REQ-087 R1-c：S11 从"仅靠自觉"升级为**有物理载体**——
+        // `progress_ledger record` 每次改动后重新从磁盘读回、算 sha256、跑回读断言；
+        // `selftest` 三态（无漂移 / 改了没重记必检出 / 重记后清零）证明判定逻辑真的活着。
+        // 硬判定 = 载体存在且判定逻辑可复现；"当前这轮有多少漂移" 交给软条目与流程监督员。
+        const r = run(process.execPath, ['scripts/progress_ledger.mjs', 'selftest'], { timeout: 60000 })
+        const first = (r.out.split('\n').filter(Boolean).pop() || '').slice(0, 110)
+        return { ok: r.ok, detail: `exit=${r.exitCode} · ${first}`, carrier: 'scripts/progress_ledger.mjs' }
+      },
+    },
+    {
+      name: 'R2 迭代检测一致性（漂移 / 未记录改动）',
+      claim: 'REQ-087 R2',
+      strict: false,
+      check: () => {
+        const r = run(process.execPath, ['scripts/progress_ledger.mjs', 'check'], { timeout: 90000 })
+        const first = (r.out.split('\n').filter(Boolean).pop() || '').slice(0, 130)
+        // softKind='judged'：载体**存在且可用**，只是这一轮判定没过（有漂移/未记录改动）。
+        // 与"根本没有载体"必须区分——混在一起会把"该登记"误报成"机制不存在"。
+        return { ok: r.ok, soft: !r.ok, softKind: r.ok ? undefined : 'judged', detail: `exit=${r.exitCode} · ${first}`, carrier: 'scripts/progress_ledger.mjs' }
+      },
+    },
+    {
+      name: 'R3 流程管控层（顺序最优 + 更新后一致）',
+      claim: 'REQ-087 R3 / task_execution_flow.md 二之五',
+      check: () => {
+        const r = run(process.execPath, ['scripts/flow_control.mjs', '--check'], { timeout: 60000 })
+        const first = (r.out.split('\n').filter(Boolean).pop() || '').slice(0, 140)
+        return { ok: r.ok, detail: `exit=${r.exitCode} · ${first}`, carrier: 'scripts/flow_control.mjs' }
+      },
+    },
+    {
+      name: '流程监督员（判定器形态 · 独立复核）',
+      claim: 'REQ-087 R1-d（原 process-supervisor-agent 无宿主注册面，改判据器形态）',
+      check: () => {
+        // 刻意**不**整单跑它：process_supervisor 会回调 mechanism_audit，整跑会递归。
+        // 判据 = 载体在位 + 语法可解析 + 复核项清单完整（用 --list 读真实登记，不是读文档）。
+        const p = join(ROOT, 'scripts', 'process_supervisor.mjs')
+        if (!existsSync(p)) return { ok: false, detail: '载体缺失', carrier: 'scripts/process_supervisor.mjs' }
+        const syn = run(process.execPath, ['--check', 'scripts/process_supervisor.mjs'], { timeout: 30000 })
+        if (!syn.ok) return { ok: false, detail: `语法自检失败：${syn.out.slice(0, 80)}`, carrier: 'scripts/process_supervisor.mjs' }
+        const list = run(process.execPath, ['scripts/process_supervisor.mjs', '--list'], { timeout: 30000 })
+        const n = (list.out.match(/^\s*\S+\s/gm) || []).length
+        return {
+          ok: list.ok && n >= 8,
+          detail: `语法 ✅ · 复核项 ${n} 条（硬项需全绿才结项）`,
+          carrier: 'scripts/process_supervisor.mjs',
+        }
+      },
     },
     {
       name: '拦截层宿主注册（硬门禁真的在跑）',
@@ -141,9 +261,9 @@ function buildRegistry() {
       name: '双检扫描（冗余 / 冲突 / 存量）',
       claim: 'meta_rules.md 第三十五条',
       check: () => {
-        const r1 = run('node', ['scripts/redundancy_scan.mjs', '--root', '.'])
-        const r2 = run('node', ['scripts/conflict_scan.mjs', '--root', '.'])
-        const r3 = run('node', ['scripts/legacy_align_scan.mjs', '--root', '.'])
+        const r1 = run(process.execPath, ['scripts/redundancy_scan.mjs', '--root', '.'])
+        const r2 = run(process.execPath, ['scripts/conflict_scan.mjs', '--root', '.'])
+        const r3 = run(process.execPath, ['scripts/legacy_align_scan.mjs', '--root', '.'])
         const ok = r1.ok && r2.ok && r3.ok
         return { ok, detail: `冗余/${r1.ok ? '0' : '有'} · 冲突/${r2.ok ? '0' : '有'} · 存量/${r3.ok ? '0' : '有'}`, carrier: 'scripts/*scan.mjs' }
       },
@@ -181,48 +301,17 @@ function buildRegistry() {
       },
     },
     {
-      name: 'S11 写后必读回（运行时拦截）',
-      claim: 'task_execution_flow.md 防线 4',
-      strict: false,
-      check: () => {
-        const p = join(ROOT, 'ai-control', 'plugin', 'index.mjs')
-        const t = existsSync(p) ? readFileSync(p, 'utf8') : ''
-        // 只有存在"写后未读回 → 拒绝下一步"的判定，才算运行时触达
-        const enforced = /readBack|requireReadBack|S11/.test(t)
-        return {
-          ok: false,
-          soft: true,
-          detail: enforced ? '已有运行时判定' : '⚠️ 仅靠执行者自觉：拦截层无写后读回判定，无物理拦截',
-          carrier: 'rules/workflow/task_execution_flow.md（规则）+ ai-control/plugin（未实现）',
-        }
-      },
-    },
-    {
-      name: '流程监督员 agent（独立复核）',
-      claim: 'skill-pool/agents/process-supervisor-agent',
-      strict: false,
-      check: () => {
-        const exists = existsSync(join(ROOT, 'skill-pool', 'agents', 'process-supervisor-agent', 'PROMPT.md'))
-        return {
-          ok: false,
-          soft: true,
-          detail: exists ? '⚠️ 契约文件在位，但宿主无 agent 注册面（无可执行载体）' : '⛔ 契约文件缺失',
-          carrier: 'skill-pool/agents/process-supervisor-agent/PROMPT.md',
-        }
-      },
-    },
-    {
       name: '控制跳转插件（常显调控按钮）',
       claim: 'skill-pool/plugins/dsh-plugin-control-jump',
       strict: false,
       check: () => {
         const pkg = existsSync(join(ROOT, 'skill-pool', 'plugins', 'dsh-plugin-control-jump', 'package.json'))
         // 注册有两条独立路径，判据必须看**真正决定加载的那一条**：
-        //   ① profile 的 dsh.profile.bundles 列表（本机实测就是这条，见 profiles/web/package.json）；
+        //   ① profile 的 dsh.profile.bundles 列表（本机实测就是这条，见 profiles/<当前 profile>/package.json）；
         //   ② cordis.patch.yml 里显式 insert 条目（另一种写法）。
         // 2026-09-28 审计曾只看 ②，于是把"已装且已进 bundles"误判为"未注册"——
         // 判据选错，会得出与事实相反的结论。
-        const profilePkg = join(DSH_HOME, 'profiles', 'web', 'package.json')
+        const profilePkg = join(PROFILE_DIR, 'package.json')
         let inBundles = false
         try {
           const j = JSON.parse(readFileSync(profilePkg, 'utf8'))
@@ -264,6 +353,7 @@ function main() {
       claim: r.claim,
       strict: r.strict !== false,
       soft: !!outcome.soft,
+      softKind: outcome.softKind || null,
       transient: !!isTransient(outcome.detail || ''),
       ok: !!outcome.ok,
       detail: outcome.detail || '',
@@ -291,13 +381,25 @@ function main() {
   console.log('| 机制 | 载体 | 实测 | 判定 |')
   console.log('| :--- | :--- | :--- | :---: |')
   for (const r of results) {
-    const verdict = r.ok ? '✅ 已触达' : (r.soft ? '⚠️ 无物理载体' : '⛔ 未触达')
+    const verdict = r.ok ? '✅ 已触达'
+      : r.softKind === 'judged' ? '⚠️ 判定未过（有载体）'
+      : r.soft ? '⚠️ 无物理载体' : '⛔ 未触达'
     console.log(`| ${r.name} | \`${r.carrier}\` | ${r.detail} | ${verdict} |`)
   }
   if (softGaps.length) {
     console.log('')
-    console.log('**⚠️ 仅有文字、没有物理载体的项（"虚无缥缈"清单）**：')
-    for (const r of softGaps) console.log(`- **${r.name}**：${r.detail}｜宣称出处：${r.claim}`)
+    const noCarrier = softGaps.filter((r) => r.softKind !== 'judged')
+    const judged = softGaps.filter((r) => r.softKind === 'judged')
+    if (judged.length) {
+      console.log('')
+      console.log('**⚠️ 载体在位但本轮判定未过（改完要登记 / 要重跑）**：')
+      for (const r of judged) console.log(`- **${r.name}**：${r.detail}`)
+    }
+    if (noCarrier.length) {
+      console.log('')
+      console.log('**⚠️ 仅有文字、没有物理载体的项（"虚无缥缈"清单）**：')
+      for (const r of noCarrier) console.log(`- **${r.name}**：${r.detail}｜宣称出处：${r.claim}`)
+    }
   }
   if (hardFail.length) {
     console.log('')

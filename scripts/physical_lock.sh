@@ -15,7 +15,13 @@ ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 ACTION="${1:-status}"
 ARG2="${2:-}"
 
-node -e '
+# Node 运行时解析（REQ-087 R1 修复）：裸 `node` 在 PATH 缺失时会让判定静默降级
+# （实测 audit_execution 误报 36/100、todo_gate 直接 command not found）。
+. "$SCRIPT_DIR/lib/find_node.sh"
+NODE_BIN="$(find_node || true)"
+if [ -z "$NODE_BIN" ]; then echo "❌ 找不到 Node 运行时（可设 DSH_NODE_BIN 指定）" >&2; exit 2; fi
+
+"$NODE_BIN" -e '
 import { getLockState, advanceLock, advanceLockTo, resetLock, STAGE_NAMES, STAGES } from "./scripts/lib/physical_lock.mjs"
 import { readFileSync, existsSync } from "node:fs"
 import { join } from "node:path"
@@ -58,12 +64,18 @@ async function main() {
     // 根据磁盘实况自动判定并推进
     const s = await getLockState(sid)
     const home = process.env.DSH_HOME || join(homedir(), ".dsh")
-    const statusPath = join(home, ".dsh-control", "status.json")
+    // 双源取门禁快照：宿主控制目录写不进时，门禁会降级落到工程内（REQ-087 R1-b）。
+    // 旧实现只读宿主那一份，于是"门禁其实全绿但状态没落进宿主目录"被判成无凭据。
+    const statusCands = [
+      join(home, ".dsh-control", "status.json"),
+      join(process.cwd(), "ai-control", "reports", "state", "status.json"),
+    ]
     let gatesOk = false
-    if (existsSync(statusPath)) {
+    for (const sp of statusCands) {
+      if (!existsSync(sp)) continue
       try {
-        const d = JSON.parse(readFileSync(statusPath, "utf8"))
-        if (d.execAllowed) gatesOk = true
+        const d = JSON.parse(readFileSync(sp, "utf8"))
+        if (d.execAllowed) { gatesOk = true; break }
       } catch {}
     }
 
@@ -73,13 +85,13 @@ async function main() {
     if (gatesOk) proofs[STAGES.SPEC_PASSED] = { trigger: "sync_gates_ok" }
     let todoEvidence = null
     try {
-      const todoFile = join(home, ".dsh-control", "todos", `${sid.replace(/[^a-zA-Z0-9_-]/g, "_")}.json`)
-      if (existsSync(todoFile)) {
-        const t = JSON.parse(readFileSync(todoFile, "utf8"))
-        if (t && Array.isArray(t.items) && t.total > 0 && t.inProgress > 0) {
-          todoEvidence = t
-          proofs[STAGES.PLAN_PASSED] = { trigger: "sync_todo_evidence", todos: t.total, inProgress: t.inProgress }
-        }
+      // 双源取待办证据：REQ-087 R1-a 后主源是**宿主会话转录**（不依赖拦截层插件），
+      // 插件文件仅作较新者兜底；两者都读不到才算"无证据"。
+      const { resolveTodoEvidenceSync } = await import("./scripts/lib/todo_tracker.mjs")
+      const t = resolveTodoEvidenceSync(sid, home)
+      if (t && t.total > 0 && t.inProgress > 0) {
+        todoEvidence = t
+        proofs[STAGES.PLAN_PASSED] = { trigger: "sync_todo_evidence", source: t.lastSource || "unknown", todos: t.total, inProgress: t.inProgress }
       }
     } catch {}
 

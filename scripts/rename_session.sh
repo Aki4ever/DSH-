@@ -7,6 +7,12 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Node 运行时解析（REQ-087 R1 修复）：裸 `node` 在 PATH 缺失时会让判定静默降级。
+. "$SCRIPT_DIR/lib/find_node.sh"
+NODE_BIN="$(find_node || true)"
+
 TITLE="${1:-}"
 SESSION_ID="${2:-${DSH_SESSION_ID:-}}"
 WEB_URL="${3:-${DSH_WEB_URL:-http://127.0.0.1:50447}}"
@@ -162,8 +168,8 @@ HOME_DIR="${DSH_HOME:-$HOME/.dsh}"
 PER_SESSION_FILE="$HOME_DIR/storages/session_projcache/sessions/${SESSION_ID}.json"
 STORE_FILE="$HOME_DIR/storages/session_projcache.json"
 
-if command -v node >/dev/null 2>&1; then
-  node -e "
+if [ -n "${NODE_BIN:-}" ]; then
+  "$NODE_BIN" -e "
     const fs = require('fs');
     const path = require('path');
     const sid = '${SESSION_ID}';

@@ -15,6 +15,7 @@
 ```bash
 ./scripts/control_gates.sh check      # 输出量化看板（进度/卡点/指标）
 ./scripts/control_gates.sh badge      # 一行式徽标
+./scripts/gate_selftest.sh            # 门禁证据可证性回归：空输出/缺键/自相矛盾一律不得算通过（V4 锁定）
 ./scripts/physical_lock.sh status     # 查看底层物理锁阶梯与凭据
 ./scripts/physical_lock.sh sync       # 按磁盘实况逐阶对齐物理锁（带凭据，不跳阶）
 ./scripts/todo_gate.sh check          # S07 待办常显判定：未挂任务列表 → 改动型调用被拒
@@ -22,12 +23,24 @@
 node scripts/mechanism_audit.mjs      # 物理触达审计：哪条机制只有文字、没有载体
 node scripts/restore_skill_pool.mjs --check     # 技能池归位判定（面板能否看见技能）
 node scripts/build_capabilities_index.mjs --check  # 执行层是否 100% 入索引层
+node scripts/progress_ledger.mjs record --files a.md,b.mjs --judge "cmd" --expect "关键字"  # 改动登记（含写后必读回）
+node scripts/progress_ledger.mjs check  # 迭代检测：哈希漂移=0 且 未记录改动=0
+node scripts/flow_control.mjs --check   # 流程管控层：顺序一致 + 五条不变式成立
+node scripts/process_supervisor.mjs --fast  # 流程监督员独立复核（不采信执行者自述）
 ```
 
-> **为什么后两条必须常跑（REQ-080 / REQ-082 实测根因）**：门禁看板只能证明"工程内文件对不对"，
+> **为什么后四条必须常跑（REQ-087 实测根因）**：门禁看板只能证明"工程内文件对不对"，
 > 证明不了"规则要求的机制在不在运行"。实测发现拦截层插件从未被宿主加载（`isHost=false`），
 > 于是"待办常显/硬门禁/常显看板"物理上全部不存在，而看板依旧 100%。
 > 判定必须穿透到**载体是否活着**，否则它证明的只是文档自洽。
+>
+> 同批实测还揪出三条同类断点，分别由后四条命令兜住：
+> ① 待办证据原先**只有拦截层插件会写**，插件不跑 → `todo_gate` 永远判不过；
+> 现改读**宿主会话转录**（`scripts/lib/session_transcript.mjs`），不再依赖插件；
+> ② 状态快照写 `~/.dsh/.dsh-control/` 在沙箱下被拒 → 看板数字照算、状态留不下，
+> 现降级落盘 `ai-control/reports/state/` 并在看板显式提示，绝不静默；
+> ③ 进度只能靠自我宣称 → `progress_ledger` 以「文件 sha256 + 判定命令 + 实跑退出码 + 回读断言」
+> 三件套落盘，改了没登记、登记对不上磁盘，一律判不通过。
 
 | 门禁 | 含义 | 量化指标 |
 | :--- | :--- | :--- |

@@ -1,8 +1,8 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.23.0`
-> - **对应实施版本**：`v4.23.0`
+> - **当前文档版本**：`v4.24.0`
+> - **对应实施版本**：`v4.24.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
 > - **生效状态**：`[Release 稳定生效]`
@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：228**（技能 178 · 其他执行层 50）
+**执行层条目总数：232**（技能 178 · 其他执行层 54）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -534,6 +534,8 @@
 | 脚本 (CLI) | `cli.rules.deepseek_usage_probe` | `scripts/deepseek_usage_probe.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.disk_check_and_cleanup` | `scripts/disk_check_and_cleanup.sh` | DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位) |
 | 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
+| 脚本 (CLI) | `cli.rules.flow_control` | `scripts/flow_control.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.gate_selftest` | `scripts/gate_selftest.sh` | — |
 | 脚本 (CLI) | `cli.rules.generate_image` | `scripts/generate_image.py` | — |
 | 脚本 (CLI) | `cli.rules.generate_naming_plan` | `scripts/generate_naming_plan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.git_sync_remote` | `scripts/git_sync_remote.sh` | DSH 工程远程 Git 智能探针、缺地址开页引导、动态摘要提交与强同步引擎 |
@@ -551,6 +553,8 @@
 | 脚本 (CLI) | `cli.rules.probe_long_output` | `scripts/probe_long_output.mjs` | 长输出实测探针：验证 max_tokens 提高后单次回复能否突破旧上限（32768）。 |
 | 脚本 (CLI) | `cli.rules.probe_long_output_stream` | `scripts/probe_long_output_stream.mjs` | 长输出触顶实测（流式版）：验证单次回复到底能有多长。 |
 | 脚本 (CLI) | `cli.rules.probe_max_tokens` | `scripts/probe_max_tokens.mjs` | 探测服务端对 max_tokens 的接受范围。 |
+| 脚本 (CLI) | `cli.rules.process_supervisor` | `scripts/process_supervisor.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.progress_ledger` | `scripts/progress_ledger.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.redundancy_scan` | `scripts/redundancy_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.rename_session` | `scripts/rename_session.sh` | 通过 DSH 后台 HTTP RPC 接口，为当前会话重命名并锁定侧边栏标题 |
 | 脚本 (CLI) | `cli.rules.restore_skill_pool` | `scripts/restore_skill_pool.mjs` | ============================================================================== |
