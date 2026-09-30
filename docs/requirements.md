@@ -2404,6 +2404,13 @@
     非 UTF-8 locale 下 bash 把多字节首字节并入变量名。全库探针扫出 **4 处同类**并全部改为 `${VAR}`
     （`install_host_gate.sh`×2 · `verify_guard_live.sh` · `deepseek_key_setup.sh`），复扫 0 处；
     已登记 [`memory/error_ledger.md`](../memory/error_ledger.md) **ERR-006** 并附可复跑探针命令。
+  - **第二处连带发现（同族"假绿"，已清零）**：`node scripts/conflict_scan.mjs --self-test` 长期
+    **红着**却无人复跑 —— 真实用例报「真实元规则标题自洽（自称 35 / 实际 36）」失败。
+    根因：`rules/system/meta_rules.md` 标题写「全局元规则三十五条」，而实际列出 **36 条**
+    （第三十六条于 `9949df4` / v4.22.0 加入时未同步改标题）；同时 C2 的 `checkCount` 有
+    「容许差 1」规则，于是**主扫描报"未发现冲突"、自检却红** —— 同一事实两套结论。
+    处置：以磁盘实际条目为准，标题改为「三十六条」（**不动**差 1 容忍规则，它服务于导语行偏移，
+    且正是这条自检把问题抓出来的）。复跑：自检 **26/26 全过**、主扫描 0 冲突。
 - **验收标准**：
   - [x] `check_redundancy` 解析不出 `duplicatePairs` / `blocksScanned` → `rc=2`（不再默认 0）；
   - [x] 检测器自报 0 实质块而外壳扫到文件 → `rc=2`（证据自相矛盾）；
