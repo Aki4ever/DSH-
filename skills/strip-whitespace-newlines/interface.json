@@ -1,0 +1,31 @@
+{
+  "id": "skill.pool.strip-whitespace-newlines",
+  "layer": "技能 (Skill)",
+  "path": "skills/strip-whitespace-newlines",
+  "invoke": "skill strip-whitespace-newlines",
+  "summary": "微观原子规约：严格剥离文本首尾与多余的连续空白字符、制表符及空行，实现物理对齐。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

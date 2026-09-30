@@ -1,0 +1,54 @@
+{
+  "id": "skill.pool.score-task-lane",
+  "layer": "技能 (Skill)",
+  "path": "skills/score-task-lane",
+  "invoke": "skill score-task-lane",
+  "summary": "工序动作级技能：对任务做确定性双流程分流判定，输出 lane、score、matched_redlines 与 reason 四元组。",
+  "inputs": [
+    {
+      "name": "--task",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/score-task-lane/scripts/score_lane.py --task \"读取并解释 docs/requirements/inde…"
+    },
+    {
+      "name": "--files",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/score-task-lane/scripts/score_lane.py --task \"把 README 的标题改一下\" --files 1 -…"
+    },
+    {
+      "name": "--steps",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/score-task-lane/scripts/score_lane.py --task \"把 README 的标题改一下\" --files 1 -…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "Exit Code 恒为 0：判定结果通过 stdout JSON 承载，退出码不承载语义；"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "stdout JSON 必含 `lane`（`fast`/`full`）、`score`（0~5）、`matched_redlines`（数组）、`reason`（字符串）；"
+    }
+  ],
+  "exitCodes": {
+    "0": "判定结果通过 stdout JSON 承载，退出码不承载语义"
+  },
+  "dependencies": [
+    "skill.pool.fastlane-redline-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/score-task-lane/scripts/score_lane.py --task \"读取并解释 docs/requirements/index.md\"",
+    "python3 skills/score-task-lane/scripts/score_lane.py --task \"把 README 的标题改一下\" --files 1 --steps 2",
+    "python3 skills/score-task-lane/scripts/score_lane.py --task \"删除旧的日志目录\" --files 3"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

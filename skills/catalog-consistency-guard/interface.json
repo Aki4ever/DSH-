@@ -1,0 +1,37 @@
+{
+  "id": "skill.pool.catalog-consistency-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/catalog-consistency-guard",
+  "invoke": "skill catalog-consistency-guard",
+  "summary": "复合流程级技能(L3)：口径一致性门禁。串联受管区块生成与三方对拍，是技能池任何写入动作的前置门禁。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "受管区块已刷新且四方一致",
+    "1": "受管区块无法生成，或对拍发现任一不一致"
+  },
+  "dependencies": [
+    "skill.pool.render-catalog-docs",
+    "skill.pool.verify-catalog-consistency"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "./bin/skill-pool consistency"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

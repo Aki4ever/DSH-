@@ -168,5 +168,8 @@
       "title": "技能层"
     }
   },
-  "registry_version": "1.0.0"
+  "registry_version": "1.0.0",
+  "pathBase": "skill-pool",
+  "truthSource": "磁盘可枚举的执行层以 scripts/build_capabilities_index.mjs 的扫盘为唯一真相源；本表仅作补充声明（宿主提供项 + 手工登记项），口径对拍见 node scripts/build_capabilities_index.mjs --check 的第 ⑥ 项",
+  "pathBaseNote": "本表内的 path 一律相对于 skill-pool/ 目录（历史约定），消费者必须先拼 pathBase 再判存在性"
 }

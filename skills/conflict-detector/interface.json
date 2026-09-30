@@ -1,0 +1,34 @@
+{
+  "id": "skill.pool.conflict-detector",
+  "layer": "技能 (Skill)",
+  "path": "skills/conflict-detector",
+  "invoke": "skill conflict-detector",
+  "summary": "复合流程级技能(L3)：规则冲突检测与仲裁自愈。检测多技能或多指令间的排他矛盾，给出确定性裁决方案，保障管控稳固有效。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [
+    "skill.pool.arbitrate-priority-resolver",
+    "skill.pool.detect-rule-conflicts"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

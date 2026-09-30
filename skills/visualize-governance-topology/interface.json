@@ -1,0 +1,36 @@
+{
+  "id": "skill.pool.visualize-governance-topology",
+  "layer": "技能 (Skill)",
+  "path": "skills/visualize-governance-topology",
+  "invoke": "skill visualize-governance-topology",
+  "summary": "复合流程级技能(L3)：全景索引与管家调度链路可视化透视。基于物理数据源提取与图表编译，向用户直观呈现静态资产金字塔与动态管控调用轨迹。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [
+    "skill.pool.format-visual-inspection",
+    "skill.pool.extract-catalog-topology",
+    "skill.pool.render-governance-mermaid",
+    "skill.pool.check-deepseek-usage"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

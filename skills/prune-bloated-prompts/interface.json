@@ -1,0 +1,31 @@
+{
+  "id": "skill.pool.prune-bloated-prompts",
+  "layer": "技能 (Skill)",
+  "path": "skills/prune-bloated-prompts",
+  "invoke": "skill prune-bloated-prompts",
+  "summary": "微观原子规约：防膨胀裁剪。禁止在提示词或机制中加入等价/重复语句，保持指令极致紧凑。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

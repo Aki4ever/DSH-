@@ -1,0 +1,52 @@
+{
+  "id": "skill.pool.check-deepseek-usage",
+  "layer": "技能 (Skill)",
+  "path": "skills/check-deepseek-usage",
+  "invoke": "skill check-deepseek-usage",
+  "summary": "工序动作级技能(L2)：DeepSeek 用量探针。以北京时间本地判定高峰/空闲时段并算出下次切换倒计时，真实调用官方余额接口取额度，并对官方定价页做 sha256 指纹巡检（每日一次语义）；铁律是「取不到就如实报错，绝不编造余额/时段/…",
+  "inputs": [
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：node scripts/deepseek_usage_probe.mjs --json"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：node scripts/deepseek_usage_probe.mjs --check"
+    },
+    {
+      "name": "--price-sync",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：node scripts/deepseek_usage_probe.mjs --price-sync"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功 · 报告产出且定价指纹可用（`--check` 为三项判定全过；`--price-sync` 为同步成功）",
+    "1": "判定失败 / 数据不可用 · 定价页抓不到（指纹不可用）、`--check` 任一项失败、`--price-sync` 同步失败",
+    "2": "用法错误 · 未知参数、多模式混用"
+  },
+  "dependencies": [
+    "skill.pool.multi-source-search-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/deepseek_usage_probe.mjs",
+    "node scripts/deepseek_usage_probe.mjs --json",
+    "node scripts/deepseek_usage_probe.mjs --check",
+    "node scripts/deepseek_usage_probe.mjs --price-sync"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

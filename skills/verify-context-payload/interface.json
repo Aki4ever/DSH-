@@ -1,0 +1,50 @@
+{
+  "id": "skill.pool.verify-context-payload",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-context-payload",
+  "invoke": "skill verify-context-payload",
+  "summary": "工序动作级技能：断言一次任务加载的技能正文数不超过 top-K、字节数不超预算，且未出现选中清单之外的技能。",
+  "inputs": [
+    {
+      "name": "--selected",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-context-payload/scripts/verify_payload.py --selected a,b,c --loaded…"
+    },
+    {
+      "name": "--loaded",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-context-payload/scripts/verify_payload.py --selected a,b,c --loaded…"
+    },
+    {
+      "name": "--manifest",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-context-payload/scripts/verify_payload.py --manifest /tmp/manifest.…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "输出必含 `checks` 数组与 `total_bytes` / `total_tokens`，便于事后审计。"
+    }
+  ],
+  "exitCodes": {
+    "0": "四项断言全部通过",
+    "1": "越权加载、超出 top-K、超出字节预算，或目标文件缺失"
+  },
+  "dependencies": [
+    "skill.pool.select-skills-for-task",
+    "skill.pool.load-skill-contract"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/verify-context-payload/scripts/verify_payload.py --selected a,b,c --loaded a,b",
+    "python3 skills/verify-context-payload/scripts/verify_payload.py --manifest /tmp/manifest.json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

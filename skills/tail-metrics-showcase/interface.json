@@ -1,0 +1,38 @@
+{
+  "id": "skill.pool.tail-metrics-showcase",
+  "layer": "技能 (Skill)",
+  "path": "skills/tail-metrics-showcase",
+  "invoke": "skill tail-metrics-showcase",
+  "summary": "复合流程级技能(L3)：尾部量化指标与通俗表达总控。实现输出纯中文、默认极简聚焦、通俗生活常识比喻，并在尾部展示索引命中与路由时长量化指标。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [
+    "skill.pool.output-chinese-only",
+    "skill.pool.concise-focused-output",
+    "skill.pool.plain-analogy-explanation",
+    "skill.pool.measure-routing-metrics",
+    "skill.pool.format-iconized-tail",
+    "skill.pool.validate-icon-syntax"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

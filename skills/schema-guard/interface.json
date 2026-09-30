@@ -1,0 +1,35 @@
+{
+  "id": "skill.pool.schema-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/schema-guard",
+  "invoke": "skill schema-guard",
+  "summary": "复合流程级技能(L3)：基于 L1 零闲聊、L1 去围栏与 L2 JSON提取叠加组装而成。保证严格结构化纯净输出。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [
+    "skill.pool.no-conversational-filler",
+    "skill.pool.strip-markdown-fence",
+    "skill.pool.extract-json-payload"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

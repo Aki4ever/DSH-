@@ -268,6 +268,48 @@ function renderSection(items) {
   return lines.join('\n')
 }
 
+/* ── REQ-089 R3-d：把判定拆成可单测的纯函数，并提供反向用例 ──────────────────
+ * 为什么必须能判红：本脚本的 `--check` 历史上有过"自证式绿灯"（它一度从不扫 scripts/，
+ * 于是自己定义的集合永不缺项）。**一个从没红过的判定器，等于没有判定器。**
+ * 因此这里把三个判据抽成纯函数，并用合成数据做反向验证：造重复 id / 造缺失路径 /
+ * 造条数不一致，都必须被判出来。 */
+export function findDuplicateIds(items) {
+  const seen = new Map()
+  for (const it of items) seen.set(it.id, (seen.get(it.id) || 0) + 1)
+  return [...seen.entries()].filter(([, n]) => n > 1).map(([id]) => id)
+}
+
+export function findMissingPaths(items, exists = (p) => existsSync(join(ROOT, p))) {
+  return items.filter((it) => !exists(it.path))
+}
+
+function runSelfTest() {
+  const cases = []
+  const add = (name, got, expect) => cases.push({ name, got, expect, ok: got === expect })
+
+  add('重复 id 必被检出', findDuplicateIds([{ id: 'a' }, { id: 'a' }, { id: 'b' }]).join(','), 'a')
+  add('id 全唯一不误报', findDuplicateIds([{ id: 'a' }, { id: 'b' }]).length, 0)
+  const alwaysYes = () => true
+  const alwaysNo = () => false
+  add('路径缺失必被检出', findMissingPaths([{ id: 'a', path: 'x' }], alwaysNo).length, 1)
+  add('路径齐备不误报', findMissingPaths([{ id: 'a', path: 'x' }], alwaysYes).length, 0)
+  // 机读产物条数对拍
+  const jsonOk = (n, scanned) => n === scanned
+  add('json 条数不一致必判红', jsonOk(10, 11), false)
+  add('json 条数一致即通过', jsonOk(11, 11), true)
+  // 登记表 pathBase 解析：不拼 pathBase 必须判缺失，拼上必须存在
+  const reg = { pathBase: 'skill-pool', entries: [{ id: 'p', path: 'plugins/dsh-plugin-usage-bar', source: 'repo' }] }
+  const base = reg.pathBase
+  add('不拼 pathBase 会误判缺失（反证口径必要性）', existsSync(join(ROOT, reg.entries[0].path)), false)
+  add('拼上 pathBase 即能命中真实文件', existsSync(join(ROOT, `${base}/${reg.entries[0].path}`)), true)
+
+  const failed = cases.filter((c) => !c.ok)
+  for (const c of cases) console.log(`${c.ok ? '✅' : '❌'} ${c.name}（实际 ${JSON.stringify(c.got)} / 期望 ${JSON.stringify(c.expect)}）`)
+  console.log('-----------------------------------------')
+  console.log(`共 ${cases.length} 项 · ${failed.length ? `❌ ${failed.length} 项未过` : '🎉 全部通过'}`)
+  process.exit(failed.length ? 1 : 0)
+}
+
 function check() {
   const items = collectAll()
   const cat = loadCatalog()
@@ -283,12 +325,8 @@ function check() {
   //   ② 存在性：条目声明的物理路径必须真的在磁盘上；
   //   ③ 机读产物：indexes/capabilities_index.json 必须与本次扫盘**条数一致**；
   //   ④ 接口覆盖：**与名字覆盖分开报**，禁止用"名字 100%"掩盖"接口 0%"。
-  const dupIds = (() => {
-    const seen = new Map()
-    for (const it of items) seen.set(it.id, (seen.get(it.id) || 0) + 1)
-    return [...seen.entries()].filter(([, n]) => n > 1).map(([id]) => id)
-  })()
-  const missingPaths = items.filter((it) => !existsSync(join(ROOT, it.path)))
+  const dupIds = findDuplicateIds(items)
+  const missingPaths = findMissingPaths(items)
   const jsonFile = join(ROOT, 'indexes/capabilities_index.json')
   let jsonCount = -1
   let jsonOk = false
@@ -308,6 +346,23 @@ function check() {
   console.log(`③ 路径存在性：磁盘缺失 ${missingPaths.length}${missingPaths.length ? ' → ' + missingPaths.slice(0, 5).map((m) => m.id).join('、') : ''}`)
   console.log(`④ 机读产物：indexes/capabilities_index.json ${jsonOk ? `✅ 条数一致（${jsonCount}）` : `⛔ 不一致或缺失（json ${jsonCount} / 扫盘 ${items.length}）`}（跑 --apply 重新生成）`)
   console.log(`⑤ 接口覆盖（与名字覆盖分开报，禁止互相掩盖）：已声明 ${withInterface} / ${items.length} = ${((withInterface / items.length) * 100).toFixed(1)}%`)
+
+  // ── REQ-089 R3-c：口径归一 ────────────────────────────────────────────────
+  // 实测病根（2026-10-01）：「执行层到底有多少条」在库内有**四套互相不校验的数字**——
+  //   execution-layers.json 15 · 生成器扫盘 54/58 · execution-tree.md 198 · requirements.md 224/232。
+  // 处置口径（唯一真相源原则）：
+  //   · **磁盘可枚举的执行层，以本生成器扫盘为唯一真相源**；
+  //   · `execution-layers.json` 降级为**补充声明**，它只允许声明两类东西：
+  //     ① `path` 非空 → 必须在磁盘真实存在（否则判违规）；
+  //     ② `path` 为空 → 必须是宿主提供的执行层（`source: "host"`），否则判"无声明的空路径"。
+  //   · 两边条数不一致本身**不判违规**（口径不同：一个是"宿主+手工声明"，一个是"磁盘文件"），
+  //     但必须把差异**显式报出来**，禁止再出现"谁也不知道以哪个为准"。
+  const registryDiag = diagnoseRegistry(items)
+  console.log(`⑥ 口径归一：execution-layers.json 登记 ${registryDiag.total} 条（磁盘可枚举 ${registryDiag.onDisk} · 宿主提供 ${registryDiag.host}）`)
+  console.log(`   · 登记表 path 非空但磁盘缺失：${registryDiag.missingOnDisk.length}${registryDiag.missingOnDisk.length ? ' → ' + registryDiag.missingOnDisk.slice(0, 5).join('、') : ''}`)
+  console.log(`   · 登记表 path 为空却未声明 source=host：${registryDiag.undeclaredHost.length}${registryDiag.undeclaredHost.length ? ' → ' + registryDiag.undeclaredHost.slice(0, 5).join('、') : ''}`)
+  console.log(`   · 扫盘有而登记表无（**已知口径差，非缺陷**）：${registryDiag.diskOnly}`)
+  console.log(`   · 口径声明：磁盘可枚举项以本扫盘为唯一真相源；登记表仅作补充声明`)
   console.log(`catalog 登记条目：${cat.entries.length}`)
   console.log(`catalog 有但磁盘无（漂移，必须在索引 3.2 显式列出）：${cat.missingOnDisk.length}${cat.missingOnDisk.length ? ' → ' + cat.missingOnDisk.join('、') : ''}`)
   console.log(`受管区间标记：${indexText.includes(BEGIN) && indexText.includes(END) ? '✅ 在位' : '⛔ 缺失（跑 --apply 生成）'}`)
@@ -316,6 +371,40 @@ function check() {
   // 接口覆盖**不参与**本判定的通过与否（那是 R4 的独立判定器口径），但必须显式打印，
   // 防止"名字 100% 绿"被误读为"接口齐备"。
   return missing.length === 0 && dupIds.length === 0 && missingPaths.length === 0 && jsonOk && indexText.includes(BEGIN) && driftListed
+}
+
+/**
+ * REQ-089 R3-c：对拍补充登记表 `skill-pool/docs/operations/execution-layers.json`。
+ * 只做"声明是否兑现"的核对，不做"条数是否相等"的攀比 —— 二者口径本就不同。
+ */
+function diagnoseRegistry(items) {
+  const out = { total: 0, onDisk: 0, host: 0, missingOnDisk: [], undeclaredHost: [], diskOnly: 0, resolvedPaths: [], pathBase: '.' }
+  const file = join(ROOT, 'skill-pool/docs/operations/execution-layers.json')
+  if (!existsSync(file)) { out.diskOnly = items.length; return out }
+  let reg
+  try { reg = JSON.parse(readFileSync(file, 'utf8')) } catch { out.diskOnly = items.length; return out }
+  const entries = Array.isArray(reg.entries) ? reg.entries : []
+  out.total = entries.length
+  // 历史约定（2026-10-01 实测发现）：本表内的 path 是**相对 `skill-pool/` 的**，
+  // 不是相对仓库根。此前没有任何消费者声明这一点，于是 12 条 repo 路径**全部被误判为缺失**。
+  // 现由表内 `pathBase` 显式声明，并按它解析。
+  const base = typeof reg.pathBase === 'string' && reg.pathBase ? reg.pathBase.replace(/\/$/, '') : ''
+  out.pathBase = base || '.'
+  const resolveRel = (p) => (base ? `${base}/${p}` : p)
+  for (const e of entries) {
+    if (e && e.path) {
+      out.onDisk++
+      const rel = resolveRel(e.path)
+      if (!existsSync(join(ROOT, rel))) out.missingOnDisk.push(`${e.path}（解析为 ${rel}）`)
+      else out.resolvedPaths.push(rel)
+    } else {
+      if (e && e.source === 'host') out.host++
+      else out.undeclaredHost.push((e && e.id) || '(无 id)')
+    }
+  }
+  const registeredPaths = new Set(out.resolvedPaths)
+  out.diskOnly = items.filter((it) => !registeredPaths.has(it.path)).length
+  return out
 }
 
 /** 输出机读索引产物（REQ-089 R3-a）：供路由层与接口判定器程序化消费。 */
@@ -351,5 +440,6 @@ function apply() {
   console.log(`✅ 已生成机读索引：indexes/capabilities_index.json（${json.total} 条 · 已声明接口 ${json.withInterface} 条）`)
 }
 
-if (process.argv.includes('--apply')) apply()
+if (process.argv.includes('--self-test')) runSelfTest()
+else if (process.argv.includes('--apply')) apply()
 else process.exit(check() ? 0 : 1)

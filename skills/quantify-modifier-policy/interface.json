@@ -1,0 +1,34 @@
+{
+  "id": "skill.pool.quantify-modifier-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/quantify-modifier-policy",
+  "invoke": "skill quantify-modifier-policy",
+  "summary": "微观原子规约：程度类修饰词的量化判定基元。定义「高/大/快/多/好/严重/频繁/明显/显著…」清单、四要素（场景 + 数值或区间 + 单位 + 依据）规约、场景优先原则、不可量化的处置（声明假设而非沉默）与「禁止用另一个程度词替换程度词」…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "程度词已量化，或未命中程度词；`unquantifiable` 项已显式声明假设",
+    "1": "存在未量化且未声明假设的程度词，或出现程度词替换程度词",
+    "2": "输入缺失、文件不可读，或量化映射表不可读"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "本规约只出判据，**不检测、不建表、不写文件、不阻断交付**；"
+}

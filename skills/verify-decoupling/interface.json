@@ -1,0 +1,46 @@
+{
+  "id": "skill.pool.verify-decoupling",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-decoupling",
+  "invoke": "skill verify-decoupling",
+  "summary": "工序动作级技能：断言五类耦合违规为零；豁免必须经 --allow 显式声明并在输出中标注 waived，杜绝静默放过。",
+  "inputs": [
+    {
+      "name": "--allow",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-decoupling/scripts/verify_decoupling.py --allow shared_mutable_state"
+    },
+    {
+      "name": "--root",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-decoupling/scripts/verify_decoupling.py --root /tmp/fakerepo"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "`blocking_count == 0`（豁免项单独计入 `waived`，不被隐藏）",
+    "1": "存在未豁免违规，输出含五类 `checks` 与逐条证据",
+    "2": "`--allow` 含未知类别，或检测器/输入缺失"
+  },
+  "dependencies": [
+    "skill.pool.detect-layer-coupling"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/verify-decoupling/scripts/verify_decoupling.py",
+    "python3 skills/verify-decoupling/scripts/verify_decoupling.py --allow shared_mutable_state",
+    "python3 skills/verify-decoupling/scripts/verify_decoupling.py --root /tmp/fakerepo"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "本技能不修改任何文件。"
+}

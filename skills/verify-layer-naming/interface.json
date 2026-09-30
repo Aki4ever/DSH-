@@ -1,0 +1,45 @@
+{
+  "id": "skill.pool.verify-layer-naming",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-layer-naming",
+  "invoke": "skill verify-layer-naming",
+  "summary": "工序动作级技能(L2)：执行层命名整改后的三项硬断言器——合规率必须为 1.0000、旧名残留引用必须为 0（按词边界扫描，避免把新名误判为旧名残留）、执行层登记表零违规；判据复用 audit-layer-naming 的 naming_…",
+  "inputs": [
+    {
+      "name": "--strict",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-layer-naming/scripts/verify_naming.py --strict --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-layer-naming/scripts/verify_naming.py --strict --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "JSON 契约：`{\"success\",\"verdict\",\"compliance\":{...},\"violation_codes\":{},\"violations\":[],\"retired_names\":[],\"dangling_references\":{},\"dangling_total\",\"checks\":[{\"…"
+    }
+  ],
+  "exitCodes": {
+    "0": "三项断言全过（`verdict = naming_verified`）",
+    "1": "任一断言失败（`verdict = naming_not_verified`），`checks[]` 给出逐条实数证据",
+    "2": "输入不可读（判据模块缺失、catalog / 词表 / 登记表缺失或不可解析）"
+  },
+  "dependencies": [
+    "skill.pool.capability-naming-policy",
+    "skill.pool.audit-layer-naming"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/verify-layer-naming/scripts/verify_naming.py --strict --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "只断言不整改**：不写文件、不改名、不重建索引；"
+}

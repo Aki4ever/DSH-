@@ -1,0 +1,75 @@
+{
+  "id": "skill.pool.verify-atomic-mutual-exclusion",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-atomic-mutual-exclusion",
+  "invoke": "skill verify-atomic-mutual-exclusion",
+  "summary": "工序动作级技能(L2)：原子锁互斥性物理压测断言器。真实拉起 N 个独立进程并发抢同一把 mkdir 原子锁，采集临界区进入/退出时间戳做扫描线，断言重叠窗口为 0 且任一瞬间持有者 ≤ 1；同时跑无锁负向对照段证明检测器确实能看见并发（…",
+  "inputs": [
+    {
+      "name": "--workers",
+      "type": "arg",
+      "required": false,
+      "desc": "并发进程数，默认 16；< 2 即退 2"
+    },
+    {
+      "name": "--rounds",
+      "type": "arg",
+      "required": false,
+      "desc": "每进程临界区轮次，默认 20；< 1 即退 2"
+    },
+    {
+      "name": "--hold-ms",
+      "type": "arg",
+      "required": false,
+      "desc": "临界区驻留毫秒，默认 5；设为 0 会显著降低重叠检出灵敏度"
+    },
+    {
+      "name": "--timeout",
+      "type": "arg",
+      "required": false,
+      "desc": "单次等待/持有上限秒数，默认 60"
+    },
+    {
+      "name": "--lock-root",
+      "type": "arg",
+      "required": false,
+      "desc": "锁根目录，缺省用临时目录（测完即删）"
+    },
+    {
+      "name": "--skip-control",
+      "type": "arg",
+      "required": false,
+      "desc": "跳过无锁负向对照段（不建议：跳过即丧失假阴性排除能力）"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-atomic-mutual-exclusion/scripts/verify_mutual_exclusion.py --worker…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "JSON 契约：`{\"success\",\"verdict\",\"workers\",\"rounds\",\"hold_ms\",\"lock_root\",\"guarded\":{...},\"control\":{...},\"stale\":{...},\"checks\":[...]}`"
+    }
+  ],
+  "exitCodes": {
+    "0": "四项断言全过，`verdict = mutual_exclusion_proven`：互斥已被物理证明",
+    "1": "任一断言失败，`verdict = mutual_exclusion_not_proven`：重叠非零 / 有 worker 异常 / 对照段看不见并发 / 陈旧锁不可回收",
+    "2": "输入不可读（依赖脚本缺失、`--workers < 2`、`--rounds < 1`、锁根不可写、worker 启动失败）"
+  },
+  "dependencies": [
+    "skill.pool.atomic-lock-policy",
+    "skill.pool.acquire-atomic-lock"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/verify-atomic-mutual-exclusion/scripts/verify_mutual_exclusion.py --workers 16 --rounds 20 --hold-ms 5 --json",
+    "python3 skills/verify-atomic-mutual-exclusion/scripts/verify_mutual_exclusion.py --workers 8 --rounds 5 --hold-ms 3 --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

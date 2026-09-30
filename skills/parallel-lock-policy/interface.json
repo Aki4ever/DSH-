@@ -1,0 +1,34 @@
+{
+  "id": "skill.pool.parallel-lock-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/parallel-lock-policy",
+  "invoke": "skill parallel-lock-policy",
+  "summary": "微观原子规约：并行任务调控锁的判定基元。钉死四条硬口径——锁粒度=共享资源键、加锁顺序=字典序固定顺序、超时默认 300 秒且超时即失败释放、死循环判定复用 anti-pattern-policy 的 AP-01；无锁共享写为明确禁止项。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "声明可归一化、无冲突无等待环无超时、断言全过，允许并行派发",
+    "1": "存在 `missing_locks` / `non_canonical` / `lock_conflict` / `deadlock_cycle` / `lock_timeout` / AP-01 任一命中，禁止并行派发",
+    "2": "输入缺失或不可解析（缺参、文件不可读、JSONL 行非法、任务非法）"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "本规约只输出定义与判据，**不排锁、不检测、不写文件、不中断任何任务**；"
+}

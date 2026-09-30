@@ -1,0 +1,52 @@
+{
+  "id": "skill.pool.detect-layer-coupling",
+  "layer": "技能 (Skill)",
+  "path": "skills/detect-layer-coupling",
+  "invoke": "skill detect-layer-coupling",
+  "summary": "工序动作级技能：按 layer-decoupling-policy 的五类判据真实扫描契约与脚本源码，输出逆向依赖、依赖环、跨层跳跃、隐式耦合与共享可变状态违规。",
+  "inputs": [
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-layer-coupling/scripts/detect_coupling.py --json"
+    },
+    {
+      "name": "--skill",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-layer-coupling/scripts/detect_coupling.py --skill build-layer-graph"
+    },
+    {
+      "name": "--root",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-layer-coupling/scripts/detect_coupling.py --root /tmp/fakerepo # 假仓…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "五类违规计数全为 0",
+    "1": "存在违规，`violations` 每条含 `kind` / `from` / `to` / `evidence` / `file` / `line`",
+    "2": "catalog 或登记表缺失/不可读"
+  },
+  "dependencies": [
+    "skill.pool.build-layer-graph"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/detect-layer-coupling/scripts/detect_coupling.py --json",
+    "python3 skills/detect-layer-coupling/scripts/detect_coupling.py --skill build-layer-graph",
+    "python3 skills/detect-layer-coupling/scripts/detect_coupling.py --root /tmp/fakerepo # 假仓库验证"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "不修改任何文件；`--root` 仅用于把检测指向另一份仓库副本（测试用）。"
+}

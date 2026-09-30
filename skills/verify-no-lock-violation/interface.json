@@ -1,0 +1,84 @@
+{
+  "id": "skill.pool.verify-no-lock-violation",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-no-lock-violation",
+  "invoke": "skill verify-no-lock-violation",
+  "summary": "工序动作级技能(L2)：并行派单前的五项硬断言——无锁冲突、无死锁环、无超时未释放、每个任务都已声明锁、死循环体检复用 anti-pattern-policy 的 AP-01；全过才退 0，任一违规即阻断。",
+  "inputs": [
+    {
+      "name": "--from-json",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-lock-violation/scripts/verify_no_lock_violation.py --from-json t…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-lock-violation/scripts/verify_no_lock_violation.py --from-json t…"
+    },
+    {
+      "name": "--allow-conflict",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-lock-violation/scripts/verify_no_lock_violation.py --from-json c…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "checks[].name",
+      "type": "field",
+      "desc": "五项断言名闭集：`no_lock_conflict` / `no_deadlock_cycle` / `no_lock_timeout` / `locks_declared` / `no_loop_ap01`"
+    },
+    {
+      "name": "checks[].pass",
+      "type": "field",
+      "desc": "该断言是否通过"
+    },
+    {
+      "name": "checks[].detail",
+      "type": "field",
+      "desc": "通过/失败的人类可读证据"
+    },
+    {
+      "name": "violations[].kind",
+      "type": "field",
+      "desc": "`lock_conflict` / `deadlock_cycle` / `lock_timeout` / `missing_locks` / `AP-01`（输入错误时另有 `input_unreadable`）"
+    },
+    {
+      "name": "violations[].accepted",
+      "type": "field",
+      "desc": "仅 `lock_conflict` 且 `--allow-conflict` 时为 `true`"
+    },
+    {
+      "name": "error",
+      "type": "field",
+      "desc": "仅输入或依赖不可读时出现"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "文档给出的输出结构：{\"success\":false, \"checks\":[{\"name\":\"no_loop_ap01\",\"pass\":false,\"detail\":\"命中 AP-01：pkg-006-t1\"}], \"violations\":[{\"kind\":\"AP-01\",\"task\":\"pkg-006-t1\",\"…"
+    }
+  ],
+  "exitCodes": {
+    "0": "五项断言全过（或 `--allow-conflict` 下仅剩已显式接受的 `lock_conflict`），允许并行派发",
+    "1": "存在未接受的违规：锁冲突 / 死锁环 / 超时未释放 / 未声明锁 / AP-01",
+    "2": "输入不可读或依赖脚本不可用（缺 `--from-json`、文件不存在/是目录/不可读、JSONL 行非法、`task` 缺失、`locks` 非数组、依赖模块加载失败）"
+  },
+  "dependencies": [
+    "skill.pool.detect-lock-conflict",
+    "skill.pool.detect-forbidden-state"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/verify-no-lock-violation/scripts/verify_no_lock_violation.py --from-json tasks.jsonl --json",
+    "python3 skills/verify-no-lock-violation/scripts/verify_no_lock_violation.py --from-json conflict.jsonl --json",
+    "python3 skills/verify-no-lock-violation/scripts/verify_no_lock_violation.py --from-json conflict.jsonl --allow-conflict --json",
+    "python3 skills/verify-no-lock-violation/scripts/verify_no_lock_violation.py --from-json /tmp/not-exist.jsonl --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "不改动任何文件**：本技能只读输入、只写 stdout；importlib 加载依赖时关闭字节码落盘，不在他人技能目录留副产物。"
+}

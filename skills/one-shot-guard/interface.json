@@ -1,0 +1,40 @@
+{
+  "id": "skill.pool.one-shot-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/one-shot-guard",
+  "invoke": "skill one-shot-guard",
+  "summary": "复合流程级技能(L3)：一次性解决门禁。把「判定 → 决断 → 留痕 → 反问检测」串成一道派单前/交付前门禁，挂载于管家「③ 冲突·冗余·质量」集群。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "门禁通过：判定完成、假设齐备、提问未超限",
+    "1": "门禁阻断：假设缺依据或回滚方式、交付清单缺 `assumptions` 段、出现第二次提问、提问无红线支撑",
+    "2": "输入不可读：判定输入或问题记录文件缺失、不可读、非法"
+  },
+  "dependencies": [
+    "skill.pool.one-shot-resolution-policy",
+    "skill.pool.classify-decision-reversibility",
+    "skill.pool.record-assumptions",
+    "skill.pool.verify-no-unnecessary-question"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "grep -q '^## 本次假设' /tmp/delivery.md"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

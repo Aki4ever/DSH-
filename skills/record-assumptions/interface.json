@@ -1,0 +1,71 @@
+{
+  "id": "skill.pool.record-assumptions",
+  "layer": "技能 (Skill)",
+  "path": "skills/record-assumptions",
+  "invoke": "skill record-assumptions",
+  "summary": "工序动作级技能(L2)：把自行决断的项写成可追溯假设四元组（项/取值/依据/回滚方式），缺依据或回滚方式即阻断。",
+  "inputs": [
+    {
+      "name": "--item",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/record-assumptions/scripts/record_assumptions.py --item \"阈值取值\" --value \"0.…"
+    },
+    {
+      "name": "--value",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/record-assumptions/scripts/record_assumptions.py --item \"阈值取值\" --value \"0.…"
+    },
+    {
+      "name": "--basis",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/record-assumptions/scripts/record_assumptions.py --item \"阈值取值\" --value \"0.…"
+    },
+    {
+      "name": "--rollback",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/record-assumptions/scripts/record_assumptions.py --item \"阈值取值\" --value \"0.…"
+    },
+    {
+      "name": "--format",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/record-assumptions/scripts/record_assumptions.py --item \"阈值取值\" --value \"0.…"
+    },
+    {
+      "name": "--from-decisions",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/record-assumptions/scripts/record_assumptions.py --from-decisions /tmp/dec…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "Exit Code 0：全部假设条目齐备（`basis` 与 `rollback` 非空），结果由 stdout 承载（Markdown 段落或 `{\"success\":true,\"assumptions\":[...]}`）；"
+    }
+  ],
+  "exitCodes": {
+    "0": "全部假设条目齐备（`basis` 与 `rollback` 非空），结果由 stdout 承载（Markdown 段落或 `{\"success\":true,\"assumptions\":[...]}`）",
+    "1": "存在缺 `basis` / `rollback` 的条目（逐条列出 `seq` / `item` / `missing`），或没有任何可记录的条目",
+    "2": "`--from-decisions` 指向的文件不存在、不可读，或不是合法判定 JSON"
+  },
+  "dependencies": [
+    "skill.pool.classify-decision-reversibility"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/record-assumptions/scripts/record_assumptions.py --item \"阈值取值\" --value \"0.9\" --basis \"与既有口径一致\" --rollback \"改回原常量并重跑断言\" --format md",
+    "python3 skills/record-assumptions/scripts/record_assumptions.py --from-decisions /tmp/decisions.json --format md",
+    "python3 skills/record-assumptions/scripts/record_assumptions.py --from-decisions /tmp/decisions.json --format json",
+    "python3 skills/record-assumptions/scripts/record_assumptions.py --item \"命名风格\" --value \"kebab-case\" --basis \"与仓库既有目录一致\" --rollback \"批量重命名回原风格\" --item \"输出目录\" --value \"docs/requirements\" --basis \"需求侧是权威真相源\" --rollback \"文件与指引行一并挪回\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "只留痕不改交付物**：本技能不写入任何业务文件，只产出文本供交付回复粘贴；"
+}

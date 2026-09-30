@@ -1,0 +1,44 @@
+{
+  "id": "skill.pool.select-skills-for-task",
+  "layer": "技能 (Skill)",
+  "path": "skills/select-skills-for-task",
+  "invoke": "skill select-skills-for-task",
+  "summary": "工序动作级技能：由一个任务描述产出受 top-K 约束的选中技能 id 清单，只读检索结果、绝不读取技能正文。",
+  "inputs": [
+    {
+      "name": "--task",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/select-skills-for-task/scripts/select_skills.py --task \"校验交付文件是否存在\""
+    },
+    {
+      "name": "--top-k",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/select-skills-for-task/scripts/select_skills.py --task \"生成可缩放查看器\" --top-k 3"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "输出 `selected` 数组长度恒 ≤ `top_k`。"
+    }
+  ],
+  "exitCodes": {
+    "0": "清单产出完成（可为空清单，附 `hint`）",
+    "1": "索引缺失或参数非法"
+  },
+  "dependencies": [
+    "skill.pool.rank-skills-bm25",
+    "skill.pool.lazy-load-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/select-skills-for-task/scripts/select_skills.py --task \"校验交付文件是否存在\"",
+    "python3 skills/select-skills-for-task/scripts/select_skills.py --task \"生成可缩放查看器\" --top-k 3"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

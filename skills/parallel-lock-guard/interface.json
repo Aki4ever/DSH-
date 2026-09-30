@@ -1,0 +1,38 @@
+{
+  "id": "skill.pool.parallel-lock-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/parallel-lock-guard",
+  "invoke": "skill parallel-lock-guard",
+  "summary": "复合流程级技能(L3)：并行任务调控锁派单前门禁。把「声明 → 冲突/死锁检测 → 断言」串成一道不可跳步的放行门禁，挂载于管家「③ 冲突·冗余·质量」集群；并行的前置条件是先证明可并行（parallel_groups 非空且冲突为零），…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "三环全过：锁集合已声明、三类零命中、五项断言全真，按 `parallel_groups` 派单",
+    "1": "任一环命中：`missing_locks` / `non_canonical` / `lock_conflict` / `deadlock_cycle` / `lock_timeout` / `missing_locks` / AP-01，禁止派单",
+    "2": "输入不可读或依赖脚本不可用（缺参、文件不可读、JSONL 行非法、任务非法、依赖模块加载失败）"
+  },
+  "dependencies": [
+    "skill.pool.parallel-lock-policy",
+    "skill.pool.declare-lock-set",
+    "skill.pool.detect-lock-conflict",
+    "skill.pool.verify-no-lock-violation"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

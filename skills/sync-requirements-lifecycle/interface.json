@@ -1,0 +1,33 @@
+{
+  "id": "skill.pool.sync-requirements-lifecycle",
+  "layer": "技能 (Skill)",
+  "path": "skills/sync-requirements-lifecycle",
+  "invoke": "skill sync-requirements-lifecycle",
+  "summary": "工序动作级技能：物理检查并同步 requirements 需求生命周期版本，确保任务严格从最新图纸出发。",
+  "inputs": [
+    {
+      "name": "--req-id",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/sync-requirements-lifecycle/scripts/sync_reqs.py --req-id REQ-BUTLER-SPEC-…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/sync-requirements-lifecycle/scripts/sync_reqs.py --req-id REQ-BUTLER-SPEC-GOVERNANCE-009"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

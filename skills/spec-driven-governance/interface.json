@@ -1,0 +1,35 @@
+{
+  "id": "skill.pool.spec-driven-governance",
+  "layer": "技能 (Skill)",
+  "path": "skills/spec-driven-governance",
+  "invoke": "skill spec-driven-governance",
+  "summary": "复合流程级技能(L3)：需求驱动执行与规范仲裁总控。强制任务严格从需求图纸出发，全程对照知识库7大规范（冲突以规范为准），并通过自动化测试用例方可验收交付。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [
+    "skill.pool.sync-requirements-lifecycle",
+    "skill.pool.reconcile-knowledge-specs",
+    "skill.pool.run-test-cases-gate"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

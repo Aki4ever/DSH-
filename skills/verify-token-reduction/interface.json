@@ -1,0 +1,65 @@
+{
+  "id": "skill.pool.verify-token-reduction",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-token-reduction",
+  "invoke": "skill verify-token-reduction",
+  "summary": "工序动作级技能：对裁剪前后文本同时断言 token 降幅达标与等价能力存活（cases.json 的 requires 证据串全部命中），任一条不成立即退 1 阻断放行。",
+  "inputs": [
+    {
+      "name": "--before",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-token-reduction/scripts/verify_reduction.py --before /tmp/prune-sam…"
+    },
+    {
+      "name": "--after",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-token-reduction/scripts/verify_reduction.py --before /tmp/prune-sam…"
+    },
+    {
+      "name": "--target",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-token-reduction/scripts/verify_reduction.py --before /tmp/prune-sam…"
+    },
+    {
+      "name": "--cases",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-token-reduction/scripts/verify_reduction.py --before /tmp/prune-sam…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-token-reduction/scripts/verify_reduction.py --before /tmp/prune-sam…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "stdout 恒为合法 JSON，`checks` 逐条给出断言名、布尔结论与判据明细。"
+    }
+  ],
+  "exitCodes": {
+    "0": "两条断言全部成立（降幅达标 + 全部 `requires` 证据串存活）",
+    "1": "降幅不足，或存在能力缺失（`capability.missing` 非空）",
+    "2": "参数/文件缺失（缺参、路径不存在、`--target` 越界、`cases.json` 结构非法）"
+  },
+  "dependencies": [
+    "skill.pool.measure-token-budget",
+    "skill.pool.prune-redundant-context"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "printf '%s' '{\"cases\":[{\"id\":\"c1\",\"requires\":[\"Token Estimation Formula\"]},{\"id\":\"c2\",\"requires\":[\"Exit Code 0\"]},{\"id\":\"c3\",\"requires\":[\"token-budget-policy\"]}]}' > /tmp/token-cases.json",
+    "python3 skills/verify-token-reduction/scripts/verify_reduction.py --before /tmp/prune-sample.md --after /tmp/prune-out-1.md --target 0.40 --cases /tmp/token-cases.json --json",
+    "python3 skills/verify-token-reduction/scripts/verify_reduction.py --before /tmp/prune-sample.md --after /tmp/prune-out-1.md --target 0.40 --cases /tmp/token-cases-bad.json --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "只读断言：不写任何文件、不修改 before/after、不自动裁剪「补救」；"
+}

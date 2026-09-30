@@ -1,0 +1,35 @@
+{
+  "id": "skill.pool.build-inverted-index",
+  "layer": "技能 (Skill)",
+  "path": "skills/build-inverted-index",
+  "invoke": "skill build-inverted-index",
+  "summary": "工序动作级技能：由 skill-catalog.json 生成倒排索引 skill-index.json（term→文档→字段→词频），并把分词器作为可复用库对外暴露。",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/build-inverted-index/scripts/build_index.py --check # 只检测索引是否需要重建"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "索引已是最新（`--check`）或已成功重建",
+    "1": "catalog 缺失/非法，或 `--check` 检测到索引陈旧"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/build-inverted-index/scripts/build_index.py",
+    "python3 skills/build-inverted-index/scripts/build_index.py --check # 只检测索引是否需要重建"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

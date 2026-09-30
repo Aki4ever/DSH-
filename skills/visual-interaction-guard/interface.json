@@ -1,0 +1,39 @@
+{
+  "id": "skill.pool.visual-interaction-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/visual-interaction-guard",
+  "invoke": "skill visual-interaction-guard",
+  "summary": "复合流程级技能(L3)：可视化交互四件套放行门禁。把「规约 → 档位 → 生成 → 断言」串成一道不可跳步的门禁，挂载于管家「⑤ 需求与透视」集群；放行的唯一合法证据是「档位表 ≥5 档且默认档在表内 + 吸附分支两种状态齐备 + 下载三…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "四项实数齐备：档数达标、默认档在表内、吸附两状态齐备、下载三段齐备、零外链",
+    "1": "任一环失败（缺控制标识 / 档数不足 / 默认档不在表内 / 缺主路径 / 缺降级路径 / 命中外链）",
+    "2": "输入不可读（产物不存在、探针不可用）"
+  },
+  "dependencies": [
+    "skill.pool.format-zoomable-visual",
+    "skill.pool.zoom-level-policy",
+    "skill.pool.build-image-viewer",
+    "skill.pool.verify-interactive-html",
+    "skill.pool.interactive-image-viewer"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

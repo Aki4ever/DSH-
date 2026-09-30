@@ -1,0 +1,46 @@
+{
+  "id": "skill.pool.skill-import-pipeline",
+  "layer": "技能 (Skill)",
+  "path": "skills/skill-import-pipeline",
+  "invoke": "skill skill-import-pipeline",
+  "summary": "复合流程级技能(L3)：外部执行层引入管线总控。五步串联检索→审计→归一→定级挂载→门禁验证，落点新集群「⑦ 技能引入与演进」；检索步自 PKG-008 起绑脚本探针（四源调度：本地优先 / GitHub / 官网 / awesome 清…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "五步全部通过：候选已归一纳管、composition 合法、`validate` 与 `consistency` 均退出 0",
+    "1": "任一步阻断：候选结构化失败 / 全部候选被拒 / 幂等基线失效 / 依赖边非法 / 门禁非 0"
+  },
+  "dependencies": [
+    "skill.pool.search-github-skill",
+    "skill.pool.audit-imported-skill",
+    "skill.pool.normalize-skill-contract",
+    "skill.pool.place-skill-into-cluster",
+    "skill.pool.dispatch-skill-search",
+    "skill.pool.search-official-source",
+    "skill.pool.merge-search-candidates"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "echo \"exit=$?\"",
+    "echo \"exit=$?\"",
+    "echo \"exit=$?\"",
+    "./bin/skill-pool validate && ./bin/skill-pool consistency",
+    "echo \"exit=$?\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

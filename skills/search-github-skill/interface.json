@@ -1,0 +1,61 @@
+{
+  "id": "skill.pool.search-github-skill",
+  "layer": "技能 (Skill)",
+  "path": "skills/search-github-skill",
+  "invoke": "skill search-github-skill",
+  "summary": "工序动作级技能：按能力关键词检索 GitHub 外部技能/插件候选，把结果归一为标准结构化候选清单 JSON（名称、URL、星标、许可、是否含脚本、描述）。",
+  "inputs": [
+    {
+      "name": "--query",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/search-github-skill/scripts/search_skill.py --query \"pdf\""
+    },
+    {
+      "name": "--limit",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/search-github-skill/scripts/search_skill.py --query \"pdf\" --limit 2 --from…"
+    },
+    {
+      "name": "--from-json",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/search-github-skill/scripts/search_skill.py --query \"pdf\" --limit 2 --from…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/search-github-skill/scripts/search_skill.py --query \"\" --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "文档给出的输出结构（原文标题：输出结构：）"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "文档给出的输出结构：{ \"success\": true, \"query\": \"pdf\", \"source\": \"from-json|cache|none\", \"candidates\": [ {\"name\": \"...\", \"url\": \"...\", \"license\": \"MIT\", \"has_scripts\": t…"
+    }
+  ],
+  "exitCodes": {
+    "0": "正常输出统一结构 JSON；`candidates` 允许为空数组（空结果是合法结果，不是失败）",
+    "1": "`--from-json` 指定的文件不存在，或不是合法 JSON / 结构非法"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/search-github-skill/scripts/search_skill.py --query \"pdf\"",
+    "python3 skills/search-github-skill/scripts/search_skill.py --query \"pdf\" --limit 2 --from-json /tmp/candidates.json",
+    "python3 skills/search-github-skill/scripts/search_skill.py --query \"\" --json",
+    "python3 skills/search-github-skill/scripts/search_skill.py --from-json /tmp/不存在.json; echo \"exit=$?\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "本技能只读候选来源，**不写入任何文件**。"
+}

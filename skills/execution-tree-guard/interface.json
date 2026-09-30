@@ -1,0 +1,37 @@
+{
+  "id": "skill.pool.execution-tree-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/execution-tree-guard",
+  "invoke": "skill execution-tree-guard",
+  "summary": "复合流程级技能(L3)：执行层树门禁。任何执行层变更后强制重建并断言树与索引一致，手写集群表一律阻断。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "登记表合法、树已重建且六项断言全过",
+    "1": "任一步失败；失败必须可定位到文件与行号或对象 id"
+  },
+  "dependencies": [
+    "skill.pool.tree-update-mandatory",
+    "skill.pool.register-execution-layer",
+    "skill.pool.build-execution-tree",
+    "skill.pool.verify-execution-tree"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,43 @@
+{
+  "id": "skill.pool.score-process-conformance",
+  "layer": "技能 (Skill)",
+  "path": "skills/score-process-conformance",
+  "invoke": "skill score-process-conformance",
+  "summary": "工序动作级技能(L2)：流程合规打分器。按权重计算分子与分母（na 权重从分母扣除），输出逐项 pass/fail/na 与得分；通过条件为得分 ≥ 85 且全部必需项 pass（必需项一票否决）；输出必须打印分子/分母/na 扣除项，禁…",
+  "inputs": [
+    {
+      "name": "--bundle",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/score-process-conformance/scripts/score_conformance.py --bundle <证据包> --js…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/score-process-conformance/scripts/score_conformance.py --bundle <证据包> --js…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "通过（`process_conformant`）",
+    "1": "未通过（附逐项明细）",
+    "2": "输入不可读（证据包缺失/不可解析、steps 为空）"
+  },
+  "dependencies": [
+    "skill.pool.process-conformance-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/score-process-conformance/scripts/score_conformance.py --bundle <证据包> --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

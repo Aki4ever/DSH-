@@ -1,0 +1,34 @@
+{
+  "id": "skill.pool.render-governance-mermaid",
+  "layer": "技能 (Skill)",
+  "path": "skills/render-governance-mermaid",
+  "invoke": "skill render-governance-mermaid",
+  "summary": "工序动作级技能：将拓扑数据物理编译为合规的 Mermaid 语法代码，支持调度链路图与全景拓扑图渲染。",
+  "inputs": [
+    {
+      "name": "--mode",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/render-governance-mermaid/scripts/render_mermaid.py --mode dispatch"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/render-governance-mermaid/scripts/render_mermaid.py --mode dispatch",
+    "python3 skills/render-governance-mermaid/scripts/render_mermaid.py --mode landscape"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,55 @@
+{
+  "id": "skill.pool.google-style-skill-search-router",
+  "layer": "技能 (Skill)",
+  "path": "skills/google-style-skill-search-router",
+  "invoke": "skill google-style-skill-search-router",
+  "summary": "复合流程级技能(L3)：Google 式技能检索总控。进程内组装查询解析、BM25 排序、片段生成与质量日志，只回灌片段不回灌全文。",
+  "inputs": [
+    {
+      "name": "--query",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/google-style-skill-search-router/scripts/search_skills.py --query \"校验交付文件是…"
+    },
+    {
+      "name": "--top-k",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/google-style-skill-search-router/scripts/search_skills.py --query \"统计token…"
+    },
+    {
+      "name": "--eval",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/google-style-skill-search-router/scripts/search_skills.py --eval"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "检索完成，payload ≤ 1.5 KB，无全文字段；`--eval` 命中率 ≥ 90%",
+    "1": "索引缺失/陈旧、参数非法，或 `--eval` 命中率不达标"
+  },
+  "dependencies": [
+    "skill.pool.snippet-only-recall",
+    "skill.pool.build-inverted-index",
+    "skill.pool.parse-query",
+    "skill.pool.rank-skills-bm25",
+    "skill.pool.emit-search-snippet",
+    "skill.pool.log-query-events"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/google-style-skill-search-router/scripts/search_skills.py --query \"校验交付文件是否存在\"",
+    "python3 skills/google-style-skill-search-router/scripts/search_skills.py --query \"统计token消耗\" --top-k 3",
+    "python3 skills/google-style-skill-search-router/scripts/search_skills.py --eval"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

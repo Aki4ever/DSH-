@@ -1,0 +1,37 @@
+{
+  "id": "skill.pool.chinese-output-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/chinese-output-guard",
+  "invoke": "skill chinese-output-guard",
+  "summary": "复合流程级技能(L3)：全流程中文输出交付前门禁。把「规约 → 剥离 → 断言」串成一道门禁，挂载于管家「④ 输出规约」，代码块与命令原文豁免，白名单外拉丁词零容忍。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "三项断言全部通过 · 放行交付",
+    "1": "存在违规（占比不达标 / 非白名单拉丁词 / 缩写无中文释义） · 阻断，按 `violations` 改写后重跑",
+    "2": "输入缺失、文件不存在不可读，或剥离器不可用 · 阻断，先补齐输入"
+  },
+  "dependencies": [
+    "skill.pool.chinese-end-to-end",
+    "skill.pool.strip-non-prose-scope",
+    "skill.pool.verify-chinese-output"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,51 @@
+{
+  "id": "skill.pool.search-official-source",
+  "layer": "技能 (Skill)",
+  "path": "skills/search-official-source",
+  "invoke": "skill search-official-source",
+  "summary": "工序动作级技能(L2)：官网 / 官方文档源检索器。从官方站点自声明的 sitemap 中按关键词检索可用执行层入口，产出统一六字段候选；只读、只用标准库、不携带凭据；支持 --from-file 读本地夹具做离线回归，全部域名不可达时显…",
+  "inputs": [
+    {
+      "name": "--query",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/search-official-source/scripts/search_official.py --query infographic --do…"
+    },
+    {
+      "name": "--domain",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/search-official-source/scripts/search_official.py --query infographic --do…"
+    },
+    {
+      "name": "--from-file",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/search-official-source/scripts/search_official.py --query infographic --fr…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "正常输出（候选可非空）",
+    "1": "全部域名都失败且零候选（失败绝不静默为「没找到」）",
+    "2": "输入不可读（缺 query/domain/from-file、夹具不可解析）"
+  },
+  "dependencies": [
+    "skill.pool.multi-source-search-policy"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/search-official-source/scripts/search_official.py --query infographic --domain docs.example.com",
+    "python3 skills/search-official-source/scripts/search_official.py --query infographic --from-file docs/requirements/execution/fixtures/sitemap-official-sample.xml"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "触发禁区**：只读检索，不下载页面正文、不写任何文件、不携带凭据；"
+}

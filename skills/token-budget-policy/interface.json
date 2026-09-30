@@ -1,0 +1,33 @@
+{
+  "id": "skill.pool.token-budget-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/token-budget-policy",
+  "invoke": "skill token-budget-policy",
+  "summary": "微观原子规约：定义上下文预算优先级（索引/检索片段 > 选中技能正文 > 参考文档）与超预算裁剪顺序，规定索引与检索片段永不裁剪、README 不进上下文、docs 长文仅以片段入上下文。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "候选上下文全部落在预算内；或裁剪后复算通过（降幅达标且等价能力证据全部存活）",
+    "1": "超出预算且不可裁剪（P0 触顶）；或裁剪/校验脚本判定输入不可读、降幅不足、能力缺失",
+    "2": "参数缺失（校验脚本缺 `--before` / `--after` / `--cases` 之一）"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

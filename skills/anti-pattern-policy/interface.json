@@ -1,0 +1,34 @@
+{
+  "id": "skill.pool.anti-pattern-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/anti-pattern-policy",
+  "invoke": "skill anti-pattern-policy",
+  "summary": "微观原子规约：反例层判定基元。定义系统「绝不允许发生」的七条反例（AP-01 死循环 ~ AP-07 播报风暴）及其物理判据、默认阈值与判定优先级，写不出物理判据的口号一律不得进入本层。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "事件流零命中反例，或条目本身可被物理判定并已入层",
+    "1": "命中任一条 AP，或 `--strict` 下事件流为空（不允许「空过」）",
+    "2": "事件流缺失或不可解析（缺参、文件不可读、JSONL 行非法、事件非 JSON 对象）"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "本规约只输出判据与优先级裁决，**不检测、不写文件、不中断任何任务**；"
+}

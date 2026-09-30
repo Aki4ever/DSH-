@@ -1,0 +1,31 @@
+{
+  "id": "skill.pool.output-chinese-only",
+  "layer": "技能 (Skill)",
+  "path": "skills/output-chinese-only",
+  "invoke": "skill output-chinese-only",
+  "summary": "微观原子规约：强制输出纯正中文，严禁非必要的英文单词、拼音或中英混杂，消灭跨语种表达的随机性。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,75 @@
+{
+  "id": "skill.pool.rename-execution-layer",
+  "layer": "技能 (Skill)",
+  "path": "skills/rename-execution-layer",
+  "invoke": "skill rename-execution-layer",
+  "summary": "工序动作级技能(L2)：执行层命名整改器。一次改名同步六处（目录名 / catalog id / Frontmatter name / 组装边 / 树与索引五件产物 / docs 与登记表），配套脚本同名改写，改前校验目标名合法性、改后自…",
+  "inputs": [
+    {
+      "name": "--plan",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/rename-execution-layer/scripts/rename_layer.py --plan docs/requirements/ex…"
+    },
+    {
+      "name": "--dry-run",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/rename-execution-layer/scripts/rename_layer.py --plan docs/requirements/ex…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/rename-execution-layer/scripts/rename_layer.py --plan docs/requirements/ex…"
+    },
+    {
+      "name": "--apply",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/rename-execution-layer/scripts/rename_layer.py --plan docs/requirements/ex…"
+    },
+    {
+      "name": "--rebuild",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/rename-execution-layer/scripts/rename_layer.py --plan docs/requirements/ex…"
+    },
+    {
+      "name": "--rename",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/rename-execution-layer/scripts/rename_layer.py --rename \"old-skill-id=new-…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "JSON 契约：`{\"success\",\"verdict\",\"mode\",\"renames\":[{\"from\",\"to\",\"status\",\"changed_files\",\"steps\"}],\"changed_files_total\",\"rebuild\":[...]}`"
+    }
+  ],
+  "exitCodes": {
+    "0": "干跑完成（`would_rename`）/ 整改成功（`renamed`）/ 已是目标状态（`already_applied`）",
+    "1": "目标名非法（`target_invalid`）、目标被占用（`target_taken`）、源不存在（`source_missing`）、重建失败",
+    "2": "输入不可读（计划非法、判据模块缺失、catalog 缺失）"
+  },
+  "dependencies": [
+    "skill.pool.capability-naming-policy",
+    "skill.pool.audit-layer-naming",
+    "skill.pool.build-layer-graph",
+    "skill.pool.build-inverted-index",
+    "skill.pool.classify-instance-safety",
+    "skill.pool.build-execution-tree"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/rename-execution-layer/scripts/rename_layer.py --plan docs/requirements/execution/renames-pkg007.json --dry-run --json",
+    "python3 skills/rename-execution-layer/scripts/rename_layer.py --plan docs/requirements/execution/renames-pkg007.json --apply --rebuild --json",
+    "python3 skills/rename-execution-layer/scripts/rename_layer.py --rename \"old-skill-id=new-skill-id\" --apply --rebuild",
+    "python3 skills/rename-execution-layer/scripts/rename_layer.py --rename \"find-duplicate-rules=helper-util-stuff\" --dry-run"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,54 @@
+{
+  "id": "skill.pool.verify-no-unnecessary-question",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-no-unnecessary-question",
+  "invoke": "skill verify-no-unnecessary-question",
+  "summary": "工序动作级技能(L2)：对本次任务的提问记录做四项硬断言（次数≤1、必须红线、必须不可逆、必须批量合并），默认零提问。",
+  "inputs": [
+    {
+      "name": "--questions",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-unnecessary-question/scripts/verify_no_question.py --questions /…"
+    },
+    {
+      "name": "--json",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-unnecessary-question/scripts/verify_no_question.py --questions /…"
+    },
+    {
+      "name": "--allow-ask",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-unnecessary-question/scripts/verify_no_question.py --questions /…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "四项断言全过，`success == true`，`violations` 为空",
+    "1": "存在任一违规（`too_many` / `no_redline` / `reversible` / `not_batched`），逐条给出 `seq` 与 `detail`",
+    "2": "`--questions` 指向的文件不存在或不可读（含空文件以外的解码失败）"
+  },
+  "dependencies": [
+    "skill.pool.record-assumptions"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    ": > /tmp/questions.jsonl",
+    "python3 skills/verify-no-unnecessary-question/scripts/verify_no_question.py --questions /tmp/questions.jsonl --json",
+    "printf '{\"seq\":1,\"item\":\"删除旧的日志目录\",\"redline\":\"R1\",\"reversible\":false,\"batch\":true,\"merged_count\":2}\\n' > /tmp/questions.jsonl",
+    "python3 skills/verify-no-unnecessary-question/scripts/verify_no_question.py --questions /tmp/questions.jsonl --json # 默认零提问 -> Exit 1",
+    "python3 skills/verify-no-unnecessary-question/scripts/verify_no_question.py --questions /tmp/questions.jsonl --allow-ask --json # 授权后 -> Exit 0"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "触发禁区**：本技能只读问题记录、不做提问也不改写记录；没有问题记录时按零提问放行。"
+}

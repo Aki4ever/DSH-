@@ -1,0 +1,33 @@
+{
+  "id": "skill.pool.zoom-level-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/zoom-level-policy",
+  "invoke": "skill zoom-level-policy",
+  "summary": "微观原子规约：可视化产物交互判定基元。钉死三条硬口径——缩放必须走离散档位表（13 档，+/- 跳相邻档，滚轮连续微调后吸附，档位可枚举可复算）、下载必须三段降级（showSaveFilePicker / Blob 下载 / 就地提示，禁…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "26 项断言全过：三件套齐备、档位可枚举且默认档在表内、吸附分支存在、下载三段降级齐备、零外链",
+    "1": "任一断言失败（缺控制标识 / 档数不足 / 默认档不在表内 / 缺主路径 / 缺降级路径 / 扩展名不在白名单 / 命中外链）",
+    "2": "输入不可读（文件不存在或不可解析）"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

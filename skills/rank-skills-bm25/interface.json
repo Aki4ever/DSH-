@@ -1,0 +1,57 @@
+{
+  "id": "skill.pool.rank-skills-bm25",
+  "layer": "技能 (Skill)",
+  "path": "skills/rank-skills-bm25",
+  "invoke": "skill rank-skills-bm25",
+  "summary": "工序动作级技能：对技能倒排索引执行 BM25 排序（字段权重 + 文档长度归一），支持 top-K、分页与命中率评测。",
+  "inputs": [
+    {
+      "name": "--query",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/rank-skills-bm25/scripts/rank_skills.py --query \"校验交付文件是否存在\""
+    },
+    {
+      "name": "--top-k",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/rank-skills-bm25/scripts/rank_skills.py --query \"token 统计\" --top-k 3 --off…"
+    },
+    {
+      "name": "--offset",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/rank-skills-bm25/scripts/rank_skills.py --query \"token 统计\" --top-k 3 --off…"
+    },
+    {
+      "name": "--eval",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/rank-skills-bm25/scripts/rank_skills.py --eval docs/requirements/execution…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "排序完成，或 `--eval` 命中率达标",
+    "1": "索引/查询不可读，或 `--eval` 命中率低于阈值"
+  },
+  "dependencies": [
+    "skill.pool.parse-query",
+    "skill.pool.build-inverted-index"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/rank-skills-bm25/scripts/rank_skills.py --query \"校验交付文件是否存在\"",
+    "python3 skills/rank-skills-bm25/scripts/rank_skills.py --query \"token 统计\" --top-k 3 --offset 3",
+    "python3 skills/rank-skills-bm25/scripts/rank_skills.py --eval docs/requirements/execution/fixtures/retrieval-queries.json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

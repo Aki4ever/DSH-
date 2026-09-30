@@ -1,0 +1,68 @@
+{
+  "id": "skill.pool.verify-quantified-output",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-quantified-output",
+  "invoke": "skill verify-quantified-output",
+  "summary": "工序动作级技能(L2)：量化输出三项硬断言——文本中不存在未量化的程度词、不存在程度词被另一个程度词替换、--require-mapping 下每个命中词都能找到 domain 条目；全部通过才 exit 0，否则 exit 1 并列出词…",
+  "inputs": [
+    {
+      "name": "--text",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-quantified-output/scripts/verify_quantified.py --text '在代码库场景，大文件指单…"
+    },
+    {
+      "name": "--domain",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-quantified-output/scripts/verify_quantified.py --text '在代码库场景，大文件指单…"
+    },
+    {
+      "name": "--require-mapping",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-quantified-output/scripts/verify_quantified.py --text '在代码库场景，大文件指单…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-quantified-output/scripts/verify_quantified.py --text '在代码库场景，大文件指单…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "success",
+      "type": "布尔",
+      "desc": "全部断言是否通过"
+    },
+    {
+      "name": "unquantified",
+      "type": "数组",
+      "desc": "`[{\"term\",\"line\",\"snippet\"}]`，断言一命中的未量化程度词"
+    },
+    {
+      "name": "checks",
+      "type": "数组",
+      "desc": "`[{\"name\",\"pass\",\"detail\"}]`，逐项断言的判定与证据（`detail` 含词与行号）"
+    }
+  ],
+  "exitCodes": {
+    "0": "三项断言全部通过",
+    "1": "存在未量化程度词、程度词替换程度词，或缺失 domain 映射",
+    "2": "输入缺失（既无 `--text` 也无 `--file`、文件不可读），或量化映射表不可读"
+  },
+  "dependencies": [
+    "skill.pool.quantify-modifier",
+    "skill.pool.detect-vague-modifier"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/verify-quantified-output/scripts/verify_quantified.py --text '在代码库场景，大文件指单个文件 ≥1 MB。' --domain 代码库 --require-mapping --json",
+    "python3 skills/verify-quantified-output/scripts/verify_quantified.py --text '子智能体上报大量同质动作（连续读文件、连续点击）需要汇总时；' --json",
+    "python3 skills/verify-quantified-output/scripts/verify_quantified.py --text '接口响应很快' --domain 接口响应 --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,44 @@
+{
+  "id": "skill.pool.plan-fission",
+  "layer": "技能 (Skill)",
+  "path": "skills/plan-fission",
+  "invoke": "skill plan-fission",
+  "summary": "工序动作级技能：读取 SOP 或技能主体，逐步骤判定探针绑定情况，输出结构化分裂清单（待拆步骤、建议级别、建议探针、建议父级）。",
+  "inputs": [
+    {
+      "name": "--input",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/plan-fission/scripts/plan_fission.py --input skills/qa-gatekeeper"
+    },
+    {
+      "name": "--strict",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/plan-fission/scripts/plan_fission.py --input skills/qa-gatekeeper --strict"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "stdout 恒为合法 JSON，字段含 `total_steps`、`unbound_steps`、`vague_hits`、`fission_required`、`fission_plan`。"
+    }
+  ],
+  "exitCodes": {
+    "0": "方案模式且输入解析成功（即使存在待分裂项），或门禁模式下全部步骤已绑定探针",
+    "1": "门禁模式下存在待分裂项，或 `--input` 不存在/不可读"
+  },
+  "dependencies": [
+    "skill.pool.enforce-atomic-granularity",
+    "skill.pool.detect-vague-modifier"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/plan-fission/scripts/plan_fission.py --input skills/qa-gatekeeper",
+    "python3 skills/plan-fission/scripts/plan_fission.py --input skills/qa-gatekeeper --strict"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "skill.pool.verify-instance-safety",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-instance-safety",
+  "invoke": "skill verify-instance-safety",
+  "summary": "工序动作级技能：断言每个本地执行层都有实例安全声明、声明与实际扫描一致、safe_multi 无写盘证据、受限档位带资源键。",
+  "inputs": [
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-instance-safety/scripts/verify_instance_safety.py --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "四项断言全部通过",
+    "1": "存在缺声明 / 声明陈旧 / 档位与证据矛盾 / 资源键为空",
+    "2": "声明表缺失或 catalog 不可读"
+  },
+  "dependencies": [
+    "skill.pool.classify-instance-safety"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/verify-instance-safety/scripts/verify_instance_safety.py",
+    "python3 skills/verify-instance-safety/scripts/verify_instance_safety.py --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

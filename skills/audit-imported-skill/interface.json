@@ -1,0 +1,45 @@
+{
+  "id": "skill.pool.audit-imported-skill",
+  "layer": "技能 (Skill)",
+  "path": "skills/audit-imported-skill",
+  "invoke": "skill audit-imported-skill",
+  "summary": "工序动作级技能：对外部引入候选执行许可白名单、来源 URL、脚本可执行面、描述完整性与命名规范体检，逐项 pass/fail 给出理由并返回接受/拒绝裁决。",
+  "inputs": [
+    {
+      "name": "--candidate",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/audit-imported-skill/scripts/audit_skill.py --candidate '{\"name\":\"pdf-tool…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "文档给出的输出结构（原文标题：输出结构：）"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "文档给出的输出结构：{ \"success\": false, \"candidate\": \"mystery-skill\", \"checks\": [{\"id\": \"license-whitelist\", \"passed\": false, \"reason\": \"...\"}], \"warnings\": [], \"decisio…"
+    }
+  ],
+  "exitCodes": {
+    "0": "裁决为 `accept`，该候选可进入契约归一阶段",
+    "1": "裁决为 `reject`，`reasons` 中必须含明确许可/安全/契约理由",
+    "2": "输入不可解析（既不是可读文件，也不是合法 JSON）"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/audit-imported-skill/scripts/audit_skill.py --candidate '{\"name\":\"pdf-toolkit\",\"url\":\"https://github.com/acme/pdf-toolkit\",\"license\":\"MIT\",\"has_scripts\":true,\"description\":\"PDF 处理\"}'",
+    "echo \"exit=$?\"",
+    "python3 skills/audit-imported-skill/scripts/audit_skill.py --candidate '{\"name\":\"mystery-skill\",\"url\":\"https://github.com/acme/mystery-skill\",\"license\":\"UNKNOWN\",\"description\":\"来源不明\"}'",
+    "echo \"exit=$?\"",
+    "python3 skills/audit-imported-skill/scripts/audit_skill.py --candidate /tmp/candidate.json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "只审不写**：本技能不创建、不修改、不删除任何文件，纯裁决；"
+}

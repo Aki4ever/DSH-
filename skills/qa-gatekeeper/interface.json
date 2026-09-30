@@ -1,0 +1,36 @@
+{
+  "id": "skill.pool.qa-gatekeeper",
+  "layer": "技能 (Skill)",
+  "path": "skills/qa-gatekeeper",
+  "invoke": "skill qa-gatekeeper",
+  "summary": "复合流程级技能(L3)：交付门禁与质量守卫。解耦组装了物理落地检测、Python编译验证、UTF-8编码断言与退出码硬断言。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [
+    "skill.pool.verify-file-exists",
+    "skill.pool.check-python-syntax",
+    "skill.pool.ensure-utf8-encoding",
+    "skill.pool.assert-zero-exitcode"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

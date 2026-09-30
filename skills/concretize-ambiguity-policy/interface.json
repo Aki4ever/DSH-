@@ -1,0 +1,34 @@
+{
+  "id": "skill.pool.concretize-ambiguity-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/concretize-ambiguity-policy",
+  "invoke": "skill concretize-ambiguity-policy",
+  "summary": "微观原子规约：含糊词具像化判定基元。定义范围含糊、指代含糊、时序含糊三类含糊词与 hedge 缓解词四类判据及其具像化方式（确切数量 + 计数依据 / 具体实体清单 / 触发条件 + 时限 / 可核对判据），并立下「禁止用另一个含糊词替换…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "正文不含含糊词，或每个含糊词都已按类别具像化（数量带依据 / 实体已枚举 / 时序带触发条件与时限 / hedge 已被阈值取代）",
+    "1": "存在未具像化的含糊词，或出现「含糊词替换含糊词」",
+    "2": "输入缺失、文件不可读，或词表唯一真相源 `detect-vague-modifier` 未就绪"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "本规约只出判据，**不检测、不建议、不断言、不写文件**；"
+}

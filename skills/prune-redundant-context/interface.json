@@ -1,0 +1,49 @@
+{
+  "id": "skill.pool.prune-redundant-context",
+  "layer": "技能 (Skill)",
+  "path": "skills/prune-redundant-context",
+  "invoke": "skill prune-redundant-context",
+  "summary": "工序动作级技能：以保守语义无损规则折叠连续重复行、重复段落与连续空行，同时逐字节保护 CATALOG 受管区块与 docs/requirements 编号表格行，输出裁剪前后 token 账。",
+  "inputs": [
+    {
+      "name": "--in",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/prune-redundant-context/scripts/prune_context.py --in /tmp/prune-sample.md…"
+    },
+    {
+      "name": "--out",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/prune-redundant-context/scripts/prune_context.py --in /tmp/prune-sample.md…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/prune-redundant-context/scripts/prune_context.py --in /tmp/prune-sample.md…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "Exit Code 0：裁剪完成（含零改动），`--out` 已写出，stdout 为合法 JSON；"
+    }
+  ],
+  "exitCodes": {
+    "0": "裁剪完成（含零改动），`--out` 已写出，stdout 为合法 JSON",
+    "1": "`--in` / `--paths` 任一输入不存在或不是普通文件（输出 `missing_inputs`），或两者都未给出"
+  },
+  "dependencies": [
+    "skill.pool.measure-token-budget"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/prune-redundant-context/scripts/prune_context.py --in /tmp/prune-sample.md --out /tmp/prune-out-1.md --json",
+    "python3 skills/prune-redundant-context/scripts/prune_context.py --in /tmp/prune-out-1.md --out /tmp/prune-out-2.md --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

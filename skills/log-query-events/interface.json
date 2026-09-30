@@ -1,0 +1,48 @@
+{
+  "id": "skill.pool.log-query-events",
+  "layer": "技能 (Skill)",
+  "path": "skills/log-query-events",
+  "invoke": "skill log-query-events",
+  "summary": "工序动作级技能：把 query → top-K → 实际选用 追加写入 skill-query-log.jsonl，作为质量信号用于后续触发词修订。",
+  "inputs": [
+    {
+      "name": "--query",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/log-query-events/scripts/log_query.py --query \"校验文件是否存在\" --results \"verify…"
+    },
+    {
+      "name": "--results",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/log-query-events/scripts/log_query.py --query \"校验文件是否存在\" --results \"verify…"
+    },
+    {
+      "name": "--chosen",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/log-query-events/scripts/log_query.py --query \"校验文件是否存在\" --results \"verify…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "事件已追加且可被 JSON 解析",
+    "1": "参数缺失、目标目录不可写"
+  },
+  "dependencies": [
+    "skill.pool.rank-skills-bm25"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/log-query-events/scripts/log_query.py --query \"校验文件是否存在\" --results \"verify-file-exists,qa-gatekeeper\" --chosen verify-file-exists"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

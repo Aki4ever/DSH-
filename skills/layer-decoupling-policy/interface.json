@@ -1,0 +1,34 @@
+{
+  "id": "skill.pool.layer-decoupling-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/layer-decoupling-policy",
+  "invoke": "skill layer-decoupling-policy",
+  "summary": "微观原子规约：执行层解耦判定基元。规定执行层之间只通过契约（catalog 的 composition 边 + 已声明产物路径）通信，依赖方向只允许 L4→L3→L2→L1 与同层，禁止环与跨层直引内部实现，并给出逆向依赖、依赖环、跨层跳…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "五类违规计数全为 0（或已用 `--allow` 显式豁免并在输出中标注 `waived`）",
+    "1": "存在未豁免的耦合违规，或 `--check` 检测到 layer-graph 陈旧",
+    "2": "输入缺失/不可读（缺 `skill-catalog.json`、`execution-layers.json`、SKILL.md，或 `--skill` 指向不存在的技能）"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "触发禁区**：只读查询、纯问答与单文件改动不经过本规约；本规约不检测、不写文件、不阻断任务，只给出「什么算耦合违规」。"
+}

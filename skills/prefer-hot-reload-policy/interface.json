@@ -1,0 +1,32 @@
+{
+  "id": "skill.pool.prefer-hot-reload-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/prefer-hot-reload-policy",
+  "invoke": "skill prefer-hot-reload-policy",
+  "summary": "微观原子规约：能不重启就不重启。定义 hot_reload（热更）/ incremental（增量重载）/ restart（重启）三级处置与最长前缀判定表，只有命中「不可热更边界」白名单才允许重启，且必须同时给出「路径 + 边界 + 重建…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "每个变更路径都得到唯一处置，且不存在缺任何一项重启三要素的 `restart` 声明",
+    "1": "存在「不必要重启」（路径未变更却重启，或判定非 `restart` 却重启）或「无证据重启」（`boundary` 或 `command` 为空）"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

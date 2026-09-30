@@ -1,0 +1,42 @@
+{
+  "id": "skill.pool.collect-process-evidence",
+  "layer": "技能 (Skill)",
+  "path": "skills/collect-process-evidence",
+  "invoke": "skill collect-process-evidence",
+  "summary": "工序动作级技能(L2)：流程合规取证器。按 process-spec.json 逐步从证据目录与仓库实况取证，产出证据包；铁律是「没有证据不等于走了这一步」——取不到证据一律记 fail + unverifiable，na 只在该步明确不…",
+  "inputs": [
+    {
+      "name": "--evidence",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/collect-process-evidence/scripts/collect_evidence.py --evidence <证据目录> --j…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/collect-process-evidence/scripts/collect_evidence.py --evidence <证据目录> --j…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "取证完成（步骤里允许有 fail）",
+    "2": "输入不可读（spec 缺失、证据目录不存在）"
+  },
+  "dependencies": [
+    "skill.pool.process-conformance-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/collect-process-evidence/scripts/collect_evidence.py --evidence <证据目录> --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

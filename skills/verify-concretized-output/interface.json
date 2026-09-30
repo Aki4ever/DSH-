@@ -1,0 +1,89 @@
+{
+  "id": "skill.pool.verify-concretized-output",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-concretized-output",
+  "invoke": "skill verify-concretized-output",
+  "summary": "工序动作级技能(L2)：含糊词具像化断言器。对「已具像化」的正文做三项硬断言——不含未具像化含糊词（AMBIGUITY_WORDS 命中数为 0）、--strict 下任何数量表述必须带依据（如 12 个（依据：…））、命中词右侧 6 字…",
+  "inputs": [
+    {
+      "name": "--text",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-concretized-output/scripts/verify_concretized.py --text '本次扫描命中 12 …"
+    },
+    {
+      "name": "--json",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-concretized-output/scripts/verify_concretized.py --text '本次扫描命中 12 …"
+    },
+    {
+      "name": "--strict",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-concretized-output/scripts/verify_concretized.py --text '本次扫描命中 12 …"
+    },
+    {
+      "name": "--file",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-concretized-output/scripts/verify_concretized.py --file <交付稿> --str…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "success",
+      "type": "布尔",
+      "desc": "三项断言全过且 `violations` 为空"
+    },
+    {
+      "name": "strict",
+      "type": "布尔",
+      "desc": "是否启用 `--strict`"
+    },
+    {
+      "name": "source",
+      "type": "字符串",
+      "desc": "`text`，或实际读取的文件路径"
+    },
+    {
+      "name": "hits[]",
+      "type": "数组",
+      "desc": "命中的含糊词：`term` / `category` / `line` / `snippet`"
+    },
+    {
+      "name": "violations[]",
+      "type": "数组",
+      "desc": "违规：`kind`（`unconcretized` / `no_basis` / `synonym_swap`）/ `term` / `line` / `detail`；`synonym_swap` 额外带 `other_term`（替换词）"
+    },
+    {
+      "name": "checks[]",
+      "type": "数组",
+      "desc": "三项断言：`name` / `pass` / `detail`"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "文档给出的输出结构（原文标题：输出 JSON 字段：）"
+    }
+  ],
+  "exitCodes": {
+    "0": "三项断言全过（`success: true`）",
+    "1": "存在违规：`unconcretized` / `no_basis` / `synonym_swap` 任一命中",
+    "2": "依赖模块 `detect-vague-modifier` 未就绪，或输入缺失（未给 `--text` / `--file`、文件不可读或为空）"
+  },
+  "dependencies": [
+    "skill.pool.concretize-term"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/verify-concretized-output/scripts/verify_concretized.py --text '本次扫描命中 12 处（依据：全仓 12 个脚本静态扫描结果）' --json",
+    "python3 skills/verify-concretized-output/scripts/verify_concretized.py --text '本次扫描命中 12 处' --strict --json # → no_basis，exit 1",
+    "python3 skills/verify-concretized-output/scripts/verify_concretized.py --text '请尽快处理，尽早反馈' --json # → synonym_swap，exit 1",
+    "python3 skills/verify-concretized-output/scripts/verify_concretized.py --file <交付稿> --strict --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "只断言不改写**：本技能不产出替换建议（那是 `concretize-term` 的职责），不写任何文件，加载依赖时不写 `.pyc`（`sys.dont_write_bytecode`）；"
+}

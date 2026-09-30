@@ -1,0 +1,53 @@
+{
+  "id": "skill.pool.verify-no-unnecessary-restart",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-no-unnecessary-restart",
+  "invoke": "skill verify-no-unnecessary-restart",
+  "summary": "工序动作级技能(L2)：对实际发生的重启事件做三项硬断言——路径在变更集合内、判定确实需要重启、带非空重建命令；任一不成立即记为不必要重启或无证据重启并退 1。",
+  "inputs": [
+    {
+      "name": "--paths",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-unnecessary-restart/scripts/verify_no_restart.py --paths \"/Appli…"
+    },
+    {
+      "name": "--restarts",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-unnecessary-restart/scripts/verify_no_restart.py --paths \"/Appli…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-unnecessary-restart/scripts/verify_no_restart.py --paths \"/Appli…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "JSON 契约：`{\"success\":bool,\"restart_events\":n,\"unnecessary\":[{\"path\",\"reason\"}],\"unproven\":[{\"path\"}],\"checks\":[{\"name\",\"pass\",\"detail\"}]}`，"
+    }
+  ],
+  "exitCodes": {
+    "0": "三项断言全部通过（`--restarts` 文件不存在或为空同样通过）",
+    "1": "存在不必要重启（`unnecessary` 非空）或无证据重启（`unproven` 非空）",
+    "2": "参数缺失、restart 记录不可解析，或判定器不可用"
+  },
+  "dependencies": [
+    "skill.pool.classify-change-scope"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "printf '{\"path\":\"/Applications/DSH Desktop.app/Contents/Resources/app/package.json\",\"command\":\"\",\"reason\":\"缺命令\"}\\n' > /tmp/restarts-unproven.jsonl",
+    "python3 skills/verify-no-unnecessary-restart/scripts/verify_no_restart.py --paths \"/Applications/DSH Desktop.app/Contents/Resources/app/package.json\" --restarts /tmp/restarts-unproven.jsonl --json",
+    "printf '{\"path\":\"/Applications/DSH Desktop.app/Contents/Resources/app/package.json\",\"command\":\"pnpm run rebuild:app\",\"reason\":\"宿主 bundle 不可热更\"}\\n' > /tmp/restarts-ok.jsonl",
+    "python3 skills/verify-no-unnecessary-restart/scripts/verify_no_restart.py --paths \"/Applications/DSH Desktop.app/Contents/Resources/app/package.json\" --restarts /tmp/restarts-ok.jsonl --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "只读**：除 stdout 外不写任何文件、不修改仓库任何路径。"
+}

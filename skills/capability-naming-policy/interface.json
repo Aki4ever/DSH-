@@ -1,0 +1,36 @@
+{
+  "id": "skill.pool.capability-naming-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/capability-naming-policy",
+  "invoke": "skill capability-naming-policy",
+  "summary": "微观原子规约：能力层命名判定基元。钉死「归属 / 分类 / 做什么 / 命名」四要素与四种已登记命名形态（动作 / 编排 / 规约 / 厂商边界），规定语法约束、禁词、同义归一、唯一性与改名的六处同步契约；词表与形态的唯一真相源是 doc…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "全部执行层命名合规率 100%，且零悬空引用",
+    "1": "存在违规（形态 / 语法 / 禁词 / 同义别名 / 近重复 / 三处不一致 / 悬空引用）",
+    "2": "输入不可读或词表缺失（`capability-naming.json` 不存在或不可解析）"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [
+    "python3 -c \"import json;d=json.load(open('docs/operations/capability-naming.json'));print(d['version'],len(d['verb_vocabulary']),'动词')\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "本规约是**能力层命名的唯一口径来源**：只出定义与判据，不检测、不改名、不写文件。"
+}

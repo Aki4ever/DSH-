@@ -1,0 +1,31 @@
+{
+  "id": "skill.pool.format-iconized-tail",
+  "layer": "技能 (Skill)",
+  "path": "skills/format-iconized-tail",
+  "invoke": "skill format-iconized-tail",
+  "summary": "微观原子规约：强制在最终回复的末尾集中使用特异化图标输出四要素框架，严禁在正文过早打断或散落分布。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

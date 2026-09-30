@@ -1,0 +1,53 @@
+{
+  "id": "skill.pool.process-supervisor",
+  "layer": "技能 (Skill)",
+  "path": "skills/process-supervisor",
+  "invoke": "skill process-supervisor",
+  "summary": "复合流程级技能(L3)：流程监督员。把「取证 → 打分 → 整改 → 独立复核」串成一道不可跳步的出口门禁，挂载于管家「③ 冲突·冗余·质量」集群；放行的唯一合法证据是「得分 ≥ 85 且全部必需项 pass 且整改清单无 unresol…",
+  "inputs": [
+    {
+      "name": "--evidence",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/process-supervisor/scripts/supervise.py --evidence <证据目录> --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/process-supervisor/scripts/supervise.py --evidence <证据目录> --json"
+    },
+    {
+      "name": "--agent-command",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/process-supervisor/scripts/supervise.py --evidence <证据目录> --agent-command …"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "流程合规（`process_conformant`）",
+    "1": "不合规（附逐项明细与可执行整改清单）",
+    "2": "输入不可读或依赖脚本缺失"
+  },
+  "dependencies": [
+    "skill.pool.process-conformance-policy",
+    "skill.pool.collect-process-evidence",
+    "skill.pool.score-process-conformance",
+    "skill.pool.plan-process-rectification"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/process-supervisor/scripts/supervise.py --evidence <证据目录> --json",
+    "python3 skills/process-supervisor/scripts/supervise.py --evidence <证据目录> --agent-command \"python3 skills/process-supervisor/scripts/run_agent_review.py\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

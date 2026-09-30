@@ -1,0 +1,52 @@
+{
+  "id": "skill.pool.fold-repeated-events",
+  "layer": "技能 (Skill)",
+  "path": "skills/fold-repeated-events",
+  "invoke": "skill fold-repeated-events",
+  "summary": "工序动作级技能(L2)：把逐条过程事件折叠成里程碑逐条保留、动作按类别计数、微操作汇总为 ×N 的紧凑过程输出。",
+  "inputs": [
+    {
+      "name": "--file",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/fold-repeated-events/scripts/fold_events.py --file /tmp/events.jsonl --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/fold-repeated-events/scripts/fold_events.py --file /tmp/events.jsonl --json"
+    },
+    {
+      "name": "--stdin",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：cat /tmp/events.jsonl | python3 skills/fold-repeated-events/scripts/fold_events.py --stdin"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "stdout 契约：默认（不带 `--json`）**必定打印非空的 `rendered` 多行文本**；带 `--json` 时打印六字段 JSON。"
+    }
+  ],
+  "exitCodes": {
+    "0": "折叠完成，`rendered` 中不含任何单条 micro 原文，`after_events ≤ before_events`",
+    "1": "输入为空、文件不存在或不可读；此时不得向用户输出任何折叠结果"
+  },
+  "dependencies": [
+    "skill.pool.classify-step-tier"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "cat > /tmp/events.jsonl <<'EOF'",
+    "{\"text\": \"已完成需求拆解\"}",
+    "{\"text\": \"读取文件 skill.md\"}",
+    "{\"text\": \"打开编辑器\"}",
+    "{\"text\": \"扫描全仓依赖拓扑并建立索引\"}"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

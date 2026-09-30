@@ -1,0 +1,88 @@
+{
+  "id": "skill.pool.acquire-atomic-lock",
+  "layer": "技能 (Skill)",
+  "path": "skills/acquire-atomic-lock",
+  "invoke": "skill acquire-atomic-lock",
+  "summary": "工序动作级技能(L2)：基于 mkdir(2) 原子目录的物理锁获取与释放器。锁键经 realpath 归一为绝对路径，持有者记录 pid+start_ticks 防 PID 复用误判，支持 lease/live 两种锁模式与按模式分档的…",
+  "inputs": [
+    {
+      "name": "action",
+      "type": "positional",
+      "required": true,
+      "values": [
+        "acquire",
+        "release",
+        "status",
+        "run"
+      ],
+      "desc": "文档声明的闭集取值（原文：`action` 落在闭集 `{acquire, release, status, run}`）"
+    },
+    {
+      "name": "--key",
+      "type": "arg",
+      "required": false,
+      "desc": "共享资源键；路径键走 `realpath` 归一，`port:` / `instance:` 前缀键逐字符保留"
+    },
+    {
+      "name": "--lock-root",
+      "type": "arg",
+      "required": false,
+      "desc": "锁根目录，默认 `/tmp/dsh-atomic-locks`"
+    },
+    {
+      "name": "--timeout",
+      "type": "arg",
+      "required": false,
+      "desc": "默认 **300 秒**：既是等待上限，也是锁的持有上限"
+    },
+    {
+      "name": "--wait",
+      "type": "arg",
+      "required": false,
+      "desc": "等待获取的上限秒数，缺省等于 `--timeout`"
+    },
+    {
+      "name": "--mode",
+      "type": "arg",
+      "required": false,
+      "desc": "`lease`（默认）或 `live`；`run` 强制 `live`"
+    },
+    {
+      "name": "--token",
+      "type": "arg",
+      "required": false,
+      "desc": "持有者 token（`pid:start_ticks`），不符即拒绝释放"
+    },
+    {
+      "name": "-- <命令...>",
+      "type": "arg",
+      "required": false,
+      "desc": "在第一个独立 `--` 之后给出子命令"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "JSON 契约（`acquire`）：`{\"success\",\"acquired\",\"key\",\"lock_path\",\"token\",\"owner\":{...},\"attempts\",\"reclaimed\"}`"
+    }
+  ],
+  "exitCodes": {
+    "0": "`acquire` 获取成功 / `release` 释放成功 / `status` 完成枚举 / `run` 取子进程退出码（子进程为 0 时本进程也为 0）",
+    "1": "等待超时未获锁（`wait_timeout`）、token 不符拒绝释放（`token_mismatch`）、锁已不存在（`lock_not_found`）",
+    "2": "输入不可读（缺 `--key`、锁键归一化后为空、锁根目录不可写、`run` 缺子命令、子命令不可执行）"
+  },
+  "dependencies": [
+    "skill.pool.atomic-lock-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/acquire-atomic-lock/scripts/atomic_lock.py run --key docs/operations/skill-catalog.json --timeout 120 -- ./bin/skill-pool catalog",
+    "python3 skills/acquire-atomic-lock/scripts/atomic_lock.py run --key port:43129 -- /usr/bin/true",
+    "python3 skills/acquire-atomic-lock/scripts/atomic_lock.py acquire --key instance:hindsight-bank-01 --timeout 60",
+    "python3 skills/acquire-atomic-lock/scripts/atomic_lock.py status --lock-root /tmp/dsh-atomic-locks"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

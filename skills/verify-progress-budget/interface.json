@@ -1,0 +1,57 @@
+{
+  "id": "skill.pool.verify-progress-budget",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-progress-budget",
+  "invoke": "skill verify-progress-budget",
+  "summary": "工序动作级技能(L2)：对折叠后的过程输出做四项硬断言（零微操作泄漏、里程碑预算、里程碑 100% 覆盖、事件数不增加），全部通过才放行交付。",
+  "inputs": [
+    {
+      "name": "--file",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-progress-budget/scripts/verify_progress.py --file /tmp/events.jsonl…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-progress-budget/scripts/verify_progress.py --file /tmp/events.jsonl…"
+    },
+    {
+      "name": "--max-milestones",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-progress-budget/scripts/verify_progress.py --file /tmp/events.jsonl…"
+    },
+    {
+      "name": "--rendered",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-progress-budget/scripts/verify_progress.py --file /tmp/events.jsonl…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "四项断言全部通过（零 micro 泄漏 + 里程碑在预算内 + 覆盖率 100% + 事件数不增加）",
+    "1": "任一断言失败，或输入为空 / 文件不存在不可读 / 折叠器不可用"
+  },
+  "dependencies": [
+    "skill.pool.fold-repeated-events",
+    "skill.pool.classify-step-tier"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/verify-progress-budget/scripts/verify_progress.py --file /tmp/events.jsonl --json",
+    "python3 skills/verify-progress-budget/scripts/verify_progress.py --file /tmp/events.jsonl --max-milestones 2",
+    "python3 skills/verify-progress-budget/scripts/verify_progress.py --file /tmp/events.jsonl --rendered /tmp/rendered_lossy.txt"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

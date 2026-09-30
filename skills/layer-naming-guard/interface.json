@@ -1,0 +1,39 @@
+{
+  "id": "skill.pool.layer-naming-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/layer-naming-guard",
+  "invoke": "skill layer-naming-guard",
+  "summary": "复合流程级技能(L3)：执行层命名规范门禁。把「体检 → 整改 → 断言 → 渲染」串成一道不可跳步的放行门禁，挂载于管家「② 契约与合规」集群；放行的唯一合法证据是「合规率 1.0000 + 旧名悬空引用 0 + 文档与真相源零漂移」三…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "五环全过：口径齐备、体检零违规、六处同步且重建全绿、三项断言实数达标、文档零漂移",
+    "1": "任一环失败：`target_invalid` / `target_taken` / 合规率 < 1.0 / 悬空引用 > 0 / 登记表违规 / 文档漂移",
+    "2": "输入不可读或依赖脚本不可用（真相源缺失、catalog 不可解析、判据模块缺失）"
+  },
+  "dependencies": [
+    "skill.pool.capability-naming-policy",
+    "skill.pool.audit-layer-naming",
+    "skill.pool.rename-execution-layer",
+    "skill.pool.verify-layer-naming",
+    "skill.pool.render-capability-naming"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,51 @@
+{
+  "id": "skill.pool.render-capability-naming",
+  "layer": "技能 (Skill)",
+  "path": "skills/render-capability-naming",
+  "invoke": "skill render-capability-naming",
+  "summary": "工序动作级技能(L2)：能力层命名规范文档渲染器。把 docs/operations/capability-naming.json 单向渲染成本仓文档与全局规则知识库文档两份受管区块，规则表全部由真相源生成、禁止人工双写；知识库路径按合并…",
+  "inputs": [
+    {
+      "name": "--write",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/render-capability-naming/scripts/render_naming_spec.py --write --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/render-capability-naming/scripts/render_naming_spec.py --write --json"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/render-capability-naming/scripts/render_naming_spec.py --check --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "JSON 契约：`{\"success\",\"mode\",\"verdict\",\"spec\",\"spec_version\",\"knowledge_dir\",\"knowledge_dir_candidates\",\"compliance\":{...},\"written\",\"drift\",\"targets\":[{\"name\",\"…"
+    }
+  ],
+  "exitCodes": {
+    "0": "写盘成功，或 `--check` 下全部目标与真相源一致（`verdict = in_sync`）",
+    "1": "`--check` 下存在漂移（`verdict = drift_detected`，逐目标给出期望与实际字节数）",
+    "2": "输入不可读（真相源缺失/字段不全/受管标记为空、写盘失败）"
+  },
+  "dependencies": [
+    "skill.pool.capability-naming-policy",
+    "skill.pool.audit-layer-naming"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/render-capability-naming/scripts/render_naming_spec.py --write --json",
+    "python3 skills/render-capability-naming/scripts/render_naming_spec.py --check --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

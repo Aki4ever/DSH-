@@ -214,6 +214,10 @@ GCM-ORCH
 | R5 路由层 | ✅ 已落地 | `scripts/route_plan.mjs`（1355 行）· `indexes/navigation_router.md`（修正虚假声明） | `--check` exit 0：① 文档-实现一致 0 问题（含**负例自检**：声明数据源但源码只有死变量必须被检出）· ①b 物理锁门禁对拍 60 格 · ② 死通道 0 · ③ 可达性 **有触发词 196 / 无触发词 39 = 83.4%**（分开报）· ④ **反向用例**「zzz-不存在的能力-9999」→ 未命中 + 3 条近似建议（全标"非命中"） |
 | R2-a 客户端插件 | ✅ 已落地并装配 | `skill-pool/plugins/dsh-plugin-image-zoom/` + 已装配进 `~/.dsh/profiles/desktop` | `node verify_image_zoom.cjs` **73/73 通过**（含反向变异自证：故意破坏 `zoomed` → 59/73 失败）；装配回执 `status: installed` · `restart_required: true` |
 | D4 失效补丁处置 | ✅ 已落地 | `scripts/patch_dsh_todo_progress.cjs` 头部加 `[DEPRECATED]` 退役说明 | 头部含失效两层根因与替代路线；入口引用仍在（未删除文件） |
+| **R1-d** 逐条可判定化 | ✅ 已落地（第二轮） | `scripts/output_audit.mjs` 新增 `cognitiveChecks()` | 唯一硬判据 = **标题嵌套 ≤3 级**（规范明文硬性边界）；其余 4 项（扫视锚点率/加粗占比/超长行/段落墙）为**报告项不参与判定**。实跑：1376 字/40 行 · 嵌套 2 级 ✅ · 锚点率 91.7% |
+| **R3-c** 口径归一 | ✅ 已落地（第二轮） | `execution-layers.json` 增 `pathBase`/`truthSource`；`--check` 增第 ⑥ 项对拍 | 实测揪出**真缺陷**：登记表 12 条路径一直是**相对 `skill-pool/` 的**却无人声明，按仓库根解析的消费者会误判"全部缺失"。修复后 `path 非空但磁盘缺失 = 0`；口径差（扫盘 236 vs 登记 15）显式报出且不当硬门 |
+| **R4-d** 约定冲突裁决 | ✅ 已裁决（第二轮） | `skills/README.md` 增「标准伴随文件 `interface.json`」；改名同步契约**维持六处不改** | 裁决理由：`interface.json` 的 id/path 一致性由**判定器强制**（不一致即退出码 1），属"机器守住的第 7 处"；扩人工清单会引发全库 5 处引用的**计数级联**，低收益高风险。原则：**凡判定器能守的，不塞进人工清单** |
+| **R4-b** 技能层接口 | ✅ 已落地（第二轮） | `scripts/gen_skill_interfaces.mjs` + **178 份** `skills/<id>/interface.json` | 技能层声明覆盖率 **0% → 100%**；`--self-test` **40/40 通过**（含反向桩件：无 Usage/ExitCode 段必须产出 `(待补)` 而**不是**编造）；`--apply` 二次实跑幂等（新增 0 / 未变化 178）；`check_layer_interfaces --check` 契约违规 **0** |
 
 ### 7.1 第一批实测新发现（连带缺陷，已顺手清零）
 
@@ -231,8 +235,15 @@ GCM-ORCH
   → **只刷新页面不够，必须重启桌面端**才能看到控件条；
 - **R2-a 已知边界（不掩盖）**：缩放用 `transform: scale()`、**不改布局盒**，而宿主灯箱 `.backdrop` 没有 overflow 滚动条
   → **400%~800% 时只能看到视口正中一块、无法拖动看边角**。改宿主 overflow 会干扰蒙层点击关闭，故未越权修改，留作后续独立需求；
-- **R4-b 技能层 178 个**：接口覆盖 0%，属"量大分批"，本轮只完成 CLI/Agent/Plugin 层（58 条基线，`verified:false`，
-  **属占位不是齐备**，须人工逐条核对才能升 `verified:true`）；
+- **R4-b 技能层 178 个**：契约已 100% 生成，但 **`verified:true` 的只有 1 份**（`route_plan`，人工核对过）。
+  抽取成功率的真实分布（可复跑 `node scripts/gen_skill_interfaces.mjs --check`）：
+  `summary` 100% · `exitCodes` 60.7% · `examples` 58.4% · `dependencies` 57.9% · `inputs` 51.7% · **`outputs` 仅 23.6%**；
+  共 **292 处 `(待补)`**，涉及 136 个技能。
+- **`parallel`（并发档位）最不可信，已收紧到保守值**：178 个技能里 145 个落 `exclusive`，33 个 `readonly` **全部只是文档自称**，
+  `shared` 经核查**全是误判已归零**——即**全池没有任何技能给出针对自身的并发安全证据**。
+  路由层只把 `verified:true` 的契约当并行依据（今日仅 1 份），因此对技能层一律取保守串行；
+  **在人工抽查升 `verified` 之前，不得据现成的 `readonly` 直接并发**。
+- **62 个技能"有脚本却完全没写出参口径"**——这是**文档缺陷**而非抽取器缺陷，已如实计入待补，未用推测填充。
 - **R1-d 输出模板落地**：当前由 `output_audit.mjs` 以"体量 + 五联装齐备性"判定，
   **尚未**把格式塔/DMIT 的条款转成逐条可判定项（本轮只完成"书目来源 + 度量载体"）。
 

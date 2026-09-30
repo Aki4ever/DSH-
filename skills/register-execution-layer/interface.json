@@ -1,0 +1,81 @@
+{
+  "id": "skill.pool.register-execution-layer",
+  "layer": "技能 (Skill)",
+  "path": "skills/register-execution-layer",
+  "invoke": "skill register-execution-layer",
+  "summary": "工序动作级技能：登记与维护非技能执行层条目（cli/agent/api/mcp/plugin），校验层名合法、仓库内路径存在、id 唯一，幂等可重跑。",
+  "inputs": [
+    {
+      "name": "--list",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/register-execution-layer/scripts/register_layer.py --list"
+    },
+    {
+      "name": "--add",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/register-execution-layer/scripts/register_layer.py --add --id skill-pool -…"
+    },
+    {
+      "name": "--id",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/register-execution-layer/scripts/register_layer.py --add --id skill-pool -…"
+    },
+    {
+      "name": "--layer",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/register-execution-layer/scripts/register_layer.py --add --id skill-pool -…"
+    },
+    {
+      "name": "--path",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/register-execution-layer/scripts/register_layer.py --add --id skill-pool -…"
+    },
+    {
+      "name": "--description",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/register-execution-layer/scripts/register_layer.py --add --id skill-pool -…"
+    },
+    {
+      "name": "--source",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/register-execution-layer/scripts/register_layer.py --add --id subagent --l…"
+    },
+    {
+      "name": "--remove",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/register-execution-layer/scripts/register_layer.py --remove --id skill-pool"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "登记成功、幂等命中或 `--list` 输出完成",
+    "1": "层名非法、`source=repo` 缺路径/路径不存在、id 冲突且内容不同、或移除不存在的 id"
+  },
+  "dependencies": [
+    "skill.pool.tree-update-mandatory"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/register-execution-layer/scripts/register_layer.py --list",
+    "python3 skills/register-execution-layer/scripts/register_layer.py --add --id skill-pool --layer cli --path bin/skill-pool --description \"技能池管理与门禁 CLI\"",
+    "python3 skills/register-execution-layer/scripts/register_layer.py --add --id subagent --layer agent --source host --description \"宿主提供的子智能体能力\"",
+    "python3 skills/register-execution-layer/scripts/register_layer.py --remove --id skill-pool"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

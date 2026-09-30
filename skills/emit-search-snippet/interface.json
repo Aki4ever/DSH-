@@ -1,0 +1,42 @@
+{
+  "id": "skill.pool.emit-search-snippet",
+  "layer": "技能 (Skill)",
+  "path": "skills/emit-search-snippet",
+  "invoke": "skill emit-search-snippet",
+  "summary": "工序动作级技能：为单条检索结果生成 ≤120 字的确定性摘要片段，并对命中词做居中截断。",
+  "inputs": [
+    {
+      "name": "--skill",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/emit-search-snippet/scripts/emit_snippet.py --skill verify-file-exists --t…"
+    },
+    {
+      "name": "--terms",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/emit-search-snippet/scripts/emit_snippet.py --skill verify-file-exists --t…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "片段生成成功，`chars ≤ max_chars`",
+    "1": "索引不可读，或技能 id 不存在"
+  },
+  "dependencies": [
+    "skill.pool.rank-skills-bm25"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/emit-search-snippet/scripts/emit_snippet.py --skill verify-file-exists --terms \"文件,存在\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

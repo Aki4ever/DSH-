@@ -1,0 +1,58 @@
+{
+  "id": "skill.pool.audit-layer-naming",
+  "layer": "技能 (Skill)",
+  "path": "skills/audit-layer-naming",
+  "invoke": "skill audit-layer-naming",
+  "summary": "工序动作级技能(L2)：全量执行层命名体检器。按四要素（归属 / 分类 / 做什么 / 命名）与四种命名形态逐条扫描 catalog、磁盘目录、契约头与执行层登记表，输出带违规码、对象与 file:line 的违规清单；判据实现以 nam…",
+  "inputs": [
+    {
+      "name": "--all",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/audit-layer-naming/scripts/audit_naming.py --all --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/audit-layer-naming/scripts/audit_naming.py --all --json"
+    },
+    {
+      "name": "--codes",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/audit-layer-naming/scripts/audit_naming.py --all --codes shape_action,shap…"
+    },
+    {
+      "name": "--limit",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/audit-layer-naming/scripts/audit_naming.py --all --limit 10 --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "JSON 契约：`{\"success\",\"verdict\",\"spec_version\",\"compliance\":{...},\"violation_codes\":{...},\"violations\":[{\"code\",\"id\",\"level\",\"detail\",\"location\"}],\"registry_viol…"
+    }
+  ],
+  "exitCodes": {
+    "0": "零违规（`verdict = naming_compliant`）",
+    "1": "存在违规（`verdict = naming_violations_found`），`violations` 给出逐条证据",
+    "2": "输入不可读（词表 / catalog 缺失或不可解析、判据模块缺失）"
+  },
+  "dependencies": [
+    "skill.pool.capability-naming-policy"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/audit-layer-naming/scripts/audit_naming.py --all --json",
+    "python3 skills/audit-layer-naming/scripts/audit_naming.py --all --codes shape_action,shape_orchestration",
+    "python3 skills/audit-layer-naming/scripts/audit_naming.py --all --limit 10 --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "触发禁区**：只读诊断，**不改名、不写文件、不重建索引**；不负责技能功能描述的质量评审（只校验前缀与字节数）；不负责层级升降。"
+}

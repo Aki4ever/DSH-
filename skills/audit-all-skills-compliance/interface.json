@@ -1,0 +1,33 @@
+{
+  "id": "skill.pool.audit-all-skills-compliance",
+  "layer": "技能 (Skill)",
+  "path": "skills/audit-all-skills-compliance",
+  "invoke": "skill audit-all-skills-compliance",
+  "summary": "工序动作级技能：遍历全量存量与增量技能，物理审查其头部场景索引、主体SOP与配套脚本合规性，返回退出码 0/1。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/audit-all-skills-compliance/scripts/audit_compliance.py"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

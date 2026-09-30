@@ -1,0 +1,37 @@
+{
+  "id": "skill.pool.decoupling-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/decoupling-guard",
+  "invoke": "skill decoupling-guard",
+  "summary": "复合流程级技能(L3)：执行层解耦门禁。任何执行层变更后强制建图、检测并断言五类违规为零，契约外耦合一律阻断。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "契约图最新、五类违规为零、断言通过",
+    "1": "图陈旧、存在未豁免违规、或断言失败"
+  },
+  "dependencies": [
+    "skill.pool.layer-decoupling-policy",
+    "skill.pool.build-layer-graph",
+    "skill.pool.detect-layer-coupling",
+    "skill.pool.verify-decoupling"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

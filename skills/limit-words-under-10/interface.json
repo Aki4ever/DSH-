@@ -1,0 +1,31 @@
+{
+  "id": "skill.pool.limit-words-under-10",
+  "layer": "技能 (Skill)",
+  "path": "skills/limit-words-under-10",
+  "invoke": "skill limit-words-under-10",
+  "summary": "微观原子规约：强制输出严格不超过 10 个字符（含标点符号），杜绝字数膨胀与冗余展开。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

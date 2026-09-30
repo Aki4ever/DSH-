@@ -1,0 +1,70 @@
+{
+  "id": "skill.pool.declare-lock-set",
+  "layer": "技能 (Skill)",
+  "path": "skills/declare-lock-set",
+  "invoke": "skill declare-lock-set",
+  "summary": "工序动作级技能(L2)：为并行任务归一化并排序锁集合（去重 + 字典序），并检测「没有锁却要写」与「锁键非归一化路径」两类静态错误，输出每任务的 locks 与 acquire_order。",
+  "inputs": [
+    {
+      "name": "task",
+      "type": "field",
+      "required": true,
+      "desc": "非空字符串；缺失即输入不可读，退 2"
+    },
+    {
+      "name": "locks",
+      "type": "field",
+      "required": false,
+      "desc": "数组；缺失按空集合处理，非数组即退 2"
+    },
+    {
+      "name": "writes",
+      "type": "field",
+      "required": false,
+      "desc": "只认显式 `true`；`true` 且锁集合为空 ⇒ `missing_locks`"
+    },
+    {
+      "name": "--from-json",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/declare-lock-set/scripts/declare_lock_set.py --from-json tasks.jsonl --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/declare-lock-set/scripts/declare_lock_set.py --from-json tasks.jsonl --json"
+    },
+    {
+      "name": "--task",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/declare-lock-set/scripts/declare_lock_set.py --task pkg-006-t1 --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "JSON 契约：`{\"success\":bool,\"tasks\":[{\"task\",\"locks\",\"acquire_order\"}],\"issues\":[{\"kind\",\"task\",\"detail\"}]}`"
+    }
+  ],
+  "exitCodes": {
+    "0": "全部任务声明成功且无 issue（`issues` 为空数组）",
+    "1": "存在 `missing_locks` 或 `non_canonical`，声明不成立",
+    "2": "输入不可读（缺参、二者同给、文件不存在/是目录/不可读、JSONL 行非法或非对象、`task` 缺失、`locks` 非数组）"
+  },
+  "dependencies": [
+    "skill.pool.parallel-lock-policy"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/declare-lock-set/scripts/declare_lock_set.py --from-json tasks.jsonl --json",
+    "python3 skills/declare-lock-set/scripts/declare_lock_set.py --task pkg-006-t1 --json",
+    "python3 skills/declare-lock-set/scripts/declare_lock_set.py --from-json /tmp/not-exist.jsonl --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "不改动任何文件**：本技能只读输入、只写 stdout。"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "skill.pool.verify-execution-contract",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-execution-contract",
+  "invoke": "skill verify-execution-contract",
+  "summary": "工序动作级技能：校验 Skill 的输入/输出契约完整性及本地挂载脚本的可执行性。",
+  "inputs": [
+    {
+      "name": "--skill-dir",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-execution-contract/scripts/verify_contract.py --skill-dir skills/sc…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/verify-execution-contract/scripts/verify_contract.py --skill-dir skills/schema-guard"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

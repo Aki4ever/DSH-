@@ -1,0 +1,77 @@
+{
+  "id": "skill.pool.concretize-term",
+  "layer": "技能 (Skill)",
+  "path": "skills/concretize-term",
+  "invoke": "skill concretize-term",
+  "summary": "工序动作级技能(L2)：含糊词具像化建议器。从唯一真相源加载含糊词并集 AMBIGUITY_WORDS 与分类函数 classify_word，对每个命中词按 range/reference/timing/hedge 四类产出具像化建议模…",
+  "inputs": [
+    {
+      "name": "--text",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/concretize-term/scripts/concretize.py --text '请尽快处理相关问题' --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/concretize-term/scripts/concretize.py --text '请尽快处理相关问题' --json"
+    },
+    {
+      "name": "--file",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/concretize-term/scripts/concretize.py --file docs/requirements/index.md --…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "success",
+      "type": "布尔",
+      "desc": "是否完成全量扫描（命中数为 0 时同样为 `true`）"
+    },
+    {
+      "name": "suggestions[]",
+      "type": "数组",
+      "desc": "逐条建议：`term` / `category` / `line` / `snippet` / `suggestion` / `example`"
+    },
+    {
+      "name": "suggestions[].weak",
+      "type": "布尔",
+      "desc": "建议去掉该词后仍含同类别含糊词则为 `true`（同义替换嫌疑）"
+    },
+    {
+      "name": "counts",
+      "type": "对象",
+      "desc": "四类命中数 `range` / `reference` / `timing` / `hedge`；出现四类之外的分类时追加 `unknown`"
+    },
+    {
+      "name": "source",
+      "type": "字符串",
+      "desc": "输入来源：`text` 或文件路径"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "文档给出的输出结构（原文标题：输出 JSON 字段：）"
+    }
+  ],
+  "exitCodes": {
+    "0": "处理完成（含命中数为 0）",
+    "1": "输入缺失：未给 `--text` / `--file`，或文件不可读 / 为空",
+    "2": "依赖模块 `detect-vague-modifier` 未就绪（文件缺失或无法加载），stderr 写明原因"
+  },
+  "dependencies": [
+    "skill.pool.concretize-ambiguity-policy",
+    "skill.pool.detect-vague-modifier"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/concretize-term/scripts/concretize.py --text '请尽快处理相关问题' --json",
+    "python3 skills/concretize-term/scripts/concretize.py --file docs/requirements/index.md --json",
+    "python3 skills/concretize-term/scripts/concretize.py --file docs/requirements/index.md"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

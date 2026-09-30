@@ -1,0 +1,43 @@
+{
+  "id": "skill.pool.milestone-progress-reporter",
+  "layer": "技能 (Skill)",
+  "path": "skills/milestone-progress-reporter",
+  "invoke": "skill milestone-progress-reporter",
+  "summary": "复合流程级技能(L3)：过程输出里程碑化总控。把「分档 → 折叠 → 预算断言」串成一条流水线，挂载于管家「④ 输出规约」集群，保证里程碑只增不删、微操作只折叠不静默丢弃。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "分档、折叠、四项预算断言全部通过，交付的过程输出只由「里程碑逐条 + `· {category} ×N` + `· 微操作 ×N`」构成",
+    "1": "任一环节失败（输入不可读 / 折叠违规 / 断言失败），此时**不得交付过程输出**，必须修正折叠层后重跑"
+  },
+  "dependencies": [
+    "skill.pool.milestone-only-progress",
+    "skill.pool.classify-step-tier",
+    "skill.pool.fold-repeated-events",
+    "skill.pool.verify-progress-budget"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "cat > /tmp/events.jsonl <<'EOF'",
+    "{\"text\": \"已完成需求拆解\"}",
+    "{\"text\": \"读取文件 skill.md\"}",
+    "{\"text\": \"打开编辑器\"}",
+    "{\"text\": \"扫描全仓依赖拓扑并建立索引\"}"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

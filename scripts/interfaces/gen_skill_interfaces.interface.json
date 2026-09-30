@@ -1,0 +1,69 @@
+{
+  "id": "cli.rules.gen_skill_interfaces",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/gen_skill_interfaces.mjs",
+  "invoke": "node scripts/gen_skill_interfaces.mjs --check",
+  "summary": "技能层接口契约抽取器（REQ-089 R4-b）：从每个 skills/<name>/SKILL.md 抽取入参/出参/退出码并落盘 interface.json；抽不到一律写 (待补)，绝不编造",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "只报不写：技能总数 / 已存在契约数 / inputs·outputs·exitCodes 各自抽取成功数 / 待补数；退出码 0=已齐备、1=有缺口、2=取不到证据"
+    },
+    {
+      "name": "--apply",
+      "type": "flag",
+      "required": false,
+      "desc": "写入 skills/<name>/interface.json；幂等，已存在且非本工具生成的契约跳过并计数，绝不覆盖"
+    },
+    {
+      "name": "--self-test",
+      "type": "flag",
+      "required": false,
+      "desc": "反向用例自证：无 Usage/ExitCode 段的桩件必须产出 (待补) 而非空数组或编造值；结构完整桩件必须抽到真值"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "与 --check 组合，输出机器可读 JSON（含 missingContracts / contentDrift / placeholderSkills）"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "markdown",
+      "desc": "--check/--apply 的人读报告：技能总数、契约数、四类字段抽取成功数与待补数、parallel 证据分布、跳过目录"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "--check --json：{skills, existing, missingContracts, stale, foreign, extracted, placeholders, totalPlaceholders, parallel, skipped, placeholderSkills}"
+    },
+    {
+      "name": "skills/<name>/interface.json",
+      "type": "file",
+      "desc": "--apply 的产物：每个已登记技能一份契约（178 份），全部 source=extracted-from-header / verified=false；抽不到的字段写 (待补) 并附 generator 标记以便幂等重写"
+    }
+  ],
+  "exitCodes": {
+    "0": "--check：已齐备（每个技能都有契约、无内容漂移、无 (待补) 字段）；--apply：写入完成；--self-test：全部断言通过",
+    "1": "--check：有缺口（缺契约 / 内容漂移 / 仍有 (待补) 字段 / 存在非本工具生成的既有契约）；--self-test：有断言失败",
+    "2": "取不到证据（skills 目录或 indexes/capabilities_index.json 缺失/不可解析、无任何已登记技能）—— 绝不算通过"
+  },
+  "sideEffects": [
+    "仅 --apply 写盘：覆盖或新建 skills/<name>/interface.json（178 个），写入前不触碰任何 SKILL.md",
+    "--check 与 --self-test 全程只读，不写任何文件"
+  ],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/gen_skill_interfaces.mjs --self-test",
+    "node scripts/gen_skill_interfaces.mjs --check",
+    "node scripts/gen_skill_interfaces.mjs --apply",
+    "node scripts/gen_skill_interfaces.mjs --check --json"
+  ],
+  "source": "handwritten",
+  "verified": false
+}

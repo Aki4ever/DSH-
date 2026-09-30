@@ -1,0 +1,42 @@
+{
+  "id": "skill.pool.verify-workspace-retirement",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-workspace-retirement",
+  "invoke": "skill verify-workspace-retirement",
+  "summary": "工序动作级技能(L2)：工作区退役断言器。三项硬断言——源路径不存在（退役的物理证据）、workspace.json 中不再有指向源路径的条目、台账记录的迁移会话数全部落在目标工作区；全过才 exit 0，任一失败 exit 1，台账或 …",
+  "inputs": [
+    {
+      "name": "--all",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-workspace-retirement/scripts/verify_retirement.py --all --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-workspace-retirement/scripts/verify_retirement.py --all --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "三项全过（`retirement_verified`）",
+    "1": "任一失败（源仍在 / 条目仍在 / 会话不完整）",
+    "2": "台账或 workspace.json 不可读"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/verify-workspace-retirement/scripts/verify_retirement.py --all --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "触发禁区**：只断言，不删目录、不改 workspace.json、不写文件。"
+}

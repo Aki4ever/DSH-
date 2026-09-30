@@ -1,0 +1,61 @@
+{
+  "id": "skill.pool.place-skill-into-cluster",
+  "layer": "技能 (Skill)",
+  "path": "skills/place-skill-into-cluster",
+  "invoke": "skill place-skill-into-cluster",
+  "summary": "工序动作级技能：依据级别与触发关键词判定引入技能的集群归属与建议父级，校验 composition 依赖边是否都真实存在于 catalog，只输出建议不写任何文件。",
+  "inputs": [
+    {
+      "name": "--name",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/place-skill-into-cluster/scripts/place_skill.py --name qa-gatekeeper --dry…"
+    },
+    {
+      "name": "--dry-run",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/place-skill-into-cluster/scripts/place_skill.py --name qa-gatekeeper --dry…"
+    },
+    {
+      "name": "--level",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/place-skill-into-cluster/scripts/place_skill.py --name qa-gatekeeper --lev…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/place-skill-into-cluster/scripts/place_skill.py --name qa-gatekeeper --dry…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "文档给出的输出结构（原文标题：输出结构：）"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "文档给出的输出结构：{ \"success\": true, \"skill\": \"qa-gatekeeper\", \"cluster\": \"② 契约与合规\", \"level\": \"L3\", \"suggested_parents\": [{\"name\": \"...\", \"level\": \"L3\", \"score\": 15}],…"
+    }
+  ],
+  "exitCodes": {
+    "0": "定位成功，且 `composition` 引用的技能全部真实存在于 catalog",
+    "1": "catalog 缺失/不可解析、技能不在 catalog 中、或 `composition` 引用了不存在的技能"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/place-skill-into-cluster/scripts/place_skill.py --name qa-gatekeeper --dry-run",
+    "python3 skills/place-skill-into-cluster/scripts/place_skill.py --name not-exist-skill --dry-run; echo \"exit=$?\"",
+    "python3 skills/place-skill-into-cluster/scripts/place_skill.py --name qa-gatekeeper --level L3 --dry-run",
+    "python3 skills/place-skill-into-cluster/scripts/place_skill.py --name qa-gatekeeper --dry-run --json | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d['cluster'], d['composition_ok'])\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "description: 工序动作级技能：依据级别与触发关键词判定引入技能的集群归属与建议父级，校验 composition 依赖边是否都真实存在于 catalog，只输出建议不写任何文件。"
+}

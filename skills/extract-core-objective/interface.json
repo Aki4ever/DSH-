@@ -1,0 +1,33 @@
+{
+  "id": "skill.pool.extract-core-objective",
+  "layer": "技能 (Skill)",
+  "path": "skills/extract-core-objective",
+  "invoke": "skill extract-core-objective",
+  "summary": "工序动作级技能：提取自然语言语句中的核心动宾主干与关键实体目标，输出标准化结构。",
+  "inputs": [
+    {
+      "name": "--text",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/extract-core-objective/scripts/extract_objective.py --text \"请帮我把输出转换成纯JSON\""
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/extract-core-objective/scripts/extract_objective.py --text \"请帮我把输出转换成纯JSON\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "skill.pool.detect-action-verb",
+  "layer": "技能 (Skill)",
+  "path": "skills/detect-action-verb",
+  "invoke": "skill detect-action-verb",
+  "summary": "工序动作级技能：单点物理识别并提取语句中的指令动作动词（如创建/生成/校验/修改）。",
+  "inputs": [
+    {
+      "name": "--text",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-action-verb/scripts/detect_verb.py --text \"生成纯JSON\""
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/detect-action-verb/scripts/detect_verb.py --text \"生成纯JSON\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

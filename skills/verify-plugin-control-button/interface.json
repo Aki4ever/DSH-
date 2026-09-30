@@ -1,0 +1,44 @@
+{
+  "id": "skill.pool.verify-plugin-control-button",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-plugin-control-button",
+  "invoke": "skill verify-plugin-control-button",
+  "summary": "工序动作级技能(L2)：插件常显调控按钮断言器。第一层静态断言包结构符合宿主 client 插件契约（dsh.client.platform=web、client 入口、cordis.patch.yml、__ModuleLoader__ …",
+  "inputs": [
+    {
+      "name": "--all",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-plugin-control-button/scripts/verify_plugin_button.py --all --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-plugin-control-button/scripts/verify_plugin_button.py --all --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "静态层与运行时层全过",
+    "1": "任一断言失败，逐项列出",
+    "2": "输入不可读（包目录缺失、内核不可读、Node 不可用）"
+  },
+  "dependencies": [
+    "skill.pool.plugin-control-jump-policy",
+    "skill.pool.install-client-plugin"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/verify-plugin-control-button/scripts/verify_plugin_button.py --all --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

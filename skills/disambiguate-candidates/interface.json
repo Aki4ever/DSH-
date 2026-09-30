@@ -1,0 +1,33 @@
+{
+  "id": "skill.pool.disambiguate-candidates",
+  "layer": "技能 (Skill)",
+  "path": "skills/disambiguate-candidates",
+  "invoke": "skill disambiguate-candidates",
+  "summary": "工序动作级技能：消除候选技能间的调用歧义，根据权重与上下文确定单一首选或互补协同组合。",
+  "inputs": [
+    {
+      "name": "--candidates-json",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/disambiguate-candidates/scripts/disambiguate.py --candidates-json '[{\"id\":…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/disambiguate-candidates/scripts/disambiguate.py --candidates-json '[{\"id\":\"a\",\"score\":10},{\"id\":\"b\",\"score\":5}]'"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

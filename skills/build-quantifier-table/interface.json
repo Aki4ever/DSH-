@@ -1,0 +1,72 @@
+{
+  "id": "skill.pool.build-quantifier-table",
+  "layer": "技能 (Skill)",
+  "path": "skills/build-quantifier-table",
+  "invoke": "skill build-quantifier-table",
+  "summary": "工序动作级技能(L2)：生成并维护场景量化映射表 docs/operations/quantifier-table.json。内置种子映射不少于 20 条，覆盖高/大/快/多/好/严重/频繁等词且每词至少 3 个场景；每条必须含 term…",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/build-quantifier-table/scripts/build_quantifier_table.py --check"
+    },
+    {
+      "name": "--list",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/build-quantifier-table/scripts/build_quantifier_table.py --list"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/build-quantifier-table/scripts/build_quantifier_table.py --list --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "success",
+      "type": "布尔",
+      "desc": "自检通过且写动作成功（`--check` 下表示已是最新）"
+    },
+    {
+      "name": "changed",
+      "type": "布尔",
+      "desc": "本次是否真的改写了文件；连跑第二次必为 `false`"
+    },
+    {
+      "name": "path",
+      "type": "字符串",
+      "desc": "产物相对路径 `docs/operations/quantifier-table.json`"
+    },
+    {
+      "name": "count",
+      "type": "整数",
+      "desc": "条目总数（种子表 52 条）"
+    },
+    {
+      "name": "table_version",
+      "type": "字符串",
+      "desc": "表版本号，当前 `1.0.0`"
+    }
+  ],
+  "exitCodes": {
+    "0": "写入成功（含 `changed:false`），或 `--check` 检测到已是最新",
+    "1": "存在缺 `basis` 或字段为空的条目；或 `--check` 检测到陈旧/缺失",
+    "2": "输出目录不可写等 I/O 故障"
+  },
+  "dependencies": [
+    "skill.pool.quantify-modifier-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/build-quantifier-table/scripts/build_quantifier_table.py",
+    "python3 skills/build-quantifier-table/scripts/build_quantifier_table.py --check",
+    "python3 skills/build-quantifier-table/scripts/build_quantifier_table.py --list",
+    "python3 skills/build-quantifier-table/scripts/build_quantifier_table.py --list --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

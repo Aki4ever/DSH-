@@ -1,0 +1,56 @@
+{
+  "id": "skill.pool.retire-legacy-workspace",
+  "layer": "技能 (Skill)",
+  "path": "skills/retire-legacy-workspace",
+  "invoke": "skill retire-legacy-workspace",
+  "summary": "工序动作级技能(L2)：旧工作区退役器。把「已合并但还活着」的源目录真正退场——先断言不丢文件（源侧独有文件数为 0）、目标已入库、会话已完整归入，再写台账、摘除 workspace.json 条目、物理删除源目录；强制「先摘注册再删目录…",
+  "inputs": [
+    {
+      "name": "--source",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/retire-legacy-workspace/scripts/retire_workspace.py --source <源目录> --targe…"
+    },
+    {
+      "name": "--target",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/retire-legacy-workspace/scripts/retire_workspace.py --source <源目录> --targe…"
+    },
+    {
+      "name": "--apply",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/retire-legacy-workspace/scripts/retire_workspace.py --source <源目录> --targe…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/retire-legacy-workspace/scripts/retire_workspace.py --source <源目录> --targe…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "干跑完成 / 退役成功 / 已是目标状态（幂等）",
+    "1": "前置断言不成立（源侧有独有文件 / 目标未入库 / 会话不完整）",
+    "2": "输入不可读（路径缺失、workspace.json 不可解析）"
+  },
+  "dependencies": [
+    "skill.pool.verify-workspace-retirement"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/retire-legacy-workspace/scripts/retire_workspace.py --source <源目录> --target <目标目录>",
+    "python3 skills/retire-legacy-workspace/scripts/retire_workspace.py --source <源目录> --target <目标目录> --apply --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

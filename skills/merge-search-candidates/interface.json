@@ -1,0 +1,44 @@
+{
+  "id": "skill.pool.merge-search-candidates",
+  "layer": "技能 (Skill)",
+  "path": "skills/merge-search-candidates",
+  "invoke": "skill merge-search-candidates",
+  "summary": "工序动作级技能(L2)：多源候选去重归一器。把四类源的候选合并成同一六字段契约，按「URL 归一 → 名称归一」两级去重，按 stars→name→url 全序排序；剔除字段缺失的候选并计入 skipped_incomplete，合并后为…",
+  "inputs": [
+    {
+      "name": "--from",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/merge-search-candidates/scripts/merge_candidates.py --from a.json --from b…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/merge-search-candidates/scripts/merge_candidates.py --from a.json --from b…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "合并后候选非空",
+    "1": "输入都读到了但合并后为空（空检索不是通过）",
+    "2": "输入不可读（未给 `--from`、文件缺失或非法）"
+  },
+  "dependencies": [
+    "skill.pool.multi-source-search-policy"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/merge-search-candidates/scripts/merge_candidates.py --from a.json --from b.json --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "它是纯数据变换：不联网、不读 catalog、不写文件。"
+}

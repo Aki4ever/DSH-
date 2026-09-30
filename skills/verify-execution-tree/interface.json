@@ -1,0 +1,37 @@
+{
+  "id": "skill.pool.verify-execution-tree",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-execution-tree",
+  "invoke": "skill verify-execution-tree",
+  "summary": "工序动作级技能：断言执行层树与 catalog、登记表、受管区块四方一致，扫描文档中手写集群枚举造成的结构漂移并给出文件与行号。",
+  "inputs": [
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-execution-tree/scripts/verify_tree.py --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "六项检查全部通过",
+    "1": "任一项失败，输出必含 `issue` 的文件路径与行号（漂移类）或对象 id（结构类）"
+  },
+  "dependencies": [
+    "skill.pool.build-execution-tree"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/verify-execution-tree/scripts/verify_tree.py",
+    "python3 skills/verify-execution-tree/scripts/verify_tree.py --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

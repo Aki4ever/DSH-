@@ -1,0 +1,35 @@
+{
+  "id": "skill.pool.plugin-control-jump-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/plugin-control-jump-policy",
+  "invoke": "skill plugin-control-jump-policy",
+  "summary": "微观原子规约：插件常显调控按钮判定基元。钉死按钮的唯一标识（data-control-jump=\"<plugin-id>\"）、常显位置（市场已安装列表与宿主插件清单的每个条目）、点击语义（定位到同 id 的配置项并高亮）、幂等去重键（容器…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "契约齐备、装配成功且可回滚、31 项断言全过",
+    "1": "契约破损、装配失败、任一断言失败、无 id 条目被注入",
+    "2": "输入不可读或依赖不可用（包目录缺失、Node 不可用）"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 plugins/dsh-plugin-control-jump/build_client.py"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

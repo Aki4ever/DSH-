@@ -1,0 +1,34 @@
+{
+  "id": "skill.pool.atomic-lock-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/atomic-lock-policy",
+  "invoke": "skill atomic-lock-policy",
+  "summary": "微观原子规约：并发共享资源的物理原子锁判定基元。钉死七条硬口径——锁载体必须是 mkdir 原子目录或 flock -n 排他文件锁、锁键=归一化绝对资源路径、加锁顺序=字典序、持有者=PID+进程起始时间戳、超时默认 300 秒且超时即…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "持有成立 / 互斥被证明（临界区重叠窗口 0，任一瞬间持有者 ≤ 1）",
+    "1": "载体伪原子、锁键未归一、加锁顺序非全序、锁字段缺失、互斥被证伪",
+    "2": "输入缺失或不可解析、依赖不可用、锁根目录不可写"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "本规约只输出定义与判据，**不获取锁、不压测、不中断任何进程、不写文件**；"
+}

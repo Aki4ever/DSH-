@@ -1,0 +1,57 @@
+{
+  "id": "skill.pool.install-client-plugin",
+  "layer": "技能 (Skill)",
+  "path": "skills/install-client-plugin",
+  "invoke": "skill install-client-plugin",
+  "summary": "工序动作级技能(L2)：DSH client 插件幂等装配器。把本仓 plugins/ 下的自建 client 插件构建后复制进指定 profile 的 node_modules，登记 file: 依赖并追加进 dsh.profile.b…",
+  "inputs": [
+    {
+      "name": "--profile",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/install-client-plugin/scripts/install_plugin.py --profile web"
+    },
+    {
+      "name": "--apply",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/install-client-plugin/scripts/install_plugin.py --profile web --apply --js…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/install-client-plugin/scripts/install_plugin.py --profile web --apply --js…"
+    },
+    {
+      "name": "--rollback",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/install-client-plugin/scripts/install_plugin.py --profile web --rollback"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "干跑完成 / 装配成功 / 回滚成功 / 已是目标状态（幂等）",
+    "1": "目标 profile 不可写、无装配记录无法回滚",
+    "2": "输入不可读（插件目录缺失、构建失败、package.json 不可解析）"
+  },
+  "dependencies": [
+    "skill.pool.plugin-control-jump-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/install-client-plugin/scripts/install_plugin.py --profile web",
+    "python3 skills/install-client-plugin/scripts/install_plugin.py --profile web --apply --json",
+    "python3 skills/install-client-plugin/scripts/install_plugin.py --profile web --rollback"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

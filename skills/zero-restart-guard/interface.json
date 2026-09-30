@@ -1,0 +1,39 @@
+{
+  "id": "skill.pool.zero-restart-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/zero-restart-guard",
+  "invoke": "skill zero-restart-guard",
+  "summary": "复合流程级技能(L3)：零重启写入门禁。把「路径 → 处置判定 → 重启证据断言」串成一道写入门禁，挂载于管家「② 契约与合规」集群，默认目标是零重启，重启必须由不可热更边界加重建命令双向举证。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "逐路径处置齐备、所有 `restart` 条目带非空边界、重启事件三项断言全过（默认零重启）",
+    "1": "存在不必要重启（判定非 `restart` 却重启）或无证据重启（缺 `boundary` / 缺重建命令），此时**不得交付写入结果**，必须收回重启或补齐证据"
+  },
+  "dependencies": [
+    "skill.pool.prefer-hot-reload-policy",
+    "skill.pool.classify-change-scope",
+    "skill.pool.verify-no-unnecessary-restart"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    ": > /tmp/restarts-empty.jsonl",
+    "printf '{\"path\":\"/Applications/DSH Desktop.app/Contents/Resources/app/package.json\",\"command\":\"pnpm run rebuild:app\",\"reason\":\"宿主 bundle 不可热更\"}\\n' > /tmp/restarts-app.jsonl"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

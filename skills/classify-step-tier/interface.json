@@ -1,0 +1,52 @@
+{
+  "id": "skill.pool.classify-step-tier",
+  "layer": "技能 (Skill)",
+  "path": "skills/classify-step-tier",
+  "invoke": "skill classify-step-tier",
+  "summary": "工序动作级技能(L2)：把一条过程事件确定性判定为 milestone / micro / action 三档之一，并输出 category 归类，作为折叠的前置判据。",
+  "inputs": [
+    {
+      "name": "--text",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-step-tier/scripts/classify_tier.py --text \"上车\" --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-step-tier/scripts/classify_tier.py --text \"上车\" --json"
+    },
+    {
+      "name": "--file",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-step-tier/scripts/classify_tier.py --file /tmp/events.txt --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "Exit Code 0：判定完成，结果由 stdout 的 JSON 承载（单条为扁平对象，多条为 `{\"count\",\"results\"}`）；"
+    }
+  ],
+  "exitCodes": {
+    "0": "判定完成，结果由 stdout 的 JSON 承载（单条为扁平对象，多条为 `{\"count\",\"results\"}`）",
+    "1": "输入为空、`--file` 指向的文件不存在或不可读、未提供 `--text` / `--file`"
+  },
+  "dependencies": [
+    "skill.pool.milestone-only-progress"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/classify-step-tier/scripts/classify_tier.py --text \"上车\" --json",
+    "python3 skills/classify-step-tier/scripts/classify_tier.py --text \"下车\" --json",
+    "python3 skills/classify-step-tier/scripts/classify_tier.py --text \"已到达长沙\" --json",
+    "python3 skills/classify-step-tier/scripts/classify_tier.py --text \"在长沙加了一次油\" --json",
+    "python3 skills/classify-step-tier/scripts/classify_tier.py --text \"已完成全部装卸\" --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

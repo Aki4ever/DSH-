@@ -1,0 +1,52 @@
+{
+  "id": "skill.pool.classify-change-scope",
+  "layer": "技能 (Skill)",
+  "path": "skills/classify-change-scope",
+  "invoke": "skill classify-change-scope",
+  "summary": "工序动作级技能(L2)：把一组变更路径逐条判定为 hot_reload / incremental / restart，输出理由与命中的不可热更边界，并给出 no_restart_needed / restart_required 总判定。",
+  "inputs": [
+    {
+      "name": "--paths",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-change-scope/scripts/classify_scope.py --paths \"/Applications/DSH…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-change-scope/scripts/classify_scope.py --paths \"/Applications/DSH…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "Exit Code 0：每条路径都得到唯一处置，结果由 stdout 的 JSON 承载（`decisions` / `summary` / `verdict`）；"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "JSON 契约：`{\"success\":true,\"decisions\":[{\"path\",\"disposition\",\"reason\",\"boundary\"}],\"summary\":{\"hot_reload\":n,\"incremental\":n,\"restart\":n},\"verdict\":\"no_restart_…"
+    }
+  ],
+  "exitCodes": {
+    "0": "每条路径都得到唯一处置，结果由 stdout 的 JSON 承载（`decisions` / `summary` / `verdict`）",
+    "1": "`--paths` 缺失或过滤后为空，无路径可判定"
+  },
+  "dependencies": [
+    "skill.pool.prefer-hot-reload-policy"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/classify-change-scope/scripts/classify_scope.py --paths \"/Applications/DSH Desktop.app/Contents/Resources/app/package.json\" --json",
+    "python3 skills/classify-change-scope/scripts/classify_scope.py --paths apps/web/src/main.ts dist/main.bundle.js --json",
+    "python3 skills/classify-change-scope/scripts/classify_scope.py --paths some/unknown/file.txt --json",
+    "python3 skills/classify-change-scope/scripts/classify_scope.py --paths",
+    "python3 skills/classify-change-scope/scripts/classify_scope.py --paths bin/skill-pool"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "它不执行任何重建命令，也不修改任何文件。"
+}

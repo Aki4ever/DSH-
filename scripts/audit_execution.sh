@@ -164,7 +164,12 @@ COMPACT_JSON="null"
 # **绝不用"检测失效"充当通过**，只是把"没通电"换成"真读转录"。
 COMPACT_SID="$(printf '%s' "${DSH_SESSION_ID:-global_session}" | tr -c 'a-zA-Z0-9_-' '_')"
 COMPACT_FILE="${DSH_HOME:-$HOME/.dsh}/.dsh-control/compact/${COMPACT_SID}.json"
-if [ -n "$NODE_BIN" ] && [ ! -f "$COMPACT_FILE" ]; then
+# 为什么是"每次都重算"而不是"文件不存在才算"（2026-10-01 实测修正）：
+# 初版写成 `[ ! -f "$COMPACT_FILE" ]`，于是报告**只在首次生成时算一次**，
+# 之后永远读那份陈旧快照 —— 实测把"上一轮 2469 字超标"永久钉在台账上，
+# 后续输出改好了也永远扣 8 分，等于换了个姿势重新制造假绿/假红。
+# 读一次宿主转录的代价极低（zstd 逐帧解压本地文件），因此改为**每次审计前重算**。
+if [ -n "$NODE_BIN" ]; then
   "$NODE_BIN" "$SCRIPT_DIR/output_audit.mjs" --refresh >/dev/null 2>&1 || true
 fi
 
@@ -185,6 +190,10 @@ try {
   COMPACT_JSON="$COMPACT_OUT"
   if echo "$COMPACT_OUT" | grep -q '"ok":true'; then
     COMPACT_PASS=1
+    # ⚠️ 2026-10-01 实测修正：初版在通过分支**没有更新 COMPACT_LINE**，
+    # 于是"已通过"的行却在卡片上显示初始值「未采集到回复度量报告」——
+    # 审计卡片自相矛盾（✅ 满分 + 文案说没采集），会让人误判机制又坏了。
+    COMPACT_LINE="$(echo "$COMPACT_OUT" | "$NODE_BIN" -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);process.stdout.write(`体量与结构均达标：${r.chars} 字/${r.lines} 行（限 ${r.maxChars}/${r.maxLines}）· 五联装齐备`)}catch{process.stdout.write("度量报告不可解析")}})')"
     CHECKS+=("✅ 输出精简合规：体量与文末五联装结构均达标 (+8)")
   else
     COMPACT_LINE="$(echo "$COMPACT_OUT" | "$NODE_BIN" -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);process.stdout.write(r.reason==="missing"?"尚无回复度量报告（本会话首次答复前必然如此）":`${r.chars} 字/${r.lines} 行（限 ${r.maxChars}/${r.maxLines}）· 缺失标头 ${(r.missingTail||[]).join("/")||"无"}`)}catch{process.stdout.write("度量报告不可解析")}})')"

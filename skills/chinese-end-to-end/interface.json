@@ -1,0 +1,33 @@
+{
+  "id": "skill.pool.chinese-end-to-end",
+  "layer": "技能 (Skill)",
+  "path": "skills/chinese-end-to-end",
+  "invoke": "skill chinese-end-to-end",
+  "summary": "微观原子规约：全流程中文输出。回复正文、进度播报、报错信息、解释说明与脚本注释一律中文；技术标识符与英文缩写保留原文但首现必须紧跟中文释义与中文全称。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "待检正文中文占比达标、非白名单拉丁词为 0、缩写均有中文释义 · `verify-chinese-output`",
+    "1": "存在违规（成句英文、非白名单拉丁词、缩写无中文全称） · `verify-chinese-output`",
+    "2": "输入缺失或文件不存在不可读 · `verify-chinese-output`"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

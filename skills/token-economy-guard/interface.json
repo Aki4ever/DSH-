@@ -1,0 +1,40 @@
+{
+  "id": "skill.pool.token-economy-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/token-economy-guard",
+  "invoke": "skill token-economy-guard",
+  "summary": "复合流程级技能(L3)：token 经济门禁。把「先测 → 裁剪 → 等价能力断言」串成一道写入前置门禁，挂载于管家「② 契约与合规」集群，证据串不存活即阻断。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "降幅达标且 `capability.missing` 为空，门禁放行",
+    "1": "降幅不足、能力证据缺失、输入不可读，或受管区块被改动",
+    "2": "参数/文件缺失（校验脚本缺 `--before` / `--after` / `--cases`，或 `cases.json` 结构非法）"
+  },
+  "dependencies": [
+    "skill.pool.token-budget-policy",
+    "skill.pool.measure-token-budget",
+    "skill.pool.prune-redundant-context",
+    "skill.pool.verify-token-reduction"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "printf '%s' '{\"cases\":[{\"id\":\"req-018\",\"requires\":[\"REQ-BUTLER-TOKENBUDGET-018\",\"CATALOG:BEGIN\"]}]}' > /tmp/token-cases.json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

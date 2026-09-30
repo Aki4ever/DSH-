@@ -1,0 +1,37 @@
+{
+  "id": "skill.pool.intent-detector",
+  "layer": "技能 (Skill)",
+  "path": "skills/intent-detector",
+  "invoke": "skill intent-detector",
+  "summary": "复合流程级技能(L3)：意图识别与噪声过滤。解耦组装了噪音剥离、空白规约、动词判定、实体提取与核心目标提取五项原子能力。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [
+    "skill.pool.filter-conversational-noise",
+    "skill.pool.strip-whitespace-newlines",
+    "skill.pool.detect-action-verb",
+    "skill.pool.detect-target-entity",
+    "skill.pool.extract-core-objective"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

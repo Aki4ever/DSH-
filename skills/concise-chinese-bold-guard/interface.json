@@ -1,0 +1,36 @@
+{
+  "id": "skill.pool.concise-chinese-bold-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/concise-chinese-bold-guard",
+  "invoke": "skill concise-chinese-bold-guard",
+  "summary": "复合流程级技能(L3)：基于 4 个微观 L1 原子规约叠加而成。强制要求输出文本不超过 10 个字、纯中文、全黑体、零闲聊。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [
+    "skill.pool.output-chinese-only",
+    "skill.pool.limit-words-under-10",
+    "skill.pool.markdown-bold-only",
+    "skill.pool.no-conversational-filler"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -92,6 +92,13 @@ description: 微观原子规约：能力层命名判定基元。钉死「归属 
 | 5 | 树与索引 | `execution-tree.json` / `execution-tree.md` / `skill-index.json` / `layer-graph.json` / `instance-safety.json` |
 | 6 | 文档与登记 | `docs/**` 受管区块与正文提及、`docs/operations/execution-layers.json` |
 
+> **关于 `interface.json`（REQ-089 R4 新增的伴随文件）为什么没有加成"第七处"**：
+> 它是**机器强制**的——`skills/<id>/interface.json` 里的 `id` 与 `path` 一旦与目录名不符，
+> `node scripts/check_layer_interfaces.mjs --check` 直接判"契约违规"并退出码 1（对拍判据见该脚本 `validateContract`）。
+> 人工清单再加一处，会引发本仓 5 处引用（`knowledge/README.md`、`skill-pool/docs/operations/workflows.md`、
+> `capability-naming.md`、`product.md`…）的**计数级联**，收益低而回归面大。
+> **裁决：不扩人工清单，改由判定器守住**——凡判定器能守的，就不塞进人工清单。
+
 ## When to Use
 
 - 新增任何执行层之前，需要按四要素派生一个合规 id 时；

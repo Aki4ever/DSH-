@@ -1,0 +1,31 @@
+{
+  "id": "skill.pool.high-relevance-notes-only",
+  "layer": "技能 (Skill)",
+  "path": "skills/high-relevance-notes-only",
+  "invoke": "skill high-relevance-notes-only",
+  "summary": "微观原子规约：规范输出框架中的“重要说明”，强制与本次输出物高强绑定，剔除泛泛空话与日常客套。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,43 @@
+{
+  "id": "skill.pool.parse-query",
+  "layer": "技能 (Skill)",
+  "path": "skills/parse-query",
+  "invoke": "skill parse-query",
+  "summary": "工序动作级技能：查询解析——归一化、分词、停用词剔除、同义词扩展与 ASCII 拼写纠错，输出可排序的 term 列表。",
+  "inputs": [
+    {
+      "name": "--query",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/parse-query/scripts/parse_query.py --query \"校验交付文件是否存在\""
+    },
+    {
+      "name": "--vocab",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/parse-query/scripts/parse_query.py --query \"vaidate file\" --vocab docs/ope…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "解析完成（即使 terms 为空）",
+    "1": "`--query` 与 `--file` 均缺失，或 `--vocab` 指定的文件不可读"
+  },
+  "dependencies": [
+    "skill.pool.build-inverted-index"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/parse-query/scripts/parse_query.py --query \"校验交付文件是否存在\"",
+    "python3 skills/parse-query/scripts/parse_query.py --query \"vaidate file\" --vocab docs/operations/skill-index.json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

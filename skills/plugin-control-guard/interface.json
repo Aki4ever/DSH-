@@ -1,0 +1,37 @@
+{
+  "id": "skill.pool.plugin-control-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/plugin-control-guard",
+  "invoke": "skill plugin-control-guard",
+  "summary": "复合流程级技能(L3)：插件常显调控按钮放行门禁。把「契约 → 装配 → 断言」串成一道不可跳步的门禁，挂载于管家「② 契约与合规」集群；放行的唯一合法证据是「包结构符合宿主 client 插件契约 + 注入内核运行时 31 项断言全过 …",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "三项齐备：契约齐备、装配成功（或幂等）、31 项断言全过",
+    "1": "任一环失败（无备份、装配失败、静态或运行时断言失败、无 id 条目被注入）",
+    "2": "输入不可读或依赖不可用（包目录缺失、Node 不可用）"
+  },
+  "dependencies": [
+    "skill.pool.plugin-control-jump-policy",
+    "skill.pool.install-client-plugin",
+    "skill.pool.verify-plugin-control-button"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

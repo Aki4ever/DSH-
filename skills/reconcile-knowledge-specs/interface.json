@@ -1,0 +1,33 @@
+{
+  "id": "skill.pool.reconcile-knowledge-specs",
+  "layer": "技能 (Skill)",
+  "path": "skills/reconcile-knowledge-specs",
+  "invoke": "skill reconcile-knowledge-specs",
+  "summary": "工序动作级技能：遍历 7 大知识库规范并对拍冲突，强制裁定知识库规范为绝对最高执行基准。",
+  "inputs": [
+    {
+      "name": "--check-all",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/reconcile-knowledge-specs/scripts/reconcile_specs.py --check-all"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/reconcile-knowledge-specs/scripts/reconcile_specs.py --check-all"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

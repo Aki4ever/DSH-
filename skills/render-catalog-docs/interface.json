@@ -1,0 +1,44 @@
+{
+  "id": "skill.pool.render-catalog-docs",
+  "layer": "技能 (Skill)",
+  "path": "skills/render-catalog-docs",
+  "invoke": "skill render-catalog-docs",
+  "summary": "工序动作级技能：读取 skill-catalog.json，把组装关系注入 docs 的受管区块，取消人工手写组装表，支持幂等重跑与 --check 漂移检测。",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/render-catalog-docs/scripts/render_docs.py --check"
+    },
+    {
+      "name": "--target",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/render-catalog-docs/scripts/render_docs.py --target docs/requirements/prod…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "写入成功，或 `--check` 模式下文档已是最新",
+    "1": "catalog JSON 缺失/非法，或 `--check` 检测到漂移"
+  },
+  "dependencies": [
+    "skill.pool.enforce-atomic-granularity"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/render-catalog-docs/scripts/render_docs.py",
+    "python3 skills/render-catalog-docs/scripts/render_docs.py --check",
+    "python3 skills/render-catalog-docs/scripts/render_docs.py --target docs/requirements/product.md"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

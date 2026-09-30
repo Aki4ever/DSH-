@@ -28,6 +28,7 @@ node scripts/progress_ledger.mjs check  # 迭代检测：哈希漂移=0 且 未�
 node scripts/flow_control.mjs --check   # 流程管控层：顺序一致 + 五条不变式成立
 node scripts/output_audit.mjs --check    # 输出体量/五联装判定（读宿主转录，不依赖拦截层插件）
 node scripts/check_layer_interfaces.mjs --check  # 执行层接口契约：接口覆盖率与名字覆盖率分开判
+node scripts/gen_skill_interfaces.mjs --check   # 技能层接口契约抽取：各字段抽取成功数/待补数（抽不到一律标 (待补)，不编造）
 node scripts/route_plan.mjs --check      # 路由层自检：文档-实现一致 + 死通道 + 可达性 + 反向用例
 node scripts/process_supervisor.mjs --fast  # 流程监督员独立复核（不采信执行者自述）
 ```

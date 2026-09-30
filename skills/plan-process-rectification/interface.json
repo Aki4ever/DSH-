@@ -1,0 +1,43 @@
+{
+  "id": "skill.pool.plan-process-rectification",
+  "layer": "技能 (Skill)",
+  "path": "skills/plan-process-rectification",
+  "invoke": "skill plan-process-rectification",
+  "summary": "工序动作级技能(L2)：流程整改清单生成器。对每个 fail 步骤产出可直接执行的整改命令与理由；整改项为空或含「加强/重视/注意/尽快」等空话的一律判不合格（exit 1）；required 失败的项单独标出；返回退出码 0/1/2。",
+  "inputs": [
+    {
+      "name": "--bundle",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/plan-process-rectification/scripts/plan_rectification.py --bundle <证据包> --…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/plan-process-rectification/scripts/plan_rectification.py --bundle <证据包> --…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "整改清单产出完毕（可为空 = 无需整改）",
+    "1": "存在无法整改的项（缺 rectify 或整改是空话）",
+    "2": "输入不可读"
+  },
+  "dependencies": [
+    "skill.pool.process-conformance-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/plan-process-rectification/scripts/plan_rectification.py --bundle <证据包> --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

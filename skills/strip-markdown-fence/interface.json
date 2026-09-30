@@ -1,0 +1,31 @@
+{
+  "id": "skill.pool.strip-markdown-fence",
+  "layer": "技能 (Skill)",
+  "path": "skills/strip-markdown-fence",
+  "invoke": "skill strip-markdown-fence",
+  "summary": "微观原子规约：强制输出纯净原生文本，绝对禁止包裹任何 ``` 代码围栏。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

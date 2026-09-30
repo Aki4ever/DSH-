@@ -1,0 +1,37 @@
+{
+  "id": "skill.pool.concretization-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/concretization-guard",
+  "invoke": "skill concretization-guard",
+  "summary": "复合流程级技能(L3)：含糊词具像化交付门禁。把「规约 → 具像化建议 → 断言」串成一道不可跳步的放行门禁，挂载于管家「④ 输出规约」集群；与 quantification-guard 分工为「程度词补数值 / 含糊词补实体与判据」；w…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "门禁通过：`concretize-term` 无 `weak` 建议，`verify-concretized-output` 三项断言全过",
+    "1": "门禁阻断：存在 `weak: true` 建议，或断言报出 `unconcretized` / `no_basis` / `synonym_swap`",
+    "2": "依赖未就绪（`detect-vague-modifier` 缺失）或输入缺失"
+  },
+  "dependencies": [
+    "skill.pool.concretize-ambiguity-policy",
+    "skill.pool.concretize-term",
+    "skill.pool.verify-concretized-output"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "skill.pool.quantification-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/quantification-guard",
+  "invoke": "skill quantification-guard",
+  "summary": "复合流程级技能(L3)：量化交付门禁。把「规约 → 建表 → 检测 → 量化 → 断言」串成一道出口门禁，挂载于管家「④ 输出规约」集群；缺失映射不阻断但必须声明假设，禁止用另一个程度词替换程度词糊过去。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "五项链路全部通过：建表自检通过、检测完成、量化建议非空或已声明假设、三项断言全过 · 放行交付",
+    "1": "映射表缺 `basis` 条目、文本存在未量化程度词、程度词替换程度词，或缺失 domain 映射 · 阻断，按 `unquantified` 与 `checks` 改写后重跑",
+    "2": "输入缺失、文件不可读，或量化映射表不可读 · 阻断，先补齐输入或重建映射表"
+  },
+  "dependencies": [
+    "skill.pool.quantify-modifier-policy",
+    "skill.pool.build-quantifier-table",
+    "skill.pool.detect-vague-modifier",
+    "skill.pool.quantify-modifier",
+    "skill.pool.verify-quantified-output"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

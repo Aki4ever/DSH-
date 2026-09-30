@@ -1,0 +1,46 @@
+{
+  "id": "skill.pool.on-demand-dispatcher",
+  "layer": "技能 (Skill)",
+  "path": "skills/on-demand-dispatcher",
+  "invoke": "skill on-demand-dispatcher",
+  "summary": "复合流程级技能(L3)：按需调用总控。先选技、再逐个加载、最后做预算断言，清单之外的技能一个都不读。",
+  "inputs": [
+    {
+      "name": "--task",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/on-demand-dispatcher/scripts/dispatch_on_demand.py --task \"校验交付文件是否存在\""
+    },
+    {
+      "name": "--emit",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/on-demand-dispatcher/scripts/dispatch_on_demand.py --task \"校验交付文件是否存在\" --e…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "输出恒含 `manifest`、`total_bytes`、`total_tokens`。"
+    }
+  ],
+  "exitCodes": {
+    "0": "清单与预算断言均通过（空清单也算通过，且不加载任何内容）",
+    "1": "索引缺失、越权加载、超出 top-K 或超出字节预算"
+  },
+  "dependencies": [
+    "skill.pool.lazy-load-policy",
+    "skill.pool.select-skills-for-task",
+    "skill.pool.load-skill-contract",
+    "skill.pool.verify-context-payload"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/on-demand-dispatcher/scripts/dispatch_on_demand.py --task \"校验交付文件是否存在\"",
+    "python3 skills/on-demand-dispatcher/scripts/dispatch_on_demand.py --task \"校验交付文件是否存在\" --emit"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

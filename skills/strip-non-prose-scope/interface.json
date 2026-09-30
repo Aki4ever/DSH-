@@ -1,0 +1,71 @@
+{
+  "id": "skill.pool.strip-non-prose-scope",
+  "layer": "技能 (Skill)",
+  "path": "skills/strip-non-prose-scope",
+  "invoke": "skill strip-non-prose-scope",
+  "summary": "工序动作级技能(L2)：按固定顺序剥离四类非散文成分（围栏代码块、行内代码、URL、文件路径），产出「待检正文」与白名单命中，供中文占比断言使用。",
+  "inputs": [
+    {
+      "name": "--text",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/strip-non-prose-scope/scripts/strip_scope.py --text \"执行 python3 bin/skill-…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/strip-non-prose-scope/scripts/strip_scope.py --text \"执行 python3 bin/skill-…"
+    },
+    {
+      "name": "--file",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/strip-non-prose-scope/scripts/strip_scope.py --file docs/operations/workfl…"
+    },
+    {
+      "name": "--allow",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/strip-non-prose-scope/scripts/strip_scope.py --file docs/operations/workfl…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "scope_text",
+      "type": "字符串",
+      "desc": "剥离四类非散文成分后的待检正文"
+    },
+    {
+      "name": "stripped",
+      "type": "对象",
+      "desc": "`{\"code_blocks\",\"inline_code\",\"urls\",\"paths\"}` 四类剥离计数"
+    },
+    {
+      "name": "whitelist_hits",
+      "type": "数组",
+      "desc": "待检正文中命中的内置白名单专有名词，去重保序"
+    },
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "| 0 | 剥离成功（结果由 stdout 承载） |"
+    }
+  ],
+  "exitCodes": {
+    "0": "剥离成功（结果由 stdout 承载）",
+    "1": "输入缺失（既无 `--text` 也无 `--file`），或 `--file` 文件不存在 / 不可读"
+  },
+  "dependencies": [
+    "skill.pool.chinese-end-to-end"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/strip-non-prose-scope/scripts/strip_scope.py --text \"执行 python3 bin/skill-pool validate 检查，详见 https://example.com/doc 与 docs/operations/workflows.md。\" --json",
+    "python3 skills/strip-non-prose-scope/scripts/strip_scope.py --file docs/operations/workflows.md",
+    "python3 skills/strip-non-prose-scope/scripts/strip_scope.py --file docs/operations/workflows.md --allow \"Codex,Feishu\" --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

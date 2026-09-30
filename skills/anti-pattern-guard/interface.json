@@ -1,0 +1,37 @@
+{
+  "id": "skill.pool.anti-pattern-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/anti-pattern-guard",
+  "invoke": "skill anti-pattern-guard",
+  "summary": "复合流程级技能(L3)：反例门禁。把「清单 → 检测 → 断言」串成一道\"绝不允许发生\"的放行门禁，挂载于管家「③ 冲突·冗余·质量」集群，命中反例一律阻断，禁止记录后继续。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "零命中且（`--strict` 下）事件非空，门禁放行",
+    "1": "命中任一条 AP，或 `--strict` 下事件流为空（不允许「空过」）",
+    "2": "事件流缺失或不可解析（缺参、文件不可读、JSONL 行非法、事件非对象、检测模块不可加载）"
+  },
+  "dependencies": [
+    "skill.pool.anti-pattern-policy",
+    "skill.pool.detect-forbidden-state",
+    "skill.pool.verify-no-forbidden-event"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

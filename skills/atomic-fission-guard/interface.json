@@ -1,0 +1,44 @@
+{
+  "id": "skill.pool.atomic-fission-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/atomic-fission-guard",
+  "invoke": "skill atomic-fission-guard",
+  "summary": "复合流程级技能(L3)：粒度递归分裂门禁。任何管控步骤若不能绑定四类物理探针之一，一律阻断实施并强制向下分裂。",
+  "inputs": [
+    {
+      "name": "--target",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/atomic-fission-guard/scripts/fission_guard.py --target skills/plan-fission"
+    },
+    {
+      "name": "--report",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/atomic-fission-guard/scripts/fission_guard.py --target skills/plan-fission…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "目标全部步骤均已绑定四类合法探针之一",
+    "1": "存在未绑定探针的步骤（输出必含步骤序号）或目标不可读"
+  },
+  "dependencies": [
+    "skill.pool.enforce-atomic-granularity",
+    "skill.pool.plan-fission"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/atomic-fission-guard/scripts/fission_guard.py --target skills/plan-fission",
+    "python3 skills/atomic-fission-guard/scripts/fission_guard.py --target skills/plan-fission --report"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -34,6 +34,7 @@ node scripts/restore_skill_pool.mjs --apply    # 从 skill-pool/skills 归位（
 | :--- | :--- |
 | 一个技能 | 一个目录：`skills/<kebab-case-name>/` |
 | 必备文件 | `SKILL.md`（技能契约，含 YAML Frontmatter + 场景索引 + 运作 SOP） |
+| 标准伴随文件 | `interface.json`（**执行层接口契约**，REQ-089 R4）：格式唯一权威源见 [`knowledge/common/execution_layer_interface_spec.md`](../knowledge/common/execution_layer_interface_spec.md)；由 `scripts/gen_skill_interfaces.mjs` 生成基线，**`verified:false` 属占位、须人工核对后才能升 `true`**。它与 `SKILL.md` 是"结构与调用口径"的关系，不重复正文 |
 | 推荐文件 | `README.md`（人读说明）、`scripts/`（配套可执行脚本） |
 | 排除项 | `_template`（脚手架模板，非技能）、以 `.` 开头的目录 |
 | 清单 | `.skill-pool-manifest.json`（机器可读，由归位脚本生成） |

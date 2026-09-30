@@ -1,0 +1,57 @@
+{
+  "id": "skill.pool.build-image-viewer",
+  "layer": "技能 (Skill)",
+  "path": "skills/build-image-viewer",
+  "invoke": "skill build-image-viewer",
+  "summary": "工序动作级技能：把任意图片以 base64 内联进零依赖单文件 HTML，产出可点击放大、可滚轮缩放、可拖拽平移、可一键复位的交互查看器。",
+  "inputs": [
+    {
+      "name": "--image",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/build-image-viewer/scripts/build_viewer.py --image /path/to/topology.png -…"
+    },
+    {
+      "name": "--out",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/build-image-viewer/scripts/build_viewer.py --image /path/to/topology.png -…"
+    },
+    {
+      "name": "--title",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/build-image-viewer/scripts/build_viewer.py --image /path/to/topology.png -…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "| 退出码 | 触发条件 | stdout |"
+    },
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "产物为**单个** HTML 文件，不得拆分出附属 CSS / JS / 图片文件。"
+    }
+  ],
+  "exitCodes": {
+    "0": "输入合规、产物已落盘且字节数 > 0 · `{\"success\": true, \"out\": ..., \"bytes\": ..., \"image\": ...}`",
+    "1": "输入不存在 / 不是常规文件 / 扩展名不支持 / 读取失败 / 输出不可写 · `{\"success\": false, \"error\": \"...\"}`"
+  },
+  "dependencies": [
+    "skill.pool.format-zoomable-visual"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/build-image-viewer/scripts/build_viewer.py --image /path/to/topology.png --out /tmp/topology-viewer.html --title \"管家拓扑图\"",
+    "python3 - <<'PY'",
+    "import base64, pathlib",
+    "png = base64.b64decode(",
+    "\"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

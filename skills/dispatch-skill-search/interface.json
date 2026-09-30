@@ -1,0 +1,59 @@
+{
+  "id": "skill.pool.dispatch-skill-search",
+  "layer": "技能 (Skill)",
+  "path": "skills/dispatch-skill-search",
+  "invoke": "skill dispatch-skill-search",
+  "summary": "工序动作级技能(L2)：四源检索调度器。按「本地优先」硬规则先扫本地技能池 catalog 与已装 DSH 插件，命中即短路且不向任何外部源发起检索并留痕 skipped_sources；未命中才在显式 --allow-network 下…",
+  "inputs": [
+    {
+      "name": "--query",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/dispatch-skill-search/scripts/dispatch_search.py --query \"信息图\" --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/dispatch-skill-search/scripts/dispatch_search.py --query \"信息图\" --json"
+    },
+    {
+      "name": "--allow-network",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/dispatch-skill-search/scripts/dispatch_search.py --query \"<词>\" --allow-net…"
+    },
+    {
+      "name": "--limit",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/dispatch-skill-search/scripts/dispatch_search.py --query \"<词>\" --allow-net…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "产出非空候选（本地短路或外呼成功）",
+    "1": "零候选（本地未命中且未允许外呼 / 外呼失败）",
+    "2": "输入不可读（缺 `--query`、catalog 不可解析）"
+  },
+  "dependencies": [
+    "skill.pool.multi-source-search-policy",
+    "skill.pool.search-github-skill",
+    "skill.pool.search-official-source",
+    "skill.pool.merge-search-candidates"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/dispatch-skill-search/scripts/dispatch_search.py --query \"信息图\" --json",
+    "python3 skills/dispatch-skill-search/scripts/dispatch_search.py --query \"<词>\" --allow-network --limit 5"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,32 @@
+{
+  "id": "skill.pool.enforce-atomic-granularity",
+  "layer": "技能 (Skill)",
+  "path": "skills/enforce-atomic-granularity",
+  "invoke": "skill enforce-atomic-granularity",
+  "summary": "微观原子规约：强制每个 SOP 步骤声明其绑定的物理探针类型，未声明或声明为非探针表述的步骤一律判定为粒度过粗，必须递归分裂。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "通过",
+    "1": "阻断"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

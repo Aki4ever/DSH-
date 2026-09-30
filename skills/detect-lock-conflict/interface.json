@@ -1,0 +1,107 @@
+{
+  "id": "skill.pool.detect-lock-conflict",
+  "layer": "技能 (Skill)",
+  "path": "skills/detect-lock-conflict",
+  "invoke": "skill detect-lock-conflict",
+  "summary": "工序动作级技能(L2)：对并行任务检测锁冲突（锁集合交集非空）、潜在死锁（等待图成环）与超时未释放（跨度超 timeout_s 或逻辑已超时），并给出必须串行的任务对与可安全并行的分组建议。",
+  "inputs": [
+    {
+      "name": "task",
+      "type": "field",
+      "required": true,
+      "desc": "必填非空字符串；缺失或非字符串即输入不可读（退 2）"
+    },
+    {
+      "name": "locks",
+      "type": "field",
+      "required": false,
+      "desc": "数组；缺失按空集合处理，非数组即退 2；逐键归一化后去重排序再比对"
+    },
+    {
+      "name": "depends_on",
+      "type": "field",
+      "required": false,
+      "desc": "数组；构建等待图的显式边"
+    },
+    {
+      "name": "timeout_s",
+      "type": "field",
+      "required": false,
+      "desc": "整数秒；缺失或非非负整数时按**默认 300 秒**处理"
+    },
+    {
+      "name": "lock_events",
+      "type": "field",
+      "required": false,
+      "desc": "可选映射 `{\"锁键\": 取得时刻}`，用于锁级等待推断（逐键时刻优先于 `started_at`）"
+    },
+    {
+      "name": "--from-json",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-lock-conflict/scripts/detect_lock_conflict.py --from-json tasks.jso…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-lock-conflict/scripts/detect_lock_conflict.py --from-json tasks.jso…"
+    },
+    {
+      "name": "--stdin",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：cat tasks.jsonl | python3 skills/detect-lock-conflict/scripts/detect_lock_conflict.py --s…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "conflicts[]",
+      "type": "field",
+      "desc": "锁冲突：`tasks`（冲突任务对）、`keys`（冲突键，非空）、`detail`"
+    },
+    {
+      "name": "deadlock_cycles[]",
+      "type": "field",
+      "desc": "潜在死锁：`cycle`（头尾相接的环路径）、`tasks`（环上任务）、`detail`"
+    },
+    {
+      "name": "timeouts[]",
+      "type": "field",
+      "desc": "超时未释放：`task`、`started_at`、`finished_at`、`timeout_s`、`span_s`、`detail`"
+    },
+    {
+      "name": "serialization_plan[]",
+      "type": "field",
+      "desc": "必须串行的任务对 `[[taskA, taskB], ...]`"
+    },
+    {
+      "name": "parallel_groups[]",
+      "type": "field",
+      "desc": "可安全并行的分组建议，**组内两两无锁交集**"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "文档给出的输出结构：{\"success\":true,\"conflicts\":[],\"deadlock_cycles\":[],\"timeouts\":[], \"serialization_plan\":[[\"pkg-006-t1\",\"pkg-006-t2\"]], \"parallel_groups\":[[\"pkg-006-t…"
+    }
+  ],
+  "exitCodes": {
+    "0": "无冲突、无死锁、无超时（三类数组全为空），允许按 `parallel_groups` 派发",
+    "1": "`lock_conflict` / `deadlock_cycle` / `lock_timeout` 任一命中，禁止并行派发",
+    "2": "输入不可读（缺参、二者同给、文件不存在/是目录/不可读、JSONL 行非法或非对象、`task` 缺失、`locks` 非数组）"
+  },
+  "dependencies": [
+    "skill.pool.declare-lock-set"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/detect-lock-conflict/scripts/detect_lock_conflict.py --from-json tasks.jsonl --json",
+    "cat tasks.jsonl | python3 skills/detect-lock-conflict/scripts/detect_lock_conflict.py --stdin --json",
+    "python3 skills/detect-lock-conflict/scripts/detect_lock_conflict.py --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "不改动任何文件**：本技能只读输入、只写 stdout。"
+}

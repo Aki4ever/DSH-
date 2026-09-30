@@ -1,0 +1,37 @@
+{
+  "id": "skill.pool.atomic-lock-guard",
+  "layer": "技能 (Skill)",
+  "path": "skills/atomic-lock-guard",
+  "invoke": "skill atomic-lock-guard",
+  "summary": "复合流程级技能(L3)：并发处理原子锁放行门禁。把「口径 → 真获取 → 真并发压测 → 断言」串成一道不可跳步的互斥门禁，挂载于管家「③ 冲突·冗余·质量」集群；放行的唯一合法证据是「持锁段重叠窗口 0 + 无锁对照段看得见并发 + 陈…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "四环全过：口径齐备、真获取成功、三段证据齐备且四项断言全真、释放四路径覆盖，互斥已被物理证明",
+    "1": "任一环失败：伪原子载体 / `wait_timeout` / `token_mismatch` / 重叠窗口非零 / 控制段看不见并发 / 陈旧锁不可回收 / 释放路径不完整",
+    "2": "输入不可读或依赖脚本不可用（缺参、锁根不可写、`--workers < 2`、依赖模块加载失败）"
+  },
+  "dependencies": [
+    "skill.pool.atomic-lock-policy",
+    "skill.pool.acquire-atomic-lock",
+    "skill.pool.verify-atomic-mutual-exclusion"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

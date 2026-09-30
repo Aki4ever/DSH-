@@ -1,0 +1,67 @@
+{
+  "id": "skill.pool.detect-forbidden-state",
+  "layer": "技能 (Skill)",
+  "path": "skills/detect-forbidden-state",
+  "invoke": "skill detect-forbidden-state",
+  "summary": "工序动作级技能：把事件流（JSONL 或 stdin）逐条判定七条反例，每条反例都有独立可命中的检测分支，命中即给出反例编号、事件 seq 列表与人类可读证据，并按正确性 > 进展 > 可观测 > 成本上报。",
+  "inputs": [
+    {
+      "name": "--events",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-forbidden-state/scripts/detect_forbidden.py --events /tmp/events.js…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-forbidden-state/scripts/detect_forbidden.py --events /tmp/events.js…"
+    },
+    {
+      "name": "--stdin",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：cat /tmp/events.jsonl | python3 skills/detect-forbidden-state/scripts/detect_forbidden.py…"
+    },
+    {
+      "name": "--loop-threshold",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-forbidden-state/scripts/detect_forbidden.py --events /tmp/events.js…"
+    },
+    {
+      "name": "--token-budget",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-forbidden-state/scripts/detect_forbidden.py --events /tmp/events.js…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "stdout 恒为合法 JSON，含 `success` / `checked_events` / `hits` / `summary` 四个字段；`--json` 为显式 JSON 模式开关（本脚本恒输出 JSON）。"
+    }
+  ],
+  "exitCodes": {
+    "0": "`success == true`，即 `hits` 为空数组（七条反例全部未命中）",
+    "1": "至少一条反例命中",
+    "2": "输入缺失或不可解析"
+  },
+  "dependencies": [
+    "skill.pool.anti-pattern-policy"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/detect-forbidden-state/scripts/detect_forbidden.py --events /tmp/events.jsonl --json",
+    "cat /tmp/events.jsonl | python3 skills/detect-forbidden-state/scripts/detect_forbidden.py --stdin --json",
+    "python3 skills/detect-forbidden-state/scripts/detect_forbidden.py --events /tmp/events.jsonl --loop-threshold 8 --token-budget 8000 --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "sideEffects": [
+    "只读检测**：绝不写入、修改或删除事件流文件，也不产生任何副作用；"
+  ],
+  "parallelEvidence": "只读检测**：绝不写入、修改或删除事件流文件，也不产生任何副作用；"
+}

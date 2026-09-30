@@ -1,0 +1,57 @@
+{
+  "id": "skill.pool.classify-instance-safety",
+  "layer": "技能 (Skill)",
+  "path": "skills/classify-instance-safety",
+  "invoke": "skill classify-instance-safety",
+  "summary": "工序动作级技能：真实扫描执行层脚本，判定 safe_multi / needs_lock / single_only 三档，提取资源键与信号，并可写出实例安全声明表。",
+  "inputs": [
+    {
+      "name": "--all",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-instance-safety/scripts/classify_instance_safety.py --all --json"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-instance-safety/scripts/classify_instance_safety.py --all --json"
+    },
+    {
+      "name": "--write",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-instance-safety/scripts/classify_instance_safety.py --all --write"
+    },
+    {
+      "name": "--skill",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-instance-safety/scripts/classify_instance_safety.py --skill build…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "扫描完成（`issues` 可为空或非空，判定结果仍有效）",
+    "1": "`--skill` 指定的技能不存在",
+    "2": "`--all` 与 `--skill` 均未给出，或 catalog 不可读"
+  },
+  "dependencies": [
+    "skill.pool.instance-pool-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/classify-instance-safety/scripts/classify_instance_safety.py --all --json",
+    "python3 skills/classify-instance-safety/scripts/classify_instance_safety.py --all --write",
+    "python3 skills/classify-instance-safety/scripts/classify_instance_safety.py --skill build-layer-graph --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

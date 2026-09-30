@@ -1,0 +1,31 @@
+{
+  "id": "skill.pool.validate-header-triggers",
+  "layer": "技能 (Skill)",
+  "path": "skills/validate-header-triggers",
+  "invoke": "skill validate-header-triggers",
+  "summary": "工序动作级技能：静态校验 Skill 的 YAML Frontmatter 元数据与触发关键词覆盖度。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

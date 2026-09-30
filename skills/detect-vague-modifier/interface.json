@@ -1,0 +1,72 @@
+{
+  "id": "skill.pool.detect-vague-modifier",
+  "layer": "技能 (Skill)",
+  "path": "skills/detect-vague-modifier",
+  "invoke": "skill detect-vague-modifier",
+  "summary": "工序动作级技能(L2)：扫描文本中的程度类与含糊类词语，输出命中词、类别（degree/ambiguity 与五类细分）、位置、是否已有场景量化映射。本技能内置词表是全仓模糊词表的唯一真相源，DEGREE_WORDS / AMBIGUIT…",
+  "inputs": [
+    {
+      "name": "--text",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-vague-modifier/scripts/detect_vague.py --text '接口响应要快' --domain 接口响…"
+    },
+    {
+      "name": "--domain",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-vague-modifier/scripts/detect_vague.py --text '接口响应要快' --domain 接口响…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-vague-modifier/scripts/detect_vague.py --text '接口响应要快' --domain 接口响…"
+    },
+    {
+      "name": "--list-words",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/detect-vague-modifier/scripts/detect_vague.py --list-words"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "success",
+      "type": "布尔",
+      "desc": "扫描是否完成"
+    },
+    {
+      "name": "hits",
+      "type": "数组",
+      "desc": "`[{\"term\",\"category\",\"word_class\",\"line\",\"index\",\"quantified\",\"domain\",\"matched_domain\",\"snippet\"}]`"
+    },
+    {
+      "name": "counts",
+      "type": "对象",
+      "desc": "`{\"degree\",\"ambiguity\",\"hedge\",\"range\",\"reference\",\"timing\"}`"
+    },
+    {
+      "name": "unquantified",
+      "type": "整数",
+      "desc": "未量化的**程度词**数量（含糊词不计入，它们由具像化管线承接）"
+    }
+  ],
+  "exitCodes": {
+    "0": "扫描完成（命中 0 处或多处均为 0），或 `--list-words` 打印词表",
+    "1": "输入缺失（既无 `--text` 也无 `--file`），或 `--file` 指向的文件不存在/不可读"
+  },
+  "dependencies": [
+    "skill.pool.build-quantifier-table"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/detect-vague-modifier/scripts/detect_vague.py --text '接口响应要快' --domain 接口响应 --json",
+    "python3 skills/detect-vague-modifier/scripts/detect_vague.py --list-words",
+    "python3 skills/detect-vague-modifier/scripts/detect_vague.py --text '数据量大' --domain 单表数据量"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "只读不写**：不修改任何文件、不做替换、不阻断交付；"
+}

@@ -1,0 +1,44 @@
+{
+  "id": "skill.pool.verify-lane-decision",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-lane-decision",
+  "invoke": "skill verify-lane-decision",
+  "summary": "工序动作级技能：对同一任务重复执行分流判定，断言结果 100% 一致，杜绝分流被随机性污染。",
+  "inputs": [
+    {
+      "name": "--task",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-lane-decision/scripts/verify_lane.py --task \"读取并解释需求文档\" --repeat 10"
+    },
+    {
+      "name": "--repeat",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-lane-decision/scripts/verify_lane.py --task \"读取并解释需求文档\" --repeat 10"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "Exit Code 0：N 次判定的 lane 完全一致，且 stdout 含 `consistent: true`、`lane`、`runs`；"
+    }
+  ],
+  "exitCodes": {
+    "0": "N 次判定的 lane 完全一致，且 stdout 含 `consistent: true`、`lane`、`runs`",
+    "1": "出现多种 lane，或 score 脚本不可用"
+  },
+  "dependencies": [
+    "skill.pool.score-task-lane"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/verify-lane-decision/scripts/verify_lane.py --task \"读取并解释需求文档\" --repeat 10",
+    "python3 skills/verify-lane-decision/scripts/verify_lane.py --task \"部署到生产环境\" --repeat 10"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "只读探针，不写入任何文件；"
+}

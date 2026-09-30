@@ -1,0 +1,54 @@
+{
+  "id": "skill.pool.measure-token-budget",
+  "layer": "技能 (Skill)",
+  "path": "skills/measure-token-budget",
+  "invoke": "skill measure-token-budget",
+  "summary": "工序动作级技能：用唯一确定性公式物理测算文本与文件的 token 占用，并按技能契约 / README / Catalog / docs / 其他五个分区汇总，为裁剪与门禁提供可复算基线。",
+  "inputs": [
+    {
+      "name": "--paths",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/measure-token-budget/scripts/measure_tokens.py --paths docs/operations/ski…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/measure-token-budget/scripts/measure_tokens.py --paths docs/operations/ski…"
+    },
+    {
+      "name": "--text",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/measure-token-budget/scripts/measure_tokens.py --text \"汉字与ASCII混排\" --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "Exit Code 0：全部输入测算完成，stdout 为合法 JSON，且 `partitions` 五分区之和等于 `total_tokens`；"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "stdout 恒为合法 JSON；`--json` 为显式 JSON 模式开关（本脚本恒输出 JSON）。"
+    }
+  ],
+  "exitCodes": {
+    "0": "全部输入测算完成，stdout 为合法 JSON，且 `partitions` 五分区之和等于 `total_tokens`",
+    "1": "`--paths` 任一路径不存在或不是普通文件（输出 `missing_paths`），或既未给 `--paths` 也未给 `--text`"
+  },
+  "dependencies": [
+    "skill.pool.token-budget-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/measure-token-budget/scripts/measure_tokens.py --paths docs/operations/skill-catalog.json docs/operations/skills-catalog.md docs/requirements/product.md --json",
+    "python3 skills/measure-token-budget/scripts/measure_tokens.py --text \"汉字与ASCII混排\" --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

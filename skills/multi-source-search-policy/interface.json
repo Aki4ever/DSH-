@@ -1,0 +1,34 @@
+{
+  "id": "skill.pool.multi-source-search-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/multi-source-search-policy",
+  "invoke": "skill multi-source-search-policy",
+  "summary": "微观原子规约：执行层检索源判定基元。钉死四类源（本地 / GitHub / 官网 / awesome 清单）与「本地优先」硬规则、统一候选六字段契约、中英同义桥、以及「检索失败绝不等同于没找到」的诚实口径；规定官网源必须走站点自声明 si…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "产出非空候选（本地短路，或外呼成功）",
+    "1": "零候选（本地未命中且未允许外呼 / 外呼失败 / 合并后为空 / 官网源全不可达）",
+    "2": "输入不可读（缺 `--query`、catalog 不可解析、夹具不可读、未给任何来源）"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "本规约只出定义与判据，**不联网、不检索、不合并、不写文件**。"
+}

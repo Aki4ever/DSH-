@@ -1,0 +1,44 @@
+{
+  "id": "skill.pool.load-skill-contract",
+  "layer": "技能 (Skill)",
+  "path": "skills/load-skill-contract",
+  "invoke": "skill load-skill-contract",
+  "summary": "工序动作级技能：按精确技能 id 加载单个 SKILL.md 正文，拒绝通配与目录递归，并返回字节数与 token 估算。",
+  "inputs": [
+    {
+      "name": "--name",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/load-skill-contract/scripts/load_contract.py --name verify-file-exists --m…"
+    },
+    {
+      "name": "--meta-only",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/load-skill-contract/scripts/load_contract.py --name verify-file-exists --m…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "输出恒含 `bytes` 与 `tokens`，便于调用方做预算核算。"
+    }
+  ],
+  "exitCodes": {
+    "0": "单个契约加载成功",
+    "1": "id 非法、通配、路径穿越，或目标文件缺失/为空"
+  },
+  "dependencies": [
+    "skill.pool.lazy-load-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/load-skill-contract/scripts/load_contract.py --name verify-file-exists --meta-only",
+    "python3 skills/load-skill-contract/scripts/load_contract.py --name verify-file-exists",
+    "python3 skills/load-skill-contract/scripts/load_contract.py --name '*' ; echo $? # 期望 1"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

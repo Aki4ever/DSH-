@@ -1,0 +1,59 @@
+{
+  "id": "skill.pool.classify-decision-reversibility",
+  "layer": "技能 (Skill)",
+  "path": "skills/classify-decision-reversibility",
+  "invoke": "skill classify-decision-reversibility",
+  "summary": "工序动作级技能(L2)：对每个不确定项确定性判定可逆性与红线归属，输出 decide_now / ask_once、建议默认值与回滚方式。",
+  "inputs": [
+    {
+      "name": "--item",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-decision-reversibility/scripts/classify_decision.py --item \"阈值取 0…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-decision-reversibility/scripts/classify_decision.py --item \"阈值取 0…"
+    },
+    {
+      "name": "--redline",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-decision-reversibility/scripts/classify_decision.py --item \"阈值取 0…"
+    },
+    {
+      "name": "--items",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/classify-decision-reversibility/scripts/classify_decision.py --items /tmp/…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "Exit Code 0：判定完成，结果由 stdout 的 JSON 承载（`decisions` + `summary` + `ask_budget`）；"
+    }
+  ],
+  "exitCodes": {
+    "0": "判定完成，结果由 stdout 的 JSON 承载（`decisions` + `summary` + `ask_budget`）",
+    "1": "未提供任何 `--item` / `--items`，或参数不合法（`--item` 缺配对值、出现未知参数）",
+    "2": "`--items` 指向的文件不存在或不可读"
+  },
+  "dependencies": [
+    "skill.pool.one-shot-resolution-policy"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/classify-decision-reversibility/scripts/classify_decision.py --item \"阈值取 0.85 还是 0.9\" --json",
+    "python3 skills/classify-decision-reversibility/scripts/classify_decision.py --item \"阈值取 0.85 还是 0.9\" --item \"命名风格用 kebab-case 还是 snake_case\" --item \"输出文件放 docs/operations 还是 docs/requirements\" --item \"删除旧的日志目录\" --redline R1 --item \"推送到远端\" --redline R2 --json",
+    "printf '{\"item\":\"删除旧的日志目录\",\"redline\":\"R1\"}\\n{\"item\":\"阈值取 0.85 还是 0.9\",\"redline\":null}\\n' > /tmp/items.jsonl",
+    "python3 skills/classify-decision-reversibility/scripts/classify_decision.py --items /tmp/items.jsonl --json",
+    "python3 skills/classify-decision-reversibility/scripts/classify_decision.py --item \"注释措辞\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

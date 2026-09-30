@@ -1,0 +1,34 @@
+{
+  "id": "skill.pool.process-conformance-policy",
+  "layer": "技能 (Skill)",
+  "path": "skills/process-conformance-policy",
+  "invoke": "skill process-conformance-policy",
+  "summary": "微观原子规约：流程合规判定基元。钉死「约定流程必须是可打分的机器可读数据」这一前提，规定九步流程各自必须绑定四类物理探针之一、权重合计 100、必需项一票否决、na 第三态（权重从分母扣除且不得当 pass）、以及「没有证据不等于走了这一…",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "0": "得分 ≥ 85 且全部必需项 pass（`process_conformant`）",
+    "1": "未通过（附逐项明细与整改清单）",
+    "2": "输入不可读（spec 缺失、证据目录不存在、依赖脚本缺失）"
+  },
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "触发禁区**：本规约只出定义与判据，**不取证、不打分、不整改、不写文件**；"
+}

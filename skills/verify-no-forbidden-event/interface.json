@@ -1,0 +1,51 @@
+{
+  "id": "skill.pool.verify-no-forbidden-event",
+  "layer": "技能 (Skill)",
+  "path": "skills/verify-no-forbidden-event",
+  "invoke": "skill verify-no-forbidden-event",
+  "summary": "工序动作级技能：反例零命中断言。进程内 importlib 加载 detect-forbidden-state 的检测器，要求 hits == 0；--strict 时额外要求 checked_events > 0，杜绝空事件流「空过」放…",
+  "inputs": [
+    {
+      "name": "--events",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-forbidden-event/scripts/verify_no_forbidden.py --events /tmp/eve…"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-forbidden-event/scripts/verify_no_forbidden.py --events /tmp/eve…"
+    },
+    {
+      "name": "--strict",
+      "type": "flag",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/verify-no-forbidden-event/scripts/verify_no_forbidden.py --events /tmp/eve…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "stdout 恒为合法 JSON，含 `success` / `checked_events` / `hits` / `checks` 四个字段；退 2 时额外带 `error`。"
+    }
+  ],
+  "exitCodes": {
+    "0": "`checks` 全部为 `pass == true`，即 `hits` 为空且（`--strict` 时）`checked_events > 0`",
+    "1": "`hits` 非空（输出逐条 `code` 与 `seq`），或 `--strict` 下 `checked_events == 0`",
+    "2": "输入不可读或不可解析（检测模块加载失败、`--events` 缺失、文件不存在或为目录、JSONL 行非法）"
+  },
+  "dependencies": [
+    "skill.pool.detect-forbidden-state"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "python3 skills/verify-no-forbidden-event/scripts/verify_no_forbidden.py --events /tmp/events.jsonl --json",
+    "python3 skills/verify-no-forbidden-event/scripts/verify_no_forbidden.py --events /tmp/events.jsonl --strict --json"
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs",
+  "parallelEvidence": "本技能不写任何文件，输出即全部产物。"
+}

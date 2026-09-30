@@ -1,0 +1,65 @@
+{
+  "id": "skill.pool.normalize-skill-contract",
+  "layer": "技能 (Skill)",
+  "path": "skills/normalize-skill-contract",
+  "invoke": "skill normalize-skill-contract",
+  "summary": "工序动作级技能：把外部引入技能改造为本池统一契约，在 skills/<name>/ 下幂等生成含 YAML Frontmatter、场景索引、Mermaid SOP 与探针步骤的 SKILL.md 与 README.md。",
+  "inputs": [
+    {
+      "name": "--name",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/normalize-skill-contract/scripts/normalize_skill.py --name pdf-toolkit --l…"
+    },
+    {
+      "name": "--level",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/normalize-skill-contract/scripts/normalize_skill.py --name pdf-toolkit --l…"
+    },
+    {
+      "name": "--description",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/normalize-skill-contract/scripts/normalize_skill.py --name pdf-toolkit --l…"
+    },
+    {
+      "name": "--composition",
+      "type": "arg",
+      "required": false,
+      "desc": "用法示例中出现：python3 skills/normalize-skill-contract/scripts/normalize_skill.py --name pdf-pipeline --…"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "| `0` | 归一成功（新建或幂等更新），stdout 输出含 `sha256` 的 JSON |"
+    },
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "文档给出的输出结构（原文标题：输出结构：）"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "文档给出的输出结构：{\"success\": true, \"skill\": \"pdf-toolkit\", \"path\": \"skills/pdf-toolkit\", \"created\": true, \"sha256\": \"...\"}"
+    }
+  ],
+  "exitCodes": {
+    "0": "归一成功（新建或幂等更新），stdout 输出含 `sha256` 的 JSON",
+    "1": "参数非法：`name` 非 kebab-case、`level` 非法、`description` 为空，或 composition 项非法"
+  },
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skills/normalize-skill-contract/scripts/normalize_skill.py --name pdf-toolkit --level L2 --description \"PDF 解析与文本抽取工序技能\"",
+    "python3 skills/normalize-skill-contract/scripts/normalize_skill.py --name pdf-toolkit --level L2 --description \"PDF 解析与文本抽取工序技能\"",
+    "python3 skills/normalize-skill-contract/scripts/normalize_skill.py --name pdf-pipeline --level L3 --composition pdf-scan,pdf-extract --description \"PDF 处理总控\"",
+    "python3 skills/normalize-skill-contract/scripts/normalize_skill.py --name Bad_Name --level L2 --description \"x\"; echo \"exit=$?\""
+  ],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "skill.pool.index-body-contract",
+  "layer": "技能 (Skill)",
+  "path": "skills/index-body-contract",
+  "invoke": "skill index-body-contract",
+  "summary": "复合流程级技能(L3)：索引主体运作契约。细化解耦为SOP流程规范、Mermaid流程图语法物理校验、底层脚本可执行权限物理检测与执行契约完整性验证。",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "该技能文档未声明入参结构，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "desc": "该技能文档未声明出参/产物结构，需人工补齐"
+    }
+  ],
+  "exitCodes": {
+    "(待补)": "该技能未声明退出码口径"
+  },
+  "dependencies": [
+    "skill.pool.standardize-workflow-sop",
+    "skill.pool.verify-mermaid-syntax",
+    "skill.pool.check-script-executable",
+    "skill.pool.verify-execution-contract"
+  ],
+  "parallel": "exclusive",
+  "examples": [],
+  "source": "extracted-from-header",
+  "verified": false,
+  "generator": "gen_skill_interfaces.mjs"
+}
