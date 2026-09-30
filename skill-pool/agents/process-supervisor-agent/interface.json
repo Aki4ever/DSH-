@@ -1,0 +1,34 @@
+{
+  "id": "agent.skillpool.process-supervisor-agent",
+  "layer": "智能体 (Agent)",
+  "path": "skill-pool/agents/process-supervisor-agent",
+  "invoke": "subagent（宿主工具，按需分派）",
+  "summary": "---",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "header 注释里未声明入参，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "subagent（宿主工具，按需分派）"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

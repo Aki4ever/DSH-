@@ -1,0 +1,40 @@
+{
+  "id": "cli.rules.route_navigate",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/route_navigate.mjs",
+  "invoke": "node scripts/route_navigate.mjs",
+  "summary": "route_navigate.mjs",
+  "inputs": [
+    {
+      "name": "--entry",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/route_navigate.mjs --entry         # 输出核心入口与当前工作区直达链接"
+    },
+    {
+      "name": "--version",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/route_navigate.mjs --version       # 单行输出系统当前总版本"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/route_navigate.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

@@ -1,0 +1,34 @@
+{
+  "id": "cli.rules.disk_check_and_cleanup",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/disk_check_and_cleanup.sh",
+  "invoke": "bash scripts/disk_check_and_cleanup.sh",
+  "summary": "DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位)",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "header 注释里未声明入参，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/disk_check_and_cleanup.sh"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

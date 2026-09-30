@@ -1,0 +1,52 @@
+{
+  "id": "cli.rules.agent_life",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/agent_life.mjs",
+  "invoke": "node scripts/agent_life.mjs",
+  "summary": "agent_life.mjs",
+  "inputs": [
+    {
+      "name": "--status",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/agent_life.mjs --status                     # 查看 PP 与活跃 Life 状态"
+    },
+    {
+      "name": "--spawn",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/agent_life.mjs --spawn <subtask_name>       # 由 PP 动态派生一个 life(N) 实例"
+    },
+    {
+      "name": "--done",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/agent_life.mjs --done <life_id> [artifact]  # life 提交回执并宣告消亡"
+    },
+    {
+      "name": "--teardown",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/agent_life.mjs --teardown                   # 结项初始化，全部清空"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/agent_life.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

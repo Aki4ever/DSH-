@@ -1,0 +1,46 @@
+{
+  "id": "cli.rules.naming_watchdog",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/naming_watchdog.mjs",
+  "invoke": "node scripts/naming_watchdog.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--apply",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/naming_watchdog.mjs --apply         # 实际改名"
+    },
+    {
+      "name": "--apply",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/naming_watchdog.mjs --apply --loop 60   # 每 60 秒巡一遍，常驻"
+    },
+    {
+      "name": "--apply",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/naming_watchdog.mjs --apply --sid session-xxx   # 只处理指定会话"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/naming_watchdog.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

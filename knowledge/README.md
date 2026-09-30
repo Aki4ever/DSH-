@@ -25,7 +25,7 @@ knowledge/
 ├── README.md                          # 知识库总览与项目隔离导航协议（本文档）
 ├── common/                            # 【第一层：通用公共规范】(所有项目 100% 共享继承)
 │   ├── README.md                      # 通用规范导航总览
-│   ├── interaction_specification.md   # 通用交互与体验规范 (格式塔六大定律 / Don't Make Me Think 零思考)
+│   ├── interaction_specification.md   # 通用交互与体验规范 (格式塔七大定律 / Don't Make Me Think 零思考)
 │   ├── readability_specification.md   # 全端可读性与无障碍排版设计法典 (字号阶梯 / 最小文字红线 / 对比度)
 │   ├── component_asset_reference.md   # 多官网精美组件与图控法典 (Shadcn/Apple HIG/AntD/Material 3)
 │   ├── unity_specification.md         # 通用 Unity 工程规范 (页面Scene / 弹窗Prefab / 按钮Drop Shadow与下沉动效)
@@ -35,6 +35,10 @@ knowledge/
 │   ├── art_specification.md           # 通用视觉与色彩规范 (60-30-10配比 / WCAG 4.5:1对比度 / 阴影阶梯)
 │   └── dsh_native_ui_components.md    # DSH 原生可视化组件体系法典 (九大层级 / Slot拓扑 / 原子工具卡)
 │   └── capability_naming_spec.md      # 通用能力层命名规范 (四要素 / 四形态 / 禁词与同义归一 / 改名六处同步)
+├── sources/                           # 【第三层：知识来源出处登记】(REQ-089 R1-a)
+│   ├── README.md                      # 来源层定位、登记规约与双向寻址
+│   ├── SOURCE-001-dont-make-me-think.md  # 《Don't Make Me Think, Revisited》3rd Ed. · Steve Krug
+│   └── SOURCE-002-gestalt-psychology.md  # 格式塔心理学组织律原始文献 (Wertheimer 1923 / Köhler 1929 / Koffka 1935)
 └── projects/                          # 【第二层：项目专属知识库】(按工程物理隔离，严禁串扰)
     ├── README.md                      # 项目隔离规约与清单
     └── aether_echo/                   # 示例核心项目：源能回响 (Aether Echo - 游戏工程)

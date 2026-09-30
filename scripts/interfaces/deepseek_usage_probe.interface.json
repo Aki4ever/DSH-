@@ -1,0 +1,46 @@
+{
+  "id": "cli.rules.deepseek_usage_probe",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/deepseek_usage_probe.mjs",
+  "invoke": "node scripts/deepseek_usage_probe.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--json",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/deepseek_usage_probe.mjs --json      # 单个 JSON 对象"
+    },
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/deepseek_usage_probe.mjs --check     # 判定：时段可判定 + 指纹可用 + JSON 结构完整"
+    },
+    {
+      "name": "--price-sync",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/deepseek_usage_probe.mjs --price-sync# 单独触发一次定价指纹同步"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/deepseek_usage_probe.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

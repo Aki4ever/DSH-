@@ -1,0 +1,34 @@
+{
+  "id": "cli.rules.check_task_naming",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/check_task_naming.sh",
+  "invoke": "bash scripts/check_task_naming.sh",
+  "summary": "检查「当前会话」的任务命名是否符合规范，供看板常显与流程判定使用",
+  "inputs": [
+    {
+      "name": "--exit",
+      "type": "arg",
+      "required": false,
+      "desc": "./scripts/check_task_naming.sh --exit   # 不合规时以退出码 1 结束"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/check_task_naming.sh"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

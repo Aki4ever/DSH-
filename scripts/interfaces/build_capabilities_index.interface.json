@@ -1,0 +1,40 @@
+{
+  "id": "cli.rules.build_capabilities_index",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/build_capabilities_index.mjs",
+  "invoke": "node scripts/build_capabilities_index.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/build_capabilities_index.mjs --check   # 只判覆盖率（退出码 0/1）"
+    },
+    {
+      "name": "--apply",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/build_capabilities_index.mjs --apply   # 重写受管区间"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/build_capabilities_index.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

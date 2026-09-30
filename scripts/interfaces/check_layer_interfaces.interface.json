@@ -1,0 +1,52 @@
+{
+  "id": "cli.rules.check_layer_interfaces",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/check_layer_interfaces.mjs",
+  "invoke": "node scripts/check_layer_interfaces.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--coverage",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/check_layer_interfaces.mjs --coverage      # 只报覆盖率（各层分开报）"
+    },
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/check_layer_interfaces.mjs --check         # 契约校验 + CLI 层覆盖率门槛（退出码 0/1/2）"
+    },
+    {
+      "name": "--scaffold",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/check_layer_interfaces.mjs --scaffold      # 为缺失单元生成基线契约（标注 verified:false）"
+    },
+    {
+      "name": "--json",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/check_layer_interfaces.mjs --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/check_layer_interfaces.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

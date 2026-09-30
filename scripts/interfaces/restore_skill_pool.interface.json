@@ -1,0 +1,46 @@
+{
+  "id": "cli.rules.restore_skill_pool",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/restore_skill_pool.mjs",
+  "invoke": "node scripts/restore_skill_pool.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/restore_skill_pool.mjs --check    # 只体检：源/目标/索引三层现状"
+    },
+    {
+      "name": "--apply",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/restore_skill_pool.mjs --apply    # 归位 + 校验 + 清理源目录"
+    },
+    {
+      "name": "--apply",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/restore_skill_pool.mjs --apply --keep-source   # 归位但保留源目录"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/restore_skill_pool.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

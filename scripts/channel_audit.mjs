@@ -24,6 +24,7 @@
 
 import { readFile, access } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { checkLinks } from './conflict_scan.mjs'
 
 // ── 通道表的权威出处（唯一，禁止在别处复制通道内容） ─────────────────────────
@@ -229,7 +230,11 @@ export function matchDetail(phrase, channels) {
       info.rival = `${ch.name}（${via}，${score} 分）`
     }
   }
-  if (!info.hit) {
+  // 未命中时补一条"最接近的通道"诊断。
+  // 必须限定 channels.length > 1：单通道调用时 info.hit 必为 null，旧实现会在这里
+  // 以同一个 [ch] 再次进入本分支 → 无限递归 → 栈溢出（路由层 scripts/route_plan.mjs
+  // 对未命中关键词调用本函数时实测踩到）。单通道场景下逐通道得分恒为 0，跳过不改变结果。
+  if (!info.hit && channels.length > 1) {
     let best = 0
     let who = ''
     for (const ch of channels) {
@@ -485,6 +490,14 @@ function selfTest() {
 
 // ── 入口 ─────────────────────────────────────────────────────────────────────
 
+// ── 入口 ─────────────────────────────────────────────────────────────────────
+// 只有"被当作主程序直接运行"时才执行审计与输出；被其它脚本 import 时
+// 只提供可复用的解析与命中函数（例如路由层 scripts/route_plan.mjs 复用
+// normalizePhrase / parseChannels / matchChannel / matchDetail 的口径）。
+// 否则一旦被导入就会顺带跑一遍通道审计并 process.exit，把调用方进程带走。
+const isMain = process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))
+
+if (isMain) {
 const args = parseArgs(process.argv.slice(2))
 
 if (args.selfTest) {
@@ -527,3 +540,5 @@ if (args.json) {
   console.log('✅ 通道表健康：无死链、说法可命中、触发词无冲突')
 }
 process.exit(0)
+}
+// 被 import 时：不执行审计、不 process.exit，只导出判定函数（见上方 isMain 注释）

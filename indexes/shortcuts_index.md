@@ -57,6 +57,9 @@
 | **“unity规范”** | **G2 支线** | 查阅 Unity 目录与代码规范 | 读取 [`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) | 输出 Unity 目录与 .meta 铁律，提供入口：[`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) |
 | **“原子性规范”** | **G2 支线** | 查阅操作与设计原子性清单 | 读取 [`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) | 输出操作级与设计级事务清单，提供入口：[`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) |
 | **“避坑经验”** | **G3 辅道** | 查阅排查沉淀的避坑认知 | 读取 [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 输出避坑指引，提供入口：[`memory/lessons_learned.md`](../memory/lessons_learned.md) |
+| **“检查输出精简”**<br>*(或“回复啰不啰嗦”)* | **G2 支线** | 判定最近一轮回复的体量与文末结构 | 实跑 `node scripts/output_audit.mjs --check`（证据源为宿主会话转录） | 输出体量/行数/五联装齐备性与退出码，提供入口：[`scripts/output_audit.mjs`](../scripts/output_audit.mjs) |
+| **“检查接口覆盖”**<br>*(或“执行层有接口吗”)* | **G2 支线** | 核查执行层是否都有 OOP 式接口契约 | 实跑 `node scripts/check_layer_interfaces.mjs --coverage` | 输出分层接口覆盖率（与名字覆盖率分开报），入口：[`knowledge/common/execution_layer_interface_spec.md`](../knowledge/common/execution_layer_interface_spec.md) |
+| **“规划执行路线”**<br>*(或“这个能力怎么调更高效”)* | **G1 干线** | 命中执行层后给出调配方案（依赖/并行/锁冲突/失败回退） | 实跑 `node scripts/route_plan.mjs "<意图>"` | 输出命中条目 + 调用命令 + 建议批次 + 回退命令；未命中必须显式报未命中，入口：[`scripts/route_plan.mjs`](../scripts/route_plan.mjs) |
 | **“生态扩展”** | **G1 干线** | 查阅外部智能体扩展生态 | 读取 [`indexes/extension_ecosystem.md`](extension_ecosystem.md) | 输出 MCP / Skills / CLI / API 矩阵，提供入口：[`indexes/extension_ecosystem.md`](extension_ecosystem.md) |
 | **“生成图表”** | **G1 干线** | 查阅图表标准与决策树 | 读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 输出五大图表模版，提供入口：[`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) |
 | **“生成图片 <描述>”** | **G1 干线** | 用图像模型按描述创作图片（非手绘信息图） | 执行 [`scripts/generate_image.py`](../scripts/generate_image.py) | 自动生图，输出 `![描述](路径)` 并附带可点击打开链接 |

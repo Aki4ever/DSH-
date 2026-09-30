@@ -1,0 +1,40 @@
+{
+  "id": "cli.rules.name_me",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/name_me.sh",
+  "invoke": "bash scripts/name_me.sh",
+  "summary": "立刻给\"当前会话\"改名——开工第一动作，一条命令，任何目录可用",
+  "inputs": [
+    {
+      "name": "--auto",
+      "type": "arg",
+      "required": false,
+      "desc": "name_me.sh --auto                        # 让机器按规范生成标题（分类看 cwd，概述取首条消息）"
+    },
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "name_me.sh --check                       # 只看当前名称是否合规，不改"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/name_me.sh"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

@@ -1,0 +1,46 @@
+{
+  "id": "cli.rules.channel_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/channel_audit.mjs",
+  "invoke": "node scripts/channel_audit.mjs",
+  "summary": "快速通道注册审计器 —— 校验\"通道表\"是否真的可用（对应 REQ-045）",
+  "inputs": [
+    {
+      "name": "--root",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/channel_audit.mjs --root .          # 实扫通道表"
+    },
+    {
+      "name": "--root",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/channel_audit.mjs --root . --json   # 机器可读输出"
+    },
+    {
+      "name": "--self-test",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/channel_audit.mjs --self-test       # 正反例自检"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/channel_audit.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

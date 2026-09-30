@@ -23,8 +23,9 @@
 | :--- | :--- | :--- |
 | **注入层** | 只放红线与路由指针，按需加载细则 | [`AGENTS.md`](../AGENTS.md)（项目级）、`$DSH_HOME/AGENTS.md`（宿主级）、[`indexes/shortcuts_index.md`](shortcuts_index.md) |
 | **状态层** | 由磁盘实况推导真值，产出 `status.json` | [`scripts/control_gates.sh`](../scripts/control_gates.sh)、[`ai-control/config/gates.conf`](../ai-control/config/gates.conf) |
-| **判定层** | 门禁判定 + 冗余与冲突双检 + 存量校准 + 通道审计 + **迭代检测 + 物理触达审计** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs)、[`scripts/progress_ledger.mjs`](../scripts/progress_ledger.mjs)、[`scripts/mechanism_audit.mjs`](../scripts/mechanism_audit.mjs) |
+| **判定层** | 门禁判定 + 冗余与冲突双检 + 存量校准 + 通道审计 + **迭代检测 + 物理触达审计 + 输出体量判定 + 接口契约判定** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs)、[`scripts/progress_ledger.mjs`](../scripts/progress_ledger.mjs)、[`scripts/mechanism_audit.mjs`](../scripts/mechanism_audit.mjs)、[`scripts/output_audit.mjs`](../scripts/output_audit.mjs)、[`scripts/check_layer_interfaces.mjs`](../scripts/check_layer_interfaces.mjs) |
 | **流程管控层** | 流程依赖唯一权威源 + 效率最优排列 + 更新后一致性判定（REQ-087 R3） | [`ai-control/config/flow_graph.json`](../ai-control/config/flow_graph.json)（权威源）、[`scripts/flow_control.mjs`](../scripts/flow_control.mjs)（判定器）、[`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) §二之五（规则层）、[`scripts/process_supervisor.mjs`](../scripts/process_supervisor.mjs)（独立复核） |
+| **路由层** | 意图 → 条目匹配 + 调配决策（依赖/并行/锁冲突）+ 文档-实现一致性审计（REQ-089 R5） | [`scripts/route_plan.mjs`](../scripts/route_plan.mjs)（判定器 + 路线规划器）、[`indexes/navigation_router.md`](navigation_router.md)（模型说明）、[`indexes/capabilities_index.json`](capabilities_index.json)（条目真相源）、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs)（触发词匹配库） |
 | **拦截层** | 门禁未过时拒绝改动型工具调用 | [`ai-control/plugin/index.mjs`](../ai-control/plugin/index.mjs) |
 
 **四道基础门禁（累积语义，须按序全部通过）**：
@@ -61,6 +62,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **现行实况版** | [`assets/generated_images/control_mechanism_infographic_v2.svg`](../assets/generated_images/control_mechanism_infographic_v2.svg) + `.png` | 复用基线版式、按实跑数据重绘；数字对应快照 2026-09-23 16:02（门禁 4/4 · 通道 24 条 · 双检与校准全 0）。**资产已落盘，台账条目尚未登记**，引用前先核对当轮实跑 |
 | **结构树实况版** | [`assets/generated_images/control_mechanism_structure_tree_v3.svg`](../assets/generated_images/control_mechanism_structure_tree_v3.svg) + `.png` | 走"五层分工 + 两把硬闸"的结构树口径（比 v2 多一层"自证与审计层"）；数字对应快照 2026-09-29（门禁 4/4 ↔ 3/4 闪烁 · 物理锁 [2] LOCK-2 · 拦截层宿主注册仍缺）。台账留痕见 [`docs/requirements.md`](../docs/requirements.md) 附录"资产变更留痕" |
 | **当前实况总览版（现行引用首选）** | [`assets/generated_images/control_mechanism_live_overview_v4.svg`](../assets/generated_images/control_mechanism_live_overview_v4.svg) + `.png` | 走"五层管道 + 13 条机制触达清点 + 实跑数据矩阵 + 断点处置"口径；数字对应快照 2026-09-29 03:58（门禁 4/4 · 触达 9/13 · 物理锁 [2] LOCK-2 · 拦截层未注册）。**引用现状一律以本版为准**，v2/v3 退为历史版本；台账留痕见 [`docs/requirements.md`](../docs/requirements.md) 附录"资产变更留痕" |
+| **小白教学版（讲解用，不承担实况数字权威）** | [`assets/generated_images/control_mechanism_beginner_flow_v1.svg`](../assets/generated_images/control_mechanism_beginner_flow_v1.svg) + `.png` | 面向非专业读者的全流程讲解图（10 道关 + 五层分工 + 物理锁五级台阶 + 16 条机制红绿灯 + 三句脾气）；数字对应快照 2026-10-01（门禁 4/4 · 物理锁 [2] LOCK-2 · 触达 13/16 · 拦截层未注册）。**讲"怎么运作"看本版，引用"现状数字"仍看上一行实况总览版**；台账留痕见 [`docs/requirements.md`](../docs/requirements.md) 附录"资产变更留痕" |
 
 ---
 
@@ -110,7 +112,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | 文档路径 | 中文全称 | 核心管理内容与约束 |
 | :--- | :--- | :--- |
 | [`knowledge/README.md`](../knowledge/README.md) | **系统分层知识库总索引与教学图** | 知识库总览、分层架构教学图、前置防冲突阻断卡点与项目隔离导航。 |
-| [`knowledge/common/interaction_specification.md`](../knowledge/common/interaction_specification.md) | **通用交互与体验设计规范** | 格式塔六大定律实操、Don't Make Me Think 零思考设计与防呆机制。 |
+| [`knowledge/common/interaction_specification.md`](../knowledge/common/interaction_specification.md) | **通用交互与体验设计规范** | 格式塔七大定律实操、Don't Make Me Think 零思考设计与防呆机制。 |
 | [`knowledge/common/readability_specification.md`](../knowledge/common/readability_specification.md) | **全端可读性与无障碍排版设计法典** | 跨端（Web/DMG/App/小程序）字号阶梯、绝对最小文字红线、WCAG 2.1 对比度与加粗节制规范。 |
 | [`knowledge/common/unity_specification.md`](../knowledge/common/unity_specification.md) | **通用 Unity 客户端工程规范** | 页面做成 Scene、弹窗做成 Prefab、按钮必配 Drop Shadow 阴影与微动效。 |
 | [`knowledge/common/web_specification.md`](../knowledge/common/web_specification.md) | **通用 Web 前端工程规范** | 路由懒加载、Modal Portal 根挂载防层叠污染、box-shadow 与骨架屏。 |

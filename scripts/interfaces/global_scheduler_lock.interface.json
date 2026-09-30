@@ -1,0 +1,34 @@
+{
+  "id": "cli.rules.global_scheduler_lock",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/global_scheduler_lock.sh",
+  "invoke": "bash scripts/global_scheduler_lock.sh",
+  "summary": "DSH 全自动轻量级全局调度锁中枢与并发资源防冲突引擎",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "header 注释里未声明入参，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/global_scheduler_lock.sh"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

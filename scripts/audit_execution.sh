@@ -154,6 +154,20 @@ fi
 COMPACT_PASS=0
 COMPACT_LINE="未采集到回复度量报告"
 COMPACT_JSON="null"
+
+# ── 维度 8 前置：度量报告「离插件化」(REQ-089 R1-c，2026-10-01) ─────────────
+# 为什么要有这一步：本维的度量报告原先**只有拦截层插件会写**，而拦截层至今未注册进宿主
+# （install_host_gate.sh verify 报「条目存在 ⛔ 缺失」）→ 报告目录从未生成 →
+# 本维**结构性恒扣 8 分**，与输出质量无关，是一条永远不可能通过的判定。
+# 现改由 scripts/output_audit.mjs 从**宿主会话转录**取「最近一轮已完结的助手正文」，
+# 用与插件完全同一套度量实现算分。取不到证据时该脚本退 2，本维照旧扣分——
+# **绝不用"检测失效"充当通过**，只是把"没通电"换成"真读转录"。
+COMPACT_SID="$(printf '%s' "${DSH_SESSION_ID:-global_session}" | tr -c 'a-zA-Z0-9_-' '_')"
+COMPACT_FILE="${DSH_HOME:-$HOME/.dsh}/.dsh-control/compact/${COMPACT_SID}.json"
+if [ -n "$NODE_BIN" ] && [ ! -f "$COMPACT_FILE" ]; then
+  "$NODE_BIN" "$SCRIPT_DIR/output_audit.mjs" --refresh >/dev/null 2>&1 || true
+fi
+
 if [ -n "$NODE_BIN" ]; then
   COMPACT_OUT="$("$NODE_BIN" -e '
 const { readFileSync, existsSync } = require("node:fs")

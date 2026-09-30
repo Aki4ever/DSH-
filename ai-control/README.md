@@ -61,6 +61,9 @@ ai-control/
 | `scripts/lib/session_transcript.mjs` | **宿主会话转录读取**（REQ-087 R1-a）：多帧 zstd 逐帧解压，取宿主权威的 `todo/write` 记录 | 待办证据不再依赖拦截层插件是否加载 |
 | `scripts/flow_control.mjs` | **流程管控层判定器**（REQ-087 R3）：拓扑分层出效率最优排列 + 五条不变式 + 与规则层同步校验 | 退出码 0；`--diff` 出顺序变更提案，`--apply-order` 重新批准 |
 | `scripts/process_supervisor.mjs` | **流程监督员（判定器形态）**：独立重跑全部客观判定，不采信执行者自述 | 硬项全绿才允许结项，否则整单驳回 |
+| `scripts/output_audit.mjs` | **输出体量与结构判定**（REQ-089 R1-c）：从**宿主会话转录**取最近一轮已完结的助手正文，度量字数/行数与文末五联装齐备性 | 退出码 0 通过 / 1 不达标 / 2 取不到证据（**2 绝不算通过**）；报告落 `~/.dsh/.dsh-control/compact/<sid>.json`，审计第 8 维据此判分 |
+| `scripts/check_layer_interfaces.mjs` | **执行层接口契约判定**（REQ-089 R4）：按 `<unit>/interface.json` 与 `scripts/interfaces/*.interface.json` 逐条对拍机读索引，**把接口覆盖率与名字覆盖率分开报** | CLI 层声明覆盖率须 100%；契约违规 = 0；`已声明 ≠ 已人工核对` 必须分列 |
+| `scripts/route_plan.mjs` | **路由层判定器 + 路线规划器**（REQ-089 R5）：意图匹配（复用 `channel_audit` 的匹配库）→ 调配决策（依赖/并行/全局调度锁/物理锁阶位）→ **文档-实现一致性审计** | `--check` exit 0 须同时满足：文档声明数据源真实被读 · 死通道 0 · 可达性覆盖率分开报 · **反向用例**（无意义关键词必须报未命中，禁止回显关键词伪造路线） |
 
 **硬要求**：检测器不可用时一律判"未通过"，**不允许以"检测失效"充当通过**。
 
@@ -90,6 +93,7 @@ node scripts/channel_audit.mjs --self-test       # 通道审计自检（23 项�
 node ai-control/plugin/selftest.mjs              # 拦截层插件自检（33 项）
 ./scripts/physical_lock.sh status                # 查看底层物理锁状态与凭据
 ./scripts/physical_lock.sh sync                  # 自适应同步推进物理锁
+node scripts/output_audit.mjs --check            # 输出体量/结构判定（读宿主转录，不依赖插件）
 node scripts/test_physical_lock.mjs             # 底层物理锁全量自检（19 项）
 ```
 

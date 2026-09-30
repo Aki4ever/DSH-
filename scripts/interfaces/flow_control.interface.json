@@ -1,0 +1,70 @@
+{
+  "id": "cli.rules.flow_control",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/flow_control.mjs",
+  "invoke": "node scripts/flow_control.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--plan",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/flow_control.mjs --plan [--json]"
+    },
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/flow_control.mjs --check [--json]"
+    },
+    {
+      "name": "--diff",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/flow_control.mjs --diff"
+    },
+    {
+      "name": "--graph",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/flow_control.mjs --graph"
+    },
+    {
+      "name": "--apply-order",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/flow_control.mjs --apply-order      # 批准当前规划（写回 order 字段）"
+    },
+    {
+      "name": "--mark",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/flow_control.mjs --mark S11         # 追加一条实际执行轨迹"
+    },
+    {
+      "name": "--selftest",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/flow_control.mjs --selftest"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/flow_control.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

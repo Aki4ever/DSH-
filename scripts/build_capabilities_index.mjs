@@ -101,7 +101,49 @@ function collectAll() {
     // 生成器原先从不扫 scripts/，45 个 CLI 游离于"分子分母"之外，
     // `--check` 恒报"未收录 0"——它度量的是自己定义的集合，不是全部执行层）。
     ...scanScriptLayer(),
-  ]
+  ].map(enrich)
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * REQ-089 R3：把「静态清单」升级为「机读索引 + 可执行跳转」
+ * --------------------------------------------------------------------------
+ * 为什么必须补这几列（实测病根，2026-10-01）：
+ *   升级前 §3.1 只有 4 列（层级/标识/物理路径/简介），且路径写作反引号**不可点击**，
+ *   既没有"怎么调起它"，也没有"它的接口声明在哪"。
+ *   于是 `--check` 只能做 `indexText.includes(id)` 这种**字符串包含判定** ——
+ *   它证明的是"这个名字在文件里出现过"，**证明不了"这条能被调起"**。
+ *   本段补的 `invoke`（调用命令）与 `interface`（接口指针）两列，
+ *   正是后面 R4「接口覆盖率」与 R5「路由可执行跳转」的物理基础。
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+/** 由物理路径推导出"怎么调起它"；能从文件头注释里抽到真实用法时以真实用法为准。 */
+function invokeFor(entry) {
+  const p = entry.path
+  if (entry.layer.includes('Skill')) {
+    return { invoke: `skill ${entry.id.replace(/^skill\.pool\./, '')}`, invokeKind: 'host-tool' }
+  }
+  if (entry.layer.includes('Agent')) return { invoke: 'subagent（宿主工具，按需分派）', invokeKind: 'host-tool' }
+  if (entry.layer.includes('Plugin')) return { invoke: `dsh plugin add ${p}`, invokeKind: 'plugin-install' }
+  if (/\.sh$/.test(p)) return { invoke: `bash ${p}`, invokeKind: 'cli' }
+  if (/\.(mjs|cjs)$/.test(p)) return { invoke: `node ${p}`, invokeKind: 'cli' }
+  if (/\.py$/.test(p)) return { invoke: `python3 ${p}`, invokeKind: 'cli' }
+  return { invoke: '', invokeKind: 'unknown' }
+}
+
+/** 目录型单元：`<unit>/interface.json`；文件型单元：`scripts/interfaces/<basename>.interface.json`。 */
+function interfaceFor(entry) {
+  const p = entry.path
+  const candidates = /\.(sh|mjs|cjs|py)$/.test(p)
+    ? [`scripts/interfaces/${p.split('/').pop().replace(/\.[a-z]+$/, '')}.interface.json`]
+    : [`${p}/interface.json`]
+  for (const c of candidates) if (existsSync(join(ROOT, c))) return c
+  return null
+}
+
+/** 给条目补上机读字段（不改动原有四列，向后兼容）。 */
+function enrich(entry) {
+  const inv = invokeFor(entry)
+  return { ...entry, ...inv, interface: interfaceFor(entry) }
 }
 
 /** 扫描本工程 CLI：`scripts/**` 下的可执行脚本（.sh/.mjs/.cjs/.py），排除 lib 内部实现。 */
@@ -198,10 +240,10 @@ function renderSection(items) {
   lines.push('')
   lines.push('### 3.1 全量执行层速查（含 agent / plugin / cli）')
   lines.push('')
-  lines.push('| 层级 | 能力标识 (Identifier) | 物理路径 | 简介 |')
-  lines.push('| :--- | :--- | :--- | :--- |')
+  lines.push('| 层级 | 能力标识 (Identifier) | 物理路径 | 接口声明 | 调用命令 | 简介 |')
+  lines.push('| :--- | :--- | :--- | :--- | :--- | :--- |')
   for (const it of items) {
-    lines.push(`| ${it.layer} | \`${it.id}\` | \`${it.path}\` | ${it.desc.replace(/\|/g, '\\|') || '—'} |`)
+    lines.push(`| ${it.layer} | \`${it.id}\` | \`${it.path}\` | ${it.interface ? `✅ \`${it.interface}\`` : '⛔ 未声明'} | \`${it.invoke || '—'}\` | ${it.desc.replace(/\|/g, '\\|') || '—'} |`)
   }
   lines.push('')
   if (cat.missingOnDisk.length) {
@@ -231,19 +273,65 @@ function check() {
   const cat = loadCatalog()
   const indexText = existsSync(INDEX_FILE) ? readFileSync(INDEX_FILE, 'utf8') : ''
   const missing = items.filter((it) => !indexText.includes(it.id))
-  console.log('🔎 执行层 → 索引层 覆盖率判定')
+
+  // ── REQ-089 R3-d：把「字符串包含判定」升级为「对拍判定」 ────────────────────
+  // 为什么必须升级：`indexText.includes(id)` 只证明"这个名字在文件里出现过"，
+  // 证明不了"这条能被调起"。实测病根：生成器**曾经从不扫 scripts/**，可它自己
+  // 定义的集合里当然一个都不缺，于是 `--check` 恒报"未收录 0"——自证式绿灯。
+  // 现在改成四项硬对拍，且每项都能判红：
+  //   ① 唯一性：同一 id 不得在索引里出现两次（防重复登记）；
+  //   ② 存在性：条目声明的物理路径必须真的在磁盘上；
+  //   ③ 机读产物：indexes/capabilities_index.json 必须与本次扫盘**条数一致**；
+  //   ④ 接口覆盖：**与名字覆盖分开报**，禁止用"名字 100%"掩盖"接口 0%"。
+  const dupIds = (() => {
+    const seen = new Map()
+    for (const it of items) seen.set(it.id, (seen.get(it.id) || 0) + 1)
+    return [...seen.entries()].filter(([, n]) => n > 1).map(([id]) => id)
+  })()
+  const missingPaths = items.filter((it) => !existsSync(join(ROOT, it.path)))
+  const jsonFile = join(ROOT, 'indexes/capabilities_index.json')
+  let jsonCount = -1
+  let jsonOk = false
+  try {
+    const parsed = JSON.parse(readFileSync(jsonFile, 'utf8'))
+    jsonCount = Array.isArray(parsed.entries) ? parsed.entries.length : -1
+    jsonOk = jsonCount === items.length
+  } catch { jsonOk = false }
+  const withInterface = items.filter((it) => it.interface).length
+
+  console.log('🔎 执行层 → 索引层 覆盖率判定（对拍口径，REQ-089 R3-d）')
   console.log('-----------------------------------------')
   console.log(`执行层条目：${items.length}（技能 ${items.filter((i) => i.layer.includes('Skill')).length} · agent/plugin/cli ${items.filter((i) => !i.layer.includes('Skill')).length}）`)
-  console.log(`已收录：${items.length - missing.length} · 未收录：${missing.length}`)
-  if (missing.length) {
-    console.log('未收录样例：' + missing.slice(0, 6).map((m) => m.id).join('、'))
-  }
+  console.log(`① 名字覆盖：已收录 ${items.length - missing.length} · 未收录 ${missing.length}`)
+  if (missing.length) console.log('   未收录样例：' + missing.slice(0, 6).map((m) => m.id).join('、'))
+  console.log(`② id 唯一性：重复 id ${dupIds.length}${dupIds.length ? ' → ' + dupIds.slice(0, 5).join('、') : ''}`)
+  console.log(`③ 路径存在性：磁盘缺失 ${missingPaths.length}${missingPaths.length ? ' → ' + missingPaths.slice(0, 5).map((m) => m.id).join('、') : ''}`)
+  console.log(`④ 机读产物：indexes/capabilities_index.json ${jsonOk ? `✅ 条数一致（${jsonCount}）` : `⛔ 不一致或缺失（json ${jsonCount} / 扫盘 ${items.length}）`}（跑 --apply 重新生成）`)
+  console.log(`⑤ 接口覆盖（与名字覆盖分开报，禁止互相掩盖）：已声明 ${withInterface} / ${items.length} = ${((withInterface / items.length) * 100).toFixed(1)}%`)
   console.log(`catalog 登记条目：${cat.entries.length}`)
   console.log(`catalog 有但磁盘无（漂移，必须在索引 3.2 显式列出）：${cat.missingOnDisk.length}${cat.missingOnDisk.length ? ' → ' + cat.missingOnDisk.join('、') : ''}`)
   console.log(`受管区间标记：${indexText.includes(BEGIN) && indexText.includes(END) ? '✅ 在位' : '⛔ 缺失（跑 --apply 生成）'}`)
   console.log('-----------------------------------------')
   const driftListed = cat.missingOnDisk.every((n) => indexText.includes(n))
-  return missing.length === 0 && indexText.includes(BEGIN) && driftListed
+  // 接口覆盖**不参与**本判定的通过与否（那是 R4 的独立判定器口径），但必须显式打印，
+  // 防止"名字 100% 绿"被误读为"接口齐备"。
+  return missing.length === 0 && dupIds.length === 0 && missingPaths.length === 0 && jsonOk && indexText.includes(BEGIN) && driftListed
+}
+
+/** 输出机读索引产物（REQ-089 R3-a）：供路由层与接口判定器程序化消费。 */
+function writeJson(items) {
+  const out = {
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    generator: 'scripts/build_capabilities_index.mjs',
+    authority: '磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）',
+    total: items.length,
+    byLayer: items.reduce((acc, it) => { acc[it.layer] = (acc[it.layer] || 0) + 1; return acc }, {}),
+    withInterface: items.filter((it) => it.interface).length,
+    entries: items,
+  }
+  writeFileSync(join(ROOT, 'indexes/capabilities_index.json'), JSON.stringify(out, null, 2) + '\n', 'utf8')
+  return out
 }
 
 function apply() {
@@ -258,7 +346,9 @@ function apply() {
     text = text.trimEnd() + '\n\n---\n\n' + section + '\n'
   }
   writeFileSync(INDEX_FILE, text, 'utf8')
+  const json = writeJson(items)
   console.log(`✅ 已重写索引受管区间：indexes/capabilities_index.md（${items.length} 条执行层）`)
+  console.log(`✅ 已生成机读索引：indexes/capabilities_index.json（${json.total} 条 · 已声明接口 ${json.withInterface} 条）`)
 }
 
 if (process.argv.includes('--apply')) apply()

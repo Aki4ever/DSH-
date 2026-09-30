@@ -1,0 +1,40 @@
+{
+  "id": "cli.rules.align_version",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/align_version.mjs",
+  "invoke": "node scripts/align_version.mjs",
+  "summary": "全库受管文档版本归位（把受管文档头部版本统一改到当前总版本）",
+  "inputs": [
+    {
+      "name": "--dry-run",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/align_version.mjs --dry-run       # 只预览，不写"
+    },
+    {
+      "name": "--to",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/align_version.mjs --to 3.0.0      # 指定目标版本"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/align_version.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

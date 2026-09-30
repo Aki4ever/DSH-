@@ -1,0 +1,22 @@
+{
+  "name": "dsh-plugin-image-zoom",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DSH 客户端插件：给 GUI 的原图灯箱注入多级缩放控件条（− / + / 1:1 / 百分比显示）。纯 DOM 增强（MutationObserver + ARIA 锚点），不依赖 React、不改宿主样式、不 require 任何模块。",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "inject": []
+    }
+  },
+  "files": ["lib", "src", "cordis.patch.yml", "package.json", "README.md"]
+}

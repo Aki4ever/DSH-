@@ -1,0 +1,40 @@
+{
+  "id": "cli.rules.session_naming_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/session_naming_audit.mjs",
+  "invoke": "node scripts/session_naming_audit.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--json",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/session_naming_audit.mjs --json          # 输出 JSON 供程序消费"
+    },
+    {
+      "name": "--limit",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/session_naming_audit.mjs --limit 10      # 只处理前 N 条"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/session_naming_audit.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

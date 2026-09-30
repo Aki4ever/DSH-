@@ -1,0 +1,34 @@
+{
+  "id": "cli.rules.fingerprint_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/fingerprint_audit.sh",
+  "invoke": "bash scripts/fingerprint_audit.sh",
+  "summary": "DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "header 注释里未声明入参，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/fingerprint_audit.sh"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

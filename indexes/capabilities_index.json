@@ -1,0 +1,2140 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-30T22:32:58.403Z",
+  "generator": "scripts/build_capabilities_index.mjs",
+  "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
+  "total": 236,
+  "byLayer": {
+    "技能 (Skill)": 178,
+    "智能体 (Agent)": 1,
+    "插件 (Plugin)": 3,
+    "脚本 (CLI)": 54
+  },
+  "withInterface": 58,
+  "entries": [
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.acquire-atomic-lock",
+      "path": "skills/acquire-atomic-lock",
+      "desc": "工序动作级技能(L2)：基于 mkdir(2) 原子目录的物理锁获取与释放器。锁键经 realpath 归一为绝对路径，持有者记录 pid+start_ticks 防 PID 复用误判，支持 lease/live 两种锁模式与按模式分档的陈",
+      "invoke": "skill acquire-atomic-lock",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.anti-pattern-guard",
+      "path": "skills/anti-pattern-guard",
+      "desc": "复合流程级技能(L3)：反例门禁。把「清单 → 检测 → 断言」串成一道\"绝不允许发生\"的放行门禁，挂载于管家「③ 冲突·冗余·质量」集群，命中反例一律阻断，禁止记录后继续。",
+      "invoke": "skill anti-pattern-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.anti-pattern-policy",
+      "path": "skills/anti-pattern-policy",
+      "desc": "微观原子规约：反例层判定基元。定义系统「绝不允许发生」的七条反例（AP-01 死循环 ~ AP-07 播报风暴）及其物理判据、默认阈值与判定优先级，写不出物理判据的口号一律不得进入本层。",
+      "invoke": "skill anti-pattern-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.arbitrate-priority-resolver",
+      "path": "skills/arbitrate-priority-resolver",
+      "desc": "微观原子规约：优先级仲裁基元。在多条规则发生逻辑冲突时，强制遵循固定优先级决断法则。",
+      "invoke": "skill arbitrate-priority-resolver",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.assert-zero-exitcode",
+      "path": "skills/assert-zero-exitcode",
+      "desc": "工序动作级技能：执行命令并硬断言退出码必须为 0，杜绝忽略报错与失败静默。",
+      "invoke": "skill assert-zero-exitcode",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.atomic-fastpath-router",
+      "path": "skills/atomic-fastpath-router",
+      "desc": "复合流程级技能(L3)：原子级快捷路由总控。当索引命中目标技能后，提供直达原子动作的Shell执行命令与依赖指引，实现毫秒级触达。",
+      "invoke": "skill atomic-fastpath-router",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.atomic-fission-guard",
+      "path": "skills/atomic-fission-guard",
+      "desc": "复合流程级技能(L3)：粒度递归分裂门禁。任何管控步骤若不能绑定四类物理探针之一，一律阻断实施并强制向下分裂。",
+      "invoke": "skill atomic-fission-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.atomic-lock-guard",
+      "path": "skills/atomic-lock-guard",
+      "desc": "复合流程级技能(L3)：并发处理原子锁放行门禁。把「口径 → 真获取 → 真并发压测 → 断言」串成一道不可跳步的互斥门禁，挂载于管家「③ 冲突·冗余·质量」集群；放行的唯一合法证据是「持锁段重叠窗口 0 + 无锁对照段看得见并发 + 陈旧",
+      "invoke": "skill atomic-lock-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.atomic-lock-policy",
+      "path": "skills/atomic-lock-policy",
+      "desc": "微观原子规约：并发共享资源的物理原子锁判定基元。钉死七条硬口径——锁载体必须是 mkdir 原子目录或 flock -n 排他文件锁、锁键=归一化绝对资源路径、加锁顺序=字典序、持有者=PID+进程起始时间戳、超时默认 300 秒且超时即失",
+      "invoke": "skill atomic-lock-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.audit-all-skills-compliance",
+      "path": "skills/audit-all-skills-compliance",
+      "desc": "工序动作级技能：遍历全量存量与增量技能，物理审查其头部场景索引、主体SOP与配套脚本合规性，返回退出码 0/1。",
+      "invoke": "skill audit-all-skills-compliance",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.audit-imported-skill",
+      "path": "skills/audit-imported-skill",
+      "desc": "工序动作级技能：对外部引入候选执行许可白名单、来源 URL、脚本可执行面、描述完整性与命名规范体检，逐项 pass/fail 给出理由并返回接受/拒绝裁决。",
+      "invoke": "skill audit-imported-skill",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.audit-layer-naming",
+      "path": "skills/audit-layer-naming",
+      "desc": "工序动作级技能(L2)：全量执行层命名体检器。按四要素（归属 / 分类 / 做什么 / 命名）与四种命名形态逐条扫描 catalog、磁盘目录、契约头与执行层登记表，输出带违规码、对象与 file:line 的违规清单；判据实现以 nami",
+      "invoke": "skill audit-layer-naming",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.build-execution-tree",
+      "path": "skills/build-execution-tree",
+      "desc": "工序动作级技能：合并 skill-catalog.json 与执行层登记表，生成 execution-tree.json/md 唯一真相源，并把受管集群区块注入 dsh-butler 契约。",
+      "invoke": "skill build-execution-tree",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.build-image-viewer",
+      "path": "skills/build-image-viewer",
+      "desc": "工序动作级技能：把任意图片以 base64 内联进零依赖单文件 HTML，产出可点击放大、可滚轮缩放、可拖拽平移、可一键复位的交互查看器。",
+      "invoke": "skill build-image-viewer",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.build-inverted-index",
+      "path": "skills/build-inverted-index",
+      "desc": "工序动作级技能：由 skill-catalog.json 生成倒排索引 skill-index.json（term→文档→字段→词频），并把分词器作为可复用库对外暴露。",
+      "invoke": "skill build-inverted-index",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.build-layer-graph",
+      "path": "skills/build-layer-graph",
+      "desc": "工序动作级技能：由 skill-catalog.json 与执行层登记表生成层间依赖图 layer-graph.json（节点 / 边 / 层级计数），幂等可重跑。",
+      "invoke": "skill build-layer-graph",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.build-quantifier-table",
+      "path": "skills/build-quantifier-table",
+      "desc": "工序动作级技能(L2)：生成并维护场景量化映射表 docs/operations/quantifier-table.json。内置种子映射不少于 20 条，覆盖高/大/快/多/好/严重/频繁等词且每词至少 3 个场景；每条必须含 term/",
+      "invoke": "skill build-quantifier-table",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.capability-naming-policy",
+      "path": "skills/capability-naming-policy",
+      "desc": "微观原子规约：能力层命名判定基元。钉死「归属 / 分类 / 做什么 / 命名」四要素与四种已登记命名形态（动作 / 编排 / 规约 / 厂商边界），规定语法约束、禁词、同义归一、唯一性与改名的六处同步契约；词表与形态的唯一真相源是 docs",
+      "invoke": "skill capability-naming-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.catalog-consistency-guard",
+      "path": "skills/catalog-consistency-guard",
+      "desc": "复合流程级技能(L3)：口径一致性门禁。串联受管区块生成与三方对拍，是技能池任何写入动作的前置门禁。",
+      "invoke": "skill catalog-consistency-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.check-deepseek-usage",
+      "path": "skills/check-deepseek-usage",
+      "desc": "工序动作级技能(L2)：DeepSeek 用量探针。以北京时间本地判定高峰/空闲时段并算出下次切换倒计时，真实调用官方余额接口取额度，并对官方定价页做 sha256 指纹巡检（每日一次语义）；铁律是「取不到就如实报错，绝不编造余额/时段/指",
+      "invoke": "skill check-deepseek-usage",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.check-python-syntax",
+      "path": "skills/check-python-syntax",
+      "desc": "工序动作级技能：对指定的 Python 源码文件执行静态编译语法验证，防止引入 SyntaxError。",
+      "invoke": "skill check-python-syntax",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.check-script-executable",
+      "path": "skills/check-script-executable",
+      "desc": "工序动作级技能：物理检测指定技能目录中的配套脚本是否存在且具备可执行权限 (chmod +x)。",
+      "invoke": "skill check-script-executable",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.chinese-end-to-end",
+      "path": "skills/chinese-end-to-end",
+      "desc": "微观原子规约：全流程中文输出。回复正文、进度播报、报错信息、解释说明与脚本注释一律中文；技术标识符与英文缩写保留原文但首现必须紧跟中文释义与中文全称。",
+      "invoke": "skill chinese-end-to-end",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.chinese-output-guard",
+      "path": "skills/chinese-output-guard",
+      "desc": "复合流程级技能(L3)：全流程中文输出交付前门禁。把「规约 → 剥离 → 断言」串成一道门禁，挂载于管家「④ 输出规约」，代码块与命令原文豁免，白名单外拉丁词零容忍。",
+      "invoke": "skill chinese-output-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.classify-change-scope",
+      "path": "skills/classify-change-scope",
+      "desc": "工序动作级技能(L2)：把一组变更路径逐条判定为 hot_reload / incremental / restart，输出理由与命中的不可热更边界，并给出 no_restart_needed / restart_required 总判定。",
+      "invoke": "skill classify-change-scope",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.classify-decision-reversibility",
+      "path": "skills/classify-decision-reversibility",
+      "desc": "工序动作级技能(L2)：对每个不确定项确定性判定可逆性与红线归属，输出 decide_now / ask_once、建议默认值与回滚方式。",
+      "invoke": "skill classify-decision-reversibility",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.classify-instance-safety",
+      "path": "skills/classify-instance-safety",
+      "desc": "工序动作级技能：真实扫描执行层脚本，判定 safe_multi / needs_lock / single_only 三档，提取资源键与信号，并可写出实例安全声明表。",
+      "invoke": "skill classify-instance-safety",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.classify-step-tier",
+      "path": "skills/classify-step-tier",
+      "desc": "工序动作级技能(L2)：把一条过程事件确定性判定为 milestone / micro / action 三档之一，并输出 category 归类，作为折叠的前置判据。",
+      "invoke": "skill classify-step-tier",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.collect-process-evidence",
+      "path": "skills/collect-process-evidence",
+      "desc": "工序动作级技能(L2)：流程合规取证器。按 process-spec.json 逐步从证据目录与仓库实况取证，产出证据包；铁律是「没有证据不等于走了这一步」——取不到证据一律记 fail + unverifiable，na 只在该步明确不适",
+      "invoke": "skill collect-process-evidence",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.concise-chinese-bold-guard",
+      "path": "skills/concise-chinese-bold-guard",
+      "desc": "复合流程级技能(L3)：基于 4 个微观 L1 原子规约叠加而成。强制要求输出文本不超过 10 个字、纯中文、全黑体、零闲聊。",
+      "invoke": "skill concise-chinese-bold-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.concise-focused-output",
+      "path": "skills/concise-focused-output",
+      "desc": "微观原子规约：默认简短聚焦输出。在无特定篇幅扩充要求下，压缩篇幅、开门见山、直击要害，杜绝冗长铺垫。",
+      "invoke": "skill concise-focused-output",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.concretization-guard",
+      "path": "skills/concretization-guard",
+      "desc": "复合流程级技能(L3)：含糊词具像化交付门禁。把「规约 → 具像化建议 → 断言」串成一道不可跳步的放行门禁，挂载于管家「④ 输出规约」集群；与 quantification-guard 分工为「程度词补数值 / 含糊词补实体与判据」；we",
+      "invoke": "skill concretization-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.concretize-ambiguity-policy",
+      "path": "skills/concretize-ambiguity-policy",
+      "desc": "微观原子规约：含糊词具像化判定基元。定义范围含糊、指代含糊、时序含糊三类含糊词与 hedge 缓解词四类判据及其具像化方式（确切数量 + 计数依据 / 具体实体清单 / 触发条件 + 时限 / 可核对判据），并立下「禁止用另一个含糊词替换含",
+      "invoke": "skill concretize-ambiguity-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.concretize-term",
+      "path": "skills/concretize-term",
+      "desc": "工序动作级技能(L2)：含糊词具像化建议器。从唯一真相源加载含糊词并集 AMBIGUITY_WORDS 与分类函数 classify_word，对每个命中词按 range/reference/timing/hedge 四类产出具像化建议模板",
+      "invoke": "skill concretize-term",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.conditional-deliverable-router",
+      "path": "skills/conditional-deliverable-router",
+      "desc": "微观原子规约：输出框架条件分支裁决。有物理产物时展示输出物与地址；无产物时强制抹除输出地址，转为输出核心结论。",
+      "invoke": "skill conditional-deliverable-router",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.conflict-detector",
+      "path": "skills/conflict-detector",
+      "desc": "复合流程级技能(L3)：规则冲突检测与仲裁自愈。检测多技能或多指令间的排他矛盾，给出确定性裁决方案，保障管控稳固有效。",
+      "invoke": "skill conflict-detector",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.declare-lock-set",
+      "path": "skills/declare-lock-set",
+      "desc": "工序动作级技能(L2)：为并行任务归一化并排序锁集合（去重 + 字典序），并检测「没有锁却要写」与「锁键非归一化路径」两类静态错误，输出每任务的 locks 与 acquire_order。",
+      "invoke": "skill declare-lock-set",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.decoupling-guard",
+      "path": "skills/decoupling-guard",
+      "desc": "复合流程级技能(L3)：执行层解耦门禁。任何执行层变更后强制建图、检测并断言五类违规为零，契约外耦合一律阻断。",
+      "invoke": "skill decoupling-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.detect-action-verb",
+      "path": "skills/detect-action-verb",
+      "desc": "工序动作级技能：单点物理识别并提取语句中的指令动作动词（如创建/生成/校验/修改）。",
+      "invoke": "skill detect-action-verb",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.detect-forbidden-state",
+      "path": "skills/detect-forbidden-state",
+      "desc": "工序动作级技能：把事件流（JSONL 或 stdin）逐条判定七条反例，每条反例都有独立可命中的检测分支，命中即给出反例编号、事件 seq 列表与人类可读证据，并按正确性 > 进展 > 可观测 > 成本上报。",
+      "invoke": "skill detect-forbidden-state",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.detect-layer-coupling",
+      "path": "skills/detect-layer-coupling",
+      "desc": "工序动作级技能：按 layer-decoupling-policy 的五类判据真实扫描契约与脚本源码，输出逆向依赖、依赖环、跨层跳跃、隐式耦合与共享可变状态违规。",
+      "invoke": "skill detect-layer-coupling",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.detect-lock-conflict",
+      "path": "skills/detect-lock-conflict",
+      "desc": "工序动作级技能(L2)：对并行任务检测锁冲突（锁集合交集非空）、潜在死锁（等待图成环）与超时未释放（跨度超 timeout_s 或逻辑已超时），并给出必须串行的任务对与可安全并行的分组建议。",
+      "invoke": "skill detect-lock-conflict",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.detect-rule-conflicts",
+      "path": "skills/detect-rule-conflicts",
+      "desc": "工序动作级技能：检测规则集中的排他性冲突（如语种互斥、长度上下限倒挂、格式互斥）。",
+      "invoke": "skill detect-rule-conflicts",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.detect-target-entity",
+      "path": "skills/detect-target-entity",
+      "desc": "工序动作级技能：单点物理提取语句中的核心操作实体（如JSON/文档/代码/文件）。",
+      "invoke": "skill detect-target-entity",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.detect-vague-modifier",
+      "path": "skills/detect-vague-modifier",
+      "desc": "工序动作级技能(L2)：扫描文本中的程度类与含糊类词语，输出命中词、类别（degree/ambiguity 与五类细分）、位置、是否已有场景量化映射。本技能内置词表是全仓模糊词表的唯一真相源，DEGREE_WORDS / AMBIGUITY",
+      "invoke": "skill detect-vague-modifier",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.disambiguate-candidates",
+      "path": "skills/disambiguate-candidates",
+      "desc": "工序动作级技能：消除候选技能间的调用歧义，根据权重与上下文确定单一首选或互补协同组合。",
+      "invoke": "skill disambiguate-candidates",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.dispatch-skill-search",
+      "path": "skills/dispatch-skill-search",
+      "desc": "工序动作级技能(L2)：四源检索调度器。按「本地优先」硬规则先扫本地技能池 catalog 与已装 DSH 插件，命中即短路且不向任何外部源发起检索并留痕 skipped_sources；未命中才在显式 --allow-network 下外",
+      "invoke": "skill dispatch-skill-search",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.dsh-butler",
+      "path": "skills/dsh-butler",
+      "desc": "DSH 全局主控管家(L4 中枢编排级)，统筹调度 L1~L3 全量执行层，支持自底向上按需拼装能力积木与动态造物。",
+      "invoke": "skill dsh-butler",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.dual-lane-router",
+      "path": "skills/dual-lane-router",
+      "desc": "复合流程级技能(L3)：完整流程与快速流程双轨总控。先判红线，再算加权分，判定可复算后方可进入执行。",
+      "invoke": "skill dual-lane-router",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.emit-search-snippet",
+      "path": "skills/emit-search-snippet",
+      "desc": "工序动作级技能：为单条检索结果生成 ≤120 字的确定性摘要片段，并对命中词做居中截断。",
+      "invoke": "skill emit-search-snippet",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.enforce-atomic-granularity",
+      "path": "skills/enforce-atomic-granularity",
+      "desc": "微观原子规约：强制每个 SOP 步骤声明其绑定的物理探针类型，未声明或声明为非探针表述的步骤一律判定为粒度过粗，必须递归分裂。",
+      "invoke": "skill enforce-atomic-granularity",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.enforce-contract-completeness",
+      "path": "skills/enforce-contract-completeness",
+      "desc": "微观原子规约：技能契约完整性强制要求。所有存量与增量技能必须同时具备Frontmatter元数据、头部场景索引与主体运作SOP。",
+      "invoke": "skill enforce-contract-completeness",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.ensure-utf8-encoding",
+      "path": "skills/ensure-utf8-encoding",
+      "desc": "工序动作级技能：物理检测并断言指定文件是否为合法 UTF-8 编码且无不可读乱码。",
+      "invoke": "skill ensure-utf8-encoding",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.execution-tree-guard",
+      "path": "skills/execution-tree-guard",
+      "desc": "复合流程级技能(L3)：执行层树门禁。任何执行层变更后强制重建并断言树与索引一致，手写集群表一律阻断。",
+      "invoke": "skill execution-tree-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.extract-catalog-topology",
+      "path": "skills/extract-catalog-topology",
+      "desc": "工序动作级技能：物理读取全局 Catalog JSON 数据，提取全量技能节点与其加法依赖拓扑边。",
+      "invoke": "skill extract-catalog-topology",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.extract-core-objective",
+      "path": "skills/extract-core-objective",
+      "desc": "工序动作级技能：提取自然语言语句中的核心动宾主干与关键实体目标，输出标准化结构。",
+      "invoke": "skill extract-core-objective",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.extract-json-payload",
+      "path": "skills/extract-json-payload",
+      "desc": "工序动作级技能：从任意夹杂自然语言的文本中，精准提取并解析出闭合合法的 JSON 负载。",
+      "invoke": "skill extract-json-payload",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.fastlane-redline-policy",
+      "path": "skills/fastlane-redline-policy",
+      "desc": "微观原子规约：定义强制进入完整流程的不可逆红线清单，并规定红线优先于任何加权分值。",
+      "invoke": "skill fastlane-redline-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.fastpath-dispatch-guide",
+      "path": "skills/fastpath-dispatch-guide",
+      "desc": "微观原子规约：规范快捷路由的指引结构，必须包含目标技能ID、级别、直调执行命令与底层原子依赖。",
+      "invoke": "skill fastpath-dispatch-guide",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.filter-conversational-noise",
+      "path": "skills/filter-conversational-noise",
+      "desc": "微观原子规约：过滤用户表达或大模型交流中的语气词、叹词、客套、口癖等纯噪音内容。",
+      "invoke": "skill filter-conversational-noise",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.fold-repeated-events",
+      "path": "skills/fold-repeated-events",
+      "desc": "工序动作级技能(L2)：把逐条过程事件折叠成里程碑逐条保留、动作按类别计数、微操作汇总为 ×N 的紧凑过程输出。",
+      "invoke": "skill fold-repeated-events",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.format-iconized-tail",
+      "path": "skills/format-iconized-tail",
+      "desc": "微观原子规约：强制在最终回复的末尾集中使用特异化图标输出四要素框架，严禁在正文过早打断或散落分布。",
+      "invoke": "skill format-iconized-tail",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.format-status-block",
+      "path": "skills/format-status-block",
+      "desc": "微观原子规约：规范输出框架中的“当前状态”板块，必须使用确切状态标记与一句话结论。",
+      "invoke": "skill format-status-block",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.format-visual-inspection",
+      "path": "skills/format-visual-inspection",
+      "desc": "微观原子规约：强制可视化透视输出必须包含标准 Mermaid 图表或 GenUI 卡片，严禁仅输出大段无图纯文本。",
+      "invoke": "skill format-visual-inspection",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.format-zoomable-visual",
+      "path": "skills/format-zoomable-visual",
+      "desc": "微观原子规约：一切可视化产物（图片、图谱、拓扑图、示意图）必须提供「点击放大 + 多级缩放按钮 + 复位 + 下载」四件套交互，严禁只输出静态图；缩放必须走离散档位表（口径见 zoom-level-policy），下载必须三段降级可选存储地",
+      "invoke": "skill format-zoomable-visual",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.full-spectrum-skill-auditor",
+      "path": "skills/full-spectrum-skill-auditor",
+      "desc": "复合流程级技能(L3)：全量技能合规自检门禁。在每次更新时穿透审计全量存量与增量技能的Frontmatter元数据、头部场景索引与主体SOP，确保零契约缺失。",
+      "invoke": "skill full-spectrum-skill-auditor",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.generate-fastpath-route",
+      "path": "skills/generate-fastpath-route",
+      "desc": "工序动作级技能：接收 Skill ID，秒级提取并返回其直达运行命令、级别属性与原子依赖链。",
+      "invoke": "skill generate-fastpath-route",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.google-style-skill-search-router",
+      "path": "skills/google-style-skill-search-router",
+      "desc": "复合流程级技能(L3)：Google 式技能检索总控。进程内组装查询解析、BM25 排序、片段生成与质量日志，只回灌片段不回灌全文。",
+      "invoke": "skill google-style-skill-search-router",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.high-relevance-notes-only",
+      "path": "skills/high-relevance-notes-only",
+      "desc": "微观原子规约：规范输出框架中的“重要说明”，强制与本次输出物高强绑定，剔除泛泛空话与日常客套。",
+      "invoke": "skill high-relevance-notes-only",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.iconized-output-showcase",
+      "path": "skills/iconized-output-showcase",
+      "desc": "复合流程级技能(L3)：尾部集中特异化图标展示总控。将交付输出全部收敛至最终末尾，通过特异化Emoji形成结构化视觉锚点，并通过正则断言保障物理合规。",
+      "invoke": "skill iconized-output-showcase",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.index-body-contract",
+      "path": "skills/index-body-contract",
+      "desc": "复合流程级技能(L3)：索引主体运作契约。细化解耦为SOP流程规范、Mermaid流程图语法物理校验、底层脚本可执行权限物理检测与执行契约完整性验证。",
+      "invoke": "skill index-body-contract",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.index-header-contract",
+      "path": "skills/index-header-contract",
+      "desc": "复合流程级技能(L3)：索引头部契约规约。规范 Skill 的元数据与触发场景，使索引系统能够快速、精准识别适用时机。",
+      "invoke": "skill index-header-contract",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.install-client-plugin",
+      "path": "skills/install-client-plugin",
+      "desc": "工序动作级技能(L2)：DSH client 插件幂等装配器。把本仓 plugins/ 下的自建 client 插件构建后复制进指定 profile 的 node_modules，登记 file: 依赖并追加进 dsh.profile.bu",
+      "invoke": "skill install-client-plugin",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.instance-pool-guard",
+      "path": "skills/instance-pool-guard",
+      "desc": "复合流程级技能(L3)：实例准入门禁。多实例不是默认允许，必须先分档、再断言，只有 safe_multi 可无锁并发。",
+      "invoke": "skill instance-pool-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.instance-pool-policy",
+      "path": "skills/instance-pool-policy",
+      "desc": "微观原子规约：执行层实例可多开，但必须无状态或状态外置到资源键；独占资源必须声明，禁止实例间共享可变全局。",
+      "invoke": "skill instance-pool-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.intent-detector",
+      "path": "skills/intent-detector",
+      "desc": "复合流程级技能(L3)：意图识别与噪声过滤。解耦组装了噪音剥离、空白规约、动词判定、实体提取与核心目标提取五项原子能力。",
+      "invoke": "skill intent-detector",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.interactive-image-viewer",
+      "path": "skills/interactive-image-viewer",
+      "desc": "复合流程级技能(L3)：可缩放可视化总控。把规约、单文件生成器与静态验证探针串成「生成 → 自检 → 交付」端到端流程，确保交付的每一张图片或图谱都真正可点击放大、可缩放复位。",
+      "invoke": "skill interactive-image-viewer",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.layer-decoupling-policy",
+      "path": "skills/layer-decoupling-policy",
+      "desc": "微观原子规约：执行层解耦判定基元。规定执行层之间只通过契约（catalog 的 composition 边 + 已声明产物路径）通信，依赖方向只允许 L4→L3→L2→L1 与同层，禁止环与跨层直引内部实现，并给出逆向依赖、依赖环、跨层跳跃",
+      "invoke": "skill layer-decoupling-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.layer-naming-guard",
+      "path": "skills/layer-naming-guard",
+      "desc": "复合流程级技能(L3)：执行层命名规范门禁。把「体检 → 整改 → 断言 → 渲染」串成一道不可跳步的放行门禁，挂载于管家「② 契约与合规」集群；放行的唯一合法证据是「合规率 1.0000 + 旧名悬空引用 0 + 文档与真相源零漂移」三项",
+      "invoke": "skill layer-naming-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.lazy-load-policy",
+      "path": "skills/lazy-load-policy",
+      "desc": "微观原子规约：未命中的技能一律不加载；禁止通配读取技能正文，单任务加载技能数不得超过 top-K。",
+      "invoke": "skill lazy-load-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.limit-words-under-10",
+      "path": "skills/limit-words-under-10",
+      "desc": "微观原子规约：强制输出严格不超过 10 个字符（含标点符号），杜绝字数膨胀与冗余展开。",
+      "invoke": "skill limit-words-under-10",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.load-skill-contract",
+      "path": "skills/load-skill-contract",
+      "desc": "工序动作级技能：按精确技能 id 加载单个 SKILL.md 正文，拒绝通配与目录递归，并返回字节数与 token 估算。",
+      "invoke": "skill load-skill-contract",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.log-query-events",
+      "path": "skills/log-query-events",
+      "desc": "工序动作级技能：把 query → top-K → 实际选用 追加写入 skill-query-log.jsonl，作为质量信号用于后续触发词修订。",
+      "invoke": "skill log-query-events",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.markdown-bold-only",
+      "path": "skills/markdown-bold-only",
+      "desc": "微观原子规约：强制所有正文文本必须包裹在 Markdown 加粗语法（**内容**）中。",
+      "invoke": "skill markdown-bold-only",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.match-intent-keywords",
+      "path": "skills/match-intent-keywords",
+      "desc": "工序动作级技能：在全局 Skill Catalog 中执行倒排关键词与触发标签匹配，快速筛选初筛候选技能。",
+      "invoke": "skill match-intent-keywords",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.measure-routing-metrics",
+      "path": "skills/measure-routing-metrics",
+      "desc": "工序动作级技能：物理测算索引匹配与路由检索的命中技能及执行耗时（毫秒级 ms），提供量化优化指标。",
+      "invoke": "skill measure-routing-metrics",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.measure-token-budget",
+      "path": "skills/measure-token-budget",
+      "desc": "工序动作级技能：用唯一确定性公式物理测算文本与文件的 token 占用，并按技能契约 / README / Catalog / docs / 其他五个分区汇总，为裁剪与门禁提供可复算基线。",
+      "invoke": "skill measure-token-budget",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.merge-search-candidates",
+      "path": "skills/merge-search-candidates",
+      "desc": "工序动作级技能(L2)：多源候选去重归一器。把四类源的候选合并成同一六字段契约，按「URL 归一 → 名称归一」两级去重，按 stars→name→url 全序排序；剔除字段缺失的候选并计入 skipped_incomplete，合并后为空",
+      "invoke": "skill merge-search-candidates",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.milestone-only-progress",
+      "path": "skills/milestone-only-progress",
+      "desc": "微观原子规约：过程输出只报阶段目标（如从惠州去北京只报「到达长沙」「到达武汉」），严禁输出「上车」「下车」这类高度重复的微操作；同类微操作一律折叠为 ×N。",
+      "invoke": "skill milestone-only-progress",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.milestone-progress-reporter",
+      "path": "skills/milestone-progress-reporter",
+      "desc": "复合流程级技能(L3)：过程输出里程碑化总控。把「分档 → 折叠 → 预算断言」串成一条流水线，挂载于管家「④ 输出规约」集群，保证里程碑只增不删、微操作只折叠不静默丢弃。",
+      "invoke": "skill milestone-progress-reporter",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.multi-source-search-policy",
+      "path": "skills/multi-source-search-policy",
+      "desc": "微观原子规约：执行层检索源判定基元。钉死四类源（本地 / GitHub / 官网 / awesome 清单）与「本地优先」硬规则、统一候选六字段契约、中英同义桥、以及「检索失败绝不等同于没找到」的诚实口径；规定官网源必须走站点自声明 sit",
+      "invoke": "skill multi-source-search-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.no-conversational-filler",
+      "path": "skills/no-conversational-filler",
+      "desc": "微观原子规约：严禁任何开场白、问候客套、总结废话或承接虚词，直接输出核心内容。",
+      "invoke": "skill no-conversational-filler",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.normalize-skill-contract",
+      "path": "skills/normalize-skill-contract",
+      "desc": "工序动作级技能：把外部引入技能改造为本池统一契约，在 skills/<name>/ 下幂等生成含 YAML Frontmatter、场景索引、Mermaid SOP 与探针步骤的 SKILL.md 与 README.md。",
+      "invoke": "skill normalize-skill-contract",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.on-demand-dispatcher",
+      "path": "skills/on-demand-dispatcher",
+      "desc": "复合流程级技能(L3)：按需调用总控。先选技、再逐个加载、最后做预算断言，清单之外的技能一个都不读。",
+      "invoke": "skill on-demand-dispatcher",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.one-shot-guard",
+      "path": "skills/one-shot-guard",
+      "desc": "复合流程级技能(L3)：一次性解决门禁。把「判定 → 决断 → 留痕 → 反问检测」串成一道派单前/交付前门禁，挂载于管家「③ 冲突·冗余·质量」集群。",
+      "invoke": "skill one-shot-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.one-shot-resolution-policy",
+      "path": "skills/one-shot-resolution-policy",
+      "desc": "微观原子规约：默认不提问，不确定项选自决可回滚默认值并强制假设留痕，仅「红线 + 不可逆」允许每任务一次批量提问。",
+      "invoke": "skill one-shot-resolution-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.output-chinese-only",
+      "path": "skills/output-chinese-only",
+      "desc": "微观原子规约：强制输出纯正中文，严禁非必要的英文单词、拼音或中英混杂，消灭跨语种表达的随机性。",
+      "invoke": "skill output-chinese-only",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.parallel-lock-guard",
+      "path": "skills/parallel-lock-guard",
+      "desc": "复合流程级技能(L3)：并行任务调控锁派单前门禁。把「声明 → 冲突/死锁检测 → 断言」串成一道不可跳步的放行门禁，挂载于管家「③ 冲突·冗余·质量」集群；并行的前置条件是先证明可并行（parallel_groups 非空且冲突为零），死",
+      "invoke": "skill parallel-lock-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.parallel-lock-policy",
+      "path": "skills/parallel-lock-policy",
+      "desc": "微观原子规约：并行任务调控锁的判定基元。钉死四条硬口径——锁粒度=共享资源键、加锁顺序=字典序固定顺序、超时默认 300 秒且超时即失败释放、死循环判定复用 anti-pattern-policy 的 AP-01；无锁共享写为明确禁止项。",
+      "invoke": "skill parallel-lock-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.parse-query",
+      "path": "skills/parse-query",
+      "desc": "工序动作级技能：查询解析——归一化、分词、停用词剔除、同义词扩展与 ASCII 拼写纠错，输出可排序的 term 列表。",
+      "invoke": "skill parse-query",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.place-skill-into-cluster",
+      "path": "skills/place-skill-into-cluster",
+      "desc": "工序动作级技能：依据级别与触发关键词判定引入技能的集群归属与建议父级，校验 composition 依赖边是否都真实存在于 catalog，只输出建议不写任何文件。",
+      "invoke": "skill place-skill-into-cluster",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.plain-analogy-explanation",
+      "path": "skills/plain-analogy-explanation",
+      "desc": "微观原子规约：通俗生活化原理解释与技术细节静默。用普通人听得懂的日常原理阐述，用户未主动提问时绝对不展开底层代码技术细节。",
+      "invoke": "skill plain-analogy-explanation",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.plan-fission",
+      "path": "skills/plan-fission",
+      "desc": "工序动作级技能：读取 SOP 或技能主体，逐步骤判定探针绑定情况，输出结构化分裂清单（待拆步骤、建议级别、建议探针、建议父级）。",
+      "invoke": "skill plan-fission",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.plan-process-rectification",
+      "path": "skills/plan-process-rectification",
+      "desc": "工序动作级技能(L2)：流程整改清单生成器。对每个 fail 步骤产出可直接执行的整改命令与理由；整改项为空或含「加强/重视/注意/尽快」等空话的一律判不合格（exit 1）；required 失败的项单独标出；返回退出码 0/1/2。",
+      "invoke": "skill plan-process-rectification",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.plugin-control-guard",
+      "path": "skills/plugin-control-guard",
+      "desc": "复合流程级技能(L3)：插件常显调控按钮放行门禁。把「契约 → 装配 → 断言」串成一道不可跳步的门禁，挂载于管家「② 契约与合规」集群；放行的唯一合法证据是「包结构符合宿主 client 插件契约 + 注入内核运行时 31 项断言全过 +",
+      "invoke": "skill plugin-control-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.plugin-control-jump-policy",
+      "path": "skills/plugin-control-jump-policy",
+      "desc": "微观原子规约：插件常显调控按钮判定基元。钉死按钮的唯一标识（data-control-jump=\"<plugin-id>\"）、常显位置（市场已安装列表与宿主插件清单的每个条目）、点击语义（定位到同 id 的配置项并高亮）、幂等去重键（容器|",
+      "invoke": "skill plugin-control-jump-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.prefer-hot-reload-policy",
+      "path": "skills/prefer-hot-reload-policy",
+      "desc": "微观原子规约：能不重启就不重启。定义 hot_reload（热更）/ incremental（增量重载）/ restart（重启）三级处置与最长前缀判定表，只有命中「不可热更边界」白名单才允许重启，且必须同时给出「路径 + 边界 + 重建命",
+      "invoke": "skill prefer-hot-reload-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.process-conformance-policy",
+      "path": "skills/process-conformance-policy",
+      "desc": "微观原子规约：流程合规判定基元。钉死「约定流程必须是可打分的机器可读数据」这一前提，规定九步流程各自必须绑定四类物理探针之一、权重合计 100、必需项一票否决、na 第三态（权重从分母扣除且不得当 pass）、以及「没有证据不等于走了这一步",
+      "invoke": "skill process-conformance-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.process-supervisor",
+      "path": "skills/process-supervisor",
+      "desc": "复合流程级技能(L3)：流程监督员。把「取证 → 打分 → 整改 → 独立复核」串成一道不可跳步的出口门禁，挂载于管家「③ 冲突·冗余·质量」集群；放行的唯一合法证据是「得分 ≥ 85 且全部必需项 pass 且整改清单无 unresolv",
+      "invoke": "skill process-supervisor",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.prune-bloated-prompts",
+      "path": "skills/prune-bloated-prompts",
+      "desc": "微观原子规约：防膨胀裁剪。禁止在提示词或机制中加入等价/重复语句，保持指令极致紧凑。",
+      "invoke": "skill prune-bloated-prompts",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.prune-redundant-context",
+      "path": "skills/prune-redundant-context",
+      "desc": "工序动作级技能：以保守语义无损规则折叠连续重复行、重复段落与连续空行，同时逐字节保护 CATALOG 受管区块与 docs/requirements 编号表格行，输出裁剪前后 token 账。",
+      "invoke": "skill prune-redundant-context",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.qa-gatekeeper",
+      "path": "skills/qa-gatekeeper",
+      "desc": "复合流程级技能(L3)：交付门禁与质量守卫。解耦组装了物理落地检测、Python编译验证、UTF-8编码断言与退出码硬断言。",
+      "invoke": "skill qa-gatekeeper",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.quantification-guard",
+      "path": "skills/quantification-guard",
+      "desc": "复合流程级技能(L3)：量化交付门禁。把「规约 → 建表 → 检测 → 量化 → 断言」串成一道出口门禁，挂载于管家「④ 输出规约」集群；缺失映射不阻断但必须声明假设，禁止用另一个程度词替换程度词糊过去。",
+      "invoke": "skill quantification-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.quantify-modifier",
+      "path": "skills/quantify-modifier",
+      "desc": "工序动作级技能(L2)：按场景把程度类修饰词替换为可判定的数值区间。命中且有 (term, domain) 映射时产出「保留原词 + → 数值 单位（依据：…）」的建议；无映射或场景未声明时落 unquantifiable 并要求显式声明假",
+      "invoke": "skill quantify-modifier",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.quantify-modifier-policy",
+      "path": "skills/quantify-modifier-policy",
+      "desc": "微观原子规约：程度类修饰词的量化判定基元。定义「高/大/快/多/好/严重/频繁/明显/显著…」清单、四要素（场景 + 数值或区间 + 单位 + 依据）规约、场景优先原则、不可量化的处置（声明假设而非沉默）与「禁止用另一个程度词替换程度词」禁",
+      "invoke": "skill quantify-modifier-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.rank-skills-bm25",
+      "path": "skills/rank-skills-bm25",
+      "desc": "工序动作级技能：对技能倒排索引执行 BM25 排序（字段权重 + 文档长度归一），支持 top-K、分页与命中率评测。",
+      "invoke": "skill rank-skills-bm25",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.reconcile-knowledge-specs",
+      "path": "skills/reconcile-knowledge-specs",
+      "desc": "工序动作级技能：遍历 7 大知识库规范并对拍冲突，强制裁定知识库规范为绝对最高执行基准。",
+      "invoke": "skill reconcile-knowledge-specs",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.record-assumptions",
+      "path": "skills/record-assumptions",
+      "desc": "工序动作级技能(L2)：把自行决断的项写成可追溯假设四元组（项/取值/依据/回滚方式），缺依据或回滚方式即阻断。",
+      "invoke": "skill record-assumptions",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.redundancy-detector",
+      "path": "skills/redundancy-detector",
+      "desc": "复合流程级技能(L3)：冗余检测与防机制膨胀。检测管控规则中的重复与重叠，输出去重与裁剪方案，确保机制简洁高效。",
+      "invoke": "skill redundancy-detector",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.register-execution-layer",
+      "path": "skills/register-execution-layer",
+      "desc": "工序动作级技能：登记与维护非技能执行层条目（cli/agent/api/mcp/plugin），校验层名合法、仓库内路径存在、id 唯一，幂等可重跑。",
+      "invoke": "skill register-execution-layer",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.rename-execution-layer",
+      "path": "skills/rename-execution-layer",
+      "desc": "工序动作级技能(L2)：执行层命名整改器。一次改名同步六处（目录名 / catalog id / Frontmatter name / 组装边 / 树与索引五件产物 / docs 与登记表），配套脚本同名改写，改前校验目标名合法性、改后自动",
+      "invoke": "skill rename-execution-layer",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.render-capability-naming",
+      "path": "skills/render-capability-naming",
+      "desc": "工序动作级技能(L2)：能力层命名规范文档渲染器。把 docs/operations/capability-naming.json 单向渲染成本仓文档与全局规则知识库文档两份受管区块，规则表全部由真相源生成、禁止人工双写；知识库路径按合并前",
+      "invoke": "skill render-capability-naming",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.render-catalog-docs",
+      "path": "skills/render-catalog-docs",
+      "desc": "工序动作级技能：读取 skill-catalog.json，把组装关系注入 docs 的受管区块，取消人工手写组装表，支持幂等重跑与 --check 漂移检测。",
+      "invoke": "skill render-catalog-docs",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.render-governance-mermaid",
+      "path": "skills/render-governance-mermaid",
+      "desc": "工序动作级技能：将拓扑数据物理编译为合规的 Mermaid 语法代码，支持调度链路图与全景拓扑图渲染。",
+      "invoke": "skill render-governance-mermaid",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.retire-legacy-workspace",
+      "path": "skills/retire-legacy-workspace",
+      "desc": "工序动作级技能(L2)：旧工作区退役器。把「已合并但还活着」的源目录真正退场——先断言不丢文件（源侧独有文件数为 0）、目标已入库、会话已完整归入，再写台账、摘除 workspace.json 条目、物理删除源目录；强制「先摘注册再删目录」",
+      "invoke": "skill retire-legacy-workspace",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.run-test-cases-gate",
+      "path": "skills/run-test-cases-gate",
+      "desc": "工序动作级技能：对照需求规格执行自动化测试案例脚本，所有用例全部通过方可放行验收。",
+      "invoke": "skill run-test-cases-gate",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.schema-guard",
+      "path": "skills/schema-guard",
+      "desc": "复合流程级技能(L3)：基于 L1 零闲聊、L1 去围栏与 L2 JSON提取叠加组装而成。保证严格结构化纯净输出。",
+      "invoke": "skill schema-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.score-process-conformance",
+      "path": "skills/score-process-conformance",
+      "desc": "工序动作级技能(L2)：流程合规打分器。按权重计算分子与分母（na 权重从分母扣除），输出逐项 pass/fail/na 与得分；通过条件为得分 ≥ 85 且全部必需项 pass（必需项一票否决）；输出必须打印分子/分母/na 扣除项，禁止",
+      "invoke": "skill score-process-conformance",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.score-task-lane",
+      "path": "skills/score-task-lane",
+      "desc": "工序动作级技能：对任务做确定性双流程分流判定，输出 lane、score、matched_redlines 与 reason 四元组。",
+      "invoke": "skill score-task-lane",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.search-duplicate-rules",
+      "path": "skills/search-duplicate-rules",
+      "desc": "工序动作级技能：计算两条或多条文本规则之间的词频重叠度，精准定位重复与高冗余规则。",
+      "invoke": "skill search-duplicate-rules",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.search-github-skill",
+      "path": "skills/search-github-skill",
+      "desc": "工序动作级技能：按能力关键词检索 GitHub 外部技能/插件候选，把结果归一为标准结构化候选清单 JSON（名称、URL、星标、许可、是否含脚本、描述）。",
+      "invoke": "skill search-github-skill",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.search-official-source",
+      "path": "skills/search-official-source",
+      "desc": "工序动作级技能(L2)：官网 / 官方文档源检索器。从官方站点自声明的 sitemap 中按关键词检索可用执行层入口，产出统一六字段候选；只读、只用标准库、不携带凭据；支持 --from-file 读本地夹具做离线回归，全部域名不可达时显式",
+      "invoke": "skill search-official-source",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.select-skills-for-task",
+      "path": "skills/select-skills-for-task",
+      "desc": "工序动作级技能：由一个任务描述产出受 top-K 约束的选中技能 id 清单，只读检索结果、绝不读取技能正文。",
+      "invoke": "skill select-skills-for-task",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.skill-import-pipeline",
+      "path": "skills/skill-import-pipeline",
+      "desc": "复合流程级技能(L3)：外部执行层引入管线总控。五步串联检索→审计→归一→定级挂载→门禁验证，落点新集群「⑦ 技能引入与演进」；检索步自 PKG-008 起绑脚本探针（四源调度：本地优先 / GitHub / 官网 / awesome 清单",
+      "invoke": "skill skill-import-pipeline",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.skill-index-router",
+      "path": "skills/skill-index-router",
+      "desc": "复合流程级技能(L3)：索引控制与消歧路由。控制全局 Catalog 索引寻址，消灭调用歧义，确保极速精准命中。",
+      "invoke": "skill skill-index-router",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.snippet-only-recall",
+      "path": "skills/snippet-only-recall",
+      "desc": "微观原子规约：检索结果只允许回灌命中片段与元数据，严禁把 catalog 或技能正文整体灌回上下文。",
+      "invoke": "skill snippet-only-recall",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.spec-driven-governance",
+      "path": "skills/spec-driven-governance",
+      "desc": "复合流程级技能(L3)：需求驱动执行与规范仲裁总控。强制任务严格从需求图纸出发，全程对照知识库7大规范（冲突以规范为准），并通过自动化测试用例方可验收交付。",
+      "invoke": "skill spec-driven-governance",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.standard-output-framework",
+      "path": "skills/standard-output-framework",
+      "desc": "复合流程级技能(L3)：交付输出框架标准化总控。强制最终答复统一遵循“当前状态、输出物、输出地址、重要说明”，无产物时自动剔除输出地址转为核心结论。",
+      "invoke": "skill standard-output-framework",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.standardize-when-to-use",
+      "path": "skills/standardize-when-to-use",
+      "desc": "微观原子规约：标准化触发场景说明。强制包含明确的正面触发条件与触发禁区，方便索引快速识破。",
+      "invoke": "skill standardize-when-to-use",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.standardize-workflow-sop",
+      "path": "skills/standardize-workflow-sop",
+      "desc": "微观原子规约：标准化主体运作 SOP。强制正文必须具备清晰的 Mermaid 流程图与有序执行步骤。",
+      "invoke": "skill standardize-workflow-sop",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.strip-markdown-fence",
+      "path": "skills/strip-markdown-fence",
+      "desc": "微观原子规约：强制输出纯净原生文本，绝对禁止包裹任何 ``` 代码围栏。",
+      "invoke": "skill strip-markdown-fence",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.strip-non-prose-scope",
+      "path": "skills/strip-non-prose-scope",
+      "desc": "工序动作级技能(L2)：按固定顺序剥离四类非散文成分（围栏代码块、行内代码、URL、文件路径），产出「待检正文」与白名单命中，供中文占比断言使用。",
+      "invoke": "skill strip-non-prose-scope",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.strip-whitespace-newlines",
+      "path": "skills/strip-whitespace-newlines",
+      "desc": "微观原子规约：严格剥离文本首尾与多余的连续空白字符、制表符及空行，实现物理对齐。",
+      "invoke": "skill strip-whitespace-newlines",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.sync-requirements-lifecycle",
+      "path": "skills/sync-requirements-lifecycle",
+      "desc": "工序动作级技能：物理检查并同步 requirements 需求生命周期版本，确保任务严格从最新图纸出发。",
+      "invoke": "skill sync-requirements-lifecycle",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.tail-metrics-showcase",
+      "path": "skills/tail-metrics-showcase",
+      "desc": "复合流程级技能(L3)：尾部量化指标与通俗表达总控。实现输出纯中文、默认极简聚焦、通俗生活常识比喻，并在尾部展示索引命中与路由时长量化指标。",
+      "invoke": "skill tail-metrics-showcase",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.token-budget-policy",
+      "path": "skills/token-budget-policy",
+      "desc": "微观原子规约：定义上下文预算优先级（索引/检索片段 > 选中技能正文 > 参考文档）与超预算裁剪顺序，规定索引与检索片段永不裁剪、README 不进上下文、docs 长文仅以片段入上下文。",
+      "invoke": "skill token-budget-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.token-economy-guard",
+      "path": "skills/token-economy-guard",
+      "desc": "复合流程级技能(L3)：token 经济门禁。把「先测 → 裁剪 → 等价能力断言」串成一道写入前置门禁，挂载于管家「② 契约与合规」集群，证据串不存活即阻断。",
+      "invoke": "skill token-economy-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.tree-update-mandatory",
+      "path": "skills/tree-update-mandatory",
+      "desc": "微观原子规约：任何执行层（skill/agent/api/mcp/plugin/cli）新增或优化后，必须同步刷新索引与执行层树，禁止只改能力不改树。",
+      "invoke": "skill tree-update-mandatory",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.validate-header-triggers",
+      "path": "skills/validate-header-triggers",
+      "desc": "工序动作级技能：静态校验 Skill 的 YAML Frontmatter 元数据与触发关键词覆盖度。",
+      "invoke": "skill validate-header-triggers",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.validate-icon-syntax",
+      "path": "skills/validate-icon-syntax",
+      "desc": "工序动作级技能：通过正则表达式物理断言输出文案的尾部是否包含合规的特异化图标框架。",
+      "invoke": "skill validate-icon-syntax",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-atomic-mutual-exclusion",
+      "path": "skills/verify-atomic-mutual-exclusion",
+      "desc": "工序动作级技能(L2)：原子锁互斥性物理压测断言器。真实拉起 N 个独立进程并发抢同一把 mkdir 原子锁，采集临界区进入/退出时间戳做扫描线，断言重叠窗口为 0 且任一瞬间持有者 ≤ 1；同时跑无锁负向对照段证明检测器确实能看见并发（否",
+      "invoke": "skill verify-atomic-mutual-exclusion",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-catalog-consistency",
+      "path": "skills/verify-catalog-consistency",
+      "desc": "工序动作级技能：三方对拍 SKILL.md Frontmatter、skill-catalog.json 与 docs 受管区块，并扫描正文手写组装关系造成的口径漂移，返回退出码 0/1。",
+      "invoke": "skill verify-catalog-consistency",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-chinese-output",
+      "path": "skills/verify-chinese-output",
+      "desc": "工序动作级技能(L2)：中文输出三项硬断言（待检正文 CJK 占比 ≥ 0.85、非白名单拉丁词 = 0、独立大写缩写后必须有中文释义），全部通过才 Exit 0。",
+      "invoke": "skill verify-chinese-output",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-concretized-output",
+      "path": "skills/verify-concretized-output",
+      "desc": "工序动作级技能(L2)：含糊词具像化断言器。对「已具像化」的正文做三项硬断言——不含未具像化含糊词（AMBIGUITY_WORDS 命中数为 0）、--strict 下任何数量表述必须带依据（如 12 个（依据：…））、命中词右侧 6 字内",
+      "invoke": "skill verify-concretized-output",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-context-payload",
+      "path": "skills/verify-context-payload",
+      "desc": "工序动作级技能：断言一次任务加载的技能正文数不超过 top-K、字节数不超预算，且未出现选中清单之外的技能。",
+      "invoke": "skill verify-context-payload",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-decoupling",
+      "path": "skills/verify-decoupling",
+      "desc": "工序动作级技能：断言五类耦合违规为零；豁免必须经 --allow 显式声明并在输出中标注 waived，杜绝静默放过。",
+      "invoke": "skill verify-decoupling",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-deliverable-paths",
+      "path": "skills/verify-deliverable-paths",
+      "desc": "工序动作级技能：物理验证交付物地址的有效性，严禁输出不存在或空路径。",
+      "invoke": "skill verify-deliverable-paths",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-execution-contract",
+      "path": "skills/verify-execution-contract",
+      "desc": "工序动作级技能：校验 Skill 的输入/输出契约完整性及本地挂载脚本的可执行性。",
+      "invoke": "skill verify-execution-contract",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-execution-tree",
+      "path": "skills/verify-execution-tree",
+      "desc": "工序动作级技能：断言执行层树与 catalog、登记表、受管区块四方一致，扫描文档中手写集群枚举造成的结构漂移并给出文件与行号。",
+      "invoke": "skill verify-execution-tree",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-file-exists",
+      "path": "skills/verify-file-exists",
+      "desc": "工序动作级技能：物理验证指定文件路径是否真实存在于磁盘上，且文件大小大于 0 字节。",
+      "invoke": "skill verify-file-exists",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-instance-safety",
+      "path": "skills/verify-instance-safety",
+      "desc": "工序动作级技能：断言每个本地执行层都有实例安全声明、声明与实际扫描一致、safe_multi 无写盘证据、受限档位带资源键。",
+      "invoke": "skill verify-instance-safety",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-interactive-html",
+      "path": "skills/verify-interactive-html",
+      "desc": "工序动作级技能：对交互查看器 HTML 做静态断言，校验缩放控制标识齐备、结构标签闭合且零外部资源引用，返回退出码 0/1。",
+      "invoke": "skill verify-interactive-html",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-lane-decision",
+      "path": "skills/verify-lane-decision",
+      "desc": "工序动作级技能：对同一任务重复执行分流判定，断言结果 100% 一致，杜绝分流被随机性污染。",
+      "invoke": "skill verify-lane-decision",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-layer-naming",
+      "path": "skills/verify-layer-naming",
+      "desc": "工序动作级技能(L2)：执行层命名整改后的三项硬断言器——合规率必须为 1.0000、旧名残留引用必须为 0（按词边界扫描，避免把新名误判为旧名残留）、执行层登记表零违规；判据复用 audit-layer-naming 的 naming_r",
+      "invoke": "skill verify-layer-naming",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-mermaid-syntax",
+      "path": "skills/verify-mermaid-syntax",
+      "desc": "工序动作级技能：物理提取文本中的 Mermaid 流程图并执行语法校验，确保流程图无语法破坏。",
+      "invoke": "skill verify-mermaid-syntax",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-no-forbidden-event",
+      "path": "skills/verify-no-forbidden-event",
+      "desc": "工序动作级技能：反例零命中断言。进程内 importlib 加载 detect-forbidden-state 的检测器，要求 hits == 0；--strict 时额外要求 checked_events > 0，杜绝空事件流「空过」放行",
+      "invoke": "skill verify-no-forbidden-event",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-no-lock-violation",
+      "path": "skills/verify-no-lock-violation",
+      "desc": "工序动作级技能(L2)：并行派单前的五项硬断言——无锁冲突、无死锁环、无超时未释放、每个任务都已声明锁、死循环体检复用 anti-pattern-policy 的 AP-01；全过才退 0，任一违规即阻断。",
+      "invoke": "skill verify-no-lock-violation",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-no-unnecessary-question",
+      "path": "skills/verify-no-unnecessary-question",
+      "desc": "工序动作级技能(L2)：对本次任务的提问记录做四项硬断言（次数≤1、必须红线、必须不可逆、必须批量合并），默认零提问。",
+      "invoke": "skill verify-no-unnecessary-question",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-no-unnecessary-restart",
+      "path": "skills/verify-no-unnecessary-restart",
+      "desc": "工序动作级技能(L2)：对实际发生的重启事件做三项硬断言——路径在变更集合内、判定确实需要重启、带非空重建命令；任一不成立即记为不必要重启或无证据重启并退 1。",
+      "invoke": "skill verify-no-unnecessary-restart",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-plugin-control-button",
+      "path": "skills/verify-plugin-control-button",
+      "desc": "工序动作级技能(L2)：插件常显调控按钮断言器。第一层静态断言包结构符合宿主 client 插件契约（dsh.client.platform=web、client 入口、cordis.patch.yml、__ModuleLoader__ 注",
+      "invoke": "skill verify-plugin-control-button",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-progress-budget",
+      "path": "skills/verify-progress-budget",
+      "desc": "工序动作级技能(L2)：对折叠后的过程输出做四项硬断言（零微操作泄漏、里程碑预算、里程碑 100% 覆盖、事件数不增加），全部通过才放行交付。",
+      "invoke": "skill verify-progress-budget",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-quantified-output",
+      "path": "skills/verify-quantified-output",
+      "desc": "工序动作级技能(L2)：量化输出三项硬断言——文本中不存在未量化的程度词、不存在程度词被另一个程度词替换、--require-mapping 下每个命中词都能找到 domain 条目；全部通过才 exit 0，否则 exit 1 并列出词与",
+      "invoke": "skill verify-quantified-output",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-token-reduction",
+      "path": "skills/verify-token-reduction",
+      "desc": "工序动作级技能：对裁剪前后文本同时断言 token 降幅达标与等价能力存活（cases.json 的 requires 证据串全部命中），任一条不成立即退 1 阻断放行。",
+      "invoke": "skill verify-token-reduction",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.verify-workspace-retirement",
+      "path": "skills/verify-workspace-retirement",
+      "desc": "工序动作级技能(L2)：工作区退役断言器。三项硬断言——源路径不存在（退役的物理证据）、workspace.json 中不再有指向源路径的条目、台账记录的迁移会话数全部落在目标工作区；全过才 exit 0，任一失败 exit 1，台账或 w",
+      "invoke": "skill verify-workspace-retirement",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.visual-interaction-guard",
+      "path": "skills/visual-interaction-guard",
+      "desc": "复合流程级技能(L3)：可视化交互四件套放行门禁。把「规约 → 档位 → 生成 → 断言」串成一道不可跳步的门禁，挂载于管家「⑤ 需求与透视」集群；放行的唯一合法证据是「档位表 ≥5 档且默认档在表内 + 吸附分支两种状态齐备 + 下载三段",
+      "invoke": "skill visual-interaction-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.visualize-governance-topology",
+      "path": "skills/visualize-governance-topology",
+      "desc": "复合流程级技能(L3)：全景索引与管家调度链路可视化透视。基于物理数据源提取与图表编译，向用户直观呈现静态资产金字塔与动态管控调用轨迹。",
+      "invoke": "skill visualize-governance-topology",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.zero-restart-guard",
+      "path": "skills/zero-restart-guard",
+      "desc": "复合流程级技能(L3)：零重启写入门禁。把「路径 → 处置判定 → 重启证据断言」串成一道写入门禁，挂载于管家「② 契约与合规」集群，默认目标是零重启，重启必须由不可热更边界加重建命令双向举证。",
+      "invoke": "skill zero-restart-guard",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "技能 (Skill)",
+      "id": "skill.pool.zoom-level-policy",
+      "path": "skills/zoom-level-policy",
+      "desc": "微观原子规约：可视化产物交互判定基元。钉死三条硬口径——缩放必须走离散档位表（13 档，+/- 跳相邻档，滚轮连续微调后吸附，档位可枚举可复算）、下载必须三段降级（showSaveFilePicker / Blob 下载 / 就地提示，禁止",
+      "invoke": "skill zoom-level-policy",
+      "invokeKind": "host-tool",
+      "interface": null
+    },
+    {
+      "layer": "智能体 (Agent)",
+      "id": "agent.skillpool.process-supervisor-agent",
+      "path": "skill-pool/agents/process-supervisor-agent",
+      "desc": "---",
+      "invoke": "subagent（宿主工具，按需分派）",
+      "invokeKind": "host-tool",
+      "interface": "skill-pool/agents/process-supervisor-agent/interface.json"
+    },
+    {
+      "layer": "插件 (Plugin)",
+      "id": "plugin.skillpool.dsh-plugin-control-jump",
+      "path": "skill-pool/plugins/dsh-plugin-control-jump",
+      "desc": "",
+      "invoke": "dsh plugin add skill-pool/plugins/dsh-plugin-control-jump",
+      "invokeKind": "plugin-install",
+      "interface": "skill-pool/plugins/dsh-plugin-control-jump/interface.json"
+    },
+    {
+      "layer": "插件 (Plugin)",
+      "id": "plugin.skillpool.dsh-plugin-image-zoom",
+      "path": "skill-pool/plugins/dsh-plugin-image-zoom",
+      "desc": "",
+      "invoke": "dsh plugin add skill-pool/plugins/dsh-plugin-image-zoom",
+      "invokeKind": "plugin-install",
+      "interface": "skill-pool/plugins/dsh-plugin-image-zoom/interface.json"
+    },
+    {
+      "layer": "插件 (Plugin)",
+      "id": "plugin.skillpool.dsh-plugin-usage-bar",
+      "path": "skill-pool/plugins/dsh-plugin-usage-bar",
+      "desc": "",
+      "invoke": "dsh plugin add skill-pool/plugins/dsh-plugin-usage-bar",
+      "invokeKind": "plugin-install",
+      "interface": "skill-pool/plugins/dsh-plugin-usage-bar/interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.agent_life",
+      "path": "scripts/agent_life.mjs",
+      "desc": "agent_life.mjs",
+      "invoke": "node scripts/agent_life.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/agent_life.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.align_version",
+      "path": "scripts/align_version.mjs",
+      "desc": "全库受管文档版本归位（把受管文档头部版本统一改到当前总版本）",
+      "invoke": "node scripts/align_version.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/align_version.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.audit_execution",
+      "path": "scripts/audit_execution.sh",
+      "desc": "对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片",
+      "invoke": "bash scripts/audit_execution.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/audit_execution.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.batch_fix_sidebar_titles",
+      "path": "scripts/batch_fix_sidebar_titles.mjs",
+      "desc": "全量穿透修复前端侧边栏及权威存储中的全部存量会话标题",
+      "invoke": "node scripts/batch_fix_sidebar_titles.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/batch_fix_sidebar_titles.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.batch_rename_sessions",
+      "path": "scripts/batch_rename_sessions.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/batch_rename_sessions.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/batch_rename_sessions.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.build_capabilities_index",
+      "path": "scripts/build_capabilities_index.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/build_capabilities_index.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/build_capabilities_index.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.channel_audit",
+      "path": "scripts/channel_audit.mjs",
+      "desc": "快速通道注册审计器 —— 校验\"通道表\"是否真的可用（对应 REQ-045）",
+      "invoke": "node scripts/channel_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/channel_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.check_freshness",
+      "path": "scripts/check_freshness.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/check_freshness.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/check_freshness.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.check_layer_interfaces",
+      "path": "scripts/check_layer_interfaces.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/check_layer_interfaces.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/check_layer_interfaces.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.check_task_naming",
+      "path": "scripts/check_task_naming.sh",
+      "desc": "检查「当前会话」的任务命名是否符合规范，供看板常显与流程判定使用",
+      "invoke": "bash scripts/check_task_naming.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/check_task_naming.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.check_unique_identifiers",
+      "path": "scripts/check_unique_identifiers.mjs",
+      "desc": "check_unique_identifiers.mjs",
+      "invoke": "node scripts/check_unique_identifiers.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/check_unique_identifiers.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.conflict_scan",
+      "path": "scripts/conflict_scan.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/conflict_scan.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/conflict_scan.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.control_gates",
+      "path": "scripts/control_gates.sh",
+      "desc": "",
+      "invoke": "bash scripts/control_gates.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/control_gates.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.deepseek_key_setup",
+      "path": "scripts/deepseek_key_setup.sh",
+      "desc": "",
+      "invoke": "bash scripts/deepseek_key_setup.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/deepseek_key_setup.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.deepseek_usage_probe",
+      "path": "scripts/deepseek_usage_probe.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/deepseek_usage_probe.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/deepseek_usage_probe.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.disk_check_and_cleanup",
+      "path": "scripts/disk_check_and_cleanup.sh",
+      "desc": "DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位)",
+      "invoke": "bash scripts/disk_check_and_cleanup.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/disk_check_and_cleanup.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.fingerprint_audit",
+      "path": "scripts/fingerprint_audit.sh",
+      "desc": "DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎",
+      "invoke": "bash scripts/fingerprint_audit.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/fingerprint_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.flow_control",
+      "path": "scripts/flow_control.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/flow_control.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/flow_control.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.gate_selftest",
+      "path": "scripts/gate_selftest.sh",
+      "desc": "",
+      "invoke": "bash scripts/gate_selftest.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/gate_selftest.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.generate_image",
+      "path": "scripts/generate_image.py",
+      "desc": "",
+      "invoke": "python3 scripts/generate_image.py",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/generate_image.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.generate_naming_plan",
+      "path": "scripts/generate_naming_plan.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/generate_naming_plan.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/generate_naming_plan.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.git_sync_remote",
+      "path": "scripts/git_sync_remote.sh",
+      "desc": "DSH 工程远程 Git 智能探针、缺地址开页引导、动态摘要提交与强同步引擎",
+      "invoke": "bash scripts/git_sync_remote.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/git_sync_remote.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.global_scheduler_lock",
+      "path": "scripts/global_scheduler_lock.sh",
+      "desc": "DSH 全自动轻量级全局调度锁中枢与并发资源防冲突引擎",
+      "invoke": "bash scripts/global_scheduler_lock.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/global_scheduler_lock.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.init_dir",
+      "path": "scripts/init_dir.sh",
+      "desc": "",
+      "invoke": "bash scripts/init_dir.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/init_dir.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.init_project",
+      "path": "scripts/init_project.sh",
+      "desc": "",
+      "invoke": "bash scripts/init_project.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/init_project.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.install_host_gate",
+      "path": "scripts/install_host_gate.sh",
+      "desc": "",
+      "invoke": "bash scripts/install_host_gate.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/install_host_gate.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.legacy_align_scan",
+      "path": "scripts/legacy_align_scan.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/legacy_align_scan.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/legacy_align_scan.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.mechanism_audit",
+      "path": "scripts/mechanism_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/mechanism_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/mechanism_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.name_me",
+      "path": "scripts/name_me.sh",
+      "desc": "**立刻**给\"当前会话\"改名——开工第一动作，一条命令，任何目录可用",
+      "invoke": "bash scripts/name_me.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/name_me.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.naming_watchdog",
+      "path": "scripts/naming_watchdog.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/naming_watchdog.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/naming_watchdog.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.normalize_all_projects",
+      "path": "scripts/normalize_all_projects.mjs",
+      "desc": "全域存量 DSH 工程文件夹批量合规与规范化治理脚本",
+      "invoke": "node scripts/normalize_all_projects.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/normalize_all_projects.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.output_audit",
+      "path": "scripts/output_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/output_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/output_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.patch_dsh_todo_progress",
+      "path": "scripts/patch_dsh_todo_progress.cjs",
+      "desc": "⛔⛔⛔ [DEPRECATED 已废弃 · 2026-10-01 · REQ-089 D4] ⛔⛔⛔",
+      "invoke": "node scripts/patch_dsh_todo_progress.cjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/patch_dsh_todo_progress.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.physical_lock",
+      "path": "scripts/physical_lock.sh",
+      "desc": "",
+      "invoke": "bash scripts/physical_lock.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/physical_lock.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.probe_long_output",
+      "path": "scripts/probe_long_output.mjs",
+      "desc": "长输出实测探针：验证 max_tokens 提高后单次回复能否突破旧上限（32768）。",
+      "invoke": "node scripts/probe_long_output.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/probe_long_output.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.probe_long_output_stream",
+      "path": "scripts/probe_long_output_stream.mjs",
+      "desc": "长输出触顶实测（流式版）：验证单次回复到底能有多长。",
+      "invoke": "node scripts/probe_long_output_stream.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/probe_long_output_stream.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.probe_max_tokens",
+      "path": "scripts/probe_max_tokens.mjs",
+      "desc": "探测服务端对 max_tokens 的接受范围。",
+      "invoke": "node scripts/probe_max_tokens.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/probe_max_tokens.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.process_supervisor",
+      "path": "scripts/process_supervisor.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/process_supervisor.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/process_supervisor.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.progress_ledger",
+      "path": "scripts/progress_ledger.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/progress_ledger.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/progress_ledger.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.redundancy_scan",
+      "path": "scripts/redundancy_scan.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/redundancy_scan.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/redundancy_scan.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.rename_session",
+      "path": "scripts/rename_session.sh",
+      "desc": "通过 DSH 后台 HTTP RPC 接口，为当前会话重命名并锁定侧边栏标题",
+      "invoke": "bash scripts/rename_session.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/rename_session.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.restore_skill_pool",
+      "path": "scripts/restore_skill_pool.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/restore_skill_pool.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/restore_skill_pool.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.route_navigate",
+      "path": "scripts/route_navigate.mjs",
+      "desc": "route_navigate.mjs",
+      "invoke": "node scripts/route_navigate.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/route_navigate.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.route_plan",
+      "path": "scripts/route_plan.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/route_plan.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/route_plan.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.session_naming_audit",
+      "path": "scripts/session_naming_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/session_naming_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/session_naming_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.svg2png",
+      "path": "scripts/svg2png.sh",
+      "desc": "把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节）",
+      "invoke": "bash scripts/svg2png.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/svg2png.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.sync_control_requirements",
+      "path": "scripts/sync_control_requirements.mjs",
+      "desc": "管控机制专属需求同步校验脚本 (Control Requirements Sync Verifier)",
+      "invoke": "node scripts/sync_control_requirements.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/sync_control_requirements.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.test_auto_naming",
+      "path": "scripts/test_auto_naming.mjs",
+      "desc": "自动命名逻辑测试（在**不重启宿主**的前提下验证）。",
+      "invoke": "node scripts/test_auto_naming.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/test_auto_naming.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.test_physical_lock",
+      "path": "scripts/test_physical_lock.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/test_physical_lock.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/test_physical_lock.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.test_v180_spec",
+      "path": "scripts/test_v180_spec.sh",
+      "desc": "",
+      "invoke": "bash scripts/test_v180_spec.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/test_v180_spec.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.todo_gate",
+      "path": "scripts/todo_gate.sh",
+      "desc": "",
+      "invoke": "bash scripts/todo_gate.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/todo_gate.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.verify_auto_naming_e2e",
+      "path": "scripts/verify_auto_naming_e2e.mjs",
+      "desc": "自动命名端到端验收（重启后运行，一次给出结论）。",
+      "invoke": "node scripts/verify_auto_naming_e2e.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/verify_auto_naming_e2e.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.verify_escape_hatch",
+      "path": "scripts/verify_escape_hatch.sh",
+      "desc": "",
+      "invoke": "bash scripts/verify_escape_hatch.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/verify_escape_hatch.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.verify_guard_live",
+      "path": "scripts/verify_guard_live.sh",
+      "desc": "",
+      "invoke": "bash scripts/verify_guard_live.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/verify_guard_live.interface.json"
+    }
+  ]
+}

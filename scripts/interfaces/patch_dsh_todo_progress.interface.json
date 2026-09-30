@@ -1,0 +1,40 @@
+{
+  "id": "cli.rules.patch_dsh_todo_progress",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/patch_dsh_todo_progress.cjs",
+  "invoke": "node scripts/patch_dsh_todo_progress.cjs",
+  "summary": "补丁：给 DSH 输入坞任务条（TodoPanel）加「首栏总进度 + 每行实时进度」，并把",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/patch_dsh_todo_progress.cjs --check     # 只体检，不改（退出码 1 表示缺失）"
+    },
+    {
+      "name": "--apply",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/patch_dsh_todo_progress.cjs --apply     # 打补丁（自动备份 + 校验 + 回读）"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/patch_dsh_todo_progress.cjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

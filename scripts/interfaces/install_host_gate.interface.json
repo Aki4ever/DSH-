@@ -1,0 +1,34 @@
+{
+  "id": "cli.rules.install_host_gate",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/install_host_gate.sh",
+  "invoke": "bash scripts/install_host_gate.sh",
+  "summary": "(待补：从头部注释里没抽到功能描述)",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "header 注释里未声明入参，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/install_host_gate.sh"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

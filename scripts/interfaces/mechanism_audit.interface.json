@@ -1,0 +1,40 @@
+{
+  "id": "cli.rules.mechanism_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/mechanism_audit.mjs",
+  "invoke": "node scripts/mechanism_audit.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--json",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/mechanism_audit.mjs --json   # 机器可读"
+    },
+    {
+      "name": "--exit",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/mechanism_audit.mjs --exit   # 存在未触达项则退出码 1"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/mechanism_audit.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

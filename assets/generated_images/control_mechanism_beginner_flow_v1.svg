@@ -1,0 +1,304 @@
+<svg width="1200" height="3310" viewBox="0 0 1200 3310" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans GB','PingFang SC','Heiti SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="3310" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#070B12"/><stop offset="50%" stop-color="#0E1522"/><stop offset="100%" stop-color="#05080D"/>
+    </linearGradient>
+    <linearGradient id="topbar" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D2FF"/><stop offset="45%" stop-color="#2EC4B6"/><stop offset="100%" stop-color="#F45B69"/>
+    </linearGradient>
+  </defs>
+<rect x="0" y="0" width="1200" height="172" rx="0" fill="url(#bg)"/>
+<rect x="0" y="0" width="1200" height="6" rx="0" fill="url(#topbar)"/>
+<text x="60" y="76" font-size="38" fill="#EAF2FA" font-weight="700">管控机制 · 小白版全流程图文</text>
+<text x="60" y="108" font-size="14.5" fill="#8A98AC" font-weight="400">把「我说我做完了」换成「磁盘上真的做完了」—— 我干活的每一步，都要留下你能亲手验证的痕迹</text>
+<text x="60" y="136" font-size="13" fill="#5F7189" font-weight="400">读完这张图，你能在一分钟内说清楚：一句话交给我之后，中间发生了什么、卡在哪、凭什么信。</text>
+<rect x="872" y="30" width="268" height="118" rx="10" fill="#131C2B" stroke="#233046" stroke-width="1.5"/>
+<text x="892" y="56" font-size="12.5" fill="#5F7189" font-weight="400">本轮实跑快照</text>
+<text x="892" y="82" font-size="14.5" fill="#EAF2FA" font-weight="700">2026-10-01 05:58</text>
+<text x="892" y="106" font-size="12" fill="#2EC4B6" font-weight="400">门禁 4/4 · 物理锁 [2] LOCK-2</text>
+<text x="892" y="128" font-size="12" fill="#2EC4B6" font-weight="400">机制触达 13/16</text>
+<text x="892" y="146" font-size="11.5" fill="#F45B69" font-weight="400">拦截层 ⛔ 未通电（最大断点）</text>
+<rect x="60" y="220" width="6" height="24" rx="3" fill="#00D2FF"/>
+<text x="80" y="238" font-size="22" fill="#EAF2FA" font-weight="700">① 你发一句话之后，我要连着过 10 道关</text>
+<text x="568.56" y="238" font-size="12.5" fill="#5F7189" font-weight="400">顺序由 ai-control/config/flow_graph.json 唯一管着，顺序不对就判不通过</text>
+<line x1="78" y1="292" x2="78" y2="1304" stroke="#233046" stroke-width="2"/>
+<circle cx="78" cy="312" r="17" fill="#131C2B" stroke="#00D2FF" stroke-width="2"/>
+<text x="78" y="317" font-size="15" fill="#00D2FF" font-weight="700" text-anchor="middle">1</text>
+<rect x="118" y="278" width="1022" height="90" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="118" y="278" width="4" height="90" rx="2" fill="#00D2FF"/>
+<text x="140" y="305" font-size="15.5" fill="#EAF2FA" font-weight="700">首动改名</text>
+<text x="214.0" y="305" font-size="11.5" fill="#5F7189" font-weight="400" opacity="0.9" font-family="Menlo, monospace">S05</text>
+<text x="140" y="328" font-size="12.5" fill="#8A98AC" font-weight="400">先把这次任务的标题按规范锁死。标题是会话的唯一身份，没名字等于没立案。</text>
+<rect x="140" y="337" width="462" height="22" rx="6" fill="#0A121B" stroke="#1B2635" stroke-width="1"/>
+<text x="150" y="352" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">./scripts/name_me.sh "[优规001][60分] 管控机制流程讲解"</text>
+<rect x="1025.12" y="298" width="96.88" height="24" rx="12" fill="#00D2FF" opacity="0.14"/>
+<text x="1110" y="315" font-size="12" fill="#00D2FF" font-weight="700" text-anchor="end">G0 一票否决</text>
+<circle cx="78" cy="416" r="17" fill="#131C2B" stroke="#2EC4B6" stroke-width="2"/>
+<text x="78" y="421" font-size="15" fill="#2EC4B6" font-weight="700" text-anchor="middle">2</text>
+<rect x="118" y="382" width="1022" height="90" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="118" y="382" width="4" height="90" rx="2" fill="#2EC4B6"/>
+<text x="140" y="409" font-size="15.5" fill="#EAF2FA" font-weight="700">门禁看板</text>
+<text x="214.0" y="409" font-size="11.5" fill="#5F7189" font-weight="400" opacity="0.9" font-family="Menlo, monospace">G0G4</text>
+<text x="140" y="432" font-size="12.5" fill="#8A98AC" font-weight="400">去磁盘上数：骨架齐不齐、目录有没有孤儿、台账和 Git 对不对得上、有没有抄两遍。</text>
+<rect x="140" y="441" width="462" height="22" rx="6" fill="#0A121B" stroke="#1B2635" stroke-width="1"/>
+<text x="150" y="456" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">./scripts/control_gates.sh check</text>
+<rect x="1000.4000000000001" y="402" width="121.59999999999997" height="24" rx="12" fill="#2EC4B6" opacity="0.14"/>
+<text x="1110" y="419" font-size="12" fill="#2EC4B6" font-weight="700" text-anchor="end">G0~G4 累积 4/4</text>
+<circle cx="78" cy="520" r="17" fill="#131C2B" stroke="#FFB900" stroke-width="2"/>
+<text x="78" y="525" font-size="15" fill="#FFB900" font-weight="700" text-anchor="middle">3</text>
+<rect x="118" y="486" width="1022" height="90" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="118" y="486" width="4" height="90" rx="2" fill="#FFB900"/>
+<text x="140" y="513" font-size="15.5" fill="#EAF2FA" font-weight="700">物理锁同步</text>
+<text x="229.5" y="513" font-size="11.5" fill="#5F7189" font-weight="400" opacity="0.9" font-family="Menlo, monospace">LOCK</text>
+<text x="140" y="536" font-size="12.5" fill="#8A98AC" font-weight="400">按磁盘实况逐阶签凭据，把我推到「可以动手」的那一阶，不许跳级。</text>
+<rect x="140" y="545" width="462" height="22" rx="6" fill="#0A121B" stroke="#1B2635" stroke-width="1"/>
+<text x="150" y="560" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">./scripts/physical_lock.sh sync</text>
+<rect x="989.6" y="506" width="132.39999999999998" height="24" rx="12" fill="#FFB900" opacity="0.14"/>
+<text x="1110" y="523" font-size="12" fill="#FFB900" font-weight="700" text-anchor="end">LOCK-0 → LOCK-2</text>
+<circle cx="78" cy="624" r="17" fill="#131C2B" stroke="#A78BFA" stroke-width="2"/>
+<text x="78" y="629" font-size="15" fill="#A78BFA" font-weight="700" text-anchor="middle">4</text>
+<rect x="118" y="590" width="1022" height="90" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="118" y="590" width="4" height="90" rx="2" fill="#A78BFA"/>
+<text x="140" y="617" font-size="15.5" fill="#EAF2FA" font-weight="700">待办常显</text>
+<text x="214.0" y="617" font-size="11.5" fill="#5F7189" font-weight="400" opacity="0.9" font-family="Menlo, monospace">S07</text>
+<text x="140" y="640" font-size="12.5" fill="#8A98AC" font-weight="400">把任务拆成清单挂出来给你看。清单是从宿主会话转录里读的，不是我自己嘴上说的。</text>
+<rect x="140" y="649" width="462" height="22" rx="6" fill="#0A121B" stroke="#1B2635" stroke-width="1"/>
+<text x="150" y="664" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">./scripts/todo_gate.sh check</text>
+<rect x="998.0" y="610" width="124.0" height="24" rx="12" fill="#A78BFA" opacity="0.14"/>
+<text x="1110" y="627" font-size="12" fill="#A78BFA" font-weight="700" text-anchor="end">证据源：宿主转录</text>
+<circle cx="78" cy="728" r="17" fill="#131C2B" stroke="#00D2FF" stroke-width="2"/>
+<text x="78" y="733" font-size="15" fill="#00D2FF" font-weight="700" text-anchor="middle">5</text>
+<rect x="118" y="694" width="1022" height="90" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="118" y="694" width="4" height="90" rx="2" fill="#00D2FF"/>
+<text x="140" y="721" font-size="15.5" fill="#EAF2FA" font-weight="700">动手改文件</text>
+<text x="229.5" y="721" font-size="11.5" fill="#5F7189" font-weight="400" opacity="0.9" font-family="Menlo, monospace">S09</text>
+<text x="140" y="744" font-size="12.5" fill="#8A98AC" font-weight="400">到这里才允许 write / edit。改之前先查需求台账与既有规则，防重复造轮子。</text>
+<rect x="140" y="753" width="462" height="22" rx="6" fill="#0A121B" stroke="#1B2635" stroke-width="1"/>
+<text x="150" y="768" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">write / edit / bash</text>
+<rect x="1022.0" y="714" width="100.0" height="24" rx="12" fill="#00D2FF" opacity="0.14"/>
+<text x="1110" y="731" font-size="12" fill="#00D2FF" font-weight="700" text-anchor="end">进入攻坚阶段</text>
+<circle cx="78" cy="832" r="17" fill="#131C2B" stroke="#2EC4B6" stroke-width="2"/>
+<text x="78" y="837" font-size="15" fill="#2EC4B6" font-weight="700" text-anchor="middle">6</text>
+<rect x="118" y="798" width="1022" height="90" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="118" y="798" width="4" height="90" rx="2" fill="#2EC4B6"/>
+<text x="140" y="825" font-size="15.5" fill="#EAF2FA" font-weight="700">写后必读回</text>
+<text x="229.5" y="825" font-size="11.5" fill="#5F7189" font-weight="400" opacity="0.9" font-family="Menlo, monospace">S11</text>
+<text x="140" y="848" font-size="12.5" fill="#8A98AC" font-weight="400">每写完一个文件，立刻从磁盘读回、算 sha256、跑判定命令、记录真实退出码。</text>
+<rect x="140" y="857" width="462" height="22" rx="6" fill="#0A121B" stroke="#1B2635" stroke-width="1"/>
+<text x="150" y="872" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">node scripts/progress_ledger.mjs record --files ...</text>
+<rect x="978.3199999999999" y="818" width="143.68" height="24" rx="12" fill="#2EC4B6" opacity="0.14"/>
+<text x="1110" y="835" font-size="12" fill="#2EC4B6" font-weight="700" text-anchor="end">sha256+退出码+断言</text>
+<circle cx="78" cy="936" r="17" fill="#131C2B" stroke="#FFB900" stroke-width="2"/>
+<text x="78" y="941" font-size="15" fill="#FFB900" font-weight="700" text-anchor="middle">7</text>
+<rect x="118" y="902" width="1022" height="90" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="118" y="902" width="4" height="90" rx="2" fill="#FFB900"/>
+<text x="140" y="929" font-size="15.5" fill="#EAF2FA" font-weight="700">双检扫描</text>
+<text x="214.0" y="929" font-size="11.5" fill="#5F7189" font-weight="400" opacity="0.9" font-family="Menlo, monospace">S13</text>
+<text x="140" y="952" font-size="12.5" fill="#8A98AC" font-weight="400">冗余（抄两遍）、冲突（同一件事两种说法）、存量（旧账没跟上新规范）三路一起扫。</text>
+<rect x="140" y="961" width="462" height="22" rx="6" fill="#0A121B" stroke="#1B2635" stroke-width="1"/>
+<text x="150" y="976" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">redundancy / conflict / legacy_align</text>
+<rect x="954.3199999999999" y="922" width="167.68" height="24" rx="12" fill="#FFB900" opacity="0.14"/>
+<text x="1110" y="939" font-size="12" fill="#FFB900" font-weight="700" text-anchor="end">0 冗余·0 冲突·0 待对齐</text>
+<circle cx="78" cy="1040" r="17" fill="#131C2B" stroke="#A78BFA" stroke-width="2"/>
+<text x="78" y="1045" font-size="15" fill="#A78BFA" font-weight="700" text-anchor="middle">8</text>
+<rect x="118" y="1006" width="1022" height="90" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="118" y="1006" width="4" height="90" rx="2" fill="#A78BFA"/>
+<text x="140" y="1033" font-size="15.5" fill="#EAF2FA" font-weight="700">流程自检</text>
+<text x="214.0" y="1033" font-size="11.5" fill="#5F7189" font-weight="400" opacity="0.9" font-family="Menlo, monospace">R3</text>
+<text x="140" y="1056" font-size="12.5" fill="#8A98AC" font-weight="400">检查整条工序的图、载体、五条不变式、和规则里的清单是否一一对得上。</text>
+<rect x="140" y="1065" width="462" height="22" rx="6" fill="#0A121B" stroke="#1B2635" stroke-width="1"/>
+<text x="150" y="1080" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">node scripts/flow_control.mjs --check</text>
+<rect x="1010.0" y="1026" width="112.0" height="24" rx="12" fill="#A78BFA" opacity="0.14"/>
+<text x="1110" y="1043" font-size="12" fill="#A78BFA" font-weight="700" text-anchor="end">五条不变式成立</text>
+<circle cx="78" cy="1144" r="17" fill="#131C2B" stroke="#F45B69" stroke-width="2"/>
+<text x="78" y="1149" font-size="15" fill="#F45B69" font-weight="700" text-anchor="middle">9</text>
+<rect x="118" y="1110" width="1022" height="90" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="118" y="1110" width="4" height="90" rx="2" fill="#F45B69"/>
+<text x="140" y="1137" font-size="15.5" fill="#EAF2FA" font-weight="700">独立复核</text>
+<text x="214.0" y="1137" font-size="11.5" fill="#5F7189" font-weight="400" opacity="0.9" font-family="Menlo, monospace">SUP</text>
+<text x="140" y="1160" font-size="12.5" fill="#8A98AC" font-weight="400">监督员把以上判定全部重跑一遍，只认退出码和磁盘，不听我汇报。硬项一票驳回。</text>
+<rect x="140" y="1169" width="462" height="22" rx="6" fill="#0A121B" stroke="#1B2635" stroke-width="1"/>
+<text x="150" y="1184" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">node scripts/process_supervisor.mjs --fast</text>
+<rect x="1011.2" y="1130" width="110.80000000000001" height="24" rx="12" fill="#F45B69" opacity="0.14"/>
+<text x="1110" y="1147" font-size="12" fill="#F45B69" font-weight="700" text-anchor="end">硬项 9/9 全绿</text>
+<circle cx="78" cy="1248" r="17" fill="#131C2B" stroke="#2EC4B6" stroke-width="2"/>
+<text x="78" y="1253" font-size="15" fill="#2EC4B6" font-weight="700" text-anchor="middle">10</text>
+<rect x="118" y="1214" width="1022" height="90" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="118" y="1214" width="4" height="90" rx="2" fill="#2EC4B6"/>
+<text x="140" y="1241" font-size="15.5" fill="#EAF2FA" font-weight="700">打分收尾</text>
+<text x="214.0" y="1241" font-size="11.5" fill="#5F7189" font-weight="400" opacity="0.9" font-family="Menlo, monospace">S16</text>
+<text x="140" y="1264" font-size="12.5" fill="#8A98AC" font-weight="400">给这次执行打 0~100 分，扣分项写明，作为可回溯的审计凭据交给你。</text>
+<rect x="140" y="1273" width="462" height="22" rx="6" fill="#0A121B" stroke="#1B2635" stroke-width="1"/>
+<text x="150" y="1288" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">./scripts/audit_execution.sh</text>
+<rect x="1022.0" y="1234" width="100.0" height="24" rx="12" fill="#2EC4B6" opacity="0.14"/>
+<text x="1110" y="1251" font-size="12" fill="#2EC4B6" font-weight="700" text-anchor="end">量化审计卡片</text>
+<rect x="60" y="1318" width="1080" height="52" rx="8" fill="#1C1607" stroke="#5C4A10" stroke-width="1.5"/>
+<text x="84" y="1340" font-size="12.5" fill="#FFB900" font-weight="700">⚠️ 看板上的 100% 只算 G1~G4 这四道门；G0 命名是一票否决位，不在进度条的分母里。</text>
+<text x="84" y="1360" font-size="12" fill="#8A98AC" font-weight="400">所以「进度 100% 却写着禁止执行」是这个机制的正常形态，不是 bug（证据：ai-control/reports/state/status.json）。</text>
+<rect x="60" y="1438" width="6" height="24" rx="3" fill="#00D2FF"/>
+<text x="80" y="1456" font-size="22" fill="#EAF2FA" font-weight="700">② 这套机制分五层，各管一件事</text>
+<text x="473.52" y="1456" font-size="12.5" fill="#5F7189" font-weight="400">名字的唯一权威出处：indexes/rules_index.md 第〇章</text>
+<rect x="60" y="1492" width="1080" height="62" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="60" y="1492" width="4" height="62" rx="2" fill="#00D2FF"/>
+<text x="84" y="1519" font-size="15" fill="#EAF2FA" font-weight="700">注入层</text>
+<text x="143.0" y="1519" font-size="12" fill="#5F7189" font-weight="400">员工手册 · 开场就塞给你</text>
+<text x="84" y="1543" font-size="12.5" fill="#8A98AC" font-weight="400">AGENTS.md 把红线与路标常驻在我的上下文里；细则按需读，不挤占预算。</text>
+<rect x="1044.0" y="1511" width="78.0" height="26" rx="13" fill="#00D2FF" opacity="0.14"/>
+<text x="1108" y="1529" font-size="12.5" fill="#00D2FF" font-weight="700" text-anchor="end">常驻生效</text>
+<rect x="60" y="1564" width="1080" height="62" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="60" y="1564" width="4" height="62" rx="2" fill="#2EC4B6"/>
+<text x="84" y="1591" font-size="15" fill="#EAF2FA" font-weight="700">状态层</text>
+<text x="143.0" y="1591" font-size="12" fill="#5F7189" font-weight="400">打卡机 · 只认刷卡记录</text>
+<text x="84" y="1615" font-size="12.5" fill="#8A98AC" font-weight="400">control_gates.sh 从磁盘实况推出状态，写成 status.json；不接受口头汇报。</text>
+<rect x="1040.0" y="1583" width="82.0" height="26" rx="13" fill="#2EC4B6" opacity="0.14"/>
+<text x="1108" y="1601" font-size="12.5" fill="#2EC4B6" font-weight="700" text-anchor="end">4/4 通过</text>
+<rect x="60" y="1636" width="1080" height="62" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="60" y="1636" width="4" height="62" rx="2" fill="#FFB900"/>
+<text x="84" y="1663" font-size="15" fill="#EAF2FA" font-weight="700">判定层</text>
+<text x="143.0" y="1663" font-size="12" fill="#5F7189" font-weight="400">质检员 · 拿着量具逐项量</text>
+<text x="84" y="1687" font-size="12.5" fill="#8A98AC" font-weight="400">门禁 + 双检 + 存量校准 + 迭代台账 + 物理锁，每条流程绑一个能跑出退出码的脚本。</text>
+<rect x="1034.75" y="1655" width="87.25" height="26" rx="13" fill="#FFB900" opacity="0.14"/>
+<text x="1108" y="1673" font-size="12.5" fill="#FFB900" font-weight="700" text-anchor="end">13 条触达</text>
+<rect x="60" y="1708" width="1080" height="62" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="60" y="1708" width="4" height="62" rx="2" fill="#F45B69"/>
+<text x="84" y="1735" font-size="15" fill="#EAF2FA" font-weight="700">拦截层</text>
+<text x="143.0" y="1735" font-size="12" fill="#5F7189" font-weight="400">闸机 · 没刷卡就过不去</text>
+<text x="84" y="1759" font-size="12.5" fill="#8A98AC" font-weight="400">门禁未过就拒绝 write / edit，只读工具常开当逃生舱；这是唯一真正「物理拦人」的一层。</text>
+<rect x="1042.0" y="1727" width="80.0" height="26" rx="13" fill="#F45B69" opacity="0.14"/>
+<text x="1108" y="1745" font-size="12.5" fill="#F45B69" font-weight="700" text-anchor="end">⛔ 未通电</text>
+<rect x="60" y="1780" width="1080" height="62" rx="9" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="60" y="1780" width="4" height="62" rx="2" fill="#A78BFA"/>
+<text x="84" y="1807" font-size="15" fill="#EAF2FA" font-weight="700">自证审计层</text>
+<text x="173.0" y="1807" font-size="12" fill="#5F7189" font-weight="400">监控回放 · 证明保安真在岗</text>
+<text x="84" y="1831" font-size="12.5" fill="#8A98AC" font-weight="400">mechanism_audit 穿透到「载体是否活着」，专门抓「只有文字、没有物理载体」。</text>
+<rect x="1034.75" y="1799" width="87.25" height="26" rx="13" fill="#A78BFA" opacity="0.14"/>
+<text x="1108" y="1817" font-size="12.5" fill="#A78BFA" font-weight="700" text-anchor="end">16 条清点</text>
+<rect x="60" y="1910" width="6" height="24" rx="3" fill="#00D2FF"/>
+<text x="80" y="1928" font-size="22" fill="#EAF2FA" font-weight="700">③ 底层物理锁：五级台阶，必须一级一级上</text>
+<text x="583.52" y="1928" font-size="12.5" fill="#5F7189" font-weight="400">内核 scripts/lib/physical_lock.mjs · 跳级即被拒</text>
+<rect x="60" y="1966" width="1080" height="50" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="60" y="1966" width="4" height="50" rx="2" fill="#5F7189"/>
+<circle cx="94" cy="1991" r="14" fill="#5F7189" opacity="0.16"/>
+<text x="94" y="1996" font-size="14" fill="#5F7189" font-weight="700" text-anchor="middle">0</text>
+<text x="122" y="1994" font-size="14" fill="#EAF2FA" font-weight="700">LOCK-0 初始探境</text>
+<text x="248.83999999999997" y="1994" font-size="12" fill="#5F7189" font-weight="400">只许看，不许碰</text>
+<text x="122" y="2012" font-size="12" fill="#8A98AC" font-weight="400">只读工具放行；write / edit / bash 一律拦下</text>
+<rect x="86" y="2026" width="1054" height="50" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="86" y="2026" width="4" height="50" rx="2" fill="#00D2FF"/>
+<circle cx="120" cy="2051" r="14" fill="#00D2FF" opacity="0.16"/>
+<text x="120" y="2056" font-size="14" fill="#00D2FF" font-weight="700" text-anchor="middle">1</text>
+<text x="148" y="2054" font-size="14" fill="#EAF2FA" font-weight="700">LOCK-1 探境定标达成</text>
+<text x="302.84" y="2054" font-size="12" fill="#5F7189" font-weight="400">名字合规 + 门禁全绿</text>
+<text x="148" y="2072" font-size="12" fill="#8A98AC" font-weight="400">凭据：门禁 4/4；此时还不许改文件，先挂待办</text>
+<rect x="112" y="2086" width="1028" height="50" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="112" y="2086" width="4" height="50" rx="2" fill="#2EC4B6"/>
+<circle cx="146" cy="2111" r="14" fill="#2EC4B6" opacity="0.16"/>
+<text x="146" y="2116" font-size="14" fill="#2EC4B6" font-weight="700" text-anchor="middle">2</text>
+<text x="174" y="2114" font-size="14" fill="#EAF2FA" font-weight="700">LOCK-2 筹策分解达成</text>
+<text x="328.84" y="2114" font-size="12" fill="#5F7189" font-weight="400">清单挂上了，可以动手</text>
+<text x="174" y="2132" font-size="12" fill="#8A98AC" font-weight="400">凭据：宿主转录里的待办证据；允许改文件，禁止 git push</text>
+<rect x="138" y="2146" width="1002" height="50" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="138" y="2146" width="4" height="50" rx="2" fill="#FFB900"/>
+<circle cx="172" cy="2171" r="14" fill="#FFB900" opacity="0.16"/>
+<text x="172" y="2176" font-size="14" fill="#FFB900" font-weight="700" text-anchor="middle">3</text>
+<text x="200" y="2174" font-size="14" fill="#EAF2FA" font-weight="700">LOCK-3 质检验证达成</text>
+<text x="354.84" y="2174" font-size="12" fill="#5F7189" font-weight="400">改完得验过才算数</text>
+<text x="200" y="2192" font-size="12" fill="#8A98AC" font-weight="400">写后读回 + 测试 + 双检全过，才允许提交归卷</text>
+<rect x="164" y="2206" width="976" height="50" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="164" y="2206" width="4" height="50" rx="2" fill="#A78BFA"/>
+<circle cx="198" cy="2231" r="14" fill="#A78BFA" opacity="0.16"/>
+<text x="198" y="2236" font-size="14" fill="#A78BFA" font-weight="700" text-anchor="middle">4</text>
+<text x="226" y="2234" font-size="14" fill="#EAF2FA" font-weight="700">LOCK-4 归卷结项达成</text>
+<text x="380.84" y="2234" font-size="12" fill="#5F7189" font-weight="400">全闭环，收工</text>
+<text x="226" y="2252" font-size="12" fill="#8A98AC" font-weight="400">审计打分签发，任务才算真正结束</text>
+<text x="60" y="2292" font-size="12.5" fill="#FFB900" font-weight="400">拒止的三道闸：① 状态机只接受「当前阶 +1」；② 每一阶必须有对应凭据，缺凭据不放行；③ 工具调用前按当前阶检查工具类型。</text>
+<rect x="60" y="2364" width="6" height="24" rx="3" fill="#00D2FF"/>
+<text x="80" y="2382" font-size="22" fill="#EAF2FA" font-weight="700">④ 实况清点：16 条机制，谁真的活着</text>
+<text x="533.8" y="2382" font-size="12.5" fill="#5F7189" font-weight="400">node scripts/mechanism_audit.mjs 实跑结果 · 2026-10-01</text>
+<rect x="60" y="2418" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="78" y="2447" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="108" y="2447" font-size="13.5" fill="#EAF2FA" font-weight="400">首动改名 S05</text>
+<text x="396" y="2447" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="424" y="2418" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="442" y="2447" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="472" y="2447" font-size="13.5" fill="#EAF2FA" font-weight="400">G0~G4 累积门禁</text>
+<text x="760" y="2447" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="788" y="2418" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="806" y="2447" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="836" y="2447" font-size="13.5" fill="#EAF2FA" font-weight="400">底层物理锁</text>
+<text x="1124" y="2447" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="60" y="2476" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="78" y="2505" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="108" y="2505" font-size="13.5" fill="#EAF2FA" font-weight="400">待办常显 S07</text>
+<text x="396" y="2505" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="424" y="2476" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="442" y="2505" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="472" y="2505" font-size="13.5" fill="#EAF2FA" font-weight="400">状态降级落盘</text>
+<text x="760" y="2505" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="788" y="2476" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="806" y="2505" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="836" y="2505" font-size="13.5" fill="#EAF2FA" font-weight="400">写后必读回 S11</text>
+<text x="1124" y="2505" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="60" y="2534" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="78" y="2563" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="108" y="2563" font-size="13.5" fill="#EAF2FA" font-weight="400">迭代检测台账</text>
+<text x="396" y="2563" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="424" y="2534" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="442" y="2563" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="472" y="2563" font-size="13.5" fill="#EAF2FA" font-weight="400">流程管控层 R3</text>
+<text x="760" y="2563" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="788" y="2534" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="806" y="2563" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="836" y="2563" font-size="13.5" fill="#EAF2FA" font-weight="400">流程监督员</text>
+<text x="1124" y="2563" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="60" y="2592" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="78" y="2621" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="108" y="2621" font-size="13.5" fill="#EAF2FA" font-weight="400">双检扫描</text>
+<text x="396" y="2621" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="424" y="2592" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="442" y="2621" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="472" y="2621" font-size="13.5" fill="#EAF2FA" font-weight="400">执行效果打分</text>
+<text x="760" y="2621" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="788" y="2592" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="806" y="2621" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="836" y="2621" font-size="13.5" fill="#EAF2FA" font-weight="400">执行层入索引</text>
+<text x="1124" y="2621" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="60" y="2650" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="78" y="2679" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="108" y="2679" font-size="13.5" fill="#EAF2FA" font-weight="400">技能池归位</text>
+<text x="396" y="2679" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="424" y="2650" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="442" y="2679" font-size="15" fill="#2EC4B6" font-weight="400">✅</text>
+<text x="472" y="2679" font-size="13.5" fill="#EAF2FA" font-weight="400">冗余/冲突/存量</text>
+<text x="760" y="2679" font-size="11.5" fill="#2EC4B6" font-weight="700" text-anchor="end">已触达</text>
+<rect x="788" y="2650" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="806" y="2679" font-size="15" fill="#F45B69" font-weight="400">⛔</text>
+<text x="836" y="2679" font-size="13.5" fill="#EAF2FA" font-weight="400">拦截层宿主注册</text>
+<text x="1124" y="2679" font-size="11.5" fill="#F45B69" font-weight="700" text-anchor="end">未触达</text>
+<rect x="60" y="2708" width="352" height="46" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<text x="78" y="2737" font-size="15" fill="#F45B69" font-weight="400">⛔</text>
+<text x="108" y="2737" font-size="13.5" fill="#EAF2FA" font-weight="400">任务列表面板</text>
+<text x="396" y="2737" font-size="11.5" fill="#F45B69" font-weight="700" text-anchor="end">未触达</text>
+<rect x="60" y="2774" width="1080" height="68" rx="8" fill="#1C1607" stroke="#5C4A10" stroke-width="1.5"/>
+<text x="84" y="2800" font-size="12.5" fill="#FFB900" font-weight="700">⚠️ 还有一个黄色项：「控制跳转插件」源码在位、但没注册进宿主 —— 属于「只有文字、没有物理载体」的虚无缥缈项。</text>
+<text x="84" y="2824" font-size="12.5" fill="#F45B69" font-weight="700">⛔ 拦截层未注册 = 上面写的「跳步会被物理拦下」，目前靠脚本判定与凭据在约束，闸机本身还没通电。</text>
+<rect x="60" y="2912" width="6" height="24" rx="3" fill="#00D2FF"/>
+<text x="80" y="2930" font-size="22" fill="#EAF2FA" font-weight="700">⑤ 只记三句话，就懂这套机制的脾气</text>
+<rect x="60" y="2966" width="1080" height="50" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="60" y="2966" width="4" height="50" rx="2" fill="#00D2FF"/>
+<text x="84" y="2997" font-size="14.5" fill="#00D2FF" font-weight="700">不采信自述</text>
+<text x="174.5" y="2997" font-size="12.5" fill="#8A98AC" font-weight="400">我说「做完了」不算数。要看磁盘上的文件、命令的真实退出码、读回来的内容。</text>
+<rect x="60" y="3024" width="1080" height="50" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="60" y="3024" width="4" height="50" rx="2" fill="#FFB900"/>
+<text x="84" y="3055" font-size="14.5" fill="#FFB900" font-weight="700">不静默失败</text>
+<text x="174.5" y="3055" font-size="12.5" fill="#8A98AC" font-weight="400">检测器跑不出来、状态读不到，一律判「未通过」，绝不用「检测失效」当通过。</text>
+<rect x="60" y="3082" width="1080" height="50" rx="8" fill="#0F1A24" stroke="#233046" stroke-width="1.2"/>
+<rect x="60" y="3082" width="4" height="50" rx="2" fill="#F45B69"/>
+<text x="84" y="3113" font-size="14.5" fill="#F45B69" font-weight="700">不跳步</text>
+<text x="145.5" y="3113" font-size="12.5" fill="#8A98AC" font-weight="400">工序是单向链：上一步没完成，下一步的工具调用就该被拦下（能不能拦住，见④的红灯）。</text>
+<rect x="60" y="3152" width="1080" height="80" rx="9" fill="#131C2B" stroke="#233046" stroke-width="1.5"/>
+<text x="84" y="3180" font-size="13" fill="#EAF2FA" font-weight="700">三条命令，你自己就能复核我上面说的每一句：</text>
+<text x="84" y="3208" font-size="11.5" fill="#2EC4B6" font-weight="400" font-family="Menlo, monospace">./scripts/control_gates.sh check     ./scripts/physical_lock.sh status     node scripts/mechanism_audit.mjs</text>
+<rect x="0" y="3252" width="1200" height="58" rx="0" fill="#05080D"/>
+<text x="60" y="3286" font-size="12" fill="#5F7189" font-weight="400">出图 2026-10-01 · 数据源：control_gates.sh / physical_lock.sh / mechanism_audit.mjs / process_supervisor.mjs 的实跑结果</text>
+</svg>

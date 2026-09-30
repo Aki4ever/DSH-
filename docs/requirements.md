@@ -649,7 +649,7 @@
      - 产出分层架构教学图 `assets/generated_images/knowledge_base_layered_architecture.svg`；
      - 将游戏世界观等特定资产隔离进 `knowledge/projects/aether_echo/`，严格阻断跨业务上下文污染。
   3. **细化到原子级的跨平台工程与交互规范**：
-     - **交互规范**：格式塔六大定律（接近/相似/闭合/主体背景）与 Don't Make Me Think 零思考直觉、防呆与三秒法则；
+     - **交互规范**：格式塔七大定律（接近/相似/闭合/主体背景分离/对称秩序/连续/共同命运）与 Don't Make Me Think 零思考直觉、防呆与三秒法则；
      - **Unity 规范**：主页面必做成 Scene、弹窗浮层必做成 Prefab、按钮必配 Drop Shadow 阴影与物理下沉动效、动静分离双 Canvas 与 `.meta` 同生共死；
      - **Web 规范**：页面路由懒加载、Modal Portal 挂载防层叠上下文污染、立体 box-shadow 与骨架屏；
      - **小程序规范**：主包 ≤1.5MB、组件化弹窗与防滚动穿透、`hover-class` 原生按压、`setData` 路径差量更新。
@@ -2421,6 +2421,55 @@
 
 ---
 
+### REQ-089: 执行层编排化改造（GCM-ORCH）—— 呈现简化 / 图片缩放 / 索引 / 接口 / 路由
+> ### 🏷️ **资产元数据与生命周期标记**
+> - **文档类型 (Doc Type)**: `[REQUIREMENT 业务需求台账]`
+> - **清理定位 (Retention)**: `[PERSISTENT 长期受管]`
+> - **生成会话**: `[优规001][60分] 管控机制流程讲解`
+> - **到期/清理条件**: `[随版本演进]`
+
+- **当前状态**：`[EVOLVING]` 演进中（**需求文案待用户拍板，尚未实施**）
+- **实施版本**：`v4.25.0`（规划目标；未实施前不得声称已生效）
+- **提出时间**：2026-10-01
+- **最新更新**：2026-10-01
+- **责任归属**：用户（提出与裁决） / AI 智能体（翻译、分裂与实施）
+- **需求文案**：[`docs/constraint_mechanism_optimize_6.md`](constraint_mechanism_optimize_6.md)（唯一权威出处，本条目只放指针不复述细则）
+
+#### 1. 提出背景与痛点
+用户提出 5 条优化诉求（输出精简、图片缩放、索引层、执行层接口、路由层），
+且明确要求"颗粒度过大就递归分裂到触达物理实现层"。本轮实测发现：**这 5 条里有 3 条并非"没有"，
+而是"有纸面、没物理"**——索引层已有 232 条静态清单但无机读产物、路由层只有 3 个硬编码分支、
+接口层 179 个技能只有 4 个 frontmatter 键；另有一条（图片缩放）物理落点已实测定位到
+`dsh-client-ui-primitives` 的 `ImageLightbox`（有灯箱、无缩放控件）。
+
+#### 2. 核心诉求与目标
+1. **呈现侧（UX-SIMP）**：输出按《Don't Make Me Think》与格式塔心理学收敛到最小阅读成本；
+   书目来源入知识库；输出体量判定从"只有未通电插件会写"改为可独立判定；
+2. **编排侧（ORCH）**：232 个执行层从"名字清单"升级为「机读索引 + 接口契约 + 路由择优调配」；
+3. **递归分裂铁律**：任何子需求若 6 条物理触达判据（§2.3）不全满足，继续分裂，不得登记为完成。
+
+#### 3. 关联文件与影响范围
+- **需求文案**：[`docs/constraint_mechanism_optimize_6.md`](constraint_mechanism_optimize_6.md)（本条目唯一细则出处）；
+- **新建（规划）**：`knowledge/sources/` · `scripts/output_audit.mjs` · `scripts/check_layer_interfaces.mjs` ·
+  `scripts/route_plan.mjs` · `indexes/capabilities_index.json` · `assets/viewers/image_viewer.html` ·
+  `skill-pool/plugins/dsh-plugin-image-zoom/`；
+- **改动（规划）**：`scripts/build_capabilities_index.mjs` · `indexes/capabilities_index.md` ·
+  `scripts/route_navigate.mjs` 与 `indexes/navigation_router.md`（路由侧）· `scripts/audit_execution.sh`（第 8 维接线）·
+  `knowledge/common/interaction_specification.md`（口径统一）· `skills/README.md`（接口文件约定，与 R4-d 冲突裁决绑定）。
+
+#### 4. 验收标准
+- [ ] 5 条子需求各自的判定命令可跑出退出码，且**名字覆盖率与接口覆盖率分开报**；
+- [ ] 递归分裂的 18 个叶子逐一按 6 条物理触达判据过检，未触达者显式列为未完成；
+- [ ] 4 项待裁决分歧（D1 格式塔书目出处 / D2 缩放落点 / D3 授权改宿主 / D4 失效补丁处置）经用户裁决后写入文案；
+- [ ] 全量复跑 `control_gates.sh` · `gate_selftest.sh` · `mechanism_audit` · `process_supervisor` · `progress_ledger` 全绿。
+
+#### 5. 历史演进与变更记录
+- **2026-10-01 [新建]**：接收 5 条口语需求，产出需求文案并把 5 条递归分裂为 18 个执行层叶子；
+  完成现状核查（可复用 7 项 / 实测缺口 11 项 / 本轮新发现 3 项）；登记 4 项待裁决分歧。
+  本轮**未改任何机制载体**，状态为 `[EVOLVING]` 待拍板。
+
+---
+
 
 ## 📎 附：不计入条目数的资产变更留痕
 
@@ -2608,3 +2657,23 @@
 - **改动后复跑**：冗余高相似对 0 · 冲突 0 · 存量待对齐 0（3 项书面豁免）· 门禁 4/4 · 物理锁 [2] LOCK-2；
 - **未验证项**：PNG 未在 Web GUI 页面内实点打开验证（仅文件工具读回 + 目视校验）；SVG 由手写坐标排版，
   已按设计尺寸栅格化并逐段目视核对，但未做跨浏览器渲染差异比对。
+
+### 小白版全流程图文（2026-10-01 · 用户提问"可视化讲解管控机制流程"）
+
+- **触发**：用户直接提问"看看当前管控机制的流程，用可视化图文讲给小白听"——属查阅问答类，走快速轻量流（【探】→【攻】→【归】），
+  仍按机制完成首动改名（`[优规001][60分] 管控机制流程讲解`）与 G0~G4 门禁前置；
+- **新增资产**：`assets/generated_images/control_mechanism_beginner_flow_v1.svg` + `.png`（1200×3310）——
+  面向非专业读者的教学版：① 你发一句话后必过的 10 道关（带真实命令与判定标签）· ② 五层分工（配生活化比喻）·
+  ③ 物理锁 LOCK-0~4 五级台阶 · ④ 16 条机制触达红绿灯 · ⑤ 三句脾气（不采信自述 / 不静默失败 / 不跳步）；
+- **版本分工**：本图定位为**教学讲解版**，只承担"讲清楚怎么运作"，**不承担实况数字权威**；
+  引用机制现状一律仍以 [`indexes/rules_index.md`](../indexes/rules_index.md) 第〇章"机制信息图"表中的
+  **当前实况总览版 v4** 为准，本节不新增 `REQ-###` 条目，不影响 G3 计数口径；
+- **本次实跑数据**（图文数据源，均可复跑）：门禁 4/4（骨架 11/11 · 防丢 11/11 · 条目 88 · 未提交 0/30 · HEAD 7211e4b）·
+  物理锁 [2] LOCK-2（凭据 2 条：`sync_gates_ok` + `sync_todo_evidence`）· S07 待办 1/6 完成 · 总进度 42% ·
+  `mechanism_audit` 登记 16 条（已触达 13 · 硬性未触达 2 · 无载体 1）· `process_supervisor --fast` 硬项 9/9 全绿 ·
+  `flow_control --check` 步骤 19 / 批次 17 / 五条不变式成立 · 双检与存量校准全 0；
+- **本轮新发现（非重复登记）**：`mechanism_audit` 的"任务列表面板"判据仍在按 `DSH Desktop.app` 旧应用名找宿主前端产物，
+  当前宿主已更名为 `DeepSeek Harness.app`，故该条**恒判未触达**——属判据路径未随宿主更名对齐（本轮只留痕，未改判据）；
+- **改动后复跑**：冗余高相似对 0 · 冲突 0 · 存量待对齐 0（7 项书面豁免）· 门禁 4/4 · 物理锁 [2] LOCK-2；
+- **未验证项**：PNG 未在 Web GUI 页面内实点打开验证（仅文件工具读回 + 四段裁切目视核对）；
+  本次改动**尚未推送远程**；SVG 由一次性 Python 生成器排版（生成器未落地为仓库脚本，交付物为 SVG 与 PNG 两份）。

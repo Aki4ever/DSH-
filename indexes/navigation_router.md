@@ -60,10 +60,17 @@
 
 ## 🛠️ 三、自动化导航路由工具
 
-系统提供轻量级导航脚本支持：
+路由层的**可执行载体**是 [`scripts/route_plan.mjs`](../scripts/route_plan.mjs)（需求依据 `REQ-089` / `R5`）：
+
 ```bash
-node scripts/route_navigate.mjs --entry        # 快速输出当前交付物或核心入口
-node scripts/route_navigate.mjs <能力/关键词>   # 自动规划并打印地图导航路线
+node scripts/route_plan.mjs "<意图或关键词>"   # 命中后输出调配方案：执行层调用命令 + 前置门禁 + 依赖与顺序 + 并行串行裁决 + 建议批次 + 失败回退
+node scripts/route_plan.mjs --check            # 路由层自检：文档-实现一致性 / 死通道 / 可达性覆盖率 / 反向用例
+node scripts/route_plan.mjs --json "<关键词>"  # 机器可读输出
 ```
-- **单一权威源**：路由知识基于 `indexes/capabilities_index.md` 与 `indexes/shortcuts_index.md` 动态生成；
-- **免推理降耗**：利用本地 Node.js 脚本毫秒级匹配并拼接路线，节省大模型规划 Token。
+- **退出码**：`0` 全过 · `1` 有问题（含未命中）· `2` 取不到证据（铁律：没有可解析的证据 ≠ 通过）；
+- **单一权威源**：路由知识基于 [`indexes/capabilities_index.json`](capabilities_index.json)（缺失时回退解析 [`indexes/capabilities_index.md`](capabilities_index.md) 的 §3.1 表）与 [`indexes/shortcuts_index.md`](shortcuts_index.md) 动态生成；通道解析与说法命中直接复用 [`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs) 的导出函数，不在本层另写一套匹配逻辑；
+- **依赖与裁决的权威源**（取自以下文件，查不到即写"未登记"）：工序依赖取自 [`ai-control/config/flow_graph.json`](../ai-control/config/flow_graph.json)，组合依赖取自 [`skill-pool/docs/operations/layer-graph.json`](../skill-pool/docs/operations/layer-graph.json)，实例安全档位（safe_multi / needs_lock / single_only）取自 [`skill-pool/docs/operations/instance-safety.json`](../skill-pool/docs/operations/instance-safety.json)，技能登记触发词取自 [`skill-pool/docs/operations/skill-catalog.json`](../skill-pool/docs/operations/skill-catalog.json)；
+- **门禁边界**取自 [`scripts/lib/physical_lock.mjs`](../scripts/lib/physical_lock.mjs) 的 `STAGES` 与 `evaluatePhysicalLock`，并由 `--check` 以 12 支探针 × 5 个阶逐格对拍；
+- **免推理降耗**：利用本地 Node.js 脚本毫秒级匹配并拼接调配方案，节省大模型规划 Token。
+
+> **历史实现（并存不弃，禁止当作路由知识来源）**：[`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) 仅保留 `--entry` 与 `--version` 两个入口；它**不读取任何索引文件**——其中 `capFile` 是死变量（第 65 行 `const capFile = path.join(WORKSPACE, 'indexes/capabilities_index.md')` 声明后从未被读取），因此 `--check` 的 ① 会把它判为"纸面声明"。保留它的理由：兼容历史入口，同时把"文档承诺 ≠ 实现读取"变成可执行判定。

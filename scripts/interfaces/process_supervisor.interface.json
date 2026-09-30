@@ -1,0 +1,46 @@
+{
+  "id": "cli.rules.process_supervisor",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/process_supervisor.mjs",
+  "invoke": "node scripts/process_supervisor.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--fast",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/process_supervisor.mjs --fast     # 只跑轻判定（跳过审计/指纹）"
+    },
+    {
+      "name": "--list",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/process_supervisor.mjs --list     # 只列复核项清单（不执行，供上层审计核验）"
+    },
+    {
+      "name": "--json",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/process_supervisor.mjs --json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/process_supervisor.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

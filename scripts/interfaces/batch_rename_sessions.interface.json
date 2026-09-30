@@ -1,0 +1,46 @@
+{
+  "id": "cli.rules.batch_rename_sessions",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/batch_rename_sessions.mjs",
+  "invoke": "node scripts/batch_rename_sessions.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--plan",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/batch_rename_sessions.mjs --plan naming-plan.json --dry-run"
+    },
+    {
+      "name": "--plan",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/batch_rename_sessions.mjs --plan naming-plan.json --apply"
+    },
+    {
+      "name": "--plan",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/batch_rename_sessions.mjs --plan naming-rollback.json --apply"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/batch_rename_sessions.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

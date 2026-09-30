@@ -1,0 +1,34 @@
+{
+  "id": "plugin.skillpool.dsh-plugin-image-zoom",
+  "layer": "插件 (Plugin)",
+  "path": "skill-pool/plugins/dsh-plugin-image-zoom",
+  "invoke": "dsh plugin add skill-pool/plugins/dsh-plugin-image-zoom",
+  "summary": "(待补：从头部注释里没抽到功能描述)",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "header 注释里未声明入参，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "dsh plugin add skill-pool/plugins/dsh-plugin-image-zoom"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

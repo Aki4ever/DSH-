@@ -1,0 +1,40 @@
+{
+  "id": "cli.rules.redundancy_scan",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/redundancy_scan.mjs",
+  "invoke": "node scripts/redundancy_scan.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--root",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/redundancy_scan.mjs --root <项目根> [--json] [--top N]"
+    },
+    {
+      "name": "--self-test",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/redundancy_scan.mjs --self-test"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/redundancy_scan.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

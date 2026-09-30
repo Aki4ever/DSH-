@@ -353,6 +353,8 @@ async function scan({ root, dirs }) {
   const metricClaims = new Map([
     ['插件自检项数', []],
     ['冗余检测自检项数', []],
+    // REQ-089 R1-b：格式塔定律计数（跨文件事实口径，必须先在此登记，否则采集处会越界写入）
+    ['格式塔定律数', []],
   ])
 
   for (const full of files) {
@@ -399,6 +401,22 @@ async function scan({ root, dirs }) {
     }
     const mRed = text.match(/自检\s*(\d+)\s*\/\s*(\d+)\s*通过/)
     if (mRed) metricClaims.get('冗余检测自检项数').push({ file: rel, value: `${mRed[1]}/${mRed[2]}` })
+
+    // C3 扩展：**格式塔定律计数**（REQ-089 R1-b 补的盲区用例）。
+    // 为什么单独加这一条：这是"同一事实散落在多处叙述文字里"的典型形态 ——
+    // 权威文件自己写"七大定律"，而 README / 索引 / 知识库导航共 4 处仍写"六大定律"。
+    // 它不是"标题自称数 vs 标题下条目数"（C2 管不了），只能按**跨文件事实口径**来查。
+    // 采纳范围含 knowledge/（导航类文字正是错源），但**排除** docs/ 与 ai-control/reports/
+    // —— 台账与复盘属"记录"，允许合法写出历史差异，否则复盘越清楚越会被自己报成冲突。
+    const gestaltScope = /^(README\.md|indexes\/|knowledge\/)/
+    if (gestaltScope.test(rel)) {
+      const gestaltRe = /格式塔[^\n|]{0,16}?([零一二两三四五六七八九十百\d]+)\s*(?:大|条|项)?\s*(?:心理学)?定律/g
+      let gm
+      while ((gm = gestaltRe.exec(text))) {
+        const n = cnToNumber(gm[1])
+        if (n != null) metricClaims.get('格式塔定律数').push({ file: rel, value: `${gm[1]}（${n}）` })
+      }
+    }
 
     // C5
     conflicts.push(...checkLinks(full, text, existsFn))
@@ -499,6 +517,32 @@ function selfTest() {
   add('指标一致不误报', checkMetric('插件自检项数', [
     { file: 'a.md', value: '33' }, { file: 'b.md', value: '33' },
   ]) === null, (v) => v === true)
+  // 9c) 格式塔定律计数口径冲突必检出（REQ-089 R1-b 补的盲区）
+  //     实测背景：权威文件写"七大"，而 README/索引/知识库导航共 4 处写"六大"，
+  //     当时 conflict_scan 报 0 冲突 —— 因为它只管"标题自称数 vs 标题下条目数"，
+  //     管不了"同一事实散落在多处叙述文字里"。这条用例把那类盲区钉死。
+  add('格式塔口径冲突必检出', !!checkMetric('格式塔定律数', [
+    { file: 'indexes/a.md', value: '六（6）' },
+    { file: 'knowledge/b.md', value: '七（7）' },
+  ]), (v) => v === true)
+  // 9d) 格式塔口径一致不误报
+  add('格式塔口径一致不误报', checkMetric('格式塔定律数', [
+    { file: 'README.md', value: '七（7）' }, { file: 'knowledge/README.md', value: '七（7）' },
+  ]) === null, (v) => v === true)
+  // 9e) 采集器必须真的抓到三种真实词序，否则"有规则但采不到"仍然是空转
+  const gestaltSample = [
+    '格式塔六大定律 / Don\'t Make Me Think 零思考',
+    '通用交互与体验规范 (格式塔七大定律 / Don\'t Make Me Think 零思考)',
+    '## 一、格式塔心理学七大定律与交互映射规范',
+  ]
+  const gestaltHits = gestaltSample.map((s) => {
+    const re = /格式塔[^\n|]{0,16}?([零一二两三四五六七八九十百\d]+)\s*(?:大|条|项)?\s*(?:心理学)?定律/g
+    const out = []
+    let m
+    while ((m = re.exec(s))) out.push(cnToNumber(m[1]))
+    return out.join(',')
+  })
+  add('格式塔采集器覆盖三种真实词序', gestaltHits.join(' | ') === '6 | 7 | 7', (v) => v === true)
   // 9b) 表格跨界不误配：说明行里的"插件自检"不得与相邻单元格的数字配成一对
   const tableSample = `| 指标 | 现状 | 校准后 |
 | :--- | :--- | :--- |

@@ -1,0 +1,34 @@
+{
+  "id": "cli.rules.generate_naming_plan",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/generate_naming_plan.mjs",
+  "invoke": "node scripts/generate_naming_plan.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--brief",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/generate_naming_plan.mjs --brief brief.json --out plan.json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/generate_naming_plan.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

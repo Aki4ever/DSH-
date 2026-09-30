@@ -1,0 +1,46 @@
+{
+  "id": "cli.rules.deepseek_key_setup",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/deepseek_key_setup.sh",
+  "invoke": "bash scripts/deepseek_key_setup.sh",
+  "summary": "(待补：从头部注释里没抽到功能描述)",
+  "inputs": [
+    {
+      "name": "--from-env",
+      "type": "arg",
+      "required": false,
+      "desc": "./scripts/deepseek_key_setup.sh --from-env # 从 $DEEPSEEK_API_KEY 读取（CI/脚本场景）"
+    },
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "./scripts/deepseek_key_setup.sh --check    # 只报告是否已配置（绝不打印密钥）"
+    },
+    {
+      "name": "--clear",
+      "type": "arg",
+      "required": false,
+      "desc": "./scripts/deepseek_key_setup.sh --clear    # 删除已落盘的密钥"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/deepseek_key_setup.sh"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

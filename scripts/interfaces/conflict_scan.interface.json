@@ -1,0 +1,40 @@
+{
+  "id": "cli.rules.conflict_scan",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/conflict_scan.mjs",
+  "invoke": "node scripts/conflict_scan.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "--root",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/conflict_scan.mjs --root <项目根> [--json] [--dirs a,b,c] [--top N]"
+    },
+    {
+      "name": "--self-test",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/conflict_scan.mjs --self-test"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/conflict_scan.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

@@ -1,0 +1,40 @@
+{
+  "id": "cli.rules.audit_execution",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/audit_execution.sh",
+  "invoke": "bash scripts/audit_execution.sh",
+  "summary": "对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片",
+  "inputs": [
+    {
+      "name": "--json",
+      "type": "arg",
+      "required": false,
+      "desc": "./scripts/audit_execution.sh --json   # 输出 JSON 数据"
+    },
+    {
+      "name": "--exit",
+      "type": "arg",
+      "required": false,
+      "desc": "./scripts/audit_execution.sh --exit   # 低于 80 分退出码为 1"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/audit_execution.sh"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：232**（技能 178 · 其他执行层 54）
+**执行层条目总数：236**（技能 178 · 其他执行层 58）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -335,240 +335,244 @@
 
 ### 3.1 全量执行层速查（含 agent / plugin / cli）
 
-| 层级 | 能力标识 (Identifier) | 物理路径 | 简介 |
-| :--- | :--- | :--- | :--- |
-| 技能 (Skill) | `skill.pool.acquire-atomic-lock` | `skills/acquire-atomic-lock` | 工序动作级技能(L2)：基于 mkdir(2) 原子目录的物理锁获取与释放器。锁键经 realpath 归一为绝对路径，持有者记录 pid+start_ticks 防 PID 复用误判，支持 lease/live 两种锁模式与按模式分档的陈 |
-| 技能 (Skill) | `skill.pool.anti-pattern-guard` | `skills/anti-pattern-guard` | 复合流程级技能(L3)：反例门禁。把「清单 → 检测 → 断言」串成一道"绝不允许发生"的放行门禁，挂载于管家「③ 冲突·冗余·质量」集群，命中反例一律阻断，禁止记录后继续。 |
-| 技能 (Skill) | `skill.pool.anti-pattern-policy` | `skills/anti-pattern-policy` | 微观原子规约：反例层判定基元。定义系统「绝不允许发生」的七条反例（AP-01 死循环 ~ AP-07 播报风暴）及其物理判据、默认阈值与判定优先级，写不出物理判据的口号一律不得进入本层。 |
-| 技能 (Skill) | `skill.pool.arbitrate-priority-resolver` | `skills/arbitrate-priority-resolver` | 微观原子规约：优先级仲裁基元。在多条规则发生逻辑冲突时，强制遵循固定优先级决断法则。 |
-| 技能 (Skill) | `skill.pool.assert-zero-exitcode` | `skills/assert-zero-exitcode` | 工序动作级技能：执行命令并硬断言退出码必须为 0，杜绝忽略报错与失败静默。 |
-| 技能 (Skill) | `skill.pool.atomic-fastpath-router` | `skills/atomic-fastpath-router` | 复合流程级技能(L3)：原子级快捷路由总控。当索引命中目标技能后，提供直达原子动作的Shell执行命令与依赖指引，实现毫秒级触达。 |
-| 技能 (Skill) | `skill.pool.atomic-fission-guard` | `skills/atomic-fission-guard` | 复合流程级技能(L3)：粒度递归分裂门禁。任何管控步骤若不能绑定四类物理探针之一，一律阻断实施并强制向下分裂。 |
-| 技能 (Skill) | `skill.pool.atomic-lock-guard` | `skills/atomic-lock-guard` | 复合流程级技能(L3)：并发处理原子锁放行门禁。把「口径 → 真获取 → 真并发压测 → 断言」串成一道不可跳步的互斥门禁，挂载于管家「③ 冲突·冗余·质量」集群；放行的唯一合法证据是「持锁段重叠窗口 0 + 无锁对照段看得见并发 + 陈旧 |
-| 技能 (Skill) | `skill.pool.atomic-lock-policy` | `skills/atomic-lock-policy` | 微观原子规约：并发共享资源的物理原子锁判定基元。钉死七条硬口径——锁载体必须是 mkdir 原子目录或 flock -n 排他文件锁、锁键=归一化绝对资源路径、加锁顺序=字典序、持有者=PID+进程起始时间戳、超时默认 300 秒且超时即失 |
-| 技能 (Skill) | `skill.pool.audit-all-skills-compliance` | `skills/audit-all-skills-compliance` | 工序动作级技能：遍历全量存量与增量技能，物理审查其头部场景索引、主体SOP与配套脚本合规性，返回退出码 0/1。 |
-| 技能 (Skill) | `skill.pool.audit-imported-skill` | `skills/audit-imported-skill` | 工序动作级技能：对外部引入候选执行许可白名单、来源 URL、脚本可执行面、描述完整性与命名规范体检，逐项 pass/fail 给出理由并返回接受/拒绝裁决。 |
-| 技能 (Skill) | `skill.pool.audit-layer-naming` | `skills/audit-layer-naming` | 工序动作级技能(L2)：全量执行层命名体检器。按四要素（归属 / 分类 / 做什么 / 命名）与四种命名形态逐条扫描 catalog、磁盘目录、契约头与执行层登记表，输出带违规码、对象与 file:line 的违规清单；判据实现以 nami |
-| 技能 (Skill) | `skill.pool.build-execution-tree` | `skills/build-execution-tree` | 工序动作级技能：合并 skill-catalog.json 与执行层登记表，生成 execution-tree.json/md 唯一真相源，并把受管集群区块注入 dsh-butler 契约。 |
-| 技能 (Skill) | `skill.pool.build-image-viewer` | `skills/build-image-viewer` | 工序动作级技能：把任意图片以 base64 内联进零依赖单文件 HTML，产出可点击放大、可滚轮缩放、可拖拽平移、可一键复位的交互查看器。 |
-| 技能 (Skill) | `skill.pool.build-inverted-index` | `skills/build-inverted-index` | 工序动作级技能：由 skill-catalog.json 生成倒排索引 skill-index.json（term→文档→字段→词频），并把分词器作为可复用库对外暴露。 |
-| 技能 (Skill) | `skill.pool.build-layer-graph` | `skills/build-layer-graph` | 工序动作级技能：由 skill-catalog.json 与执行层登记表生成层间依赖图 layer-graph.json（节点 / 边 / 层级计数），幂等可重跑。 |
-| 技能 (Skill) | `skill.pool.build-quantifier-table` | `skills/build-quantifier-table` | 工序动作级技能(L2)：生成并维护场景量化映射表 docs/operations/quantifier-table.json。内置种子映射不少于 20 条，覆盖高/大/快/多/好/严重/频繁等词且每词至少 3 个场景；每条必须含 term/ |
-| 技能 (Skill) | `skill.pool.capability-naming-policy` | `skills/capability-naming-policy` | 微观原子规约：能力层命名判定基元。钉死「归属 / 分类 / 做什么 / 命名」四要素与四种已登记命名形态（动作 / 编排 / 规约 / 厂商边界），规定语法约束、禁词、同义归一、唯一性与改名的六处同步契约；词表与形态的唯一真相源是 docs |
-| 技能 (Skill) | `skill.pool.catalog-consistency-guard` | `skills/catalog-consistency-guard` | 复合流程级技能(L3)：口径一致性门禁。串联受管区块生成与三方对拍，是技能池任何写入动作的前置门禁。 |
-| 技能 (Skill) | `skill.pool.check-deepseek-usage` | `skills/check-deepseek-usage` | 工序动作级技能(L2)：DeepSeek 用量探针。以北京时间本地判定高峰/空闲时段并算出下次切换倒计时，真实调用官方余额接口取额度，并对官方定价页做 sha256 指纹巡检（每日一次语义）；铁律是「取不到就如实报错，绝不编造余额/时段/指 |
-| 技能 (Skill) | `skill.pool.check-python-syntax` | `skills/check-python-syntax` | 工序动作级技能：对指定的 Python 源码文件执行静态编译语法验证，防止引入 SyntaxError。 |
-| 技能 (Skill) | `skill.pool.check-script-executable` | `skills/check-script-executable` | 工序动作级技能：物理检测指定技能目录中的配套脚本是否存在且具备可执行权限 (chmod +x)。 |
-| 技能 (Skill) | `skill.pool.chinese-end-to-end` | `skills/chinese-end-to-end` | 微观原子规约：全流程中文输出。回复正文、进度播报、报错信息、解释说明与脚本注释一律中文；技术标识符与英文缩写保留原文但首现必须紧跟中文释义与中文全称。 |
-| 技能 (Skill) | `skill.pool.chinese-output-guard` | `skills/chinese-output-guard` | 复合流程级技能(L3)：全流程中文输出交付前门禁。把「规约 → 剥离 → 断言」串成一道门禁，挂载于管家「④ 输出规约」，代码块与命令原文豁免，白名单外拉丁词零容忍。 |
-| 技能 (Skill) | `skill.pool.classify-change-scope` | `skills/classify-change-scope` | 工序动作级技能(L2)：把一组变更路径逐条判定为 hot_reload / incremental / restart，输出理由与命中的不可热更边界，并给出 no_restart_needed / restart_required 总判定。 |
-| 技能 (Skill) | `skill.pool.classify-decision-reversibility` | `skills/classify-decision-reversibility` | 工序动作级技能(L2)：对每个不确定项确定性判定可逆性与红线归属，输出 decide_now / ask_once、建议默认值与回滚方式。 |
-| 技能 (Skill) | `skill.pool.classify-instance-safety` | `skills/classify-instance-safety` | 工序动作级技能：真实扫描执行层脚本，判定 safe_multi / needs_lock / single_only 三档，提取资源键与信号，并可写出实例安全声明表。 |
-| 技能 (Skill) | `skill.pool.classify-step-tier` | `skills/classify-step-tier` | 工序动作级技能(L2)：把一条过程事件确定性判定为 milestone / micro / action 三档之一，并输出 category 归类，作为折叠的前置判据。 |
-| 技能 (Skill) | `skill.pool.collect-process-evidence` | `skills/collect-process-evidence` | 工序动作级技能(L2)：流程合规取证器。按 process-spec.json 逐步从证据目录与仓库实况取证，产出证据包；铁律是「没有证据不等于走了这一步」——取不到证据一律记 fail + unverifiable，na 只在该步明确不适 |
-| 技能 (Skill) | `skill.pool.concise-chinese-bold-guard` | `skills/concise-chinese-bold-guard` | 复合流程级技能(L3)：基于 4 个微观 L1 原子规约叠加而成。强制要求输出文本不超过 10 个字、纯中文、全黑体、零闲聊。 |
-| 技能 (Skill) | `skill.pool.concise-focused-output` | `skills/concise-focused-output` | 微观原子规约：默认简短聚焦输出。在无特定篇幅扩充要求下，压缩篇幅、开门见山、直击要害，杜绝冗长铺垫。 |
-| 技能 (Skill) | `skill.pool.concretization-guard` | `skills/concretization-guard` | 复合流程级技能(L3)：含糊词具像化交付门禁。把「规约 → 具像化建议 → 断言」串成一道不可跳步的放行门禁，挂载于管家「④ 输出规约」集群；与 quantification-guard 分工为「程度词补数值 / 含糊词补实体与判据」；we |
-| 技能 (Skill) | `skill.pool.concretize-ambiguity-policy` | `skills/concretize-ambiguity-policy` | 微观原子规约：含糊词具像化判定基元。定义范围含糊、指代含糊、时序含糊三类含糊词与 hedge 缓解词四类判据及其具像化方式（确切数量 + 计数依据 / 具体实体清单 / 触发条件 + 时限 / 可核对判据），并立下「禁止用另一个含糊词替换含 |
-| 技能 (Skill) | `skill.pool.concretize-term` | `skills/concretize-term` | 工序动作级技能(L2)：含糊词具像化建议器。从唯一真相源加载含糊词并集 AMBIGUITY_WORDS 与分类函数 classify_word，对每个命中词按 range/reference/timing/hedge 四类产出具像化建议模板 |
-| 技能 (Skill) | `skill.pool.conditional-deliverable-router` | `skills/conditional-deliverable-router` | 微观原子规约：输出框架条件分支裁决。有物理产物时展示输出物与地址；无产物时强制抹除输出地址，转为输出核心结论。 |
-| 技能 (Skill) | `skill.pool.conflict-detector` | `skills/conflict-detector` | 复合流程级技能(L3)：规则冲突检测与仲裁自愈。检测多技能或多指令间的排他矛盾，给出确定性裁决方案，保障管控稳固有效。 |
-| 技能 (Skill) | `skill.pool.declare-lock-set` | `skills/declare-lock-set` | 工序动作级技能(L2)：为并行任务归一化并排序锁集合（去重 + 字典序），并检测「没有锁却要写」与「锁键非归一化路径」两类静态错误，输出每任务的 locks 与 acquire_order。 |
-| 技能 (Skill) | `skill.pool.decoupling-guard` | `skills/decoupling-guard` | 复合流程级技能(L3)：执行层解耦门禁。任何执行层变更后强制建图、检测并断言五类违规为零，契约外耦合一律阻断。 |
-| 技能 (Skill) | `skill.pool.detect-action-verb` | `skills/detect-action-verb` | 工序动作级技能：单点物理识别并提取语句中的指令动作动词（如创建/生成/校验/修改）。 |
-| 技能 (Skill) | `skill.pool.detect-forbidden-state` | `skills/detect-forbidden-state` | 工序动作级技能：把事件流（JSONL 或 stdin）逐条判定七条反例，每条反例都有独立可命中的检测分支，命中即给出反例编号、事件 seq 列表与人类可读证据，并按正确性 > 进展 > 可观测 > 成本上报。 |
-| 技能 (Skill) | `skill.pool.detect-layer-coupling` | `skills/detect-layer-coupling` | 工序动作级技能：按 layer-decoupling-policy 的五类判据真实扫描契约与脚本源码，输出逆向依赖、依赖环、跨层跳跃、隐式耦合与共享可变状态违规。 |
-| 技能 (Skill) | `skill.pool.detect-lock-conflict` | `skills/detect-lock-conflict` | 工序动作级技能(L2)：对并行任务检测锁冲突（锁集合交集非空）、潜在死锁（等待图成环）与超时未释放（跨度超 timeout_s 或逻辑已超时），并给出必须串行的任务对与可安全并行的分组建议。 |
-| 技能 (Skill) | `skill.pool.detect-rule-conflicts` | `skills/detect-rule-conflicts` | 工序动作级技能：检测规则集中的排他性冲突（如语种互斥、长度上下限倒挂、格式互斥）。 |
-| 技能 (Skill) | `skill.pool.detect-target-entity` | `skills/detect-target-entity` | 工序动作级技能：单点物理提取语句中的核心操作实体（如JSON/文档/代码/文件）。 |
-| 技能 (Skill) | `skill.pool.detect-vague-modifier` | `skills/detect-vague-modifier` | 工序动作级技能(L2)：扫描文本中的程度类与含糊类词语，输出命中词、类别（degree/ambiguity 与五类细分）、位置、是否已有场景量化映射。本技能内置词表是全仓模糊词表的唯一真相源，DEGREE_WORDS / AMBIGUITY |
-| 技能 (Skill) | `skill.pool.disambiguate-candidates` | `skills/disambiguate-candidates` | 工序动作级技能：消除候选技能间的调用歧义，根据权重与上下文确定单一首选或互补协同组合。 |
-| 技能 (Skill) | `skill.pool.dispatch-skill-search` | `skills/dispatch-skill-search` | 工序动作级技能(L2)：四源检索调度器。按「本地优先」硬规则先扫本地技能池 catalog 与已装 DSH 插件，命中即短路且不向任何外部源发起检索并留痕 skipped_sources；未命中才在显式 --allow-network 下外 |
-| 技能 (Skill) | `skill.pool.dsh-butler` | `skills/dsh-butler` | DSH 全局主控管家(L4 中枢编排级)，统筹调度 L1~L3 全量执行层，支持自底向上按需拼装能力积木与动态造物。 |
-| 技能 (Skill) | `skill.pool.dual-lane-router` | `skills/dual-lane-router` | 复合流程级技能(L3)：完整流程与快速流程双轨总控。先判红线，再算加权分，判定可复算后方可进入执行。 |
-| 技能 (Skill) | `skill.pool.emit-search-snippet` | `skills/emit-search-snippet` | 工序动作级技能：为单条检索结果生成 ≤120 字的确定性摘要片段，并对命中词做居中截断。 |
-| 技能 (Skill) | `skill.pool.enforce-atomic-granularity` | `skills/enforce-atomic-granularity` | 微观原子规约：强制每个 SOP 步骤声明其绑定的物理探针类型，未声明或声明为非探针表述的步骤一律判定为粒度过粗，必须递归分裂。 |
-| 技能 (Skill) | `skill.pool.enforce-contract-completeness` | `skills/enforce-contract-completeness` | 微观原子规约：技能契约完整性强制要求。所有存量与增量技能必须同时具备Frontmatter元数据、头部场景索引与主体运作SOP。 |
-| 技能 (Skill) | `skill.pool.ensure-utf8-encoding` | `skills/ensure-utf8-encoding` | 工序动作级技能：物理检测并断言指定文件是否为合法 UTF-8 编码且无不可读乱码。 |
-| 技能 (Skill) | `skill.pool.execution-tree-guard` | `skills/execution-tree-guard` | 复合流程级技能(L3)：执行层树门禁。任何执行层变更后强制重建并断言树与索引一致，手写集群表一律阻断。 |
-| 技能 (Skill) | `skill.pool.extract-catalog-topology` | `skills/extract-catalog-topology` | 工序动作级技能：物理读取全局 Catalog JSON 数据，提取全量技能节点与其加法依赖拓扑边。 |
-| 技能 (Skill) | `skill.pool.extract-core-objective` | `skills/extract-core-objective` | 工序动作级技能：提取自然语言语句中的核心动宾主干与关键实体目标，输出标准化结构。 |
-| 技能 (Skill) | `skill.pool.extract-json-payload` | `skills/extract-json-payload` | 工序动作级技能：从任意夹杂自然语言的文本中，精准提取并解析出闭合合法的 JSON 负载。 |
-| 技能 (Skill) | `skill.pool.fastlane-redline-policy` | `skills/fastlane-redline-policy` | 微观原子规约：定义强制进入完整流程的不可逆红线清单，并规定红线优先于任何加权分值。 |
-| 技能 (Skill) | `skill.pool.fastpath-dispatch-guide` | `skills/fastpath-dispatch-guide` | 微观原子规约：规范快捷路由的指引结构，必须包含目标技能ID、级别、直调执行命令与底层原子依赖。 |
-| 技能 (Skill) | `skill.pool.filter-conversational-noise` | `skills/filter-conversational-noise` | 微观原子规约：过滤用户表达或大模型交流中的语气词、叹词、客套、口癖等纯噪音内容。 |
-| 技能 (Skill) | `skill.pool.fold-repeated-events` | `skills/fold-repeated-events` | 工序动作级技能(L2)：把逐条过程事件折叠成里程碑逐条保留、动作按类别计数、微操作汇总为 ×N 的紧凑过程输出。 |
-| 技能 (Skill) | `skill.pool.format-iconized-tail` | `skills/format-iconized-tail` | 微观原子规约：强制在最终回复的末尾集中使用特异化图标输出四要素框架，严禁在正文过早打断或散落分布。 |
-| 技能 (Skill) | `skill.pool.format-status-block` | `skills/format-status-block` | 微观原子规约：规范输出框架中的“当前状态”板块，必须使用确切状态标记与一句话结论。 |
-| 技能 (Skill) | `skill.pool.format-visual-inspection` | `skills/format-visual-inspection` | 微观原子规约：强制可视化透视输出必须包含标准 Mermaid 图表或 GenUI 卡片，严禁仅输出大段无图纯文本。 |
-| 技能 (Skill) | `skill.pool.format-zoomable-visual` | `skills/format-zoomable-visual` | 微观原子规约：一切可视化产物（图片、图谱、拓扑图、示意图）必须提供「点击放大 + 多级缩放按钮 + 复位 + 下载」四件套交互，严禁只输出静态图；缩放必须走离散档位表（口径见 zoom-level-policy），下载必须三段降级可选存储地 |
-| 技能 (Skill) | `skill.pool.full-spectrum-skill-auditor` | `skills/full-spectrum-skill-auditor` | 复合流程级技能(L3)：全量技能合规自检门禁。在每次更新时穿透审计全量存量与增量技能的Frontmatter元数据、头部场景索引与主体SOP，确保零契约缺失。 |
-| 技能 (Skill) | `skill.pool.generate-fastpath-route` | `skills/generate-fastpath-route` | 工序动作级技能：接收 Skill ID，秒级提取并返回其直达运行命令、级别属性与原子依赖链。 |
-| 技能 (Skill) | `skill.pool.google-style-skill-search-router` | `skills/google-style-skill-search-router` | 复合流程级技能(L3)：Google 式技能检索总控。进程内组装查询解析、BM25 排序、片段生成与质量日志，只回灌片段不回灌全文。 |
-| 技能 (Skill) | `skill.pool.high-relevance-notes-only` | `skills/high-relevance-notes-only` | 微观原子规约：规范输出框架中的“重要说明”，强制与本次输出物高强绑定，剔除泛泛空话与日常客套。 |
-| 技能 (Skill) | `skill.pool.iconized-output-showcase` | `skills/iconized-output-showcase` | 复合流程级技能(L3)：尾部集中特异化图标展示总控。将交付输出全部收敛至最终末尾，通过特异化Emoji形成结构化视觉锚点，并通过正则断言保障物理合规。 |
-| 技能 (Skill) | `skill.pool.index-body-contract` | `skills/index-body-contract` | 复合流程级技能(L3)：索引主体运作契约。细化解耦为SOP流程规范、Mermaid流程图语法物理校验、底层脚本可执行权限物理检测与执行契约完整性验证。 |
-| 技能 (Skill) | `skill.pool.index-header-contract` | `skills/index-header-contract` | 复合流程级技能(L3)：索引头部契约规约。规范 Skill 的元数据与触发场景，使索引系统能够快速、精准识别适用时机。 |
-| 技能 (Skill) | `skill.pool.install-client-plugin` | `skills/install-client-plugin` | 工序动作级技能(L2)：DSH client 插件幂等装配器。把本仓 plugins/ 下的自建 client 插件构建后复制进指定 profile 的 node_modules，登记 file: 依赖并追加进 dsh.profile.bu |
-| 技能 (Skill) | `skill.pool.instance-pool-guard` | `skills/instance-pool-guard` | 复合流程级技能(L3)：实例准入门禁。多实例不是默认允许，必须先分档、再断言，只有 safe_multi 可无锁并发。 |
-| 技能 (Skill) | `skill.pool.instance-pool-policy` | `skills/instance-pool-policy` | 微观原子规约：执行层实例可多开，但必须无状态或状态外置到资源键；独占资源必须声明，禁止实例间共享可变全局。 |
-| 技能 (Skill) | `skill.pool.intent-detector` | `skills/intent-detector` | 复合流程级技能(L3)：意图识别与噪声过滤。解耦组装了噪音剥离、空白规约、动词判定、实体提取与核心目标提取五项原子能力。 |
-| 技能 (Skill) | `skill.pool.interactive-image-viewer` | `skills/interactive-image-viewer` | 复合流程级技能(L3)：可缩放可视化总控。把规约、单文件生成器与静态验证探针串成「生成 → 自检 → 交付」端到端流程，确保交付的每一张图片或图谱都真正可点击放大、可缩放复位。 |
-| 技能 (Skill) | `skill.pool.layer-decoupling-policy` | `skills/layer-decoupling-policy` | 微观原子规约：执行层解耦判定基元。规定执行层之间只通过契约（catalog 的 composition 边 + 已声明产物路径）通信，依赖方向只允许 L4→L3→L2→L1 与同层，禁止环与跨层直引内部实现，并给出逆向依赖、依赖环、跨层跳跃 |
-| 技能 (Skill) | `skill.pool.layer-naming-guard` | `skills/layer-naming-guard` | 复合流程级技能(L3)：执行层命名规范门禁。把「体检 → 整改 → 断言 → 渲染」串成一道不可跳步的放行门禁，挂载于管家「② 契约与合规」集群；放行的唯一合法证据是「合规率 1.0000 + 旧名悬空引用 0 + 文档与真相源零漂移」三项 |
-| 技能 (Skill) | `skill.pool.lazy-load-policy` | `skills/lazy-load-policy` | 微观原子规约：未命中的技能一律不加载；禁止通配读取技能正文，单任务加载技能数不得超过 top-K。 |
-| 技能 (Skill) | `skill.pool.limit-words-under-10` | `skills/limit-words-under-10` | 微观原子规约：强制输出严格不超过 10 个字符（含标点符号），杜绝字数膨胀与冗余展开。 |
-| 技能 (Skill) | `skill.pool.load-skill-contract` | `skills/load-skill-contract` | 工序动作级技能：按精确技能 id 加载单个 SKILL.md 正文，拒绝通配与目录递归，并返回字节数与 token 估算。 |
-| 技能 (Skill) | `skill.pool.log-query-events` | `skills/log-query-events` | 工序动作级技能：把 query → top-K → 实际选用 追加写入 skill-query-log.jsonl，作为质量信号用于后续触发词修订。 |
-| 技能 (Skill) | `skill.pool.markdown-bold-only` | `skills/markdown-bold-only` | 微观原子规约：强制所有正文文本必须包裹在 Markdown 加粗语法（**内容**）中。 |
-| 技能 (Skill) | `skill.pool.match-intent-keywords` | `skills/match-intent-keywords` | 工序动作级技能：在全局 Skill Catalog 中执行倒排关键词与触发标签匹配，快速筛选初筛候选技能。 |
-| 技能 (Skill) | `skill.pool.measure-routing-metrics` | `skills/measure-routing-metrics` | 工序动作级技能：物理测算索引匹配与路由检索的命中技能及执行耗时（毫秒级 ms），提供量化优化指标。 |
-| 技能 (Skill) | `skill.pool.measure-token-budget` | `skills/measure-token-budget` | 工序动作级技能：用唯一确定性公式物理测算文本与文件的 token 占用，并按技能契约 / README / Catalog / docs / 其他五个分区汇总，为裁剪与门禁提供可复算基线。 |
-| 技能 (Skill) | `skill.pool.merge-search-candidates` | `skills/merge-search-candidates` | 工序动作级技能(L2)：多源候选去重归一器。把四类源的候选合并成同一六字段契约，按「URL 归一 → 名称归一」两级去重，按 stars→name→url 全序排序；剔除字段缺失的候选并计入 skipped_incomplete，合并后为空 |
-| 技能 (Skill) | `skill.pool.milestone-only-progress` | `skills/milestone-only-progress` | 微观原子规约：过程输出只报阶段目标（如从惠州去北京只报「到达长沙」「到达武汉」），严禁输出「上车」「下车」这类高度重复的微操作；同类微操作一律折叠为 ×N。 |
-| 技能 (Skill) | `skill.pool.milestone-progress-reporter` | `skills/milestone-progress-reporter` | 复合流程级技能(L3)：过程输出里程碑化总控。把「分档 → 折叠 → 预算断言」串成一条流水线，挂载于管家「④ 输出规约」集群，保证里程碑只增不删、微操作只折叠不静默丢弃。 |
-| 技能 (Skill) | `skill.pool.multi-source-search-policy` | `skills/multi-source-search-policy` | 微观原子规约：执行层检索源判定基元。钉死四类源（本地 / GitHub / 官网 / awesome 清单）与「本地优先」硬规则、统一候选六字段契约、中英同义桥、以及「检索失败绝不等同于没找到」的诚实口径；规定官网源必须走站点自声明 sit |
-| 技能 (Skill) | `skill.pool.no-conversational-filler` | `skills/no-conversational-filler` | 微观原子规约：严禁任何开场白、问候客套、总结废话或承接虚词，直接输出核心内容。 |
-| 技能 (Skill) | `skill.pool.normalize-skill-contract` | `skills/normalize-skill-contract` | 工序动作级技能：把外部引入技能改造为本池统一契约，在 skills/<name>/ 下幂等生成含 YAML Frontmatter、场景索引、Mermaid SOP 与探针步骤的 SKILL.md 与 README.md。 |
-| 技能 (Skill) | `skill.pool.on-demand-dispatcher` | `skills/on-demand-dispatcher` | 复合流程级技能(L3)：按需调用总控。先选技、再逐个加载、最后做预算断言，清单之外的技能一个都不读。 |
-| 技能 (Skill) | `skill.pool.one-shot-guard` | `skills/one-shot-guard` | 复合流程级技能(L3)：一次性解决门禁。把「判定 → 决断 → 留痕 → 反问检测」串成一道派单前/交付前门禁，挂载于管家「③ 冲突·冗余·质量」集群。 |
-| 技能 (Skill) | `skill.pool.one-shot-resolution-policy` | `skills/one-shot-resolution-policy` | 微观原子规约：默认不提问，不确定项选自决可回滚默认值并强制假设留痕，仅「红线 + 不可逆」允许每任务一次批量提问。 |
-| 技能 (Skill) | `skill.pool.output-chinese-only` | `skills/output-chinese-only` | 微观原子规约：强制输出纯正中文，严禁非必要的英文单词、拼音或中英混杂，消灭跨语种表达的随机性。 |
-| 技能 (Skill) | `skill.pool.parallel-lock-guard` | `skills/parallel-lock-guard` | 复合流程级技能(L3)：并行任务调控锁派单前门禁。把「声明 → 冲突/死锁检测 → 断言」串成一道不可跳步的放行门禁，挂载于管家「③ 冲突·冗余·质量」集群；并行的前置条件是先证明可并行（parallel_groups 非空且冲突为零），死 |
-| 技能 (Skill) | `skill.pool.parallel-lock-policy` | `skills/parallel-lock-policy` | 微观原子规约：并行任务调控锁的判定基元。钉死四条硬口径——锁粒度=共享资源键、加锁顺序=字典序固定顺序、超时默认 300 秒且超时即失败释放、死循环判定复用 anti-pattern-policy 的 AP-01；无锁共享写为明确禁止项。 |
-| 技能 (Skill) | `skill.pool.parse-query` | `skills/parse-query` | 工序动作级技能：查询解析——归一化、分词、停用词剔除、同义词扩展与 ASCII 拼写纠错，输出可排序的 term 列表。 |
-| 技能 (Skill) | `skill.pool.place-skill-into-cluster` | `skills/place-skill-into-cluster` | 工序动作级技能：依据级别与触发关键词判定引入技能的集群归属与建议父级，校验 composition 依赖边是否都真实存在于 catalog，只输出建议不写任何文件。 |
-| 技能 (Skill) | `skill.pool.plain-analogy-explanation` | `skills/plain-analogy-explanation` | 微观原子规约：通俗生活化原理解释与技术细节静默。用普通人听得懂的日常原理阐述，用户未主动提问时绝对不展开底层代码技术细节。 |
-| 技能 (Skill) | `skill.pool.plan-fission` | `skills/plan-fission` | 工序动作级技能：读取 SOP 或技能主体，逐步骤判定探针绑定情况，输出结构化分裂清单（待拆步骤、建议级别、建议探针、建议父级）。 |
-| 技能 (Skill) | `skill.pool.plan-process-rectification` | `skills/plan-process-rectification` | 工序动作级技能(L2)：流程整改清单生成器。对每个 fail 步骤产出可直接执行的整改命令与理由；整改项为空或含「加强/重视/注意/尽快」等空话的一律判不合格（exit 1）；required 失败的项单独标出；返回退出码 0/1/2。 |
-| 技能 (Skill) | `skill.pool.plugin-control-guard` | `skills/plugin-control-guard` | 复合流程级技能(L3)：插件常显调控按钮放行门禁。把「契约 → 装配 → 断言」串成一道不可跳步的门禁，挂载于管家「② 契约与合规」集群；放行的唯一合法证据是「包结构符合宿主 client 插件契约 + 注入内核运行时 31 项断言全过 + |
-| 技能 (Skill) | `skill.pool.plugin-control-jump-policy` | `skills/plugin-control-jump-policy` | 微观原子规约：插件常显调控按钮判定基元。钉死按钮的唯一标识（data-control-jump="<plugin-id>"）、常显位置（市场已安装列表与宿主插件清单的每个条目）、点击语义（定位到同 id 的配置项并高亮）、幂等去重键（容器\| |
-| 技能 (Skill) | `skill.pool.prefer-hot-reload-policy` | `skills/prefer-hot-reload-policy` | 微观原子规约：能不重启就不重启。定义 hot_reload（热更）/ incremental（增量重载）/ restart（重启）三级处置与最长前缀判定表，只有命中「不可热更边界」白名单才允许重启，且必须同时给出「路径 + 边界 + 重建命 |
-| 技能 (Skill) | `skill.pool.process-conformance-policy` | `skills/process-conformance-policy` | 微观原子规约：流程合规判定基元。钉死「约定流程必须是可打分的机器可读数据」这一前提，规定九步流程各自必须绑定四类物理探针之一、权重合计 100、必需项一票否决、na 第三态（权重从分母扣除且不得当 pass）、以及「没有证据不等于走了这一步 |
-| 技能 (Skill) | `skill.pool.process-supervisor` | `skills/process-supervisor` | 复合流程级技能(L3)：流程监督员。把「取证 → 打分 → 整改 → 独立复核」串成一道不可跳步的出口门禁，挂载于管家「③ 冲突·冗余·质量」集群；放行的唯一合法证据是「得分 ≥ 85 且全部必需项 pass 且整改清单无 unresolv |
-| 技能 (Skill) | `skill.pool.prune-bloated-prompts` | `skills/prune-bloated-prompts` | 微观原子规约：防膨胀裁剪。禁止在提示词或机制中加入等价/重复语句，保持指令极致紧凑。 |
-| 技能 (Skill) | `skill.pool.prune-redundant-context` | `skills/prune-redundant-context` | 工序动作级技能：以保守语义无损规则折叠连续重复行、重复段落与连续空行，同时逐字节保护 CATALOG 受管区块与 docs/requirements 编号表格行，输出裁剪前后 token 账。 |
-| 技能 (Skill) | `skill.pool.qa-gatekeeper` | `skills/qa-gatekeeper` | 复合流程级技能(L3)：交付门禁与质量守卫。解耦组装了物理落地检测、Python编译验证、UTF-8编码断言与退出码硬断言。 |
-| 技能 (Skill) | `skill.pool.quantification-guard` | `skills/quantification-guard` | 复合流程级技能(L3)：量化交付门禁。把「规约 → 建表 → 检测 → 量化 → 断言」串成一道出口门禁，挂载于管家「④ 输出规约」集群；缺失映射不阻断但必须声明假设，禁止用另一个程度词替换程度词糊过去。 |
-| 技能 (Skill) | `skill.pool.quantify-modifier` | `skills/quantify-modifier` | 工序动作级技能(L2)：按场景把程度类修饰词替换为可判定的数值区间。命中且有 (term, domain) 映射时产出「保留原词 + → 数值 单位（依据：…）」的建议；无映射或场景未声明时落 unquantifiable 并要求显式声明假 |
-| 技能 (Skill) | `skill.pool.quantify-modifier-policy` | `skills/quantify-modifier-policy` | 微观原子规约：程度类修饰词的量化判定基元。定义「高/大/快/多/好/严重/频繁/明显/显著…」清单、四要素（场景 + 数值或区间 + 单位 + 依据）规约、场景优先原则、不可量化的处置（声明假设而非沉默）与「禁止用另一个程度词替换程度词」禁 |
-| 技能 (Skill) | `skill.pool.rank-skills-bm25` | `skills/rank-skills-bm25` | 工序动作级技能：对技能倒排索引执行 BM25 排序（字段权重 + 文档长度归一），支持 top-K、分页与命中率评测。 |
-| 技能 (Skill) | `skill.pool.reconcile-knowledge-specs` | `skills/reconcile-knowledge-specs` | 工序动作级技能：遍历 7 大知识库规范并对拍冲突，强制裁定知识库规范为绝对最高执行基准。 |
-| 技能 (Skill) | `skill.pool.record-assumptions` | `skills/record-assumptions` | 工序动作级技能(L2)：把自行决断的项写成可追溯假设四元组（项/取值/依据/回滚方式），缺依据或回滚方式即阻断。 |
-| 技能 (Skill) | `skill.pool.redundancy-detector` | `skills/redundancy-detector` | 复合流程级技能(L3)：冗余检测与防机制膨胀。检测管控规则中的重复与重叠，输出去重与裁剪方案，确保机制简洁高效。 |
-| 技能 (Skill) | `skill.pool.register-execution-layer` | `skills/register-execution-layer` | 工序动作级技能：登记与维护非技能执行层条目（cli/agent/api/mcp/plugin），校验层名合法、仓库内路径存在、id 唯一，幂等可重跑。 |
-| 技能 (Skill) | `skill.pool.rename-execution-layer` | `skills/rename-execution-layer` | 工序动作级技能(L2)：执行层命名整改器。一次改名同步六处（目录名 / catalog id / Frontmatter name / 组装边 / 树与索引五件产物 / docs 与登记表），配套脚本同名改写，改前校验目标名合法性、改后自动 |
-| 技能 (Skill) | `skill.pool.render-capability-naming` | `skills/render-capability-naming` | 工序动作级技能(L2)：能力层命名规范文档渲染器。把 docs/operations/capability-naming.json 单向渲染成本仓文档与全局规则知识库文档两份受管区块，规则表全部由真相源生成、禁止人工双写；知识库路径按合并前 |
-| 技能 (Skill) | `skill.pool.render-catalog-docs` | `skills/render-catalog-docs` | 工序动作级技能：读取 skill-catalog.json，把组装关系注入 docs 的受管区块，取消人工手写组装表，支持幂等重跑与 --check 漂移检测。 |
-| 技能 (Skill) | `skill.pool.render-governance-mermaid` | `skills/render-governance-mermaid` | 工序动作级技能：将拓扑数据物理编译为合规的 Mermaid 语法代码，支持调度链路图与全景拓扑图渲染。 |
-| 技能 (Skill) | `skill.pool.retire-legacy-workspace` | `skills/retire-legacy-workspace` | 工序动作级技能(L2)：旧工作区退役器。把「已合并但还活着」的源目录真正退场——先断言不丢文件（源侧独有文件数为 0）、目标已入库、会话已完整归入，再写台账、摘除 workspace.json 条目、物理删除源目录；强制「先摘注册再删目录」 |
-| 技能 (Skill) | `skill.pool.run-test-cases-gate` | `skills/run-test-cases-gate` | 工序动作级技能：对照需求规格执行自动化测试案例脚本，所有用例全部通过方可放行验收。 |
-| 技能 (Skill) | `skill.pool.schema-guard` | `skills/schema-guard` | 复合流程级技能(L3)：基于 L1 零闲聊、L1 去围栏与 L2 JSON提取叠加组装而成。保证严格结构化纯净输出。 |
-| 技能 (Skill) | `skill.pool.score-process-conformance` | `skills/score-process-conformance` | 工序动作级技能(L2)：流程合规打分器。按权重计算分子与分母（na 权重从分母扣除），输出逐项 pass/fail/na 与得分；通过条件为得分 ≥ 85 且全部必需项 pass（必需项一票否决）；输出必须打印分子/分母/na 扣除项，禁止 |
-| 技能 (Skill) | `skill.pool.score-task-lane` | `skills/score-task-lane` | 工序动作级技能：对任务做确定性双流程分流判定，输出 lane、score、matched_redlines 与 reason 四元组。 |
-| 技能 (Skill) | `skill.pool.search-duplicate-rules` | `skills/search-duplicate-rules` | 工序动作级技能：计算两条或多条文本规则之间的词频重叠度，精准定位重复与高冗余规则。 |
-| 技能 (Skill) | `skill.pool.search-github-skill` | `skills/search-github-skill` | 工序动作级技能：按能力关键词检索 GitHub 外部技能/插件候选，把结果归一为标准结构化候选清单 JSON（名称、URL、星标、许可、是否含脚本、描述）。 |
-| 技能 (Skill) | `skill.pool.search-official-source` | `skills/search-official-source` | 工序动作级技能(L2)：官网 / 官方文档源检索器。从官方站点自声明的 sitemap 中按关键词检索可用执行层入口，产出统一六字段候选；只读、只用标准库、不携带凭据；支持 --from-file 读本地夹具做离线回归，全部域名不可达时显式 |
-| 技能 (Skill) | `skill.pool.select-skills-for-task` | `skills/select-skills-for-task` | 工序动作级技能：由一个任务描述产出受 top-K 约束的选中技能 id 清单，只读检索结果、绝不读取技能正文。 |
-| 技能 (Skill) | `skill.pool.skill-import-pipeline` | `skills/skill-import-pipeline` | 复合流程级技能(L3)：外部执行层引入管线总控。五步串联检索→审计→归一→定级挂载→门禁验证，落点新集群「⑦ 技能引入与演进」；检索步自 PKG-008 起绑脚本探针（四源调度：本地优先 / GitHub / 官网 / awesome 清单 |
-| 技能 (Skill) | `skill.pool.skill-index-router` | `skills/skill-index-router` | 复合流程级技能(L3)：索引控制与消歧路由。控制全局 Catalog 索引寻址，消灭调用歧义，确保极速精准命中。 |
-| 技能 (Skill) | `skill.pool.snippet-only-recall` | `skills/snippet-only-recall` | 微观原子规约：检索结果只允许回灌命中片段与元数据，严禁把 catalog 或技能正文整体灌回上下文。 |
-| 技能 (Skill) | `skill.pool.spec-driven-governance` | `skills/spec-driven-governance` | 复合流程级技能(L3)：需求驱动执行与规范仲裁总控。强制任务严格从需求图纸出发，全程对照知识库7大规范（冲突以规范为准），并通过自动化测试用例方可验收交付。 |
-| 技能 (Skill) | `skill.pool.standard-output-framework` | `skills/standard-output-framework` | 复合流程级技能(L3)：交付输出框架标准化总控。强制最终答复统一遵循“当前状态、输出物、输出地址、重要说明”，无产物时自动剔除输出地址转为核心结论。 |
-| 技能 (Skill) | `skill.pool.standardize-when-to-use` | `skills/standardize-when-to-use` | 微观原子规约：标准化触发场景说明。强制包含明确的正面触发条件与触发禁区，方便索引快速识破。 |
-| 技能 (Skill) | `skill.pool.standardize-workflow-sop` | `skills/standardize-workflow-sop` | 微观原子规约：标准化主体运作 SOP。强制正文必须具备清晰的 Mermaid 流程图与有序执行步骤。 |
-| 技能 (Skill) | `skill.pool.strip-markdown-fence` | `skills/strip-markdown-fence` | 微观原子规约：强制输出纯净原生文本，绝对禁止包裹任何 ``` 代码围栏。 |
-| 技能 (Skill) | `skill.pool.strip-non-prose-scope` | `skills/strip-non-prose-scope` | 工序动作级技能(L2)：按固定顺序剥离四类非散文成分（围栏代码块、行内代码、URL、文件路径），产出「待检正文」与白名单命中，供中文占比断言使用。 |
-| 技能 (Skill) | `skill.pool.strip-whitespace-newlines` | `skills/strip-whitespace-newlines` | 微观原子规约：严格剥离文本首尾与多余的连续空白字符、制表符及空行，实现物理对齐。 |
-| 技能 (Skill) | `skill.pool.sync-requirements-lifecycle` | `skills/sync-requirements-lifecycle` | 工序动作级技能：物理检查并同步 requirements 需求生命周期版本，确保任务严格从最新图纸出发。 |
-| 技能 (Skill) | `skill.pool.tail-metrics-showcase` | `skills/tail-metrics-showcase` | 复合流程级技能(L3)：尾部量化指标与通俗表达总控。实现输出纯中文、默认极简聚焦、通俗生活常识比喻，并在尾部展示索引命中与路由时长量化指标。 |
-| 技能 (Skill) | `skill.pool.token-budget-policy` | `skills/token-budget-policy` | 微观原子规约：定义上下文预算优先级（索引/检索片段 > 选中技能正文 > 参考文档）与超预算裁剪顺序，规定索引与检索片段永不裁剪、README 不进上下文、docs 长文仅以片段入上下文。 |
-| 技能 (Skill) | `skill.pool.token-economy-guard` | `skills/token-economy-guard` | 复合流程级技能(L3)：token 经济门禁。把「先测 → 裁剪 → 等价能力断言」串成一道写入前置门禁，挂载于管家「② 契约与合规」集群，证据串不存活即阻断。 |
-| 技能 (Skill) | `skill.pool.tree-update-mandatory` | `skills/tree-update-mandatory` | 微观原子规约：任何执行层（skill/agent/api/mcp/plugin/cli）新增或优化后，必须同步刷新索引与执行层树，禁止只改能力不改树。 |
-| 技能 (Skill) | `skill.pool.validate-header-triggers` | `skills/validate-header-triggers` | 工序动作级技能：静态校验 Skill 的 YAML Frontmatter 元数据与触发关键词覆盖度。 |
-| 技能 (Skill) | `skill.pool.validate-icon-syntax` | `skills/validate-icon-syntax` | 工序动作级技能：通过正则表达式物理断言输出文案的尾部是否包含合规的特异化图标框架。 |
-| 技能 (Skill) | `skill.pool.verify-atomic-mutual-exclusion` | `skills/verify-atomic-mutual-exclusion` | 工序动作级技能(L2)：原子锁互斥性物理压测断言器。真实拉起 N 个独立进程并发抢同一把 mkdir 原子锁，采集临界区进入/退出时间戳做扫描线，断言重叠窗口为 0 且任一瞬间持有者 ≤ 1；同时跑无锁负向对照段证明检测器确实能看见并发（否 |
-| 技能 (Skill) | `skill.pool.verify-catalog-consistency` | `skills/verify-catalog-consistency` | 工序动作级技能：三方对拍 SKILL.md Frontmatter、skill-catalog.json 与 docs 受管区块，并扫描正文手写组装关系造成的口径漂移，返回退出码 0/1。 |
-| 技能 (Skill) | `skill.pool.verify-chinese-output` | `skills/verify-chinese-output` | 工序动作级技能(L2)：中文输出三项硬断言（待检正文 CJK 占比 ≥ 0.85、非白名单拉丁词 = 0、独立大写缩写后必须有中文释义），全部通过才 Exit 0。 |
-| 技能 (Skill) | `skill.pool.verify-concretized-output` | `skills/verify-concretized-output` | 工序动作级技能(L2)：含糊词具像化断言器。对「已具像化」的正文做三项硬断言——不含未具像化含糊词（AMBIGUITY_WORDS 命中数为 0）、--strict 下任何数量表述必须带依据（如 12 个（依据：…））、命中词右侧 6 字内 |
-| 技能 (Skill) | `skill.pool.verify-context-payload` | `skills/verify-context-payload` | 工序动作级技能：断言一次任务加载的技能正文数不超过 top-K、字节数不超预算，且未出现选中清单之外的技能。 |
-| 技能 (Skill) | `skill.pool.verify-decoupling` | `skills/verify-decoupling` | 工序动作级技能：断言五类耦合违规为零；豁免必须经 --allow 显式声明并在输出中标注 waived，杜绝静默放过。 |
-| 技能 (Skill) | `skill.pool.verify-deliverable-paths` | `skills/verify-deliverable-paths` | 工序动作级技能：物理验证交付物地址的有效性，严禁输出不存在或空路径。 |
-| 技能 (Skill) | `skill.pool.verify-execution-contract` | `skills/verify-execution-contract` | 工序动作级技能：校验 Skill 的输入/输出契约完整性及本地挂载脚本的可执行性。 |
-| 技能 (Skill) | `skill.pool.verify-execution-tree` | `skills/verify-execution-tree` | 工序动作级技能：断言执行层树与 catalog、登记表、受管区块四方一致，扫描文档中手写集群枚举造成的结构漂移并给出文件与行号。 |
-| 技能 (Skill) | `skill.pool.verify-file-exists` | `skills/verify-file-exists` | 工序动作级技能：物理验证指定文件路径是否真实存在于磁盘上，且文件大小大于 0 字节。 |
-| 技能 (Skill) | `skill.pool.verify-instance-safety` | `skills/verify-instance-safety` | 工序动作级技能：断言每个本地执行层都有实例安全声明、声明与实际扫描一致、safe_multi 无写盘证据、受限档位带资源键。 |
-| 技能 (Skill) | `skill.pool.verify-interactive-html` | `skills/verify-interactive-html` | 工序动作级技能：对交互查看器 HTML 做静态断言，校验缩放控制标识齐备、结构标签闭合且零外部资源引用，返回退出码 0/1。 |
-| 技能 (Skill) | `skill.pool.verify-lane-decision` | `skills/verify-lane-decision` | 工序动作级技能：对同一任务重复执行分流判定，断言结果 100% 一致，杜绝分流被随机性污染。 |
-| 技能 (Skill) | `skill.pool.verify-layer-naming` | `skills/verify-layer-naming` | 工序动作级技能(L2)：执行层命名整改后的三项硬断言器——合规率必须为 1.0000、旧名残留引用必须为 0（按词边界扫描，避免把新名误判为旧名残留）、执行层登记表零违规；判据复用 audit-layer-naming 的 naming_r |
-| 技能 (Skill) | `skill.pool.verify-mermaid-syntax` | `skills/verify-mermaid-syntax` | 工序动作级技能：物理提取文本中的 Mermaid 流程图并执行语法校验，确保流程图无语法破坏。 |
-| 技能 (Skill) | `skill.pool.verify-no-forbidden-event` | `skills/verify-no-forbidden-event` | 工序动作级技能：反例零命中断言。进程内 importlib 加载 detect-forbidden-state 的检测器，要求 hits == 0；--strict 时额外要求 checked_events > 0，杜绝空事件流「空过」放行 |
-| 技能 (Skill) | `skill.pool.verify-no-lock-violation` | `skills/verify-no-lock-violation` | 工序动作级技能(L2)：并行派单前的五项硬断言——无锁冲突、无死锁环、无超时未释放、每个任务都已声明锁、死循环体检复用 anti-pattern-policy 的 AP-01；全过才退 0，任一违规即阻断。 |
-| 技能 (Skill) | `skill.pool.verify-no-unnecessary-question` | `skills/verify-no-unnecessary-question` | 工序动作级技能(L2)：对本次任务的提问记录做四项硬断言（次数≤1、必须红线、必须不可逆、必须批量合并），默认零提问。 |
-| 技能 (Skill) | `skill.pool.verify-no-unnecessary-restart` | `skills/verify-no-unnecessary-restart` | 工序动作级技能(L2)：对实际发生的重启事件做三项硬断言——路径在变更集合内、判定确实需要重启、带非空重建命令；任一不成立即记为不必要重启或无证据重启并退 1。 |
-| 技能 (Skill) | `skill.pool.verify-plugin-control-button` | `skills/verify-plugin-control-button` | 工序动作级技能(L2)：插件常显调控按钮断言器。第一层静态断言包结构符合宿主 client 插件契约（dsh.client.platform=web、client 入口、cordis.patch.yml、__ModuleLoader__ 注 |
-| 技能 (Skill) | `skill.pool.verify-progress-budget` | `skills/verify-progress-budget` | 工序动作级技能(L2)：对折叠后的过程输出做四项硬断言（零微操作泄漏、里程碑预算、里程碑 100% 覆盖、事件数不增加），全部通过才放行交付。 |
-| 技能 (Skill) | `skill.pool.verify-quantified-output` | `skills/verify-quantified-output` | 工序动作级技能(L2)：量化输出三项硬断言——文本中不存在未量化的程度词、不存在程度词被另一个程度词替换、--require-mapping 下每个命中词都能找到 domain 条目；全部通过才 exit 0，否则 exit 1 并列出词与 |
-| 技能 (Skill) | `skill.pool.verify-token-reduction` | `skills/verify-token-reduction` | 工序动作级技能：对裁剪前后文本同时断言 token 降幅达标与等价能力存活（cases.json 的 requires 证据串全部命中），任一条不成立即退 1 阻断放行。 |
-| 技能 (Skill) | `skill.pool.verify-workspace-retirement` | `skills/verify-workspace-retirement` | 工序动作级技能(L2)：工作区退役断言器。三项硬断言——源路径不存在（退役的物理证据）、workspace.json 中不再有指向源路径的条目、台账记录的迁移会话数全部落在目标工作区；全过才 exit 0，任一失败 exit 1，台账或 w |
-| 技能 (Skill) | `skill.pool.visual-interaction-guard` | `skills/visual-interaction-guard` | 复合流程级技能(L3)：可视化交互四件套放行门禁。把「规约 → 档位 → 生成 → 断言」串成一道不可跳步的门禁，挂载于管家「⑤ 需求与透视」集群；放行的唯一合法证据是「档位表 ≥5 档且默认档在表内 + 吸附分支两种状态齐备 + 下载三段 |
-| 技能 (Skill) | `skill.pool.visualize-governance-topology` | `skills/visualize-governance-topology` | 复合流程级技能(L3)：全景索引与管家调度链路可视化透视。基于物理数据源提取与图表编译，向用户直观呈现静态资产金字塔与动态管控调用轨迹。 |
-| 技能 (Skill) | `skill.pool.zero-restart-guard` | `skills/zero-restart-guard` | 复合流程级技能(L3)：零重启写入门禁。把「路径 → 处置判定 → 重启证据断言」串成一道写入门禁，挂载于管家「② 契约与合规」集群，默认目标是零重启，重启必须由不可热更边界加重建命令双向举证。 |
-| 技能 (Skill) | `skill.pool.zoom-level-policy` | `skills/zoom-level-policy` | 微观原子规约：可视化产物交互判定基元。钉死三条硬口径——缩放必须走离散档位表（13 档，+/- 跳相邻档，滚轮连续微调后吸附，档位可枚举可复算）、下载必须三段降级（showSaveFilePicker / Blob 下载 / 就地提示，禁止 |
-| 智能体 (Agent) | `agent.skillpool.process-supervisor-agent` | `skill-pool/agents/process-supervisor-agent` | --- |
-| 插件 (Plugin) | `plugin.skillpool.dsh-plugin-control-jump` | `skill-pool/plugins/dsh-plugin-control-jump` | — |
-| 插件 (Plugin) | `plugin.skillpool.dsh-plugin-usage-bar` | `skill-pool/plugins/dsh-plugin-usage-bar` | — |
-| 脚本 (CLI) | `cli.rules.agent_life` | `scripts/agent_life.mjs` | agent_life.mjs |
-| 脚本 (CLI) | `cli.rules.align_version` | `scripts/align_version.mjs` | 全库受管文档版本归位（把受管文档头部版本统一改到当前总版本） |
-| 脚本 (CLI) | `cli.rules.audit_execution` | `scripts/audit_execution.sh` | 对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片 |
-| 脚本 (CLI) | `cli.rules.batch_fix_sidebar_titles` | `scripts/batch_fix_sidebar_titles.mjs` | 全量穿透修复前端侧边栏及权威存储中的全部存量会话标题 |
-| 脚本 (CLI) | `cli.rules.batch_rename_sessions` | `scripts/batch_rename_sessions.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.build_capabilities_index` | `scripts/build_capabilities_index.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.channel_audit` | `scripts/channel_audit.mjs` | 快速通道注册审计器 —— 校验"通道表"是否真的可用（对应 REQ-045） |
-| 脚本 (CLI) | `cli.rules.check_freshness` | `scripts/check_freshness.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.check_task_naming` | `scripts/check_task_naming.sh` | 检查「当前会话」的任务命名是否符合规范，供看板常显与流程判定使用 |
-| 脚本 (CLI) | `cli.rules.check_unique_identifiers` | `scripts/check_unique_identifiers.mjs` | check_unique_identifiers.mjs |
-| 脚本 (CLI) | `cli.rules.conflict_scan` | `scripts/conflict_scan.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.control_gates` | `scripts/control_gates.sh` | — |
-| 脚本 (CLI) | `cli.rules.deepseek_key_setup` | `scripts/deepseek_key_setup.sh` | — |
-| 脚本 (CLI) | `cli.rules.deepseek_usage_probe` | `scripts/deepseek_usage_probe.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.disk_check_and_cleanup` | `scripts/disk_check_and_cleanup.sh` | DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位) |
-| 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
-| 脚本 (CLI) | `cli.rules.flow_control` | `scripts/flow_control.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.gate_selftest` | `scripts/gate_selftest.sh` | — |
-| 脚本 (CLI) | `cli.rules.generate_image` | `scripts/generate_image.py` | — |
-| 脚本 (CLI) | `cli.rules.generate_naming_plan` | `scripts/generate_naming_plan.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.git_sync_remote` | `scripts/git_sync_remote.sh` | DSH 工程远程 Git 智能探针、缺地址开页引导、动态摘要提交与强同步引擎 |
-| 脚本 (CLI) | `cli.rules.global_scheduler_lock` | `scripts/global_scheduler_lock.sh` | DSH 全自动轻量级全局调度锁中枢与并发资源防冲突引擎 |
-| 脚本 (CLI) | `cli.rules.init_dir` | `scripts/init_dir.sh` | — |
-| 脚本 (CLI) | `cli.rules.init_project` | `scripts/init_project.sh` | — |
-| 脚本 (CLI) | `cli.rules.install_host_gate` | `scripts/install_host_gate.sh` | — |
-| 脚本 (CLI) | `cli.rules.legacy_align_scan` | `scripts/legacy_align_scan.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.mechanism_audit` | `scripts/mechanism_audit.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.name_me` | `scripts/name_me.sh` | **立刻**给"当前会话"改名——开工第一动作，一条命令，任何目录可用 |
-| 脚本 (CLI) | `cli.rules.naming_watchdog` | `scripts/naming_watchdog.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.normalize_all_projects` | `scripts/normalize_all_projects.mjs` | 全域存量 DSH 工程文件夹批量合规与规范化治理脚本 |
-| 脚本 (CLI) | `cli.rules.patch_dsh_todo_progress` | `scripts/patch_dsh_todo_progress.cjs` | 补丁：给 DSH 输入坞任务条（TodoPanel）加「首栏总进度 + 每行实时进度」，并把 |
-| 脚本 (CLI) | `cli.rules.physical_lock` | `scripts/physical_lock.sh` | — |
-| 脚本 (CLI) | `cli.rules.probe_long_output` | `scripts/probe_long_output.mjs` | 长输出实测探针：验证 max_tokens 提高后单次回复能否突破旧上限（32768）。 |
-| 脚本 (CLI) | `cli.rules.probe_long_output_stream` | `scripts/probe_long_output_stream.mjs` | 长输出触顶实测（流式版）：验证单次回复到底能有多长。 |
-| 脚本 (CLI) | `cli.rules.probe_max_tokens` | `scripts/probe_max_tokens.mjs` | 探测服务端对 max_tokens 的接受范围。 |
-| 脚本 (CLI) | `cli.rules.process_supervisor` | `scripts/process_supervisor.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.progress_ledger` | `scripts/progress_ledger.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.redundancy_scan` | `scripts/redundancy_scan.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.rename_session` | `scripts/rename_session.sh` | 通过 DSH 后台 HTTP RPC 接口，为当前会话重命名并锁定侧边栏标题 |
-| 脚本 (CLI) | `cli.rules.restore_skill_pool` | `scripts/restore_skill_pool.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.route_navigate` | `scripts/route_navigate.mjs` | route_navigate.mjs |
-| 脚本 (CLI) | `cli.rules.session_naming_audit` | `scripts/session_naming_audit.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.svg2png` | `scripts/svg2png.sh` | 把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节） |
-| 脚本 (CLI) | `cli.rules.sync_control_requirements` | `scripts/sync_control_requirements.mjs` | 管控机制专属需求同步校验脚本 (Control Requirements Sync Verifier) |
-| 脚本 (CLI) | `cli.rules.test_auto_naming` | `scripts/test_auto_naming.mjs` | 自动命名逻辑测试（在**不重启宿主**的前提下验证）。 |
-| 脚本 (CLI) | `cli.rules.test_physical_lock` | `scripts/test_physical_lock.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.test_v180_spec` | `scripts/test_v180_spec.sh` | — |
-| 脚本 (CLI) | `cli.rules.todo_gate` | `scripts/todo_gate.sh` | — |
-| 脚本 (CLI) | `cli.rules.verify_auto_naming_e2e` | `scripts/verify_auto_naming_e2e.mjs` | 自动命名端到端验收（重启后运行，一次给出结论）。 |
-| 脚本 (CLI) | `cli.rules.verify_escape_hatch` | `scripts/verify_escape_hatch.sh` | — |
-| 脚本 (CLI) | `cli.rules.verify_guard_live` | `scripts/verify_guard_live.sh` | — |
+| 层级 | 能力标识 (Identifier) | 物理路径 | 接口声明 | 调用命令 | 简介 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 技能 (Skill) | `skill.pool.acquire-atomic-lock` | `skills/acquire-atomic-lock` | ⛔ 未声明 | `skill acquire-atomic-lock` | 工序动作级技能(L2)：基于 mkdir(2) 原子目录的物理锁获取与释放器。锁键经 realpath 归一为绝对路径，持有者记录 pid+start_ticks 防 PID 复用误判，支持 lease/live 两种锁模式与按模式分档的陈 |
+| 技能 (Skill) | `skill.pool.anti-pattern-guard` | `skills/anti-pattern-guard` | ⛔ 未声明 | `skill anti-pattern-guard` | 复合流程级技能(L3)：反例门禁。把「清单 → 检测 → 断言」串成一道"绝不允许发生"的放行门禁，挂载于管家「③ 冲突·冗余·质量」集群，命中反例一律阻断，禁止记录后继续。 |
+| 技能 (Skill) | `skill.pool.anti-pattern-policy` | `skills/anti-pattern-policy` | ⛔ 未声明 | `skill anti-pattern-policy` | 微观原子规约：反例层判定基元。定义系统「绝不允许发生」的七条反例（AP-01 死循环 ~ AP-07 播报风暴）及其物理判据、默认阈值与判定优先级，写不出物理判据的口号一律不得进入本层。 |
+| 技能 (Skill) | `skill.pool.arbitrate-priority-resolver` | `skills/arbitrate-priority-resolver` | ⛔ 未声明 | `skill arbitrate-priority-resolver` | 微观原子规约：优先级仲裁基元。在多条规则发生逻辑冲突时，强制遵循固定优先级决断法则。 |
+| 技能 (Skill) | `skill.pool.assert-zero-exitcode` | `skills/assert-zero-exitcode` | ⛔ 未声明 | `skill assert-zero-exitcode` | 工序动作级技能：执行命令并硬断言退出码必须为 0，杜绝忽略报错与失败静默。 |
+| 技能 (Skill) | `skill.pool.atomic-fastpath-router` | `skills/atomic-fastpath-router` | ⛔ 未声明 | `skill atomic-fastpath-router` | 复合流程级技能(L3)：原子级快捷路由总控。当索引命中目标技能后，提供直达原子动作的Shell执行命令与依赖指引，实现毫秒级触达。 |
+| 技能 (Skill) | `skill.pool.atomic-fission-guard` | `skills/atomic-fission-guard` | ⛔ 未声明 | `skill atomic-fission-guard` | 复合流程级技能(L3)：粒度递归分裂门禁。任何管控步骤若不能绑定四类物理探针之一，一律阻断实施并强制向下分裂。 |
+| 技能 (Skill) | `skill.pool.atomic-lock-guard` | `skills/atomic-lock-guard` | ⛔ 未声明 | `skill atomic-lock-guard` | 复合流程级技能(L3)：并发处理原子锁放行门禁。把「口径 → 真获取 → 真并发压测 → 断言」串成一道不可跳步的互斥门禁，挂载于管家「③ 冲突·冗余·质量」集群；放行的唯一合法证据是「持锁段重叠窗口 0 + 无锁对照段看得见并发 + 陈旧 |
+| 技能 (Skill) | `skill.pool.atomic-lock-policy` | `skills/atomic-lock-policy` | ⛔ 未声明 | `skill atomic-lock-policy` | 微观原子规约：并发共享资源的物理原子锁判定基元。钉死七条硬口径——锁载体必须是 mkdir 原子目录或 flock -n 排他文件锁、锁键=归一化绝对资源路径、加锁顺序=字典序、持有者=PID+进程起始时间戳、超时默认 300 秒且超时即失 |
+| 技能 (Skill) | `skill.pool.audit-all-skills-compliance` | `skills/audit-all-skills-compliance` | ⛔ 未声明 | `skill audit-all-skills-compliance` | 工序动作级技能：遍历全量存量与增量技能，物理审查其头部场景索引、主体SOP与配套脚本合规性，返回退出码 0/1。 |
+| 技能 (Skill) | `skill.pool.audit-imported-skill` | `skills/audit-imported-skill` | ⛔ 未声明 | `skill audit-imported-skill` | 工序动作级技能：对外部引入候选执行许可白名单、来源 URL、脚本可执行面、描述完整性与命名规范体检，逐项 pass/fail 给出理由并返回接受/拒绝裁决。 |
+| 技能 (Skill) | `skill.pool.audit-layer-naming` | `skills/audit-layer-naming` | ⛔ 未声明 | `skill audit-layer-naming` | 工序动作级技能(L2)：全量执行层命名体检器。按四要素（归属 / 分类 / 做什么 / 命名）与四种命名形态逐条扫描 catalog、磁盘目录、契约头与执行层登记表，输出带违规码、对象与 file:line 的违规清单；判据实现以 nami |
+| 技能 (Skill) | `skill.pool.build-execution-tree` | `skills/build-execution-tree` | ⛔ 未声明 | `skill build-execution-tree` | 工序动作级技能：合并 skill-catalog.json 与执行层登记表，生成 execution-tree.json/md 唯一真相源，并把受管集群区块注入 dsh-butler 契约。 |
+| 技能 (Skill) | `skill.pool.build-image-viewer` | `skills/build-image-viewer` | ⛔ 未声明 | `skill build-image-viewer` | 工序动作级技能：把任意图片以 base64 内联进零依赖单文件 HTML，产出可点击放大、可滚轮缩放、可拖拽平移、可一键复位的交互查看器。 |
+| 技能 (Skill) | `skill.pool.build-inverted-index` | `skills/build-inverted-index` | ⛔ 未声明 | `skill build-inverted-index` | 工序动作级技能：由 skill-catalog.json 生成倒排索引 skill-index.json（term→文档→字段→词频），并把分词器作为可复用库对外暴露。 |
+| 技能 (Skill) | `skill.pool.build-layer-graph` | `skills/build-layer-graph` | ⛔ 未声明 | `skill build-layer-graph` | 工序动作级技能：由 skill-catalog.json 与执行层登记表生成层间依赖图 layer-graph.json（节点 / 边 / 层级计数），幂等可重跑。 |
+| 技能 (Skill) | `skill.pool.build-quantifier-table` | `skills/build-quantifier-table` | ⛔ 未声明 | `skill build-quantifier-table` | 工序动作级技能(L2)：生成并维护场景量化映射表 docs/operations/quantifier-table.json。内置种子映射不少于 20 条，覆盖高/大/快/多/好/严重/频繁等词且每词至少 3 个场景；每条必须含 term/ |
+| 技能 (Skill) | `skill.pool.capability-naming-policy` | `skills/capability-naming-policy` | ⛔ 未声明 | `skill capability-naming-policy` | 微观原子规约：能力层命名判定基元。钉死「归属 / 分类 / 做什么 / 命名」四要素与四种已登记命名形态（动作 / 编排 / 规约 / 厂商边界），规定语法约束、禁词、同义归一、唯一性与改名的六处同步契约；词表与形态的唯一真相源是 docs |
+| 技能 (Skill) | `skill.pool.catalog-consistency-guard` | `skills/catalog-consistency-guard` | ⛔ 未声明 | `skill catalog-consistency-guard` | 复合流程级技能(L3)：口径一致性门禁。串联受管区块生成与三方对拍，是技能池任何写入动作的前置门禁。 |
+| 技能 (Skill) | `skill.pool.check-deepseek-usage` | `skills/check-deepseek-usage` | ⛔ 未声明 | `skill check-deepseek-usage` | 工序动作级技能(L2)：DeepSeek 用量探针。以北京时间本地判定高峰/空闲时段并算出下次切换倒计时，真实调用官方余额接口取额度，并对官方定价页做 sha256 指纹巡检（每日一次语义）；铁律是「取不到就如实报错，绝不编造余额/时段/指 |
+| 技能 (Skill) | `skill.pool.check-python-syntax` | `skills/check-python-syntax` | ⛔ 未声明 | `skill check-python-syntax` | 工序动作级技能：对指定的 Python 源码文件执行静态编译语法验证，防止引入 SyntaxError。 |
+| 技能 (Skill) | `skill.pool.check-script-executable` | `skills/check-script-executable` | ⛔ 未声明 | `skill check-script-executable` | 工序动作级技能：物理检测指定技能目录中的配套脚本是否存在且具备可执行权限 (chmod +x)。 |
+| 技能 (Skill) | `skill.pool.chinese-end-to-end` | `skills/chinese-end-to-end` | ⛔ 未声明 | `skill chinese-end-to-end` | 微观原子规约：全流程中文输出。回复正文、进度播报、报错信息、解释说明与脚本注释一律中文；技术标识符与英文缩写保留原文但首现必须紧跟中文释义与中文全称。 |
+| 技能 (Skill) | `skill.pool.chinese-output-guard` | `skills/chinese-output-guard` | ⛔ 未声明 | `skill chinese-output-guard` | 复合流程级技能(L3)：全流程中文输出交付前门禁。把「规约 → 剥离 → 断言」串成一道门禁，挂载于管家「④ 输出规约」，代码块与命令原文豁免，白名单外拉丁词零容忍。 |
+| 技能 (Skill) | `skill.pool.classify-change-scope` | `skills/classify-change-scope` | ⛔ 未声明 | `skill classify-change-scope` | 工序动作级技能(L2)：把一组变更路径逐条判定为 hot_reload / incremental / restart，输出理由与命中的不可热更边界，并给出 no_restart_needed / restart_required 总判定。 |
+| 技能 (Skill) | `skill.pool.classify-decision-reversibility` | `skills/classify-decision-reversibility` | ⛔ 未声明 | `skill classify-decision-reversibility` | 工序动作级技能(L2)：对每个不确定项确定性判定可逆性与红线归属，输出 decide_now / ask_once、建议默认值与回滚方式。 |
+| 技能 (Skill) | `skill.pool.classify-instance-safety` | `skills/classify-instance-safety` | ⛔ 未声明 | `skill classify-instance-safety` | 工序动作级技能：真实扫描执行层脚本，判定 safe_multi / needs_lock / single_only 三档，提取资源键与信号，并可写出实例安全声明表。 |
+| 技能 (Skill) | `skill.pool.classify-step-tier` | `skills/classify-step-tier` | ⛔ 未声明 | `skill classify-step-tier` | 工序动作级技能(L2)：把一条过程事件确定性判定为 milestone / micro / action 三档之一，并输出 category 归类，作为折叠的前置判据。 |
+| 技能 (Skill) | `skill.pool.collect-process-evidence` | `skills/collect-process-evidence` | ⛔ 未声明 | `skill collect-process-evidence` | 工序动作级技能(L2)：流程合规取证器。按 process-spec.json 逐步从证据目录与仓库实况取证，产出证据包；铁律是「没有证据不等于走了这一步」——取不到证据一律记 fail + unverifiable，na 只在该步明确不适 |
+| 技能 (Skill) | `skill.pool.concise-chinese-bold-guard` | `skills/concise-chinese-bold-guard` | ⛔ 未声明 | `skill concise-chinese-bold-guard` | 复合流程级技能(L3)：基于 4 个微观 L1 原子规约叠加而成。强制要求输出文本不超过 10 个字、纯中文、全黑体、零闲聊。 |
+| 技能 (Skill) | `skill.pool.concise-focused-output` | `skills/concise-focused-output` | ⛔ 未声明 | `skill concise-focused-output` | 微观原子规约：默认简短聚焦输出。在无特定篇幅扩充要求下，压缩篇幅、开门见山、直击要害，杜绝冗长铺垫。 |
+| 技能 (Skill) | `skill.pool.concretization-guard` | `skills/concretization-guard` | ⛔ 未声明 | `skill concretization-guard` | 复合流程级技能(L3)：含糊词具像化交付门禁。把「规约 → 具像化建议 → 断言」串成一道不可跳步的放行门禁，挂载于管家「④ 输出规约」集群；与 quantification-guard 分工为「程度词补数值 / 含糊词补实体与判据」；we |
+| 技能 (Skill) | `skill.pool.concretize-ambiguity-policy` | `skills/concretize-ambiguity-policy` | ⛔ 未声明 | `skill concretize-ambiguity-policy` | 微观原子规约：含糊词具像化判定基元。定义范围含糊、指代含糊、时序含糊三类含糊词与 hedge 缓解词四类判据及其具像化方式（确切数量 + 计数依据 / 具体实体清单 / 触发条件 + 时限 / 可核对判据），并立下「禁止用另一个含糊词替换含 |
+| 技能 (Skill) | `skill.pool.concretize-term` | `skills/concretize-term` | ⛔ 未声明 | `skill concretize-term` | 工序动作级技能(L2)：含糊词具像化建议器。从唯一真相源加载含糊词并集 AMBIGUITY_WORDS 与分类函数 classify_word，对每个命中词按 range/reference/timing/hedge 四类产出具像化建议模板 |
+| 技能 (Skill) | `skill.pool.conditional-deliverable-router` | `skills/conditional-deliverable-router` | ⛔ 未声明 | `skill conditional-deliverable-router` | 微观原子规约：输出框架条件分支裁决。有物理产物时展示输出物与地址；无产物时强制抹除输出地址，转为输出核心结论。 |
+| 技能 (Skill) | `skill.pool.conflict-detector` | `skills/conflict-detector` | ⛔ 未声明 | `skill conflict-detector` | 复合流程级技能(L3)：规则冲突检测与仲裁自愈。检测多技能或多指令间的排他矛盾，给出确定性裁决方案，保障管控稳固有效。 |
+| 技能 (Skill) | `skill.pool.declare-lock-set` | `skills/declare-lock-set` | ⛔ 未声明 | `skill declare-lock-set` | 工序动作级技能(L2)：为并行任务归一化并排序锁集合（去重 + 字典序），并检测「没有锁却要写」与「锁键非归一化路径」两类静态错误，输出每任务的 locks 与 acquire_order。 |
+| 技能 (Skill) | `skill.pool.decoupling-guard` | `skills/decoupling-guard` | ⛔ 未声明 | `skill decoupling-guard` | 复合流程级技能(L3)：执行层解耦门禁。任何执行层变更后强制建图、检测并断言五类违规为零，契约外耦合一律阻断。 |
+| 技能 (Skill) | `skill.pool.detect-action-verb` | `skills/detect-action-verb` | ⛔ 未声明 | `skill detect-action-verb` | 工序动作级技能：单点物理识别并提取语句中的指令动作动词（如创建/生成/校验/修改）。 |
+| 技能 (Skill) | `skill.pool.detect-forbidden-state` | `skills/detect-forbidden-state` | ⛔ 未声明 | `skill detect-forbidden-state` | 工序动作级技能：把事件流（JSONL 或 stdin）逐条判定七条反例，每条反例都有独立可命中的检测分支，命中即给出反例编号、事件 seq 列表与人类可读证据，并按正确性 > 进展 > 可观测 > 成本上报。 |
+| 技能 (Skill) | `skill.pool.detect-layer-coupling` | `skills/detect-layer-coupling` | ⛔ 未声明 | `skill detect-layer-coupling` | 工序动作级技能：按 layer-decoupling-policy 的五类判据真实扫描契约与脚本源码，输出逆向依赖、依赖环、跨层跳跃、隐式耦合与共享可变状态违规。 |
+| 技能 (Skill) | `skill.pool.detect-lock-conflict` | `skills/detect-lock-conflict` | ⛔ 未声明 | `skill detect-lock-conflict` | 工序动作级技能(L2)：对并行任务检测锁冲突（锁集合交集非空）、潜在死锁（等待图成环）与超时未释放（跨度超 timeout_s 或逻辑已超时），并给出必须串行的任务对与可安全并行的分组建议。 |
+| 技能 (Skill) | `skill.pool.detect-rule-conflicts` | `skills/detect-rule-conflicts` | ⛔ 未声明 | `skill detect-rule-conflicts` | 工序动作级技能：检测规则集中的排他性冲突（如语种互斥、长度上下限倒挂、格式互斥）。 |
+| 技能 (Skill) | `skill.pool.detect-target-entity` | `skills/detect-target-entity` | ⛔ 未声明 | `skill detect-target-entity` | 工序动作级技能：单点物理提取语句中的核心操作实体（如JSON/文档/代码/文件）。 |
+| 技能 (Skill) | `skill.pool.detect-vague-modifier` | `skills/detect-vague-modifier` | ⛔ 未声明 | `skill detect-vague-modifier` | 工序动作级技能(L2)：扫描文本中的程度类与含糊类词语，输出命中词、类别（degree/ambiguity 与五类细分）、位置、是否已有场景量化映射。本技能内置词表是全仓模糊词表的唯一真相源，DEGREE_WORDS / AMBIGUITY |
+| 技能 (Skill) | `skill.pool.disambiguate-candidates` | `skills/disambiguate-candidates` | ⛔ 未声明 | `skill disambiguate-candidates` | 工序动作级技能：消除候选技能间的调用歧义，根据权重与上下文确定单一首选或互补协同组合。 |
+| 技能 (Skill) | `skill.pool.dispatch-skill-search` | `skills/dispatch-skill-search` | ⛔ 未声明 | `skill dispatch-skill-search` | 工序动作级技能(L2)：四源检索调度器。按「本地优先」硬规则先扫本地技能池 catalog 与已装 DSH 插件，命中即短路且不向任何外部源发起检索并留痕 skipped_sources；未命中才在显式 --allow-network 下外 |
+| 技能 (Skill) | `skill.pool.dsh-butler` | `skills/dsh-butler` | ⛔ 未声明 | `skill dsh-butler` | DSH 全局主控管家(L4 中枢编排级)，统筹调度 L1~L3 全量执行层，支持自底向上按需拼装能力积木与动态造物。 |
+| 技能 (Skill) | `skill.pool.dual-lane-router` | `skills/dual-lane-router` | ⛔ 未声明 | `skill dual-lane-router` | 复合流程级技能(L3)：完整流程与快速流程双轨总控。先判红线，再算加权分，判定可复算后方可进入执行。 |
+| 技能 (Skill) | `skill.pool.emit-search-snippet` | `skills/emit-search-snippet` | ⛔ 未声明 | `skill emit-search-snippet` | 工序动作级技能：为单条检索结果生成 ≤120 字的确定性摘要片段，并对命中词做居中截断。 |
+| 技能 (Skill) | `skill.pool.enforce-atomic-granularity` | `skills/enforce-atomic-granularity` | ⛔ 未声明 | `skill enforce-atomic-granularity` | 微观原子规约：强制每个 SOP 步骤声明其绑定的物理探针类型，未声明或声明为非探针表述的步骤一律判定为粒度过粗，必须递归分裂。 |
+| 技能 (Skill) | `skill.pool.enforce-contract-completeness` | `skills/enforce-contract-completeness` | ⛔ 未声明 | `skill enforce-contract-completeness` | 微观原子规约：技能契约完整性强制要求。所有存量与增量技能必须同时具备Frontmatter元数据、头部场景索引与主体运作SOP。 |
+| 技能 (Skill) | `skill.pool.ensure-utf8-encoding` | `skills/ensure-utf8-encoding` | ⛔ 未声明 | `skill ensure-utf8-encoding` | 工序动作级技能：物理检测并断言指定文件是否为合法 UTF-8 编码且无不可读乱码。 |
+| 技能 (Skill) | `skill.pool.execution-tree-guard` | `skills/execution-tree-guard` | ⛔ 未声明 | `skill execution-tree-guard` | 复合流程级技能(L3)：执行层树门禁。任何执行层变更后强制重建并断言树与索引一致，手写集群表一律阻断。 |
+| 技能 (Skill) | `skill.pool.extract-catalog-topology` | `skills/extract-catalog-topology` | ⛔ 未声明 | `skill extract-catalog-topology` | 工序动作级技能：物理读取全局 Catalog JSON 数据，提取全量技能节点与其加法依赖拓扑边。 |
+| 技能 (Skill) | `skill.pool.extract-core-objective` | `skills/extract-core-objective` | ⛔ 未声明 | `skill extract-core-objective` | 工序动作级技能：提取自然语言语句中的核心动宾主干与关键实体目标，输出标准化结构。 |
+| 技能 (Skill) | `skill.pool.extract-json-payload` | `skills/extract-json-payload` | ⛔ 未声明 | `skill extract-json-payload` | 工序动作级技能：从任意夹杂自然语言的文本中，精准提取并解析出闭合合法的 JSON 负载。 |
+| 技能 (Skill) | `skill.pool.fastlane-redline-policy` | `skills/fastlane-redline-policy` | ⛔ 未声明 | `skill fastlane-redline-policy` | 微观原子规约：定义强制进入完整流程的不可逆红线清单，并规定红线优先于任何加权分值。 |
+| 技能 (Skill) | `skill.pool.fastpath-dispatch-guide` | `skills/fastpath-dispatch-guide` | ⛔ 未声明 | `skill fastpath-dispatch-guide` | 微观原子规约：规范快捷路由的指引结构，必须包含目标技能ID、级别、直调执行命令与底层原子依赖。 |
+| 技能 (Skill) | `skill.pool.filter-conversational-noise` | `skills/filter-conversational-noise` | ⛔ 未声明 | `skill filter-conversational-noise` | 微观原子规约：过滤用户表达或大模型交流中的语气词、叹词、客套、口癖等纯噪音内容。 |
+| 技能 (Skill) | `skill.pool.fold-repeated-events` | `skills/fold-repeated-events` | ⛔ 未声明 | `skill fold-repeated-events` | 工序动作级技能(L2)：把逐条过程事件折叠成里程碑逐条保留、动作按类别计数、微操作汇总为 ×N 的紧凑过程输出。 |
+| 技能 (Skill) | `skill.pool.format-iconized-tail` | `skills/format-iconized-tail` | ⛔ 未声明 | `skill format-iconized-tail` | 微观原子规约：强制在最终回复的末尾集中使用特异化图标输出四要素框架，严禁在正文过早打断或散落分布。 |
+| 技能 (Skill) | `skill.pool.format-status-block` | `skills/format-status-block` | ⛔ 未声明 | `skill format-status-block` | 微观原子规约：规范输出框架中的“当前状态”板块，必须使用确切状态标记与一句话结论。 |
+| 技能 (Skill) | `skill.pool.format-visual-inspection` | `skills/format-visual-inspection` | ⛔ 未声明 | `skill format-visual-inspection` | 微观原子规约：强制可视化透视输出必须包含标准 Mermaid 图表或 GenUI 卡片，严禁仅输出大段无图纯文本。 |
+| 技能 (Skill) | `skill.pool.format-zoomable-visual` | `skills/format-zoomable-visual` | ⛔ 未声明 | `skill format-zoomable-visual` | 微观原子规约：一切可视化产物（图片、图谱、拓扑图、示意图）必须提供「点击放大 + 多级缩放按钮 + 复位 + 下载」四件套交互，严禁只输出静态图；缩放必须走离散档位表（口径见 zoom-level-policy），下载必须三段降级可选存储地 |
+| 技能 (Skill) | `skill.pool.full-spectrum-skill-auditor` | `skills/full-spectrum-skill-auditor` | ⛔ 未声明 | `skill full-spectrum-skill-auditor` | 复合流程级技能(L3)：全量技能合规自检门禁。在每次更新时穿透审计全量存量与增量技能的Frontmatter元数据、头部场景索引与主体SOP，确保零契约缺失。 |
+| 技能 (Skill) | `skill.pool.generate-fastpath-route` | `skills/generate-fastpath-route` | ⛔ 未声明 | `skill generate-fastpath-route` | 工序动作级技能：接收 Skill ID，秒级提取并返回其直达运行命令、级别属性与原子依赖链。 |
+| 技能 (Skill) | `skill.pool.google-style-skill-search-router` | `skills/google-style-skill-search-router` | ⛔ 未声明 | `skill google-style-skill-search-router` | 复合流程级技能(L3)：Google 式技能检索总控。进程内组装查询解析、BM25 排序、片段生成与质量日志，只回灌片段不回灌全文。 |
+| 技能 (Skill) | `skill.pool.high-relevance-notes-only` | `skills/high-relevance-notes-only` | ⛔ 未声明 | `skill high-relevance-notes-only` | 微观原子规约：规范输出框架中的“重要说明”，强制与本次输出物高强绑定，剔除泛泛空话与日常客套。 |
+| 技能 (Skill) | `skill.pool.iconized-output-showcase` | `skills/iconized-output-showcase` | ⛔ 未声明 | `skill iconized-output-showcase` | 复合流程级技能(L3)：尾部集中特异化图标展示总控。将交付输出全部收敛至最终末尾，通过特异化Emoji形成结构化视觉锚点，并通过正则断言保障物理合规。 |
+| 技能 (Skill) | `skill.pool.index-body-contract` | `skills/index-body-contract` | ⛔ 未声明 | `skill index-body-contract` | 复合流程级技能(L3)：索引主体运作契约。细化解耦为SOP流程规范、Mermaid流程图语法物理校验、底层脚本可执行权限物理检测与执行契约完整性验证。 |
+| 技能 (Skill) | `skill.pool.index-header-contract` | `skills/index-header-contract` | ⛔ 未声明 | `skill index-header-contract` | 复合流程级技能(L3)：索引头部契约规约。规范 Skill 的元数据与触发场景，使索引系统能够快速、精准识别适用时机。 |
+| 技能 (Skill) | `skill.pool.install-client-plugin` | `skills/install-client-plugin` | ⛔ 未声明 | `skill install-client-plugin` | 工序动作级技能(L2)：DSH client 插件幂等装配器。把本仓 plugins/ 下的自建 client 插件构建后复制进指定 profile 的 node_modules，登记 file: 依赖并追加进 dsh.profile.bu |
+| 技能 (Skill) | `skill.pool.instance-pool-guard` | `skills/instance-pool-guard` | ⛔ 未声明 | `skill instance-pool-guard` | 复合流程级技能(L3)：实例准入门禁。多实例不是默认允许，必须先分档、再断言，只有 safe_multi 可无锁并发。 |
+| 技能 (Skill) | `skill.pool.instance-pool-policy` | `skills/instance-pool-policy` | ⛔ 未声明 | `skill instance-pool-policy` | 微观原子规约：执行层实例可多开，但必须无状态或状态外置到资源键；独占资源必须声明，禁止实例间共享可变全局。 |
+| 技能 (Skill) | `skill.pool.intent-detector` | `skills/intent-detector` | ⛔ 未声明 | `skill intent-detector` | 复合流程级技能(L3)：意图识别与噪声过滤。解耦组装了噪音剥离、空白规约、动词判定、实体提取与核心目标提取五项原子能力。 |
+| 技能 (Skill) | `skill.pool.interactive-image-viewer` | `skills/interactive-image-viewer` | ⛔ 未声明 | `skill interactive-image-viewer` | 复合流程级技能(L3)：可缩放可视化总控。把规约、单文件生成器与静态验证探针串成「生成 → 自检 → 交付」端到端流程，确保交付的每一张图片或图谱都真正可点击放大、可缩放复位。 |
+| 技能 (Skill) | `skill.pool.layer-decoupling-policy` | `skills/layer-decoupling-policy` | ⛔ 未声明 | `skill layer-decoupling-policy` | 微观原子规约：执行层解耦判定基元。规定执行层之间只通过契约（catalog 的 composition 边 + 已声明产物路径）通信，依赖方向只允许 L4→L3→L2→L1 与同层，禁止环与跨层直引内部实现，并给出逆向依赖、依赖环、跨层跳跃 |
+| 技能 (Skill) | `skill.pool.layer-naming-guard` | `skills/layer-naming-guard` | ⛔ 未声明 | `skill layer-naming-guard` | 复合流程级技能(L3)：执行层命名规范门禁。把「体检 → 整改 → 断言 → 渲染」串成一道不可跳步的放行门禁，挂载于管家「② 契约与合规」集群；放行的唯一合法证据是「合规率 1.0000 + 旧名悬空引用 0 + 文档与真相源零漂移」三项 |
+| 技能 (Skill) | `skill.pool.lazy-load-policy` | `skills/lazy-load-policy` | ⛔ 未声明 | `skill lazy-load-policy` | 微观原子规约：未命中的技能一律不加载；禁止通配读取技能正文，单任务加载技能数不得超过 top-K。 |
+| 技能 (Skill) | `skill.pool.limit-words-under-10` | `skills/limit-words-under-10` | ⛔ 未声明 | `skill limit-words-under-10` | 微观原子规约：强制输出严格不超过 10 个字符（含标点符号），杜绝字数膨胀与冗余展开。 |
+| 技能 (Skill) | `skill.pool.load-skill-contract` | `skills/load-skill-contract` | ⛔ 未声明 | `skill load-skill-contract` | 工序动作级技能：按精确技能 id 加载单个 SKILL.md 正文，拒绝通配与目录递归，并返回字节数与 token 估算。 |
+| 技能 (Skill) | `skill.pool.log-query-events` | `skills/log-query-events` | ⛔ 未声明 | `skill log-query-events` | 工序动作级技能：把 query → top-K → 实际选用 追加写入 skill-query-log.jsonl，作为质量信号用于后续触发词修订。 |
+| 技能 (Skill) | `skill.pool.markdown-bold-only` | `skills/markdown-bold-only` | ⛔ 未声明 | `skill markdown-bold-only` | 微观原子规约：强制所有正文文本必须包裹在 Markdown 加粗语法（**内容**）中。 |
+| 技能 (Skill) | `skill.pool.match-intent-keywords` | `skills/match-intent-keywords` | ⛔ 未声明 | `skill match-intent-keywords` | 工序动作级技能：在全局 Skill Catalog 中执行倒排关键词与触发标签匹配，快速筛选初筛候选技能。 |
+| 技能 (Skill) | `skill.pool.measure-routing-metrics` | `skills/measure-routing-metrics` | ⛔ 未声明 | `skill measure-routing-metrics` | 工序动作级技能：物理测算索引匹配与路由检索的命中技能及执行耗时（毫秒级 ms），提供量化优化指标。 |
+| 技能 (Skill) | `skill.pool.measure-token-budget` | `skills/measure-token-budget` | ⛔ 未声明 | `skill measure-token-budget` | 工序动作级技能：用唯一确定性公式物理测算文本与文件的 token 占用，并按技能契约 / README / Catalog / docs / 其他五个分区汇总，为裁剪与门禁提供可复算基线。 |
+| 技能 (Skill) | `skill.pool.merge-search-candidates` | `skills/merge-search-candidates` | ⛔ 未声明 | `skill merge-search-candidates` | 工序动作级技能(L2)：多源候选去重归一器。把四类源的候选合并成同一六字段契约，按「URL 归一 → 名称归一」两级去重，按 stars→name→url 全序排序；剔除字段缺失的候选并计入 skipped_incomplete，合并后为空 |
+| 技能 (Skill) | `skill.pool.milestone-only-progress` | `skills/milestone-only-progress` | ⛔ 未声明 | `skill milestone-only-progress` | 微观原子规约：过程输出只报阶段目标（如从惠州去北京只报「到达长沙」「到达武汉」），严禁输出「上车」「下车」这类高度重复的微操作；同类微操作一律折叠为 ×N。 |
+| 技能 (Skill) | `skill.pool.milestone-progress-reporter` | `skills/milestone-progress-reporter` | ⛔ 未声明 | `skill milestone-progress-reporter` | 复合流程级技能(L3)：过程输出里程碑化总控。把「分档 → 折叠 → 预算断言」串成一条流水线，挂载于管家「④ 输出规约」集群，保证里程碑只增不删、微操作只折叠不静默丢弃。 |
+| 技能 (Skill) | `skill.pool.multi-source-search-policy` | `skills/multi-source-search-policy` | ⛔ 未声明 | `skill multi-source-search-policy` | 微观原子规约：执行层检索源判定基元。钉死四类源（本地 / GitHub / 官网 / awesome 清单）与「本地优先」硬规则、统一候选六字段契约、中英同义桥、以及「检索失败绝不等同于没找到」的诚实口径；规定官网源必须走站点自声明 sit |
+| 技能 (Skill) | `skill.pool.no-conversational-filler` | `skills/no-conversational-filler` | ⛔ 未声明 | `skill no-conversational-filler` | 微观原子规约：严禁任何开场白、问候客套、总结废话或承接虚词，直接输出核心内容。 |
+| 技能 (Skill) | `skill.pool.normalize-skill-contract` | `skills/normalize-skill-contract` | ⛔ 未声明 | `skill normalize-skill-contract` | 工序动作级技能：把外部引入技能改造为本池统一契约，在 skills/<name>/ 下幂等生成含 YAML Frontmatter、场景索引、Mermaid SOP 与探针步骤的 SKILL.md 与 README.md。 |
+| 技能 (Skill) | `skill.pool.on-demand-dispatcher` | `skills/on-demand-dispatcher` | ⛔ 未声明 | `skill on-demand-dispatcher` | 复合流程级技能(L3)：按需调用总控。先选技、再逐个加载、最后做预算断言，清单之外的技能一个都不读。 |
+| 技能 (Skill) | `skill.pool.one-shot-guard` | `skills/one-shot-guard` | ⛔ 未声明 | `skill one-shot-guard` | 复合流程级技能(L3)：一次性解决门禁。把「判定 → 决断 → 留痕 → 反问检测」串成一道派单前/交付前门禁，挂载于管家「③ 冲突·冗余·质量」集群。 |
+| 技能 (Skill) | `skill.pool.one-shot-resolution-policy` | `skills/one-shot-resolution-policy` | ⛔ 未声明 | `skill one-shot-resolution-policy` | 微观原子规约：默认不提问，不确定项选自决可回滚默认值并强制假设留痕，仅「红线 + 不可逆」允许每任务一次批量提问。 |
+| 技能 (Skill) | `skill.pool.output-chinese-only` | `skills/output-chinese-only` | ⛔ 未声明 | `skill output-chinese-only` | 微观原子规约：强制输出纯正中文，严禁非必要的英文单词、拼音或中英混杂，消灭跨语种表达的随机性。 |
+| 技能 (Skill) | `skill.pool.parallel-lock-guard` | `skills/parallel-lock-guard` | ⛔ 未声明 | `skill parallel-lock-guard` | 复合流程级技能(L3)：并行任务调控锁派单前门禁。把「声明 → 冲突/死锁检测 → 断言」串成一道不可跳步的放行门禁，挂载于管家「③ 冲突·冗余·质量」集群；并行的前置条件是先证明可并行（parallel_groups 非空且冲突为零），死 |
+| 技能 (Skill) | `skill.pool.parallel-lock-policy` | `skills/parallel-lock-policy` | ⛔ 未声明 | `skill parallel-lock-policy` | 微观原子规约：并行任务调控锁的判定基元。钉死四条硬口径——锁粒度=共享资源键、加锁顺序=字典序固定顺序、超时默认 300 秒且超时即失败释放、死循环判定复用 anti-pattern-policy 的 AP-01；无锁共享写为明确禁止项。 |
+| 技能 (Skill) | `skill.pool.parse-query` | `skills/parse-query` | ⛔ 未声明 | `skill parse-query` | 工序动作级技能：查询解析——归一化、分词、停用词剔除、同义词扩展与 ASCII 拼写纠错，输出可排序的 term 列表。 |
+| 技能 (Skill) | `skill.pool.place-skill-into-cluster` | `skills/place-skill-into-cluster` | ⛔ 未声明 | `skill place-skill-into-cluster` | 工序动作级技能：依据级别与触发关键词判定引入技能的集群归属与建议父级，校验 composition 依赖边是否都真实存在于 catalog，只输出建议不写任何文件。 |
+| 技能 (Skill) | `skill.pool.plain-analogy-explanation` | `skills/plain-analogy-explanation` | ⛔ 未声明 | `skill plain-analogy-explanation` | 微观原子规约：通俗生活化原理解释与技术细节静默。用普通人听得懂的日常原理阐述，用户未主动提问时绝对不展开底层代码技术细节。 |
+| 技能 (Skill) | `skill.pool.plan-fission` | `skills/plan-fission` | ⛔ 未声明 | `skill plan-fission` | 工序动作级技能：读取 SOP 或技能主体，逐步骤判定探针绑定情况，输出结构化分裂清单（待拆步骤、建议级别、建议探针、建议父级）。 |
+| 技能 (Skill) | `skill.pool.plan-process-rectification` | `skills/plan-process-rectification` | ⛔ 未声明 | `skill plan-process-rectification` | 工序动作级技能(L2)：流程整改清单生成器。对每个 fail 步骤产出可直接执行的整改命令与理由；整改项为空或含「加强/重视/注意/尽快」等空话的一律判不合格（exit 1）；required 失败的项单独标出；返回退出码 0/1/2。 |
+| 技能 (Skill) | `skill.pool.plugin-control-guard` | `skills/plugin-control-guard` | ⛔ 未声明 | `skill plugin-control-guard` | 复合流程级技能(L3)：插件常显调控按钮放行门禁。把「契约 → 装配 → 断言」串成一道不可跳步的门禁，挂载于管家「② 契约与合规」集群；放行的唯一合法证据是「包结构符合宿主 client 插件契约 + 注入内核运行时 31 项断言全过 + |
+| 技能 (Skill) | `skill.pool.plugin-control-jump-policy` | `skills/plugin-control-jump-policy` | ⛔ 未声明 | `skill plugin-control-jump-policy` | 微观原子规约：插件常显调控按钮判定基元。钉死按钮的唯一标识（data-control-jump="<plugin-id>"）、常显位置（市场已安装列表与宿主插件清单的每个条目）、点击语义（定位到同 id 的配置项并高亮）、幂等去重键（容器\| |
+| 技能 (Skill) | `skill.pool.prefer-hot-reload-policy` | `skills/prefer-hot-reload-policy` | ⛔ 未声明 | `skill prefer-hot-reload-policy` | 微观原子规约：能不重启就不重启。定义 hot_reload（热更）/ incremental（增量重载）/ restart（重启）三级处置与最长前缀判定表，只有命中「不可热更边界」白名单才允许重启，且必须同时给出「路径 + 边界 + 重建命 |
+| 技能 (Skill) | `skill.pool.process-conformance-policy` | `skills/process-conformance-policy` | ⛔ 未声明 | `skill process-conformance-policy` | 微观原子规约：流程合规判定基元。钉死「约定流程必须是可打分的机器可读数据」这一前提，规定九步流程各自必须绑定四类物理探针之一、权重合计 100、必需项一票否决、na 第三态（权重从分母扣除且不得当 pass）、以及「没有证据不等于走了这一步 |
+| 技能 (Skill) | `skill.pool.process-supervisor` | `skills/process-supervisor` | ⛔ 未声明 | `skill process-supervisor` | 复合流程级技能(L3)：流程监督员。把「取证 → 打分 → 整改 → 独立复核」串成一道不可跳步的出口门禁，挂载于管家「③ 冲突·冗余·质量」集群；放行的唯一合法证据是「得分 ≥ 85 且全部必需项 pass 且整改清单无 unresolv |
+| 技能 (Skill) | `skill.pool.prune-bloated-prompts` | `skills/prune-bloated-prompts` | ⛔ 未声明 | `skill prune-bloated-prompts` | 微观原子规约：防膨胀裁剪。禁止在提示词或机制中加入等价/重复语句，保持指令极致紧凑。 |
+| 技能 (Skill) | `skill.pool.prune-redundant-context` | `skills/prune-redundant-context` | ⛔ 未声明 | `skill prune-redundant-context` | 工序动作级技能：以保守语义无损规则折叠连续重复行、重复段落与连续空行，同时逐字节保护 CATALOG 受管区块与 docs/requirements 编号表格行，输出裁剪前后 token 账。 |
+| 技能 (Skill) | `skill.pool.qa-gatekeeper` | `skills/qa-gatekeeper` | ⛔ 未声明 | `skill qa-gatekeeper` | 复合流程级技能(L3)：交付门禁与质量守卫。解耦组装了物理落地检测、Python编译验证、UTF-8编码断言与退出码硬断言。 |
+| 技能 (Skill) | `skill.pool.quantification-guard` | `skills/quantification-guard` | ⛔ 未声明 | `skill quantification-guard` | 复合流程级技能(L3)：量化交付门禁。把「规约 → 建表 → 检测 → 量化 → 断言」串成一道出口门禁，挂载于管家「④ 输出规约」集群；缺失映射不阻断但必须声明假设，禁止用另一个程度词替换程度词糊过去。 |
+| 技能 (Skill) | `skill.pool.quantify-modifier` | `skills/quantify-modifier` | ⛔ 未声明 | `skill quantify-modifier` | 工序动作级技能(L2)：按场景把程度类修饰词替换为可判定的数值区间。命中且有 (term, domain) 映射时产出「保留原词 + → 数值 单位（依据：…）」的建议；无映射或场景未声明时落 unquantifiable 并要求显式声明假 |
+| 技能 (Skill) | `skill.pool.quantify-modifier-policy` | `skills/quantify-modifier-policy` | ⛔ 未声明 | `skill quantify-modifier-policy` | 微观原子规约：程度类修饰词的量化判定基元。定义「高/大/快/多/好/严重/频繁/明显/显著…」清单、四要素（场景 + 数值或区间 + 单位 + 依据）规约、场景优先原则、不可量化的处置（声明假设而非沉默）与「禁止用另一个程度词替换程度词」禁 |
+| 技能 (Skill) | `skill.pool.rank-skills-bm25` | `skills/rank-skills-bm25` | ⛔ 未声明 | `skill rank-skills-bm25` | 工序动作级技能：对技能倒排索引执行 BM25 排序（字段权重 + 文档长度归一），支持 top-K、分页与命中率评测。 |
+| 技能 (Skill) | `skill.pool.reconcile-knowledge-specs` | `skills/reconcile-knowledge-specs` | ⛔ 未声明 | `skill reconcile-knowledge-specs` | 工序动作级技能：遍历 7 大知识库规范并对拍冲突，强制裁定知识库规范为绝对最高执行基准。 |
+| 技能 (Skill) | `skill.pool.record-assumptions` | `skills/record-assumptions` | ⛔ 未声明 | `skill record-assumptions` | 工序动作级技能(L2)：把自行决断的项写成可追溯假设四元组（项/取值/依据/回滚方式），缺依据或回滚方式即阻断。 |
+| 技能 (Skill) | `skill.pool.redundancy-detector` | `skills/redundancy-detector` | ⛔ 未声明 | `skill redundancy-detector` | 复合流程级技能(L3)：冗余检测与防机制膨胀。检测管控规则中的重复与重叠，输出去重与裁剪方案，确保机制简洁高效。 |
+| 技能 (Skill) | `skill.pool.register-execution-layer` | `skills/register-execution-layer` | ⛔ 未声明 | `skill register-execution-layer` | 工序动作级技能：登记与维护非技能执行层条目（cli/agent/api/mcp/plugin），校验层名合法、仓库内路径存在、id 唯一，幂等可重跑。 |
+| 技能 (Skill) | `skill.pool.rename-execution-layer` | `skills/rename-execution-layer` | ⛔ 未声明 | `skill rename-execution-layer` | 工序动作级技能(L2)：执行层命名整改器。一次改名同步六处（目录名 / catalog id / Frontmatter name / 组装边 / 树与索引五件产物 / docs 与登记表），配套脚本同名改写，改前校验目标名合法性、改后自动 |
+| 技能 (Skill) | `skill.pool.render-capability-naming` | `skills/render-capability-naming` | ⛔ 未声明 | `skill render-capability-naming` | 工序动作级技能(L2)：能力层命名规范文档渲染器。把 docs/operations/capability-naming.json 单向渲染成本仓文档与全局规则知识库文档两份受管区块，规则表全部由真相源生成、禁止人工双写；知识库路径按合并前 |
+| 技能 (Skill) | `skill.pool.render-catalog-docs` | `skills/render-catalog-docs` | ⛔ 未声明 | `skill render-catalog-docs` | 工序动作级技能：读取 skill-catalog.json，把组装关系注入 docs 的受管区块，取消人工手写组装表，支持幂等重跑与 --check 漂移检测。 |
+| 技能 (Skill) | `skill.pool.render-governance-mermaid` | `skills/render-governance-mermaid` | ⛔ 未声明 | `skill render-governance-mermaid` | 工序动作级技能：将拓扑数据物理编译为合规的 Mermaid 语法代码，支持调度链路图与全景拓扑图渲染。 |
+| 技能 (Skill) | `skill.pool.retire-legacy-workspace` | `skills/retire-legacy-workspace` | ⛔ 未声明 | `skill retire-legacy-workspace` | 工序动作级技能(L2)：旧工作区退役器。把「已合并但还活着」的源目录真正退场——先断言不丢文件（源侧独有文件数为 0）、目标已入库、会话已完整归入，再写台账、摘除 workspace.json 条目、物理删除源目录；强制「先摘注册再删目录」 |
+| 技能 (Skill) | `skill.pool.run-test-cases-gate` | `skills/run-test-cases-gate` | ⛔ 未声明 | `skill run-test-cases-gate` | 工序动作级技能：对照需求规格执行自动化测试案例脚本，所有用例全部通过方可放行验收。 |
+| 技能 (Skill) | `skill.pool.schema-guard` | `skills/schema-guard` | ⛔ 未声明 | `skill schema-guard` | 复合流程级技能(L3)：基于 L1 零闲聊、L1 去围栏与 L2 JSON提取叠加组装而成。保证严格结构化纯净输出。 |
+| 技能 (Skill) | `skill.pool.score-process-conformance` | `skills/score-process-conformance` | ⛔ 未声明 | `skill score-process-conformance` | 工序动作级技能(L2)：流程合规打分器。按权重计算分子与分母（na 权重从分母扣除），输出逐项 pass/fail/na 与得分；通过条件为得分 ≥ 85 且全部必需项 pass（必需项一票否决）；输出必须打印分子/分母/na 扣除项，禁止 |
+| 技能 (Skill) | `skill.pool.score-task-lane` | `skills/score-task-lane` | ⛔ 未声明 | `skill score-task-lane` | 工序动作级技能：对任务做确定性双流程分流判定，输出 lane、score、matched_redlines 与 reason 四元组。 |
+| 技能 (Skill) | `skill.pool.search-duplicate-rules` | `skills/search-duplicate-rules` | ⛔ 未声明 | `skill search-duplicate-rules` | 工序动作级技能：计算两条或多条文本规则之间的词频重叠度，精准定位重复与高冗余规则。 |
+| 技能 (Skill) | `skill.pool.search-github-skill` | `skills/search-github-skill` | ⛔ 未声明 | `skill search-github-skill` | 工序动作级技能：按能力关键词检索 GitHub 外部技能/插件候选，把结果归一为标准结构化候选清单 JSON（名称、URL、星标、许可、是否含脚本、描述）。 |
+| 技能 (Skill) | `skill.pool.search-official-source` | `skills/search-official-source` | ⛔ 未声明 | `skill search-official-source` | 工序动作级技能(L2)：官网 / 官方文档源检索器。从官方站点自声明的 sitemap 中按关键词检索可用执行层入口，产出统一六字段候选；只读、只用标准库、不携带凭据；支持 --from-file 读本地夹具做离线回归，全部域名不可达时显式 |
+| 技能 (Skill) | `skill.pool.select-skills-for-task` | `skills/select-skills-for-task` | ⛔ 未声明 | `skill select-skills-for-task` | 工序动作级技能：由一个任务描述产出受 top-K 约束的选中技能 id 清单，只读检索结果、绝不读取技能正文。 |
+| 技能 (Skill) | `skill.pool.skill-import-pipeline` | `skills/skill-import-pipeline` | ⛔ 未声明 | `skill skill-import-pipeline` | 复合流程级技能(L3)：外部执行层引入管线总控。五步串联检索→审计→归一→定级挂载→门禁验证，落点新集群「⑦ 技能引入与演进」；检索步自 PKG-008 起绑脚本探针（四源调度：本地优先 / GitHub / 官网 / awesome 清单 |
+| 技能 (Skill) | `skill.pool.skill-index-router` | `skills/skill-index-router` | ⛔ 未声明 | `skill skill-index-router` | 复合流程级技能(L3)：索引控制与消歧路由。控制全局 Catalog 索引寻址，消灭调用歧义，确保极速精准命中。 |
+| 技能 (Skill) | `skill.pool.snippet-only-recall` | `skills/snippet-only-recall` | ⛔ 未声明 | `skill snippet-only-recall` | 微观原子规约：检索结果只允许回灌命中片段与元数据，严禁把 catalog 或技能正文整体灌回上下文。 |
+| 技能 (Skill) | `skill.pool.spec-driven-governance` | `skills/spec-driven-governance` | ⛔ 未声明 | `skill spec-driven-governance` | 复合流程级技能(L3)：需求驱动执行与规范仲裁总控。强制任务严格从需求图纸出发，全程对照知识库7大规范（冲突以规范为准），并通过自动化测试用例方可验收交付。 |
+| 技能 (Skill) | `skill.pool.standard-output-framework` | `skills/standard-output-framework` | ⛔ 未声明 | `skill standard-output-framework` | 复合流程级技能(L3)：交付输出框架标准化总控。强制最终答复统一遵循“当前状态、输出物、输出地址、重要说明”，无产物时自动剔除输出地址转为核心结论。 |
+| 技能 (Skill) | `skill.pool.standardize-when-to-use` | `skills/standardize-when-to-use` | ⛔ 未声明 | `skill standardize-when-to-use` | 微观原子规约：标准化触发场景说明。强制包含明确的正面触发条件与触发禁区，方便索引快速识破。 |
+| 技能 (Skill) | `skill.pool.standardize-workflow-sop` | `skills/standardize-workflow-sop` | ⛔ 未声明 | `skill standardize-workflow-sop` | 微观原子规约：标准化主体运作 SOP。强制正文必须具备清晰的 Mermaid 流程图与有序执行步骤。 |
+| 技能 (Skill) | `skill.pool.strip-markdown-fence` | `skills/strip-markdown-fence` | ⛔ 未声明 | `skill strip-markdown-fence` | 微观原子规约：强制输出纯净原生文本，绝对禁止包裹任何 ``` 代码围栏。 |
+| 技能 (Skill) | `skill.pool.strip-non-prose-scope` | `skills/strip-non-prose-scope` | ⛔ 未声明 | `skill strip-non-prose-scope` | 工序动作级技能(L2)：按固定顺序剥离四类非散文成分（围栏代码块、行内代码、URL、文件路径），产出「待检正文」与白名单命中，供中文占比断言使用。 |
+| 技能 (Skill) | `skill.pool.strip-whitespace-newlines` | `skills/strip-whitespace-newlines` | ⛔ 未声明 | `skill strip-whitespace-newlines` | 微观原子规约：严格剥离文本首尾与多余的连续空白字符、制表符及空行，实现物理对齐。 |
+| 技能 (Skill) | `skill.pool.sync-requirements-lifecycle` | `skills/sync-requirements-lifecycle` | ⛔ 未声明 | `skill sync-requirements-lifecycle` | 工序动作级技能：物理检查并同步 requirements 需求生命周期版本，确保任务严格从最新图纸出发。 |
+| 技能 (Skill) | `skill.pool.tail-metrics-showcase` | `skills/tail-metrics-showcase` | ⛔ 未声明 | `skill tail-metrics-showcase` | 复合流程级技能(L3)：尾部量化指标与通俗表达总控。实现输出纯中文、默认极简聚焦、通俗生活常识比喻，并在尾部展示索引命中与路由时长量化指标。 |
+| 技能 (Skill) | `skill.pool.token-budget-policy` | `skills/token-budget-policy` | ⛔ 未声明 | `skill token-budget-policy` | 微观原子规约：定义上下文预算优先级（索引/检索片段 > 选中技能正文 > 参考文档）与超预算裁剪顺序，规定索引与检索片段永不裁剪、README 不进上下文、docs 长文仅以片段入上下文。 |
+| 技能 (Skill) | `skill.pool.token-economy-guard` | `skills/token-economy-guard` | ⛔ 未声明 | `skill token-economy-guard` | 复合流程级技能(L3)：token 经济门禁。把「先测 → 裁剪 → 等价能力断言」串成一道写入前置门禁，挂载于管家「② 契约与合规」集群，证据串不存活即阻断。 |
+| 技能 (Skill) | `skill.pool.tree-update-mandatory` | `skills/tree-update-mandatory` | ⛔ 未声明 | `skill tree-update-mandatory` | 微观原子规约：任何执行层（skill/agent/api/mcp/plugin/cli）新增或优化后，必须同步刷新索引与执行层树，禁止只改能力不改树。 |
+| 技能 (Skill) | `skill.pool.validate-header-triggers` | `skills/validate-header-triggers` | ⛔ 未声明 | `skill validate-header-triggers` | 工序动作级技能：静态校验 Skill 的 YAML Frontmatter 元数据与触发关键词覆盖度。 |
+| 技能 (Skill) | `skill.pool.validate-icon-syntax` | `skills/validate-icon-syntax` | ⛔ 未声明 | `skill validate-icon-syntax` | 工序动作级技能：通过正则表达式物理断言输出文案的尾部是否包含合规的特异化图标框架。 |
+| 技能 (Skill) | `skill.pool.verify-atomic-mutual-exclusion` | `skills/verify-atomic-mutual-exclusion` | ⛔ 未声明 | `skill verify-atomic-mutual-exclusion` | 工序动作级技能(L2)：原子锁互斥性物理压测断言器。真实拉起 N 个独立进程并发抢同一把 mkdir 原子锁，采集临界区进入/退出时间戳做扫描线，断言重叠窗口为 0 且任一瞬间持有者 ≤ 1；同时跑无锁负向对照段证明检测器确实能看见并发（否 |
+| 技能 (Skill) | `skill.pool.verify-catalog-consistency` | `skills/verify-catalog-consistency` | ⛔ 未声明 | `skill verify-catalog-consistency` | 工序动作级技能：三方对拍 SKILL.md Frontmatter、skill-catalog.json 与 docs 受管区块，并扫描正文手写组装关系造成的口径漂移，返回退出码 0/1。 |
+| 技能 (Skill) | `skill.pool.verify-chinese-output` | `skills/verify-chinese-output` | ⛔ 未声明 | `skill verify-chinese-output` | 工序动作级技能(L2)：中文输出三项硬断言（待检正文 CJK 占比 ≥ 0.85、非白名单拉丁词 = 0、独立大写缩写后必须有中文释义），全部通过才 Exit 0。 |
+| 技能 (Skill) | `skill.pool.verify-concretized-output` | `skills/verify-concretized-output` | ⛔ 未声明 | `skill verify-concretized-output` | 工序动作级技能(L2)：含糊词具像化断言器。对「已具像化」的正文做三项硬断言——不含未具像化含糊词（AMBIGUITY_WORDS 命中数为 0）、--strict 下任何数量表述必须带依据（如 12 个（依据：…））、命中词右侧 6 字内 |
+| 技能 (Skill) | `skill.pool.verify-context-payload` | `skills/verify-context-payload` | ⛔ 未声明 | `skill verify-context-payload` | 工序动作级技能：断言一次任务加载的技能正文数不超过 top-K、字节数不超预算，且未出现选中清单之外的技能。 |
+| 技能 (Skill) | `skill.pool.verify-decoupling` | `skills/verify-decoupling` | ⛔ 未声明 | `skill verify-decoupling` | 工序动作级技能：断言五类耦合违规为零；豁免必须经 --allow 显式声明并在输出中标注 waived，杜绝静默放过。 |
+| 技能 (Skill) | `skill.pool.verify-deliverable-paths` | `skills/verify-deliverable-paths` | ⛔ 未声明 | `skill verify-deliverable-paths` | 工序动作级技能：物理验证交付物地址的有效性，严禁输出不存在或空路径。 |
+| 技能 (Skill) | `skill.pool.verify-execution-contract` | `skills/verify-execution-contract` | ⛔ 未声明 | `skill verify-execution-contract` | 工序动作级技能：校验 Skill 的输入/输出契约完整性及本地挂载脚本的可执行性。 |
+| 技能 (Skill) | `skill.pool.verify-execution-tree` | `skills/verify-execution-tree` | ⛔ 未声明 | `skill verify-execution-tree` | 工序动作级技能：断言执行层树与 catalog、登记表、受管区块四方一致，扫描文档中手写集群枚举造成的结构漂移并给出文件与行号。 |
+| 技能 (Skill) | `skill.pool.verify-file-exists` | `skills/verify-file-exists` | ⛔ 未声明 | `skill verify-file-exists` | 工序动作级技能：物理验证指定文件路径是否真实存在于磁盘上，且文件大小大于 0 字节。 |
+| 技能 (Skill) | `skill.pool.verify-instance-safety` | `skills/verify-instance-safety` | ⛔ 未声明 | `skill verify-instance-safety` | 工序动作级技能：断言每个本地执行层都有实例安全声明、声明与实际扫描一致、safe_multi 无写盘证据、受限档位带资源键。 |
+| 技能 (Skill) | `skill.pool.verify-interactive-html` | `skills/verify-interactive-html` | ⛔ 未声明 | `skill verify-interactive-html` | 工序动作级技能：对交互查看器 HTML 做静态断言，校验缩放控制标识齐备、结构标签闭合且零外部资源引用，返回退出码 0/1。 |
+| 技能 (Skill) | `skill.pool.verify-lane-decision` | `skills/verify-lane-decision` | ⛔ 未声明 | `skill verify-lane-decision` | 工序动作级技能：对同一任务重复执行分流判定，断言结果 100% 一致，杜绝分流被随机性污染。 |
+| 技能 (Skill) | `skill.pool.verify-layer-naming` | `skills/verify-layer-naming` | ⛔ 未声明 | `skill verify-layer-naming` | 工序动作级技能(L2)：执行层命名整改后的三项硬断言器——合规率必须为 1.0000、旧名残留引用必须为 0（按词边界扫描，避免把新名误判为旧名残留）、执行层登记表零违规；判据复用 audit-layer-naming 的 naming_r |
+| 技能 (Skill) | `skill.pool.verify-mermaid-syntax` | `skills/verify-mermaid-syntax` | ⛔ 未声明 | `skill verify-mermaid-syntax` | 工序动作级技能：物理提取文本中的 Mermaid 流程图并执行语法校验，确保流程图无语法破坏。 |
+| 技能 (Skill) | `skill.pool.verify-no-forbidden-event` | `skills/verify-no-forbidden-event` | ⛔ 未声明 | `skill verify-no-forbidden-event` | 工序动作级技能：反例零命中断言。进程内 importlib 加载 detect-forbidden-state 的检测器，要求 hits == 0；--strict 时额外要求 checked_events > 0，杜绝空事件流「空过」放行 |
+| 技能 (Skill) | `skill.pool.verify-no-lock-violation` | `skills/verify-no-lock-violation` | ⛔ 未声明 | `skill verify-no-lock-violation` | 工序动作级技能(L2)：并行派单前的五项硬断言——无锁冲突、无死锁环、无超时未释放、每个任务都已声明锁、死循环体检复用 anti-pattern-policy 的 AP-01；全过才退 0，任一违规即阻断。 |
+| 技能 (Skill) | `skill.pool.verify-no-unnecessary-question` | `skills/verify-no-unnecessary-question` | ⛔ 未声明 | `skill verify-no-unnecessary-question` | 工序动作级技能(L2)：对本次任务的提问记录做四项硬断言（次数≤1、必须红线、必须不可逆、必须批量合并），默认零提问。 |
+| 技能 (Skill) | `skill.pool.verify-no-unnecessary-restart` | `skills/verify-no-unnecessary-restart` | ⛔ 未声明 | `skill verify-no-unnecessary-restart` | 工序动作级技能(L2)：对实际发生的重启事件做三项硬断言——路径在变更集合内、判定确实需要重启、带非空重建命令；任一不成立即记为不必要重启或无证据重启并退 1。 |
+| 技能 (Skill) | `skill.pool.verify-plugin-control-button` | `skills/verify-plugin-control-button` | ⛔ 未声明 | `skill verify-plugin-control-button` | 工序动作级技能(L2)：插件常显调控按钮断言器。第一层静态断言包结构符合宿主 client 插件契约（dsh.client.platform=web、client 入口、cordis.patch.yml、__ModuleLoader__ 注 |
+| 技能 (Skill) | `skill.pool.verify-progress-budget` | `skills/verify-progress-budget` | ⛔ 未声明 | `skill verify-progress-budget` | 工序动作级技能(L2)：对折叠后的过程输出做四项硬断言（零微操作泄漏、里程碑预算、里程碑 100% 覆盖、事件数不增加），全部通过才放行交付。 |
+| 技能 (Skill) | `skill.pool.verify-quantified-output` | `skills/verify-quantified-output` | ⛔ 未声明 | `skill verify-quantified-output` | 工序动作级技能(L2)：量化输出三项硬断言——文本中不存在未量化的程度词、不存在程度词被另一个程度词替换、--require-mapping 下每个命中词都能找到 domain 条目；全部通过才 exit 0，否则 exit 1 并列出词与 |
+| 技能 (Skill) | `skill.pool.verify-token-reduction` | `skills/verify-token-reduction` | ⛔ 未声明 | `skill verify-token-reduction` | 工序动作级技能：对裁剪前后文本同时断言 token 降幅达标与等价能力存活（cases.json 的 requires 证据串全部命中），任一条不成立即退 1 阻断放行。 |
+| 技能 (Skill) | `skill.pool.verify-workspace-retirement` | `skills/verify-workspace-retirement` | ⛔ 未声明 | `skill verify-workspace-retirement` | 工序动作级技能(L2)：工作区退役断言器。三项硬断言——源路径不存在（退役的物理证据）、workspace.json 中不再有指向源路径的条目、台账记录的迁移会话数全部落在目标工作区；全过才 exit 0，任一失败 exit 1，台账或 w |
+| 技能 (Skill) | `skill.pool.visual-interaction-guard` | `skills/visual-interaction-guard` | ⛔ 未声明 | `skill visual-interaction-guard` | 复合流程级技能(L3)：可视化交互四件套放行门禁。把「规约 → 档位 → 生成 → 断言」串成一道不可跳步的门禁，挂载于管家「⑤ 需求与透视」集群；放行的唯一合法证据是「档位表 ≥5 档且默认档在表内 + 吸附分支两种状态齐备 + 下载三段 |
+| 技能 (Skill) | `skill.pool.visualize-governance-topology` | `skills/visualize-governance-topology` | ⛔ 未声明 | `skill visualize-governance-topology` | 复合流程级技能(L3)：全景索引与管家调度链路可视化透视。基于物理数据源提取与图表编译，向用户直观呈现静态资产金字塔与动态管控调用轨迹。 |
+| 技能 (Skill) | `skill.pool.zero-restart-guard` | `skills/zero-restart-guard` | ⛔ 未声明 | `skill zero-restart-guard` | 复合流程级技能(L3)：零重启写入门禁。把「路径 → 处置判定 → 重启证据断言」串成一道写入门禁，挂载于管家「② 契约与合规」集群，默认目标是零重启，重启必须由不可热更边界加重建命令双向举证。 |
+| 技能 (Skill) | `skill.pool.zoom-level-policy` | `skills/zoom-level-policy` | ⛔ 未声明 | `skill zoom-level-policy` | 微观原子规约：可视化产物交互判定基元。钉死三条硬口径——缩放必须走离散档位表（13 档，+/- 跳相邻档，滚轮连续微调后吸附，档位可枚举可复算）、下载必须三段降级（showSaveFilePicker / Blob 下载 / 就地提示，禁止 |
+| 智能体 (Agent) | `agent.skillpool.process-supervisor-agent` | `skill-pool/agents/process-supervisor-agent` | ✅ `skill-pool/agents/process-supervisor-agent/interface.json` | `subagent（宿主工具，按需分派）` | --- |
+| 插件 (Plugin) | `plugin.skillpool.dsh-plugin-control-jump` | `skill-pool/plugins/dsh-plugin-control-jump` | ✅ `skill-pool/plugins/dsh-plugin-control-jump/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-control-jump` | — |
+| 插件 (Plugin) | `plugin.skillpool.dsh-plugin-image-zoom` | `skill-pool/plugins/dsh-plugin-image-zoom` | ✅ `skill-pool/plugins/dsh-plugin-image-zoom/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-image-zoom` | — |
+| 插件 (Plugin) | `plugin.skillpool.dsh-plugin-usage-bar` | `skill-pool/plugins/dsh-plugin-usage-bar` | ✅ `skill-pool/plugins/dsh-plugin-usage-bar/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-usage-bar` | — |
+| 脚本 (CLI) | `cli.rules.agent_life` | `scripts/agent_life.mjs` | ✅ `scripts/interfaces/agent_life.interface.json` | `node scripts/agent_life.mjs` | agent_life.mjs |
+| 脚本 (CLI) | `cli.rules.align_version` | `scripts/align_version.mjs` | ✅ `scripts/interfaces/align_version.interface.json` | `node scripts/align_version.mjs` | 全库受管文档版本归位（把受管文档头部版本统一改到当前总版本） |
+| 脚本 (CLI) | `cli.rules.audit_execution` | `scripts/audit_execution.sh` | ✅ `scripts/interfaces/audit_execution.interface.json` | `bash scripts/audit_execution.sh` | 对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片 |
+| 脚本 (CLI) | `cli.rules.batch_fix_sidebar_titles` | `scripts/batch_fix_sidebar_titles.mjs` | ✅ `scripts/interfaces/batch_fix_sidebar_titles.interface.json` | `node scripts/batch_fix_sidebar_titles.mjs` | 全量穿透修复前端侧边栏及权威存储中的全部存量会话标题 |
+| 脚本 (CLI) | `cli.rules.batch_rename_sessions` | `scripts/batch_rename_sessions.mjs` | ✅ `scripts/interfaces/batch_rename_sessions.interface.json` | `node scripts/batch_rename_sessions.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.build_capabilities_index` | `scripts/build_capabilities_index.mjs` | ✅ `scripts/interfaces/build_capabilities_index.interface.json` | `node scripts/build_capabilities_index.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.channel_audit` | `scripts/channel_audit.mjs` | ✅ `scripts/interfaces/channel_audit.interface.json` | `node scripts/channel_audit.mjs` | 快速通道注册审计器 —— 校验"通道表"是否真的可用（对应 REQ-045） |
+| 脚本 (CLI) | `cli.rules.check_freshness` | `scripts/check_freshness.mjs` | ✅ `scripts/interfaces/check_freshness.interface.json` | `node scripts/check_freshness.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.check_layer_interfaces` | `scripts/check_layer_interfaces.mjs` | ✅ `scripts/interfaces/check_layer_interfaces.interface.json` | `node scripts/check_layer_interfaces.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.check_task_naming` | `scripts/check_task_naming.sh` | ✅ `scripts/interfaces/check_task_naming.interface.json` | `bash scripts/check_task_naming.sh` | 检查「当前会话」的任务命名是否符合规范，供看板常显与流程判定使用 |
+| 脚本 (CLI) | `cli.rules.check_unique_identifiers` | `scripts/check_unique_identifiers.mjs` | ✅ `scripts/interfaces/check_unique_identifiers.interface.json` | `node scripts/check_unique_identifiers.mjs` | check_unique_identifiers.mjs |
+| 脚本 (CLI) | `cli.rules.conflict_scan` | `scripts/conflict_scan.mjs` | ✅ `scripts/interfaces/conflict_scan.interface.json` | `node scripts/conflict_scan.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.control_gates` | `scripts/control_gates.sh` | ✅ `scripts/interfaces/control_gates.interface.json` | `bash scripts/control_gates.sh` | — |
+| 脚本 (CLI) | `cli.rules.deepseek_key_setup` | `scripts/deepseek_key_setup.sh` | ✅ `scripts/interfaces/deepseek_key_setup.interface.json` | `bash scripts/deepseek_key_setup.sh` | — |
+| 脚本 (CLI) | `cli.rules.deepseek_usage_probe` | `scripts/deepseek_usage_probe.mjs` | ✅ `scripts/interfaces/deepseek_usage_probe.interface.json` | `node scripts/deepseek_usage_probe.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.disk_check_and_cleanup` | `scripts/disk_check_and_cleanup.sh` | ✅ `scripts/interfaces/disk_check_and_cleanup.interface.json` | `bash scripts/disk_check_and_cleanup.sh` | DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位) |
+| 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | ✅ `scripts/interfaces/fingerprint_audit.interface.json` | `bash scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
+| 脚本 (CLI) | `cli.rules.flow_control` | `scripts/flow_control.mjs` | ✅ `scripts/interfaces/flow_control.interface.json` | `node scripts/flow_control.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.gate_selftest` | `scripts/gate_selftest.sh` | ✅ `scripts/interfaces/gate_selftest.interface.json` | `bash scripts/gate_selftest.sh` | — |
+| 脚本 (CLI) | `cli.rules.generate_image` | `scripts/generate_image.py` | ✅ `scripts/interfaces/generate_image.interface.json` | `python3 scripts/generate_image.py` | — |
+| 脚本 (CLI) | `cli.rules.generate_naming_plan` | `scripts/generate_naming_plan.mjs` | ✅ `scripts/interfaces/generate_naming_plan.interface.json` | `node scripts/generate_naming_plan.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.git_sync_remote` | `scripts/git_sync_remote.sh` | ✅ `scripts/interfaces/git_sync_remote.interface.json` | `bash scripts/git_sync_remote.sh` | DSH 工程远程 Git 智能探针、缺地址开页引导、动态摘要提交与强同步引擎 |
+| 脚本 (CLI) | `cli.rules.global_scheduler_lock` | `scripts/global_scheduler_lock.sh` | ✅ `scripts/interfaces/global_scheduler_lock.interface.json` | `bash scripts/global_scheduler_lock.sh` | DSH 全自动轻量级全局调度锁中枢与并发资源防冲突引擎 |
+| 脚本 (CLI) | `cli.rules.init_dir` | `scripts/init_dir.sh` | ✅ `scripts/interfaces/init_dir.interface.json` | `bash scripts/init_dir.sh` | — |
+| 脚本 (CLI) | `cli.rules.init_project` | `scripts/init_project.sh` | ✅ `scripts/interfaces/init_project.interface.json` | `bash scripts/init_project.sh` | — |
+| 脚本 (CLI) | `cli.rules.install_host_gate` | `scripts/install_host_gate.sh` | ✅ `scripts/interfaces/install_host_gate.interface.json` | `bash scripts/install_host_gate.sh` | — |
+| 脚本 (CLI) | `cli.rules.legacy_align_scan` | `scripts/legacy_align_scan.mjs` | ✅ `scripts/interfaces/legacy_align_scan.interface.json` | `node scripts/legacy_align_scan.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.mechanism_audit` | `scripts/mechanism_audit.mjs` | ✅ `scripts/interfaces/mechanism_audit.interface.json` | `node scripts/mechanism_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.name_me` | `scripts/name_me.sh` | ✅ `scripts/interfaces/name_me.interface.json` | `bash scripts/name_me.sh` | **立刻**给"当前会话"改名——开工第一动作，一条命令，任何目录可用 |
+| 脚本 (CLI) | `cli.rules.naming_watchdog` | `scripts/naming_watchdog.mjs` | ✅ `scripts/interfaces/naming_watchdog.interface.json` | `node scripts/naming_watchdog.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.normalize_all_projects` | `scripts/normalize_all_projects.mjs` | ✅ `scripts/interfaces/normalize_all_projects.interface.json` | `node scripts/normalize_all_projects.mjs` | 全域存量 DSH 工程文件夹批量合规与规范化治理脚本 |
+| 脚本 (CLI) | `cli.rules.output_audit` | `scripts/output_audit.mjs` | ✅ `scripts/interfaces/output_audit.interface.json` | `node scripts/output_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.patch_dsh_todo_progress` | `scripts/patch_dsh_todo_progress.cjs` | ✅ `scripts/interfaces/patch_dsh_todo_progress.interface.json` | `node scripts/patch_dsh_todo_progress.cjs` | ⛔⛔⛔ [DEPRECATED 已废弃 · 2026-10-01 · REQ-089 D4] ⛔⛔⛔ |
+| 脚本 (CLI) | `cli.rules.physical_lock` | `scripts/physical_lock.sh` | ✅ `scripts/interfaces/physical_lock.interface.json` | `bash scripts/physical_lock.sh` | — |
+| 脚本 (CLI) | `cli.rules.probe_long_output` | `scripts/probe_long_output.mjs` | ✅ `scripts/interfaces/probe_long_output.interface.json` | `node scripts/probe_long_output.mjs` | 长输出实测探针：验证 max_tokens 提高后单次回复能否突破旧上限（32768）。 |
+| 脚本 (CLI) | `cli.rules.probe_long_output_stream` | `scripts/probe_long_output_stream.mjs` | ✅ `scripts/interfaces/probe_long_output_stream.interface.json` | `node scripts/probe_long_output_stream.mjs` | 长输出触顶实测（流式版）：验证单次回复到底能有多长。 |
+| 脚本 (CLI) | `cli.rules.probe_max_tokens` | `scripts/probe_max_tokens.mjs` | ✅ `scripts/interfaces/probe_max_tokens.interface.json` | `node scripts/probe_max_tokens.mjs` | 探测服务端对 max_tokens 的接受范围。 |
+| 脚本 (CLI) | `cli.rules.process_supervisor` | `scripts/process_supervisor.mjs` | ✅ `scripts/interfaces/process_supervisor.interface.json` | `node scripts/process_supervisor.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.progress_ledger` | `scripts/progress_ledger.mjs` | ✅ `scripts/interfaces/progress_ledger.interface.json` | `node scripts/progress_ledger.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.redundancy_scan` | `scripts/redundancy_scan.mjs` | ✅ `scripts/interfaces/redundancy_scan.interface.json` | `node scripts/redundancy_scan.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.rename_session` | `scripts/rename_session.sh` | ✅ `scripts/interfaces/rename_session.interface.json` | `bash scripts/rename_session.sh` | 通过 DSH 后台 HTTP RPC 接口，为当前会话重命名并锁定侧边栏标题 |
+| 脚本 (CLI) | `cli.rules.restore_skill_pool` | `scripts/restore_skill_pool.mjs` | ✅ `scripts/interfaces/restore_skill_pool.interface.json` | `node scripts/restore_skill_pool.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.route_navigate` | `scripts/route_navigate.mjs` | ✅ `scripts/interfaces/route_navigate.interface.json` | `node scripts/route_navigate.mjs` | route_navigate.mjs |
+| 脚本 (CLI) | `cli.rules.route_plan` | `scripts/route_plan.mjs` | ✅ `scripts/interfaces/route_plan.interface.json` | `node scripts/route_plan.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.session_naming_audit` | `scripts/session_naming_audit.mjs` | ✅ `scripts/interfaces/session_naming_audit.interface.json` | `node scripts/session_naming_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.svg2png` | `scripts/svg2png.sh` | ✅ `scripts/interfaces/svg2png.interface.json` | `bash scripts/svg2png.sh` | 把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节） |
+| 脚本 (CLI) | `cli.rules.sync_control_requirements` | `scripts/sync_control_requirements.mjs` | ✅ `scripts/interfaces/sync_control_requirements.interface.json` | `node scripts/sync_control_requirements.mjs` | 管控机制专属需求同步校验脚本 (Control Requirements Sync Verifier) |
+| 脚本 (CLI) | `cli.rules.test_auto_naming` | `scripts/test_auto_naming.mjs` | ✅ `scripts/interfaces/test_auto_naming.interface.json` | `node scripts/test_auto_naming.mjs` | 自动命名逻辑测试（在**不重启宿主**的前提下验证）。 |
+| 脚本 (CLI) | `cli.rules.test_physical_lock` | `scripts/test_physical_lock.mjs` | ✅ `scripts/interfaces/test_physical_lock.interface.json` | `node scripts/test_physical_lock.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.test_v180_spec` | `scripts/test_v180_spec.sh` | ✅ `scripts/interfaces/test_v180_spec.interface.json` | `bash scripts/test_v180_spec.sh` | — |
+| 脚本 (CLI) | `cli.rules.todo_gate` | `scripts/todo_gate.sh` | ✅ `scripts/interfaces/todo_gate.interface.json` | `bash scripts/todo_gate.sh` | — |
+| 脚本 (CLI) | `cli.rules.verify_auto_naming_e2e` | `scripts/verify_auto_naming_e2e.mjs` | ✅ `scripts/interfaces/verify_auto_naming_e2e.interface.json` | `node scripts/verify_auto_naming_e2e.mjs` | 自动命名端到端验收（重启后运行，一次给出结论）。 |
+| 脚本 (CLI) | `cli.rules.verify_escape_hatch` | `scripts/verify_escape_hatch.sh` | ✅ `scripts/interfaces/verify_escape_hatch.interface.json` | `bash scripts/verify_escape_hatch.sh` | — |
+| 脚本 (CLI) | `cli.rules.verify_guard_live` | `scripts/verify_guard_live.sh` | ✅ `scripts/interfaces/verify_guard_live.interface.json` | `bash scripts/verify_guard_live.sh` | — |
 
 ### 3.2 ⚠️ catalog 与磁盘漂移（必须处理，禁止当成可用能力）
 

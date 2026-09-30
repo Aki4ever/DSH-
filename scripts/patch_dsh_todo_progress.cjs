@@ -1,5 +1,27 @@
 #!/usr/bin/env node
 /**
+ * ⛔⛔⛔ [DEPRECATED 已废弃 · 2026-10-01 · REQ-089 D4] ⛔⛔⛔
+ *
+ * 本脚本**已永久失效，禁止再运行，也不得据其输出判定任何机制是否生效**。
+ *
+ * 失效根因（两层叠加，两层都不可逆）：
+ *   ① **宿主更名**：`RUNTIME_ROOTS` 只认 `/Applications/DSH Desktop.app/…`，
+ *      而当前应用已是 `/Applications/DeepSeek Harness.app`；
+ *   ② **打包形态变更**：前端成品包已从"可写的目录"变成塞进 **`app.asar`（121MB 签名产物）**，
+ *      不再是 `Resources/app/node_modules/@deepseek-ai/…` 那种可直接 patch 的目录。
+ *   结果：本脚本 `--check` 永远找不到目标 → 长期处于"没打上"状态而无人察觉。
+ *   这与 `mechanism_audit.mjs` 报「任务列表面板 ⛔ 找不到宿主前端产物」是**同一根因**。
+ *
+ * 替代路线（REQ-089 D4 裁决：改走**客户端插件**，不再 patch 宿主前端产物）：
+ *   · 新载体：`skill-pool/plugins/` 下的客户端插件（`dsh.client.inject` + `cordis.patch.yml` 的 `insert`）；
+ *   · 为什么换路线：客户端插件装在 `$DSH_HOME/profiles/<name>/node_modules`，
+ *     **不碰 app.asar、不破签名、DSH 升级不会被覆盖**——而 patch 成品包每次升级都会丢。
+ *
+ * 保留本文件仅为**历史留痕与失效证据**（退役说明见文件头，做法同 `scripts/test_v180_spec.sh`）。
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * 以下为废弃前的原始说明（仅存档，不代表当前可用）：
+ *
  * 补丁：给 DSH 输入坞任务条（TodoPanel）加「首栏总进度 + 每行实时进度」，并把
  * 硬编码英文标签（Think / Bash / Read …）中文化。
  *

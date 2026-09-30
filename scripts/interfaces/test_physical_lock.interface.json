@@ -1,0 +1,34 @@
+{
+  "id": "cli.rules.test_physical_lock",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/test_physical_lock.mjs",
+  "invoke": "node scripts/test_physical_lock.mjs",
+  "summary": "==============================================================================",
+  "inputs": [
+    {
+      "name": "(待补)",
+      "type": "unknown",
+      "required": false,
+      "desc": "header 注释里未声明入参，需人工补齐"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/test_physical_lock.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

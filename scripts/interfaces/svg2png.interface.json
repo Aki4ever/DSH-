@@ -1,0 +1,34 @@
+{
+  "id": "cli.rules.svg2png",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/svg2png.sh",
+  "invoke": "bash scripts/svg2png.sh",
+  "summary": "把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节）",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "./scripts/svg2png.sh --check           # 检查渲染器是否可编译可用"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/svg2png.sh"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

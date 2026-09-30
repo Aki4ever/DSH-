@@ -39,7 +39,7 @@
 │   ├── README.md                    # 知识库总索引、分层架构教学图与前置核验协议
 │   ├── common/                      # 【通用公共规范库 · 跨项目共享】
 │   │   ├── README.md                # 通用规范导航总览
-│   │   ├── interaction_specification.md # 交互规范（格式塔六大定律 / Don't Make Me Think 零思考）
+│   │   ├── interaction_specification.md # 交互规范（格式塔七大定律 / Don't Make Me Think 零思考）
 │   │   ├── unity_specification.md   # Unity规范（页面Scene / 弹窗Prefab / 按钮阴影位移 / .meta铁律）
 │   │   ├── web_specification.md     # Web规范（路由懒加载 / Modal Portal挂载 / box-shadow / 骨架屏）
 │   │   ├── miniprogram_specification.md # 小程序规范（主包≤1.5MB / 弹窗Component / setData差量）
@@ -134,6 +134,9 @@ node scripts/legacy_align_scan.mjs --root .            # 判定层：存量校�
 node scripts/channel_audit.mjs --root .                # 判定层：通道审计（死通道/说法命中/触发词冲突）
 node scripts/check_freshness.mjs                      # 判定层：新鲜度与可用性审计（能力与规则健康探活）
 node scripts/sync_control_requirements.mjs            # 判定层：管控专属需求双向同步校验（CR与REQ对齐）
+node scripts/output_audit.mjs --check                  # 判定层：输出体量/五联装判定（读宿主转录，不依赖拦截层插件）
+node scripts/check_layer_interfaces.mjs --check         # 判定层：执行层接口契约校验（接口覆盖率与名字覆盖率分开报）
+node scripts/route_plan.mjs --check                     # 路由层：文档-实现一致 + 死通道 + 可达性 + 反向用例
 ./scripts/check_task_naming.sh                         # 判定层：当前任务命名是否合规（看板已自动常显此行）
 node scripts/session_naming_audit.mjs                  # 命名层：存量会话命名审计（只读，含合规率与待改名清单）
 node scripts/session_naming_audit.mjs --json           # 命名层：导出审计数据供生成改名方案

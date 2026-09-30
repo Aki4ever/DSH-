@@ -1,0 +1,52 @@
+{
+  "id": "cli.rules.route_plan",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/route_plan.mjs",
+  "invoke": "node scripts/route_plan.mjs",
+  "summary": "路由层可执行载体 —— 命中执行层之后，输出\"怎样调配这个执行层更高效\"的调配方案",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/route_plan.mjs --check               # 路由层自检（可判红）"
+    },
+    {
+      "name": "--json",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/route_plan.mjs --json \"<关键词>\"     # 机器可读"
+    },
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/route_plan.mjs --check --json        # 自检机器可读"
+    },
+    {
+      "name": "--help",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/route_plan.mjs --help"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/route_plan.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

@@ -14,7 +14,7 @@
 
 | 规范文件 | 中文名称 | 适用领域 | 核心原子性实操约束 |
 | :--- | :--- | :---: | :--- |
-| [`interaction_specification.md`](interaction_specification.md) | **通用交互与体验设计规范** | 全平台通用 | • **格式塔六大心理学定律**落地（接近/相似/闭合/主体背景分离）；<br>• **Don't Make Me Think** 零思考直觉、防呆与三秒法则。 |
+| [`interaction_specification.md`](interaction_specification.md) | **通用交互与体验设计规范** | 全平台通用 | • **格式塔七大心理学定律**落地（接近/相似/闭合/主体背景分离/对称秩序/连续/共同命运）；<br>• **Don't Make Me Think** 零思考直觉、防呆与三秒法则。 |
 | [`readability_specification.md`](readability_specification.md) | **全端可读性与无障碍排版设计法典** | Web/DMG/App/小程序 | • **跨端排版字号阶梯**（标题/卡片/导航/正文/辅助）；<br>• **绝对可读底线**（Web 12px/移动 12pt/小程序 22rpx 严禁低于）；<br>• **WCAG 2.1 AA 级对比度**（正文 ≥ 4.5:1）与加粗面积 ≤ 10% 铁律。 |
 | [`component_asset_reference.md`](component_asset_reference.md) | **多官网精美组件与图控法典** | 全平台可视化与UI | • **权威官网设计系统白名单**（Shadcn UI/Tailwind/Apple HIG/AntD/Material 3/WeUI）；<br>• **四大经典微组件版式**（发光终端卡/数据栅格/时间轴/模态抽屉）。 |
 | [`unity_specification.md`](unity_specification.md) | **通用 Unity 客户端工程规范** | Unity 游戏与客户端 | • **页面做成 Scene**（主视景独立异步加载）；<br>• **弹窗做成 Prefab**（动态实例化与暗色蒙层）；<br>• **按钮必带 Drop Shadow 投影**与按压下沉位移；<br>• 动静分离双 Canvas 与 `.meta` 同生共死。 |

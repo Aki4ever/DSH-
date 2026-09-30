@@ -1,0 +1,34 @@
+{
+  "id": "cli.rules.verify_auto_naming_e2e",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/verify_auto_naming_e2e.mjs",
+  "invoke": "node scripts/verify_auto_naming_e2e.mjs",
+  "summary": "自动命名端到端验收（重启后运行，一次给出结论）。",
+  "inputs": [
+    {
+      "name": "--status",
+      "type": "arg",
+      "required": false,
+      "desc": "node scripts/verify_auto_naming_e2e.mjs --status # 只看状态，不新建会话"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "标准输出（待人工细化）"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "失败/不通过"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/verify_auto_naming_e2e.mjs"
+  ],
+  "source": "extracted-from-header",
+  "verified": false
+}

@@ -92,12 +92,19 @@ function toAbs(p) {
 /** 收集 git 工作树里的改动文件（相对路径）。 */
 function gitDirty() {
   try {
-    const out = execFileSync('git', ['status', '--porcelain'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+    // ⚠️ 必须带 `-uall`（REQ-089 实测缺陷，2026-10-01）：
+    // 默认 `--porcelain` 会把**整个未跟踪目录折叠成一行**（`?? knowledge/sources/`），
+    // 而 progress_ledger 只能登记**文件**（登记时要读回算 sha256，目录读不了）。
+    // 结果：任何新建目录（哪怕里面每个文件都已登记）都会被报成"未记录改动"，
+    // 台账永远清不干净 —— 一个把正确操作判成违规的假阳性。
+    // `-uall` 让 git 逐个列出未跟踪文件，与本工具的登记颗粒度对齐。
+    const out = execFileSync('git', ['status', '--porcelain', '-uall'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
     return out
       .split('\n')
       .filter((l) => l.trim())
       .map((l) => l.slice(3).trim())
       .map((l) => (l.includes(' -> ') ? l.split(' -> ').pop() : l))
+      .map((l) => l.replace(/^"(.*)"$/, '$1'))   // git 对含特殊字符的路径会加引号
       .filter((l) => !l.endsWith('.DS_Store'))
   } catch {
     return []
