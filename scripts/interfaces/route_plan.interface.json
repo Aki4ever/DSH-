@@ -2,51 +2,81 @@
   "id": "cli.rules.route_plan",
   "layer": "脚本 (CLI)",
   "path": "scripts/route_plan.mjs",
-  "invoke": "node scripts/route_plan.mjs",
-  "summary": "路由层可执行载体 —— 命中执行层之后，输出\"怎样调配这个执行层更高效\"的调配方案",
+  "invoke": "node scripts/route_plan.mjs \"<意图或关键词>\"",
+  "summary": "路由层可执行载体：命中执行层后输出调配方案（调用命令 / 前置门禁 / 依赖顺序 / 并行串行裁决 / 建议批次 / 失败回退），并自带可判红的 --check 自检",
   "inputs": [
     {
-      "name": "--check",
-      "type": "arg",
+      "name": "<意图或关键词>",
+      "type": "positional",
       "required": false,
-      "desc": "node scripts/route_plan.mjs --check               # 路由层自检（可判红）"
+      "desc": "要规划的执行意图或能力关键词；缺省时进入计划模式但无查询词"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "路由层自检：① 文档-实现一致性 ①b 物理锁口径对拍 ①c 判红能力自检 ② 死通道 ③ 可达性覆盖率 ④ 反向用例"
     },
     {
       "name": "--json",
-      "type": "arg",
+      "type": "flag",
       "required": false,
-      "desc": "node scripts/route_plan.mjs --json \"<关键词>\"     # 机器可读"
+      "desc": "输出机器可读 JSON（与 --check 可组合）"
     },
     {
-      "name": "--check",
-      "type": "arg",
+      "name": "--min-coverage",
+      "type": "number",
       "required": false,
-      "desc": "node scripts/route_plan.mjs --check --json        # 自检机器可读"
+      "default": "不设阈值（覆盖率默认只报数不当硬门）",
+      "desc": "把可达性覆盖率升格为硬门；例如 0.9 表示低于 90% 即判不过"
+    },
+    {
+      "name": "--root",
+      "type": "path",
+      "required": false,
+      "default": "当前仓库根",
+      "desc": "指定工程根目录（用于对拍与自检）"
+    },
+    {
+      "name": "--top",
+      "type": "number",
+      "required": false,
+      "desc": "限制输出的命中条目数量"
     },
     {
       "name": "--help",
-      "type": "arg",
+      "type": "flag",
       "required": false,
-      "desc": "node scripts/route_plan.mjs --help"
+      "desc": "打印用法"
     }
   ],
   "outputs": [
     {
       "name": "stdout",
-      "type": "text",
-      "desc": "标准输出（待人工细化）"
+      "type": "markdown",
+      "desc": "计划模式：调配方案卡片（命中条目 + 调用命令 + 前置门禁 + 依赖与顺序 + 并行/串行裁决 + 建议批次 + 失败回退 + 未登记项）；未命中时显式报未命中并给近似建议（全部标注「非命中」）"
+    },
+    {
+      "name": "stdout",
+      "type": "json",
+      "desc": "--json：mode=plan 时给 items/arbitration/gate/batches；mode=check 时给 evidence/checks/indicators/problems"
     }
   ],
   "exitCodes": {
-    "0": "成功",
-    "1": "失败/不通过"
+    "0": "通过（--check 全过，或计划模式成功命中）",
+    "1": "有问题（--check 有未过项，或计划模式未命中）",
+    "2": "取不到证据（证据源缺失/不可解析）—— 绝不算通过"
   },
   "sideEffects": [],
-  "dependencies": [],
-  "parallel": "exclusive",
-  "examples": [
-    "node scripts/route_plan.mjs"
+  "dependencies": [
+    "cli.rules.channel_audit"
   ],
-  "source": "extracted-from-header",
-  "verified": false
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/route_plan.mjs \"管控机制\"",
+    "node scripts/route_plan.mjs --check",
+    "node scripts/route_plan.mjs --check --json --min-coverage 0.9"
+  ],
+  "source": "handwritten",
+  "verified": true
 }
