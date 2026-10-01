@@ -37,9 +37,16 @@ function generateAgentsMd(projectName) {
 物理锁看守单向严格工序链：**必须完成上一步才可以执行下一步**，任何跳步工具调用将被底层物理拦截拒止。
 
 任何改动型动作之前，必须执行：
-1. **首动改名**：第一步调用全局改名工具锁定会话标题（三段式「[分类编号][难度分] 8字概述」）；
+1. **首动改名**：第一步跑 \`./scripts/control.sh naming\` 锁定会话标题（三段式「[分类编号][难度分] 8字概述」）；
 2. **查需求台账**：查阅 \`docs/requirements.md\` 确认需求依据与当前版本；
-3. **查安全红线**：禁止越权删除与越界破坏。
+3. **查安全红线**：禁止越权删除与越界破坏；
+4. **过门禁**：跑 \`./scripts/control.sh check\`（累积门禁）与 \`./scripts/control.sh lock\`（物理锁阶梯）。
+
+> **为什么是本工程入口**（REQ-092 实测根因）：实测 16 个外部工程会话里，全局改名/门禁/物理锁
+> 命中数**全部为 0** —— 规则写了，但工程内**没有可调用的入口**，于是规则只剩文字。
+> 本入口为薄壳，只转发与留痕，不复制判定逻辑（判定逻辑唯一权威源在全局规则仓库）。
+> 实体由 \`scripts/backfill_scope.mjs\` 铺设；判定入口是
+> \`/Users/linqiyu/Documents/DSH/全局规则/scripts/scope_audit.mjs\`。
 
 ---
 
@@ -154,6 +161,21 @@ async function scanAndNormalize() {
       }
     }
 
+    // 2.5 实体覆盖核验（REQ-092 / R1-e）：不再按"文本在不在"发绿灯。
+    //     旧实现的绿灯只覆盖 AGENTS.md / 台账 / .gitignore 三份文本，实测 4 个工程
+    //     被判"完全合规"却从未跑过任何管控脚本。现改为消费覆盖审计的同一口径。
+    try {
+      const { auditProject } = await import('./scope_audit.mjs')
+      const a = auditProject(name, projectDir, { globalRoot: CURRENT_PROJECT, skipTranscript: true })
+      stats.covered = { passed: a.passed, total: a.total, ok: a.ok }
+      for (const [k, v] of Object.entries(a.items)) {
+        if (!v.ok) stats.actions.push(`补课【${k}】：${v.detail}`)
+      }
+    } catch (e) {
+      stats.covered = { passed: 0, total: 4, ok: false, error: String(e && e.message || e) }
+      stats.actions.push('覆盖审计不可用：判定器读不到（按未达标处理，不折算通过）')
+    }
+
     // 3. 检查 .gitignore
     const gitignorePath = join(projectDir, '.gitignore')
     if (!existsSync(gitignorePath)) {
@@ -172,7 +194,8 @@ async function scanAndNormalize() {
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
   let totalActions = 0
   for (const item of report) {
-    const status = item.actions.length === 0 ? '🟢 已完全合规' : `🟡 治理动作 (${item.actions.length}项)`
+    const cov = item.covered
+    const status = cov && !cov.ok ? `🔴 未接管（覆盖 ${cov.passed}/${cov.total}）` : (item.actions.length === 0 ? '🟢 已完全合规' : `🟡 治理动作 (${item.actions.length}项)`)
     console.log(`\n📦 工程：【${item.name}】 ➜ ${status}`)
     if (item.actions.length > 0) {
       for (const act of item.actions) {

@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T16:20:23.621Z",
+  "generatedAt": "2026-10-01T16:27:24.327Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 246,
+  "total": 252,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 63
+    "脚本 (CLI)": 69
   },
   "withInterface": 246,
   "entries": [
@@ -1679,6 +1679,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.anti_hallucination_audit",
+      "path": "scripts/anti_hallucination_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/anti_hallucination_audit.mjs",
+      "invokeKind": "cli",
+      "interface": null
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.atomic_lock_audit",
       "path": "scripts/atomic_lock_audit.mjs",
       "desc": "==============================================================================",
@@ -1694,6 +1703,15 @@
       "invoke": "bash scripts/audit_execution.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/audit_execution.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.backfill_scope",
+      "path": "scripts/backfill_scope.mjs",
+      "desc": "",
+      "invoke": "node scripts/backfill_scope.mjs",
+      "invokeKind": "cli",
+      "interface": null
     },
     {
       "layer": "脚本 (CLI)",
@@ -1775,6 +1793,15 @@
       "invoke": "node scripts/conflict_scan.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/conflict_scan.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.control",
+      "path": "scripts/control.sh",
+      "desc": "",
+      "invoke": "bash scripts/control.sh",
+      "invokeKind": "cli",
+      "interface": null
     },
     {
       "layer": "脚本 (CLI)",
@@ -2093,6 +2120,24 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.req_version_audit",
+      "path": "scripts/req_version_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/req_version_audit.mjs",
+      "invokeKind": "cli",
+      "interface": null
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.req_version_gen",
+      "path": "scripts/req_version_gen.mjs",
+      "desc": "",
+      "invoke": "node scripts/req_version_gen.mjs",
+      "invokeKind": "cli",
+      "interface": null
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.restart_verify",
       "path": "scripts/restart_verify.mjs",
       "desc": "==============================================================================",
@@ -2126,6 +2171,15 @@
       "invoke": "node scripts/route_plan.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/route_plan.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.scope_audit",
+      "path": "scripts/scope_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/scope_audit.mjs",
+      "invokeKind": "cli",
+      "interface": null
     },
     {
       "layer": "脚本 (CLI)",

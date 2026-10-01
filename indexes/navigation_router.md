@@ -1,8 +1,8 @@
 # 地图导航式能力路由层规范 (Map Navigation Routing Layer)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.26.0`
-> - **对应实施版本**：`v4.26.0`
+> - **当前文档版本**：`v4.28.0`
+> - **对应实施版本**：`v4.28.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-054` / `CR-009`（地图导航式能力路由层）
 > - **生效状态**：`[Release 稳定生效]`
@@ -50,7 +50,7 @@
   3. **[检查站 3]**：申领排他独占锁或确认只读权限；
   4. **[检查站 4]**：门禁四验确认（`./scripts/control_gates.sh badge`）。
 - 🏁 **终点 (Destination)**：
-  - **执行命令/入口**：`./scripts/xxx.sh [参数]`
+  - **执行命令/入口**：模板占位（登记真实条目时替换为已存在的脚本路径，禁止留 `scripts/xxx.sh` 这类占位）
   - **核心操作目标**：[最终落盘文件或操作]
 - ⚠️ **避坑路况警示 (Road Conditions / Hazard Warning)**：
   - [负面反例：何时坚决不用、典型误用场景]

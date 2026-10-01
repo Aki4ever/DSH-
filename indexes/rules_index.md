@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.26.0`
-> - **对应实施版本**：`v4.26.0`
+> - **当前文档版本**：`v4.28.0`
+> - **对应实施版本**：`v4.28.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -153,7 +153,7 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **自动化脚本** | [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) | 地图导航式能力路由器、核心入口提取与版本速查脚本 |
 | **自动化脚本** | [`scripts/agent_life.mjs`](../scripts/agent_life.mjs) | 全局流程调度中枢 Agent PP & Agent Life(N) 辅助引擎（并发管理、生命周期推进与消亡） |
 | **自动化脚本** | [`scripts/check_unique_identifiers.mjs`](../scripts/check_unique_identifiers.mjs) | 全域能力 (Agent/MCP/CLI/Skill/Plugin) 唯一标识符与命名空间规范审计器 |
-| **管控机制** | [`scripts/control_gates.sh`](../scripts/control_gates.sh) | 状态层：由磁盘实况推导 G1~G4 并输出量化看板与状态快照 |
+| **管控机制** | [`scripts/control_gates.sh`](../scripts/control_gates.sh) | 状态层：由磁盘实况推导 G1~G4 并输出量化看板与状态快照（G1~G5） |
 | **管控机制** | [`scripts/gate_selftest.sh`](../scripts/gate_selftest.sh) | 证据可证性回归：9 用例（含反向验证）断言"检测器空输出/缺键/自相矛盾/git 不可用/半截快照"一律不得算通过（V4 缺陷锁定） |
 | **管控机制** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs) | 冗余检测：词级相似度识别真复制粘贴（内置自检） |
 | **管控机制** | [`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs) | 冲突检测：五类冲突（版本/计数/指标/标识/死链）识别与裁决建议 |
@@ -161,6 +161,11 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **管控机制** | [`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs) | 通道审计：快速通道死链、说法能否命中、触发词是否冲突（内置正反例自检） |
 | **管控机制** | [`scripts/align_version.mjs`](../scripts/align_version.mjs) | 版本归位：把全库受管文档头部版本统一到台账总版本（支持 --dry-run 预览） |
 | **管控机制** | [`scripts/normalize_all_projects.mjs`](../scripts/normalize_all_projects.mjs) | 全域工程规范化：一键扫描并批量为全域存量工程注入/升级 AGENTS.md 与需求台账 |
+| **管控机制** | [`scripts/scope_audit.mjs`](../scripts/scope_audit.mjs) | 全域覆盖审计（REQ-092 / R1）：逐工程核验入口在位/引用可达/运行留痕/版本登记四类事实，脱管项即判红 |
+| **管控机制** | [`scripts/backfill_scope.mjs`](../scripts/backfill_scope.mjs) | 存量补课（REQ-092 / R1-b）：为每个工程铺薄壳入口 + 正引用 + 实跑留痕（幂等，可重复跑） |
+| **管控机制** | [`scripts/req_version_gen.mjs`](../scripts/req_version_gen.mjs) | 需求版本机读台账生成（REQ-092 / R2-c）：从主台账抽出编号/需求版本/实施版本/承载文件 |
+| **管控机制** | [`scripts/req_version_audit.mjs`](../scripts/req_version_audit.mjs) | 需求版本贯通判定（REQ-092 / R2-d）：需求文案 ↔ 需求台账 ↔ 实施载体 ↔ 回复回执四处对拍 |
+| **管控机制** | [`scripts/anti_hallucination_audit.mjs`](../scripts/anti_hallucination_audit.mjs) | 反空架子与反幻觉（REQ-092 / R3）：判据七"通电凭据" + 判据八"引用真实性"，悬空引用即判红 |
 | **管控机制** | [`scripts/verify_guard_live.sh`](../scripts/verify_guard_live.sh) | 拦截层上线验证：**重启桌面端后**检查守卫/看板是否真实生效（源码契约 + 插件自检 + 门禁实况 + 人工观察清单） |
 | **管控机制** | [`scripts/verify_escape_hatch.sh`](../scripts/verify_escape_hatch.sh) | 逃生舱重启后验证：**宿主是否已加载最新代码**（进程启动时间 vs 插件改动时间）+ 逃生舱判定逻辑 7 项 + 宿主级实弹步骤；只读，不制造门禁未过状态 |
 | **管控机制** | [`scripts/physical_lock.sh`](../scripts/physical_lock.sh) | 底层物理锁：查看、自适应同步与单向推进物理锁状态，全项目强制执行串行工序硬阻断 |

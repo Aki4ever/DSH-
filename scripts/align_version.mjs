@@ -19,7 +19,9 @@
 // ==============================================================================
 
 import { readFile, writeFile, readdir } from 'node:fs/promises'
+import { realpathSync, readFileSync } from 'node:fs'
 import { join, relative, extname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 /** 受管文档范围（与 versioning_standard 的受管定义一致） */
 export const MANAGED_DIRS = ['rules', 'knowledge', 'indexes', 'docs', 'memory', 'templates']
@@ -80,16 +82,30 @@ export function alignText(text, to) {
   return { text: lines.join('\n'), changed }
 }
 
-/** 读取台账总版本 */
+/** 读取台账总版本（同步口径，供判定器直接消费；避免"用了 Promise 当字符串"这类静默缺陷） */
+export function ledgerVersionSync(root) {
+  try {
+    const text = readFileSync(join(root, 'docs/requirements.md'), 'utf8')
+    const m = text.match(/\*\*当前系统实施总版本\*\*：\s*`v(\d+\.\d+\.\d+)`/)
+    return m ? m[1] : null
+  } catch {
+    return null
+  }
+}
+
+/** 读取台账总版本（异步口径，供本脚本主流程复用） */
 export async function ledgerVersion(root) {
   const text = await readFile(join(root, 'docs/requirements.md'), 'utf8')
   const m = text.match(/\*\*当前系统实施总版本\*\*：\s*`v(\d+\.\d+\.\d+)`/)
   return m ? m[1] : null
 }
 
+// REQ-092 / R2-e：本脚本的 `ledgerVersion` / `alignText` 被其它判定器 import 复用。
+// 若不设主入口守卫，"被 import" 会顺带执行一次全库写入（实测：import 一次即改动 1 个文件），
+// 这类"读一眼就改盘"的行为属于典型的隐式副作用，必须消除。
+async function main() {
 const args = parseArgs(process.argv)
 const root = args.root
-
 const to = args.to || (await ledgerVersion(root))
 if (!to) {
   console.error('❌ 无法确定目标版本：既没传 --to，台账里也没读到总版本')
@@ -126,3 +142,15 @@ if (args.json) {
   for (const c of changed) console.log(`  · ${c.file}（${c.lines} 行）`)
   console.log(changed.length === 0 ? '\n✅ 全库已一致，无需归位' : `\n${args.dryRun ? '⚠️ 预览模式未写入；去掉 --dry-run 才会落盘' : '✅ 归位完成'}`)
 }
+}
+
+/** 仅在被直接执行时跑主流程（被 import 时只导出纯函数，不产生任何磁盘写入）。 */
+function invokedDirectly() {
+  try {
+    return fileURLToPath(import.meta.url) === realpathSync(process.argv[1] || '')
+  } catch {
+    return false
+  }
+}
+
+if (invokedDirectly()) await main()

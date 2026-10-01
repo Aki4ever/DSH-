@@ -325,7 +325,8 @@ export function selfTest() {
   add('全篇加粗 → 加粗占比接近 1', cognitiveChecks('**全部加粗**').boldRate > 0.9, true)
 
   // REQ-090：输出结构契约判据的双向断言（先证明"该红的能判红"）
-  const receipt = '🔧 本轮做了什么：写入 a.md\n🧪 判定证据：node x --check 退出码 0\n📊 完成度：R1 2/4\n🚧 还差什么：R2 未开始'
+  // REQ-092 / R2-a：回执由四项扩为五项，新增 `🏷️ 需求版本` 硬判据字段
+  const receipt = '🔧 本轮做了什么：写入 a.md\n🏷️ 需求版本：REQ-092 · v1.0.0\n🧪 判定证据：node x --check 退出码 0\n📊 完成度：R1 2/4\n🚧 还差什么：R2 未开始'
   const good = `🟢 【实施完成态】\n\n**一句话总结**：这是一句简短的结论式摘要。\n\n## 一、正文\n\n### 细节\n\n${receipt}\n\n${tail}`
   add('结构契约齐备 → 通过', structureChecks(good).gatePass, true)
   add('缺首行徽标 → 判红', structureChecks(good.replace('🟢 【实施完成态】\n\n', '')).bannerOk, false)
@@ -335,6 +336,9 @@ export function selfTest() {
   add('标题 ## → ### 不跳级 → 通过', structureChecks(good).headingJumpOk, true)
   add('列表缩进 4 层 → 判红', structureChecks(`🟢 【实施完成态】\n\n**一句话总结**：这是一句简短的结论式摘要。\n\n## 标题\n\n- 一\n  - 二\n    - 三\n      - 四\n\n${receipt}\n\n${tail}`).listDepthOk, false)
   add('进度回执缺字段 → 判红', structureChecks(good.replace('🚧 还差什么：R2 未开始', '')).receiptOk, false)
+  // REQ-092 / R2-a：新增字段必须自带反向用例，否则"加了字段"这件事本身不可证伪
+  add('缺「需求版本」字段 → 判红', structureChecks(good.replace('🏷️ 需求版本：REQ-092 · v1.0.0\n', '')).receiptOk, false)
+  add('带「需求版本」字段 → 通过', structureChecks(good).receiptOk, true)
   add('专业档标记重复出现 → 判红', structureChecks(good.replace('## 一、正文', '## 一、正文 ⚙️ 专业档 ⚙️ 专业档')).laneOk, false)
 
   const failed = cases.filter((c) => !c.ok)

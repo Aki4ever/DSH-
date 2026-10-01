@@ -106,13 +106,14 @@ json_int_strict() { # $1=JSON 文本 $2=键名
 }
 
 # ── 门禁定义（顺序即依赖链）──────────────────────────────────────────────────
-GATE_IDS=(init structure sync redundancy)
-GATE_NAMES=("项目初始化" "工程结构化" "需求文档同步" "冗余检测")
+GATE_IDS=(init structure sync redundancy integrity)
+GATE_NAMES=("项目初始化" "工程结构化" "需求文档同步" "冗余检测" "落地与版本一致性")
 GATE_DESC=(
   "仓库、目录骨架、防丢文件齐备"
   "目录有主、无孤儿目录与散落垃圾"
   "台账条目数与 Git 工作树对齐"
   "实质重复率与重复标题在健康区"
+  "全域覆盖/需求版本贯通/无悬空引用（REQ-092）"
 )
 
 # ── 颜色（仅 TTY 且未禁用时启用）─────────────────────────────────────────────
@@ -564,6 +565,70 @@ check_redundancy() {
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
+# G5 · 落地与版本一致性（REQ-092 / R1+R2+R3）
+# ══════════════════════════════════════════════════════════════════════════════
+# 为什么必须把这三条并入**累积门禁**而不是另起一个可选命令：
+#   实施前的实测事实是——`normalize_all_projects.mjs` 判 5 个工程"完全合规"、
+#   看板显示 4/4 · 100%，而 4 个工程从未跑过任何管控脚本、拦截层从未被加载。
+#   一份**不参与放行**的判定，最终一定会被当成"参考信息"忽略掉。
+# 三态语义（与既有门禁一致）：
+#   0 = 全绿（pass）；1 = 未达标（pending，可继续做前序）；2 = 不可判定（block，硬阻断）
+check_integrity() {
+  local script_dir; script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local node_bin="${DSH_NODE_BIN:-}"
+  if [ -z "$node_bin" ] && [ -f "$script_dir/lib/find_node.sh" ]; then
+    # shellcheck disable=SC1091
+    . "$script_dir/lib/find_node.sh"
+    node_bin="$(find_node || true)"
+  fi
+  [ -n "$node_bin" ] || node_bin="node"
+
+  local fails=0 undecided=0 total=0 detail=""
+  local entry name out rc
+  for entry in \
+    "scope_audit.mjs|全域管控覆盖" \
+    "req_version_audit.mjs|需求版本贯通" \
+    "anti_hallucination_audit.mjs|无悬空引用与空架子"; do
+    name="${entry%%|*}"; label="${entry##*|}"
+    if [ ! -f "$script_dir/$name" ]; then
+      # 判定器缺失 = 不可判定，绝不折算为通过（元规则第三十六条）
+      undecided=$((undecided+1))
+      detail="${detail}${label}:判定器缺失; "
+      continue
+    fi
+    total=$((total+1))
+    ( cd "$PROJECT_ROOT" && "$node_bin" "$script_dir/$name" --check >/dev/null 2>&1 )
+    rc=$?
+    if [ "$rc" -eq 0 ]; then
+      detail="${detail}${label}:✅; "
+    elif [ "$rc" -eq 2 ]; then
+      undecided=$((undecided+1))
+      detail="${detail}${label}:不可判定; "
+    else
+      fails=$((fails+1))
+      detail="${detail}${label}:⛔; "
+    fi
+  done
+
+  METRIC_A="$((total - fails))"; METRIC_A_LABEL="落地判定通过"
+  METRIC_B="$fails"; METRIC_B_LABEL="未达标项"
+
+  if (( undecided > 0 )); then
+    DETAIL="$detail"
+    HINT="不可判定 ${undecided} 项（判定器缺失或取不到证据）——不得折算为通过"
+    return 2
+  fi
+  if (( fails > 0 )); then
+    DETAIL="$detail"
+    HINT="未达标 ${fails} 项：定向修复命令见 node scripts/scope_audit.mjs --check 等三条判定器输出"
+    return 1
+  fi
+  DETAIL="$detail"
+  HINT="全域已接管 · 需求版本四处一致 · 无悬空引用且机制有运行凭据"
+  return 0
+}
+
+# ══════════════════════════════════════════════════════════════════════════════
 # 主流程
 # ══════════════════════════════════════════════════════════════════════════════
 compute_all() {
@@ -576,6 +641,7 @@ compute_all() {
       structure)  check_structure;  rc=$? ;;
       sync)       check_sync;       rc=$? ;;
       redundancy) check_redundancy; rc=$? ;;
+      integrity)  check_integrity;  rc=$? ;;
       *) rc=1 ;;
     esac
     case "$rc" in

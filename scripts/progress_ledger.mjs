@@ -25,6 +25,7 @@
  * 用法：
  *   node scripts/progress_ledger.mjs record --files a.md,b.mjs --judge "node x.mjs --check"
  *                                         [--expect "关键字"] [--task "会话标题"] [--note "说明"]
+ *                                         [--req REQ-092] [--req-version v1.0.0]
  *   node scripts/progress_ledger.mjs report [--json]
  *   node scripts/progress_ledger.mjs check  [--json]
  *   node scripts/progress_ledger.mjs list   [--limit 20]
@@ -186,6 +187,23 @@ async function cmdRecord(args) {
     process.exit(2)
   }
 
+  // ⓪ 需求版本锚（REQ-092 / R2-c）：每次改动都必须挂到**哪一版需求**上。
+  //    不传则从机读需求版本台账按 --req 反查；反查不到一律显式标 (未声明)，不静默编造。
+  const reqId = typeof args.req === 'string' ? args.req : null
+  let reqVersion = typeof args['req-version'] === 'string' ? args['req-version'] : null
+  if (reqId && !reqVersion) {
+    try {
+      const j = JSON.parse(readFileSync(join(ROOT, 'ai-control', 'requirements', 'req_versions.json'), 'utf8'))
+      reqVersion = j?.entries?.[reqId]?.requirement_version || '(待补)'
+    } catch {
+      reqVersion = '(待补)'
+    }
+  }
+  if (reqId && !/^v\d+\.\d+\.\d+$/.test(String(reqVersion))) {
+    console.error(`❌ 需求版本格式非法：${reqId} → ${reqVersion}（须为 vX.Y.Z；请先跑 node scripts/req_version_gen.mjs）`)
+    process.exit(2)
+  }
+
   // ① 写后必读回（S11 的物理载体）：改动后**重新从磁盘读**，算哈希、取内容
   const anchors = []
   for (const rel of rels) {
@@ -224,6 +242,9 @@ async function cmdRecord(args) {
     at: new Date().toISOString(),
     task: typeof args.task === 'string' ? args.task : (process.env.DSH_TASK_TITLE || process.env.DSH_SESSION_ID || 'unknown'),
     session: process.env.DSH_SESSION_ID || 'unknown',
+    // REQ-092 / R2-c：需求版本锚 —— 让「改了哪些文件」能反查到「凭哪一版需求改的」
+    requirement: reqId,
+    requirementVersion: reqVersion,
     note: typeof args.note === 'string' ? args.note : '',
     judge,
     judgeExit,

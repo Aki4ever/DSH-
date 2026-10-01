@@ -1,13 +1,17 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.26.0`
+> - **当前系统实施总版本**：`v4.28.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
-> - **最后同步时间**：2026-10-01
+> - **最后同步时间**：2026-10-02
 > - **版本状态**：`[Release 稳定生效]`
-> - **版本跳号说明**：`v4.24.0 → v4.26.0`，跳过 `v4.25.0`。原因：REQ-089 实施时已声明目标版本 `v4.25.0`
->   但未落盘（属版本欠账），本条目（REQ-090）实施时一并清偿 —— `v4.25.0` 归 REQ-089、`v4.26.0` 归 REQ-090，
->   两笔账一次结清，故总版本直接落 `v4.26.0`。此说明为**显式留痕**，非静默跳号。
+> - **历史跳号留痕**：`v4.24.0 → v4.26.0` 曾跳过 `v4.25.0`（`v4.25.0` 归 REQ-089、`v4.26.0` 归 REQ-090，两笔账一次结清）。
+> - **版本跳号说明**：`v4.26.0 → v4.28.0`，跳过 `v4.27.0`。原因：REQ-091 已认领目标版本 `v4.27.0`
+>   但其"所有页面常显"仍待人工 DOM 取证，**不满足递增条件**（未完成项不得冒充完成）；
+>   本条目（REQ-092）独立落地并自证，故总版本按序落 `v4.28.0`，`v4.27.0` 仍预留给 REQ-091。
+>   此说明为**显式留痕**，非静默跳号。
+> - **需求版本台账**：[`ai-control/requirements/req_versions.json`](../ai-control/requirements/req_versions.json)（机读，
+>   由 `scripts/req_version_gen.mjs` 生成）；一致性判定入口 `node scripts/req_version_audit.mjs --check`。
 
 本文档是本项目唯一的**独立核心需求管理台账**。按照系统元规则，所有规则的提出、变动与注销都必须在此记录，杜绝没有需求依据的规则变更。
 
@@ -2632,6 +2636,57 @@
   完成现状核查（可复用 9 项 / 实测缺口 9 项 / 本轮新发现 4 项，
   含 `shell.leading` 仅在 macOS 折叠态挂载这一关键落点事实）；登记 8 项待裁决分歧。
   本轮**未改任何机制载体**（仅新增本文案与台账条目），状态为 `[EVOLVING]` 待拍板。
+
+---
+
+### REQ-092: 全域覆盖与版本贯通（GCM-SCOPE）—— 管控脱管清零 / 需求版本号贯通 / 反空架子判定
+> ### 🏷️ **资产元数据与生命周期标记**
+> - **文档类型 (Doc Type)**: `[REQUIREMENT 业务需求台账]`
+> - **清理定位 (Retention)**: `[PERSISTENT 长期受管]`
+> - **生成会话**: `[新需001][3] 管控规则全域覆盖`
+> - **到期/清理条件**: `[随版本演进]`
+
+- **当前状态**：`[EVOLVING]` **已实施第一批**（R1 覆盖审计与存量薄壳、R2 版本贯通、R3 反空架子判定均已落地）
+- **实施版本**：`v4.28.0`（规划目标；三条判定器全绿并接入累积门禁后方递增总版本）
+- **需求版本**：`v1.0.0`（需求自身的版本，随需求内容变更递增，与系统实施版本分开记）
+- **提出时间**：2026-10-02
+- **最新更新**：2026-10-02
+- **责任归属**：用户（提出与裁决） / AI 智能体（翻译、分裂与实施）
+- **需求文案**：[`docs/constraint_mechanism_optimize_9.md`](constraint_mechanism_optimize_9.md)（唯一权威出处，本条目只放指针不复述细则）
+
+#### 1. 提出背景与痛点
+用户提出 3 条优化诉求（新增存量都服从管控 / 输出新增需求版本号并双记 / 全部任务必须触达物理实现层）。
+本轮**查重拦截**实测结论：3 条都不是从零新建，而是"机制在、运行时不在跑"的三处同族断点——
+① `normalize_all_projects.mjs --dry-run` 判定 5 个工程"已完全合规"，而其写入物只有三份文本，**不铺任何管控脚本**；
+② 扫描 16 个外部工程会话转录，`name_me` / `control_gates` / `physical_lock` / `todo_gate` 命中数**全为 0**；
+③ "需求版本号"全库仅有 `meta_rules.md` 第三十五条一句话，**无输出位、无台账字段、无判定器**。
+
+#### 2. 核心诉求与目标
+1. **覆盖侧（SCOPE-ALL）**：新增与存量工程 100% 纳入管控，脱管项由判定器列出并接入累积门禁；
+2. **版本侧（VER-LINK）**：需求版本号成为输出结构的硬判据项，并贯通"需求文案 ↔ 需求台账 ↔ 实施载体 ↔ 回复回执"四处；
+3. **落地侧（NO-FAKE）**：在既有六条触达判据上补"通电判定"与"引用真实性判定"，让空架子与悬空引用判红；
+4. **递归分裂铁律**：任何子需求若八条物理触达判据不全满足，继续分裂，不得登记为完成。
+
+#### 3. 关联文件与影响范围
+- **需求文案**：[`docs/constraint_mechanism_optimize_9.md`](constraint_mechanism_optimize_9.md)（本条目唯一细则出处）；
+- **新建**：`scripts/scope_audit.mjs` · `scripts/req_version_audit.mjs` · `scripts/anti_hallucination_audit.mjs` ·
+  `ai-control/requirements/req_versions.json` · `ai-control/reports/state/scope_audit.json`；
+- **改动**：`rules/system/output_standard.md`（新增需求版本号字段）· `ai-control/config/gates.conf`（`OUT_RECEIPT_FIELDS` + `SCOPE_*`）·
+  `scripts/output_audit.mjs` · `scripts/progress_ledger.mjs`（登记需求版本）· `scripts/align_version.mjs`（受管范围扩容）·
+  `scripts/normalize_all_projects.mjs`（合规判定改走覆盖审计）· `scripts/control_gates.sh`（接入三条判定器）·
+  `scripts/mechanism_audit.mjs`（新增两条判据）· 外部四工程 `AGENTS.md` 与 `scripts/` 薄壳。
+
+#### 4. 验收标准
+- [ ] `node scripts/scope_audit.mjs --check` 退出码 0，看板显示各工程覆盖项 x/y；
+- [ ] `node scripts/req_version_audit.mjs --check` 退出码 0，四处版本号逐字相等；
+- [ ] `node scripts/anti_hallucination_audit.mjs --check` 退出码 0，悬空引用清零；
+- [ ] 三条判定器各带反向用例（改坏后必须判红，不允许恒绿）且全部进入累积门禁。
+
+#### 5. 实施记录
+- **2026-10-02 [新建]**：接收 3 条口语需求，完成字面勘误（"导执行层→到执行层""这额个→这个""任务hui hua→任务会话"）、
+  **查重拦截**（结论：3 条均为"有机制、没运行时"的同族断点，不是真空白）与递归分裂（R1~R3，共 14 个叶子）；
+  完成现状核查（可复用 5 项 / 实测缺口 6 项）；登记 3 项待裁决分歧并给出本条采用口径。
+  本轮**未改任何机制载体**（仅新增本文案与台账条目），状态为 `[EVOLVING]`。
 
 ---
 

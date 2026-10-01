@@ -1,8 +1,8 @@
 # 快速通道指令路由与地图式高速干道导航索引 (Arterial Routing & Quick Shortcuts Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.26.0`
-> - **对应实施版本**：`v4.26.0`
+> - **当前文档版本**：`v4.28.0`
+> - **对应实施版本**：`v4.28.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -57,6 +57,9 @@
 | **“unity规范”** | **G2 支线** | 查阅 Unity 目录与代码规范 | 读取 [`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) | 输出 Unity 目录与 .meta 铁律，提供入口：[`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) |
 | **“原子性规范”** | **G2 支线** | 查阅操作与设计原子性清单 | 读取 [`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) | 输出操作级与设计级事务清单，提供入口：[`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) |
 | **“避坑经验”** | **G3 辅道** | 查阅排查沉淀的避坑认知 | 读取 [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 输出避坑指引，提供入口：[`memory/lessons_learned.md`](../memory/lessons_learned.md) |
+| **“全域有没有脱管”**<br>*(或“其他工程服从管控了吗”)* | **G1 干线** | 判定全域 DSH 工程是否 100% 纳入管控机制 | 实跑 `node scripts/scope_audit.mjs --check` | 输出各工程四类事实（入口/引用/留痕/版本）覆盖 x/y，提供入口：[`scripts/scope_audit.mjs`](../scripts/scope_audit.mjs) |
+| **“需求版本对得上吗”**<br>*(或“版本贯通判定”)* | **G1 干线** | 需求文案 ↔ 台账 ↔ 载体 ↔ 回复四处对拍 | 实跑 `node scripts/req_version_audit.mjs --check` | 输出四处版本号与差异，提供入口：[`scripts/req_version_audit.mjs`](../scripts/req_version_audit.mjs) |
+| **“有没有空架子/幻觉”**<br>*(或“悬空引用清理”)* | **G1 干线** | 治理文档引用真实性 + 机制通电凭据 | 实跑 `node scripts/anti_hallucination_audit.mjs --check` | 输出悬空引用清单与通电凭据，提供入口：[`scripts/anti_hallucination_audit.mjs`](../scripts/anti_hallucination_audit.mjs) |
 | **“检查输出精简”**<br>*(或“回复啰不啰嗦”)* | **G2 支线** | 判定最近一轮回复的体量与文末结构 | 实跑 `node scripts/output_audit.mjs --check`（证据源为宿主会话转录） | 输出体量/行数/五联装齐备性与退出码，提供入口：[`scripts/output_audit.mjs`](../scripts/output_audit.mjs) |
 | **“检查接口覆盖”**<br>*(或“执行层有接口吗”)* | **G2 支线** | 核查执行层是否都有 OOP 式接口契约 | 实跑 `node scripts/check_layer_interfaces.mjs --coverage` | 输出分层接口覆盖率（与名字覆盖率分开报），入口：[`knowledge/common/execution_layer_interface_spec.md`](../knowledge/common/execution_layer_interface_spec.md) |
 | **“规划执行路线”**<br>*(或“这个能力怎么调更高效”)* | **G1 干线** | 命中执行层后给出调配方案（依赖/并行/锁冲突/失败回退） | 实跑 `node scripts/route_plan.mjs "<意图>"` | 输出命中条目 + 调用命令 + 建议批次 + 回退命令；未命中必须显式报未命中，入口：[`scripts/route_plan.mjs`](../scripts/route_plan.mjs) |

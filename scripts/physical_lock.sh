@@ -21,6 +21,13 @@ ARG2="${2:-}"
 NODE_BIN="$(find_node || true)"
 if [ -z "$NODE_BIN" ]; then echo "❌ 找不到 Node 运行时（可设 DSH_NODE_BIN 指定）" >&2; exit 2; fi
 
+# cwd 中立性（REQ-092 / R1-a 实测缺陷）：下面这段 node 的内联 import 用的是
+# 相对路径 "./scripts/lib/..."，Node 按 **进程 cwd** 解析 ESM 相对说明符，
+# 于是在别的工程目录（或薄壳转发）里调用时必然 ERR_MODULE_NOT_FOUND —— 实测：
+# 在 DSH每日健康评估 下跑 `physical_lock.sh status` 直接崩，物理锁在跨工程场景**完全不可用**。
+# 修法：把 node 放进脚本目录执行（cd 只影响本子进程），使相对 import 恒等于脚本自身位置。
+(
+cd "$ROOT"
 "$NODE_BIN" -e '
 import { getLockState, advanceLock, advanceLockTo, resetLock, STAGE_NAMES, STAGES } from "./scripts/lib/physical_lock.mjs"
 import { readFileSync, existsSync } from "node:fs"
@@ -119,3 +126,4 @@ main().catch(err => {
   process.exit(1)
 })
 ' "$ACTION" "$ARG2"
+)

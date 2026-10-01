@@ -2,7 +2,7 @@
 
 > ### 🏷️ **版本信息与实施追踪**
 > - **文档类型**：需求文案（登记为 `REQ-089`，状态 `[EVOLVING]`）
-> - **当前系统实施总版本**：`v4.26.0`（本条目实施后递增至 `v4.25.0`）
+> - **当前系统实施总版本**：`v4.28.0`（本条目实施后递增至 `v4.25.0`）
 > - **本文档内容版本**：`v1.0.0`
 > - **提出时间**：2026-10-01
 > - **任务代号**：`GCM-ORCH`（Execution Orchestration：索引 · 接口 · 路由）· 呈现侧子集 `UX-SIMP`
@@ -40,7 +40,7 @@
 | # | 诉求（用户原话） | 做什么 | 物理载体 | 判定命令 | 阈值 / 后果 |
 | :-- | :--- | :--- | :--- | :--- | :--- |
 | **R1** | 输出结构精简化（DMIT + 格式塔） | 书目来源登记 + 认知要点转可判定条款 + 输出体量离插件判定 | `knowledge/sources/`（新建）· `knowledge/common/interaction_specification.md` · `scripts/output_audit.mjs`（新建） | `node scripts/output_audit.mjs --check` | 五联装齐备 + 体量达标；不达标即扣分并给扣分项 |
-| **R2** | 图片可点击 +/- 多级缩放 | 给**已有灯箱**加多级缩放控制（不是从零做放大）；另出保底查看器 | `ImageLightbox`（落点：`packages/client/ui-primitives/src/ImageLightbox.tsx`）· 新建客户端插件 `skill-pool/plugins/dsh-plugin-image-zoom/` · 新建 `assets/viewers/image_viewer.html` | 插件自检 `python3 skill-pool/plugins/dsh-plugin-image-zoom/verify_*.py` + `node scripts/check_image_zoom.mjs --check`（新建） | 三级缩放（100% / 200% / 400%）真机点击可用；自检 exit 0 且带反向用例；任一缺失即未触达 |
+| **R2** | 图片可点击 +/- 多级缩放 | 给**已有灯箱**加多级缩放控制（不是从零做放大）；另出保底查看器 | `ImageLightbox`（落点：`packages/client/ui-primitives/src/ImageLightbox.tsx`）· 新建客户端插件 `skill-pool/plugins/dsh-plugin-image-zoom/` · 新建 `assets/viewers/image_viewer.html` | 插件自检 `python3 skill-pool/plugins/dsh-plugin-image-zoom/verify_*.py` + `node skill-pool/plugins/dsh-plugin-image-zoom/verify_image_zoom.cjs`（自检脚本，实测 73/73） | 三级缩放（100% / 200% / 400%）真机点击可用；自检 exit 0 且带反向用例；任一缺失即未触达 |
 | **R3** | 新增索引层索引执行层 | 静态清单升级为机读索引 + 可执行跳转 + 口径归一 | `indexes/capabilities_index.json`（新建）· `indexes/capabilities_index.md` · `scripts/build_capabilities_index.mjs` | `node scripts/build_capabilities_index.mjs --check` | id 唯一 + 路径存在 + 受管区间内 + 三处口径一致；否则未收录数必须显式 >0 |
 | **R4** | 执行层像 OOP 一样提供接口与方法 | 统一接口契约 + 逐单元声明 + 接口覆盖率独立判定 | `<unit>/<name>.interface.json`（新建，逐单元）· `skill-pool/docs/operations/execution-layers.json` | `node scripts/check_layer_interfaces.mjs --coverage`（新建） | **接口覆盖率**与**名字覆盖率**分开报；名字 100% 但接口 0% 必须判红 |
 | **R5** | 新增路由层决定如何高效调配 | 意图匹配器 + 调配决策器 + 路由审计器 | `scripts/route_plan.mjs`（新建）· `indexes/navigation_router.md` · `scripts/route_navigate.mjs` | `node scripts/route_plan.mjs --check` | 未命中不得伪造路径；死通道 = 0；文档声明与实现一致 |
@@ -212,7 +212,7 @@ GCM-ORCH
 | R4-b CLI 补接口 | ✅ 基线完成 | `scripts/interfaces/*.interface.json`（52 份） | `source=extracted-from-header` / `verified=false`，属**基线占位**；人工核对待办 |
 | R4-b 技能补接口 | ⏳ 未开始 | — | 178 个技能接口覆盖 0%（判定器**只报数不判红**，按批次推进） |
 | R5 路由层 | ✅ 已落地 | `scripts/route_plan.mjs`（1355 行）· `indexes/navigation_router.md`（修正虚假声明） | `--check` exit 0：① 文档-实现一致 0 问题（含**负例自检**：声明数据源但源码只有死变量必须被检出）· ①b 物理锁门禁对拍 60 格 · ② 死通道 0 · ③ 可达性 **有触发词 196 / 无触发词 39 = 83.4%**（分开报）· ④ **反向用例**「zzz-不存在的能力-9999」→ 未命中 + 3 条近似建议（全标"非命中"） |
-| R2-a 客户端插件 | ✅ 已落地并装配 | `skill-pool/plugins/dsh-plugin-image-zoom/` + 已装配进 `~/.dsh/profiles/desktop` | `node verify_image_zoom.cjs` **73/73 通过**（含反向变异自证：故意破坏 `zoomed` → 59/73 失败）；装配回执 `status: installed` · `restart_required: true` |
+| R2-a 客户端插件 | ✅ 已落地并装配 | `skill-pool/plugins/dsh-plugin-image-zoom/` + 已装配进 `~/.dsh/profiles/desktop` | `node skill-pool/plugins/dsh-plugin-image-zoom/verify_image_zoom.cjs` **73/73 通过**（含反向变异自证：故意破坏 `zoomed` → 59/73 失败）；装配回执 `status: installed` · `restart_required: true` |
 | D4 失效补丁处置 | ✅ 已落地 | `scripts/patch_dsh_todo_progress.cjs` 头部加 `[DEPRECATED]` 退役说明 | 头部含失效两层根因与替代路线；入口引用仍在（未删除文件） |
 | **R1-d** 逐条可判定化 | ✅ 已落地（第二轮） | `scripts/output_audit.mjs` 新增 `cognitiveChecks()` | 唯一硬判据 = **标题嵌套 ≤3 级**（规范明文硬性边界）；其余 4 项（扫视锚点率/加粗占比/超长行/段落墙）为**报告项不参与判定**。实跑：1376 字/40 行 · 嵌套 2 级 ✅ · 锚点率 91.7% |
 | **R3-c** 口径归一 | ✅ 已落地（第二轮） | `execution-layers.json` 增 `pathBase`/`truthSource`；`--check` 增第 ⑥ 项对拍 | 实测揪出**真缺陷**：登记表 12 条路径一直是**相对 `skill-pool/` 的**却无人声明，按仓库根解析的消费者会误判"全部缺失"。修复后 `path 非空但磁盘缺失 = 0`；口径差（扫盘 236 vs 登记 15）显式报出且不当硬门 |

@@ -131,12 +131,66 @@ function buildRegistry() {
 
   return [
     {
+      name: '判据七 · 通电凭据（机制真跑过）',
+      claim: 'docs/constraint_mechanism_optimize_9.md §2.3 · REQ-092 / R3-a',
+      check: () => {
+        // 为什么单列一条：既有判据只看"载体在不在磁盘"。实测 `isHost=false` 的拦截层插件
+        // （从未被加载）在旧口径下也算"载体在位"——在位 ≠ 在跑。
+        const p = join(ROOT, 'scripts', 'anti_hallucination_audit.mjs')
+        if (!existsSync(p)) return { ok: false, detail: '判定器缺失 scripts/anti_hallucination_audit.mjs', carrier: 'scripts/anti_hallucination_audit.mjs' }
+        const r = run(process.execPath, ['scripts/anti_hallucination_audit.mjs', '--check', '--json'], { timeout: 120000 })
+        let rows = []
+        try { rows = JSON.parse(r.out).powered || [] } catch { rows = [] }
+        const unpowered = rows.filter((x) => !x.ok)
+        if (!rows.length) return { ok: false, detail: `取不到通电结论（exit=${r.exitCode}）`, carrier: 'scripts/anti_hallucination_audit.mjs' }
+        return {
+          ok: unpowered.length === 0,
+          detail: `通电凭据 ${rows.length - unpowered.length}/${rows.length}${unpowered.length ? ' · 未通电：' + unpowered.map((x) => x.id).join('、') : ''}`,
+          carrier: 'scripts/anti_hallucination_audit.mjs',
+        }
+      },
+    },
+    {
+      name: '判据八 · 引用真实性（无悬空引用）',
+      claim: 'docs/constraint_mechanism_optimize_9.md §2.3 · REQ-092 / R3-b',
+      check: () => {
+        const p = join(ROOT, 'scripts', 'anti_hallucination_audit.mjs')
+        if (!existsSync(p)) return { ok: false, detail: '判定器缺失 scripts/anti_hallucination_audit.mjs', carrier: 'scripts/anti_hallucination_audit.mjs' }
+        const r = run(process.execPath, ['scripts/anti_hallucination_audit.mjs', '--check', '--json'], { timeout: 120000 })
+        let j = null
+        try { j = JSON.parse(r.out) } catch { j = null }
+        if (!j) return { ok: false, detail: `取不到引用结论（exit=${r.exitCode}）`, carrier: 'scripts/anti_hallucination_audit.mjs' }
+        return {
+          ok: (j.dangling || []).length === 0,
+          detail: `治理文档 ${j.docsScanned} 份 · 校验引用 ${j.checkedRefs} 处 · 悬空 ${(j.dangling || []).length} 处`,
+          carrier: 'scripts/anti_hallucination_audit.mjs',
+        }
+      },
+    },
+    {
+      name: '判据九 · 全域覆盖（无脱管工程）',
+      claim: 'docs/constraint_mechanism_optimize_9.md §2.2 R1 · REQ-092 / R1-a',
+      check: () => {
+        const p = join(ROOT, 'scripts', 'scope_audit.mjs')
+        if (!existsSync(p)) return { ok: false, detail: '判定器缺失 scripts/scope_audit.mjs', carrier: 'scripts/scope_audit.mjs' }
+        const r = run(process.execPath, ['scripts/scope_audit.mjs', '--check', '--json'], { timeout: 180000 })
+        let j = null
+        try { j = JSON.parse(r.out) } catch { j = null }
+        if (!j) return { ok: false, detail: `取不到覆盖结论（exit=${r.exitCode}）`, carrier: 'scripts/scope_audit.mjs' }
+        return {
+          ok: !!j.ok,
+          detail: `已接管 ${j.covered}/${j.total}${(j.uncovered || []).length ? ' · 未接管：' + j.uncovered.join('、') : ''}`,
+          carrier: 'scripts/scope_audit.mjs',
+        }
+      },
+    },
+    {
       name: '首动改名（S05）',
       claim: 'AGENTS.md 二 · 第 0 步',
       check: fileExists('scripts/name_me.sh'),
     },
     {
-      name: 'G0~G4 累积门禁',
+      name: 'G0~G5 累积门禁',
       claim: 'AGENTS.md 一 · 门禁表',
       check: () => {
         // 判定必须读 status.json 的机器字段，不能只看脚本退出码：

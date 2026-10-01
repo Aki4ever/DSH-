@@ -1,0 +1,1411 @@
+{
+  "schema": "dsh.req-versions/1",
+  "note": "机读需求版本台账：由 scripts/req_version_gen.mjs 从 docs/requirements.md 生成；人工只维护 requirement_version_override 与 change_log 两个字段。",
+  "source": "docs/requirements.md",
+  "generated_by": "scripts/req_version_gen.mjs",
+  "requirement_count": 92,
+  "override_count": 0,
+  "entries": {
+    "REQ-001": {
+      "title": "工程结构化初始化与远程 Git 同步",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "README.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-002": {
+      "title": "全中文交互基线与需求简化转执行工单",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/system/language_standard.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-003": {
+      "title": "标准交互组件与系统命名体系",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/workflow/component_naming.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-004": {
+      "title": "规则变更双向同步与智能去重全局机制",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "docs/requirements.md",
+        "rules/system/meta_rules.md",
+        "rules/workflow/change_flow.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-005": {
+      "title": "全局规则运转逻辑梳理与教学图建设",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "docs/rules_tutorial.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-006": {
+      "title": "搜索引擎逻辑类比映射与智能体思考框架",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/system/thinking_framework.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-007": {
+      "title": "规则更新联动排查与存量资源治理机制",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/workflow/audit_and_cleanup.md",
+        "rules/workflow/change_flow.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-008": {
+      "title": "全文档中文化与通俗易懂表达标准",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/system/language_standard.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-009": {
+      "title": "会话自检与目录一键初始化协议",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/system/initialization_protocol.md",
+        "templates/directory_readme_template.md",
+        "scripts/init_dir.sh"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-010": {
+      "title": "任务执行结构化流程与操作指代规范",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "README.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-011": {
+      "title": "任务图形化双层进度条、起止卡片与难度量化打分规范",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "README.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-012": {
+      "title": "宿主模型多模态图片浏览能力配置与激活",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "docs/requirements.md"
+      ],
+      "missing_files": [
+        "$DSH_HOME/settings.yaml"
+      ],
+      "change_log": []
+    },
+    "REQ-013": {
+      "title": "历史存量任务栏统一命名与量化打分回溯治理",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-014": {
+      "title": "任务极简图形交互、100分制打分与段落吸顶置顶组件",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "README.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-015": {
+      "title": "全局体系七维升级与能力索引记忆中枢",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/system/initialization_protocol.md",
+        "rules/workflow/task_execution_flow.md",
+        "rules/workflow/audit_and_cleanup.md",
+        "indexes/dsh_capabilities.md",
+        "indexes/tool_interfaces.md",
+        "indexes/rules_index.md",
+        "memory/context_memory.md",
+        "memory/lessons_learned.md",
+        "scripts/rename_session.sh",
+        "README.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-016": {
+      "title": "任务栏强制实时命名与原生图形化区块组件标准",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "memory/lessons_learned.md",
+        "templates/graphical_block_template.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-017": {
+      "title": "AI分层架构下长短期记忆体系落地与存储规范",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.0.0",
+      "files": [
+        "docs/memory_architecture.md",
+        "memory/context_memory.md",
+        "memory/lessons_learned.md",
+        "indexes/rules_index.md",
+        "README.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-018": {
+      "title": "快速通道快捷词汇与指令路由机制",
+      "requirement_version": "v1.2.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.2.0",
+      "files": [
+        "indexes/shortcuts_index.md",
+        "indexes/dsh_capabilities.md",
+        "docs/diagram_generation_guide.md",
+        "rules/workflow/component_naming.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-019": {
+      "title": "Unity 结构化工程目录与文件形式全局规范",
+      "requirement_version": "v1.1.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.1.0",
+      "files": [
+        "rules/coding/unity_project_standard.md",
+        "indexes/rules_index.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-020": {
+      "title": "统一知识库架构建设与需求前置冲突审查机制",
+      "requirement_version": "v1.1.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.1.0",
+      "files": [
+        "knowledge/README.md",
+        "knowledge/worldview_background.md",
+        "knowledge/art_specification.md",
+        "knowledge/engineering_specification.md",
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-021": {
+      "title": "需求与知识库全生命周期实施版本号同步规范 (SemVer)",
+      "requirement_version": "v1.1.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.1.0",
+      "files": [
+        "rules/workflow/versioning_standard.md",
+        "docs/requirements.md",
+        "indexes/rules_index.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-022": {
+      "title": "系统操作与工程设计原子性事务边界规范",
+      "requirement_version": "v1.1.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.1.0",
+      "files": [
+        "rules/coding/atomicity_specification.md",
+        "rules/system/meta_rules.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-023": {
+      "title": "外部智能体能力生态 (MCP / Skill / CLI / API) 扩展全景调研与矩阵建设",
+      "requirement_version": "v1.2.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.2.0",
+      "files": [
+        "indexes/extension_ecosystem.md",
+        "indexes/dsh_capabilities.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-024": {
+      "title": "全场景流程图、信息图与教学图生成技术指南与标准模板库",
+      "requirement_version": "v1.2.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.2.0",
+      "files": [
+        "docs/diagram_generation_guide.md",
+        "templates/graphical_block_template.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-025": {
+      "title": "图形生成模型模态配置激活与绘图管道建设",
+      "requirement_version": "v1.2.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.2.0",
+      "files": [
+        "scripts/generate_image.py",
+        "indexes/shortcuts_index.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [
+        "$DSH_HOME/settings.yaml"
+      ],
+      "change_log": []
+    },
+    "REQ-026": {
+      "title": "Codex全局规则吸收与DSH执行契约升华",
+      "requirement_version": "v1.3.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.3.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "indexes/rules_index.md",
+        "README.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-027": {
+      "title": "交互式输出入口标准与地图式高速干道路由规范",
+      "requirement_version": "v1.4.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.4.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "rules/security/security_baseline.md",
+        "indexes/shortcuts_index.md",
+        "rules/system/thinking_framework.md",
+        "indexes/rules_index.md",
+        "README.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-028": {
+      "title": "全流程不可跳步固化机制、会话命名首动门禁与全景效率量化审计看板",
+      "requirement_version": "v1.5.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.5.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "memory/efficiency_audit_log.md",
+        "indexes/rules_index.md",
+        "README.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-029": {
+      "title": "DSH全景能力体系流程深度梳理与高保真矢量教学图解",
+      "requirement_version": "v1.6.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.6.0",
+      "files": [
+        "indexes/dsh_capabilities.md",
+        "assets/generated_images/dsh_system_architecture_infographic.svg",
+        "assets/generated_images/dsh_pipeline_teaching_flowchart.svg",
+        "memory/efficiency_audit_log.md",
+        "README.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-030": {
+      "title": "分层知识库多项目隔离架构与原子级全平台工程规范",
+      "requirement_version": "v1.7.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.7.0",
+      "files": [
+        "knowledge/README.md",
+        "assets/generated_images/codex_vs_dsh_architecture_comparison.svg",
+        "assets/generated_images/knowledge_base_layered_architecture.svg",
+        "README.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-031": {
+      "title": "智能体四大工程交付规范与自迭代演进体系",
+      "requirement_version": "v1.8.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.8.0",
+      "files": [
+        "rules/workflow/risk_disclosure.md",
+        "rules/coding/testing_and_quality_gate.md",
+        "rules/workflow/page_ledger_specification.md",
+        "rules/workflow/post_mortem_and_evolution.md",
+        "templates/risk_assessment_template.md",
+        "templates/page_ledger_template.md",
+        "templates/post_mortem_template.md",
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "rules/workflow/versioning_standard.md",
+        "memory/lessons_learned.md",
+        "README.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-032": {
+      "title": "DSH 宿主原生可视化组件体系架构梳理与分层知识库归卷",
+      "requirement_version": "v1.9.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v1.9.0",
+      "files": [
+        "knowledge/common/dsh_native_ui_components.md",
+        "knowledge/README.md",
+        "indexes/dsh_capabilities.md",
+        "indexes/rules_index.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-033": {
+      "title": "系统运行能效三维优化工程 (磁盘自愈 + Token 瘦身 + 流程分层)",
+      "requirement_version": "v2.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.0.0",
+      "files": [
+        "scripts/disk_check_and_cleanup.sh",
+        "rules/workflow/audit_and_cleanup.md",
+        "rules/workflow/task_execution_flow.md",
+        "rules/system/meta_rules.md",
+        "indexes/shortcuts_index.md",
+        "indexes/rules_index.md",
+        "knowledge/README.md",
+        "indexes/dsh_capabilities.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-034": {
+      "title": "任务全生命周期 DSH 原生可视化组件全量深度装配",
+      "requirement_version": "v2.1.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.1.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "knowledge/common/dsh_native_ui_components.md",
+        "indexes/dsh_capabilities.md",
+        "indexes/rules_index.md",
+        "knowledge/README.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [
+        "task_execution_flow.md",
+        "dsh_native_ui_components.md"
+      ],
+      "change_log": []
+    },
+    "REQ-035": {
+      "title": "DSH-First 项目立项赋能、全景能力树与双层接口法典化规范",
+      "requirement_version": "v2.2.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.2.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "templates/project_dsh_bootstrap_template.md",
+        "indexes/dsh_capabilities.md",
+        "indexes/tool_interfaces.md",
+        "indexes/rules_index.md",
+        "knowledge/README.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-036": {
+      "title": "全域资产最新规则对齐、数字指纹机制与新鲜度追踪工程",
+      "requirement_version": "v2.3.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.3.0",
+      "files": [
+        "scripts/fingerprint_audit.sh",
+        "memory/asset_fingerprint_ledger.md",
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "indexes/shortcuts_index.md",
+        "indexes/rules_index.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-037": {
+      "title": "工程远程 Git 强同步、缺地址开页引导与独立仓库治理规约",
+      "requirement_version": "v2.4.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.4.0",
+      "files": [
+        "scripts/git_sync_remote.sh",
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "indexes/shortcuts_index.md",
+        "indexes/rules_index.md",
+        "knowledge/README.md",
+        "indexes/dsh_capabilities.md",
+        "indexes/tool_interfaces.md",
+        "memory/asset_fingerprint_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-038": {
+      "title": "上下文压缩同语种一致性与语言镜像保真规约",
+      "requirement_version": "v2.5.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.5.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/system/language_standard.md",
+        "rules/workflow/task_execution_flow.md",
+        "indexes/rules_index.md",
+        "indexes/dsh_capabilities.md",
+        "indexes/tool_interfaces.md",
+        "indexes/shortcuts_index.md",
+        "knowledge/README.md",
+        "memory/asset_fingerprint_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-039": {
+      "title": "全自动轻量级全局调度锁与并发资源防冲突规约",
+      "requirement_version": "v2.6.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.6.0",
+      "files": [
+        "scripts/global_scheduler_lock.sh",
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "indexes/shortcuts_index.md",
+        "indexes/rules_index.md",
+        "indexes/dsh_capabilities.md",
+        "indexes/tool_interfaces.md",
+        "knowledge/README.md",
+        "memory/asset_fingerprint_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-040": {
+      "title": "DSH 执行全步骤 Assistant 纯中文说明与无死角汉化规约",
+      "requirement_version": "v2.7.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.7.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/system/language_standard.md",
+        "rules/workflow/task_execution_flow.md",
+        "indexes/tool_interfaces.md",
+        "indexes/shortcuts_index.md",
+        "indexes/rules_index.md",
+        "indexes/dsh_capabilities.md",
+        "knowledge/README.md",
+        "memory/asset_fingerprint_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-041": {
+      "title": "管控机制（门禁判定 + 常显看板 + 运行时拦截）",
+      "requirement_version": "v2.8.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.8.0",
+      "files": [
+        "scripts/control_gates.sh",
+        "ai-control/config/gates.conf",
+        "ai-control/plugin/index.mjs",
+        "ai-control/plugin/loader.mjs",
+        "ai-control/plugin/selftest.mjs",
+        "ai-control/README.md",
+        "AGENTS.md"
+      ],
+      "missing_files": [
+        "$DSH_HOME/AGENTS.md",
+        "$DSH_HOME/profiles/web/cordis.patch.yml"
+      ],
+      "change_log": []
+    },
+    "REQ-042": {
+      "title": "真·冗余检测器（词级相似度 + 元数据过滤 + 自检门禁）",
+      "requirement_version": "v2.8.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.8.0",
+      "files": [
+        "scripts/redundancy_scan.mjs",
+        "scripts/control_gates.sh",
+        "ai-control/config/gates.conf"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-043": {
+      "title": "全局约束载体化（薄入口 + 按需加载）",
+      "requirement_version": "v2.8.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.8.0",
+      "files": [
+        "AGENTS.md",
+        "docs/requirements.md",
+        "README.md"
+      ],
+      "missing_files": [
+        "$DSH_HOME/AGENTS.md"
+      ],
+      "change_log": []
+    },
+    "REQ-044": {
+      "title": "管控机制精简、双检迭代与存量全库校准",
+      "requirement_version": "v2.9.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v2.9.0",
+      "files": [
+        "docs/constraint_mechanism_spec.md",
+        "indexes/rules_index.md",
+        "README.md",
+        "scripts/conflict_scan.mjs",
+        "scripts/legacy_align_scan.mjs",
+        "rules/workflow/task_execution_flow.md",
+        "rules/workflow/versioning_standard.md",
+        "assets/generated_images/gcm_gate_control_infographic.svg",
+        "AGENTS.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-045": {
+      "title": "流程入驻审计与快速通道注册机制（GCM-ENHANCE-2）",
+      "requirement_version": "v3.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.0.0",
+      "files": [
+        "docs/constraint_mechanism_enhance_2.md",
+        "rules/workflow/change_flow.md",
+        "rules/workflow/task_execution_flow.md",
+        "indexes/shortcuts_index.md",
+        "scripts/channel_audit.mjs",
+        "scripts/legacy_align_scan.mjs",
+        "docs/requirements.md",
+        "README.md",
+        "AGENTS.md"
+      ],
+      "missing_files": [
+        "channel_audit.mjs",
+        "test_v180_spec.sh",
+        "change_flow.md"
+      ],
+      "change_log": []
+    },
+    "REQ-046": {
+      "title": "任务常显在输入框（可视化任务条）",
+      "requirement_version": "v3.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.0.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "knowledge/common/dsh_native_ui_components.md",
+        "AGENTS.md",
+        "README.md"
+      ],
+      "missing_files": [
+        "@deepseek-ai/dsh-client-ui-conversation/lib/client.js",
+        "task_execution_flow.md"
+      ],
+      "change_log": []
+    },
+    "REQ-047": {
+      "title": "管控机制优化（拦截层复活 · 检测器能力 · 状态驱动出图）",
+      "requirement_version": "v3.1.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.1.0",
+      "files": [
+        "docs/constraint_mechanism_optimize_3.md",
+        "docs/visual_learning_research.md",
+        "docs/diagram_generation_guide.md",
+        "ai-control/plugin/loader.mjs",
+        "ai-control/plugin/index.mjs",
+        "ai-control/plugin/selftest.mjs",
+        "ai-control/config/legacy_align_exempt.txt",
+        "scripts/control_gates.sh",
+        "scripts/redundancy_scan.mjs",
+        "scripts/conflict_scan.mjs",
+        "scripts/legacy_align_scan.mjs",
+        "indexes/shortcuts_index.md",
+        "assets/generated_images/gate_graph.svg"
+      ],
+      "missing_files": [
+        "loader.mjs",
+        "src/my_control_logic.js",
+        "/tmp/run_control_log.txt"
+      ],
+      "change_log": []
+    },
+    "REQ-048": {
+      "title": "管控机制双优化（客户端吞吐上限解除 · 任务命名规范统一）",
+      "requirement_version": "v3.1.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.1.0",
+      "files": [
+        "knowledge/common/task_naming_spec.md",
+        "knowledge/common/README.md",
+        "scripts/rename_session.sh",
+        "rules/workflow/task_execution_flow.md",
+        "rules/system/meta_rules.md",
+        "memory/context_memory.md",
+        "scripts/probe_long_output.mjs",
+        "scripts/probe_long_output_stream.mjs"
+      ],
+      "missing_files": [
+        "$DSH_HOME/settings.yaml",
+        "settings.yaml"
+      ],
+      "change_log": []
+    },
+    "REQ-049": {
+      "title": "任务命名全自动化（新增即时命名 · 存量回溯 · 常显判定）",
+      "requirement_version": "v3.1.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.1.0",
+      "files": [
+        "scripts/check_task_naming.sh",
+        "scripts/session_naming_audit.mjs",
+        "scripts/generate_naming_plan.mjs",
+        "scripts/batch_rename_sessions.mjs",
+        "scripts/lib/workspace_resolve.mjs",
+        "scripts/lib/auto_naming.mjs",
+        "scripts/test_auto_naming.mjs",
+        "scripts/naming_watchdog.mjs",
+        "scripts/name_me.sh",
+        "ai-control/plugin/index.mjs",
+        "ai-control/config/naming_overrides.json",
+        "scripts/control_gates.sh",
+        "scripts/rename_session.sh",
+        "rules/workflow/task_execution_flow.md",
+        "knowledge/common/task_naming_spec.md",
+        "ai-control/reports/task_naming_rollback_20260923.json"
+      ],
+      "missing_files": [
+        "check_task_naming.sh"
+      ],
+      "change_log": []
+    },
+    "REQ-050": {
+      "title": "任务看板进度同步、界面中文化与精简输出（GCM-LEAN）",
+      "requirement_version": "v3.2.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.2.0",
+      "files": [
+        "scripts/patch_dsh_todo_progress.cjs",
+        "docs/constraint_mechanism_optimize_4.md"
+      ],
+      "missing_files": [
+        "@deepseek-ai/dsh-client-ui-conversation/lib/client.js",
+        "client.js"
+      ],
+      "change_log": []
+    },
+    "REQ-051": {
+      "title": "管控机制六项综合优化与能力全景治理",
+      "requirement_version": "v3.3.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.3.0",
+      "files": [
+        "ai-control/requirements/README.md",
+        "ai-control/requirements/control_requirements_ledger.md",
+        "indexes/capabilities_index.md",
+        "scripts/check_freshness.mjs",
+        "scripts/sync_control_requirements.mjs",
+        "rules/security/security_baseline.md",
+        "rules/workflow/change_flow.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-052": {
+      "title": "显式结论置顶铁律与本地运算降耗规约",
+      "requirement_version": "v3.4.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.4.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/coding/token_and_local_compute_optimization.md",
+        "AGENTS.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-053": {
+      "title": "任务闭环回溯自进化机制与管控机制 Token 深度压缩",
+      "requirement_version": "v3.5.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.5.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "ai-control/plugin/index.mjs",
+        "scripts/control_gates.sh",
+        "AGENTS.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-054": {
+      "title": "快速通道高频指令扩充与地图导航式能力路由层",
+      "requirement_version": "v3.6.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.6.0",
+      "files": [
+        "indexes/shortcuts_index.md",
+        "indexes/navigation_router.md",
+        "scripts/route_navigate.mjs",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-055": {
+      "title": "全局流程调度 Agent Life 与 Google 级高信噪比输出架构",
+      "requirement_version": "v3.7.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.7.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/agent_life_spec.md",
+        "scripts/agent_life.mjs",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-056": {
+      "title": "全域能力标识规范重命名、极速文案通道与单例 Agent PP / 短生命周期 Life(N) 并发调度",
+      "requirement_version": "v3.8.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.8.0",
+      "files": [
+        "indexes/shortcuts_index.md",
+        "indexes/capabilities_index.md",
+        "scripts/check_unique_identifiers.mjs",
+        "rules/workflow/pp_life_orchestration.md",
+        "scripts/agent_life.mjs",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-057": {
+      "title": "第一性原理与物理实证律",
+      "requirement_version": "v3.9.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v3.9.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/coding/first_principles_verification.md",
+        "indexes/rules_index.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-058": {
+      "title": "显式交付状态、六大可见即用实体产物与极端任务聚焦",
+      "requirement_version": "v4.0.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.0.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-059": {
+      "title": "报错反思防复发闭环、流程刚柔分级矩阵与交付输出框架刚性化",
+      "requirement_version": "v4.1.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.1.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "memory/error_ledger.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-060": {
+      "title": "全端统一可读性排版设计法典与检索路由质量评估自进化机制",
+      "requirement_version": "v4.2.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.2.0",
+      "files": [
+        "knowledge/common/readability_specification.md",
+        "knowledge/common/interaction_specification.md",
+        "knowledge/common/README.md",
+        "knowledge/README.md",
+        "indexes/shortcuts_index.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-061": {
+      "title": "文本精细排版法典扩充与系统交互动效组件规范化",
+      "requirement_version": "v4.3.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.3.0",
+      "files": [
+        "knowledge/common/readability_specification.md",
+        "knowledge/common/interaction_specification.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-062": {
+      "title": "格式塔交互映射深化与全域字体选型工程标准法典化",
+      "requirement_version": "v4.4.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.4.0",
+      "files": [
+        "knowledge/common/interaction_specification.md",
+        "knowledge/common/readability_specification.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-063": {
+      "title": "任务级版本强制递增律与全域交付输出物版本强同步闭环",
+      "requirement_version": "v4.5.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.5.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "rules/workflow/versioning_standard.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-064": {
+      "title": "交互式核心信息卡片增强、多官网精美组件检索图库与新能力标准化接口生命周期",
+      "requirement_version": "v4.6.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.6.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "knowledge/common/interaction_specification.md",
+        "knowledge/common/component_asset_reference.md",
+        "indexes/capabilities_index.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-065": {
+      "title": "管控机制实况巡检与信息图二期实测重绘 (v4.7.0)",
+      "requirement_version": "v4.7.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.7.0",
+      "files": [
+        "assets/generated_images/control_mechanism_infographic_v2.svg",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-066": {
+      "title": "管控机制状态层脚本 Bash 语法缺陷修复与快照写入健全化 (v4.8.0)",
+      "requirement_version": "v4.8.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.8.0",
+      "files": [
+        "scripts/control_gates.sh",
+        "ai-control/reports/latest_status.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-067": {
+      "title": "管控机制索引/路由/接口/执行四层解耦与任务命名全生命周期治理规范 (v4.9.0)",
+      "requirement_version": "v4.9.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.9.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "rules/workflow/change_flow.md",
+        "indexes/capabilities_index.md",
+        "indexes/navigation_router.md",
+        "indexes/tool_interfaces.md",
+        "scripts/legacy_align_scan.mjs",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-068": {
+      "title": "全原子变动版本锚定基石律与管控机制存量新增全域双向同步治理体系 (v4.10.0)",
+      "requirement_version": "v4.10.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.10.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/versioning_standard.md",
+        "rules/workflow/change_flow.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-069": {
+      "title": "全任务强命名门禁与语义化分类编号难度打分模型扩充规范 (v4.11.0)",
+      "requirement_version": "v4.11.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.11.0",
+      "files": [
+        "knowledge/common/task_naming_spec.md",
+        "scripts/check_task_naming.sh",
+        "scripts/name_me.sh",
+        "scripts/lib/auto_naming.mjs",
+        "rules/workflow/task_execution_flow.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-070": {
+      "title": "管控机制结构化与全流程闭环防跳步执行规范 (v4.12.0)",
+      "requirement_version": "v4.13.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.13.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "ai-control/requirements/control_requirements_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-071": {
+      "title": "任务栏改名前端可见性保障与文末四要素固定精简收尾规范 (v4.13.0)",
+      "requirement_version": "v4.13.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.13.0",
+      "files": [
+        "scripts/rename_session.sh",
+        "rules/workflow/task_execution_flow.md",
+        "ai-control/requirements/control_requirements_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-072": {
+      "title": "管控机制核心链路四维深化优化（动态更名 · 版本联动 · 收敛落盘 · 初始化快速通道）",
+      "requirement_version": "v4.14.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.14.0",
+      "files": [
+        "scripts/init_project.sh",
+        "indexes/shortcuts_index.md",
+        "rules/workflow/task_execution_flow.md",
+        "rules/workflow/versioning_standard.md",
+        "ai-control/requirements/control_requirements_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [
+        "channel_audit.mjs"
+      ],
+      "change_log": []
+    },
+    "REQ-073": {
+      "title": "全域任务命名同权治理与文件生命周期标记清除定位规约 (v4.15.0)",
+      "requirement_version": "v4.15.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.15.0",
+      "files": [
+        "knowledge/common/task_naming_spec.md",
+        "rules/workflow/audit_and_cleanup.md",
+        "templates/requirement_template.md",
+        "templates/page_ledger_template.md",
+        "scripts/disk_check_and_cleanup.sh",
+        "ai-control/requirements/control_requirements_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-074": {
+      "title": "任务首动命名调度句柄化与执行驱动路由索引自底向上强同步规约 (v4.16.0)",
+      "requirement_version": "v4.16.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.16.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "rules/workflow/agent_life_spec.md",
+        "indexes/capabilities_index.md",
+        "indexes/shortcuts_index.md",
+        "indexes/tool_interfaces.md",
+        "scripts/channel_audit.mjs",
+        "ai-control/requirements/control_requirements_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-075": {
+      "title": "管控机制知行合一强闭环、审计 Agent 与交付执行效果百分制量化打分规约",
+      "requirement_version": "v4.17.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.17.0",
+      "files": [
+        "AGENTS.md",
+        "rules/workflow/task_execution_flow.md",
+        "ai-control/config/gates.conf",
+        "scripts/control_gates.sh",
+        "scripts/audit_execution.sh",
+        "ai-control/requirements/control_requirements_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-076": {
+      "title": "管控机制底层物理锁 Agent (Physical Lock Agent) 与全项目流程串行化硬阻断规约",
+      "requirement_version": "v4.18.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.18.0",
+      "files": [
+        "rules/workflow/task_execution_flow.md",
+        "rules/system/meta_rules.md",
+        "indexes/rules_index.md",
+        "ai-control/README.md",
+        "ai-control/plugin/index.mjs",
+        "scripts/lib/physical_lock.mjs",
+        "scripts/physical_lock.sh",
+        "scripts/test_physical_lock.mjs",
+        "ai-control/requirements/control_requirements_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-077": {
+      "title": "DSH 全域工程执行基线（全工程物理锁 · 五维知识库驱动 · 框架式留白初始化）规约",
+      "requirement_version": "v4.19.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.19.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "knowledge/README.md",
+        "templates/project_dsh_bootstrap_template.md",
+        "scripts/init_dir.sh",
+        "indexes/rules_index.md",
+        "ai-control/requirements/control_requirements_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-078": {
+      "title": "尾部固定结构交付四联装契约、极简输出原则与全域工程管控机制永久固化",
+      "requirement_version": "v4.20.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.20.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "AGENTS.md",
+        "ai-control/requirements/control_requirements_ledger.md",
+        "docs/requirements.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-079": {
+      "title": "管控机制五维深化治理、存量工程全域批量规范化与带说明视觉强化交付契约",
+      "requirement_version": "v4.21.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.21.0",
+      "files": [
+        "rules/system/meta_rules.md",
+        "rules/workflow/task_execution_flow.md",
+        "AGENTS.md",
+        "scripts/normalize_all_projects.mjs",
+        "docs/requirements.md",
+        "ai-control/requirements/control_requirements_ledger.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-080": {
+      "title": "S07 待办常显物理化治理（任务列表硬约束 · 原子证据层 · 物理锁一跳解锁）",
+      "requirement_version": "v4.22.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.22.0",
+      "files": [
+        "scripts/lib/todo_tracker.mjs",
+        "scripts/lib/todo_gate_cli.mjs",
+        "scripts/todo_gate.sh",
+        "scripts/lib/physical_lock.mjs",
+        "scripts/physical_lock.sh",
+        "ai-control/plugin/index.mjs",
+        "ai-control/plugin/selftest.mjs"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-081": {
+      "title": "输出精简客观度量（体量 + 文末五联装结构 · 审计第 8 维）",
+      "requirement_version": "v4.22.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.22.0",
+      "files": [
+        "scripts/lib/output_compactness.mjs",
+        "ai-control/plugin/index.mjs",
+        "scripts/audit_execution.sh"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-082": {
+      "title": "管控拦截层宿主注册根因治理（规则与物理运行时断层清零）",
+      "requirement_version": "v4.22.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.22.0",
+      "files": [
+        "scripts/install_host_gate.sh",
+        "ai-control/plugin/loader.mjs",
+        "ai-control/plugin/index.mjs"
+      ],
+      "missing_files": [
+        "profiles/web/cordis.patch.yml",
+        "plugin-status.txt"
+      ],
+      "change_log": []
+    },
+    "REQ-083": {
+      "title": "任务列表可视化补强（完成即打钩 · 逐条进度条 · 面板可见性）",
+      "requirement_version": "v4.23.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.23.0",
+      "files": [
+        "scripts/patch_dsh_todo_progress.cjs"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-084": {
+      "title": "技能池归位与技能面板复活（178 技能找回 + CLI 路径治理）",
+      "requirement_version": "v4.23.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.23.0",
+      "files": [
+        "scripts/restore_skill_pool.mjs",
+        "skills/README.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-085": {
+      "title": "执行层全量入索引层与覆盖率硬判定",
+      "requirement_version": "v4.23.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.23.0",
+      "files": [
+        "scripts/build_capabilities_index.mjs",
+        "indexes/capabilities_index.md",
+        "skills/.skill-pool-manifest.json"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-086": {
+      "title": "物理触达审计与\"无载体机制\"清零",
+      "requirement_version": "v4.23.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.23.0",
+      "files": [
+        "rules/system/meta_rules.md"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-087": {
+      "title": "物理触达改造（细分到底 · 自证进度 · 流程管控层）",
+      "requirement_version": "未实施",
+      "requirement_version_derived": true,
+      "implementation_version": "未实施",
+      "files": [
+        "docs/constraint_mechanism_optimize_5.md",
+        "rules/workflow/task_execution_flow.md",
+        "scripts/audit_execution.sh"
+      ],
+      "missing_files": [
+        "$DSH_HOME/.dsh-control/todos/<会话ID>.json",
+        "change_flow.md"
+      ],
+      "change_log": []
+    },
+    "REQ-088": {
+      "title": "V4 缺陷系统修复 —— \"检测器退出码 0 + 空输出即算通过\"清零",
+      "requirement_version": "v4.24.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.24.0",
+      "files": [
+        "scripts/control_gates.sh",
+        "scripts/gate_selftest.sh"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-089": {
+      "title": "执行层编排化改造（GCM-ORCH）—— 呈现简化 / 图片缩放 / 索引 / 接口 / 路由",
+      "requirement_version": "v4.25.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.25.0",
+      "files": [],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-090": {
+      "title": "输出契约与反馈层强化（GCM-OUT）—— 缩进抬头 / 反馈层 / 一句话总结 / 通俗化 / 双档输出 / 一键重启",
+      "requirement_version": "v4.26.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.26.0",
+      "files": [],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-091": {
+      "title": "常显与自证层强化（GCM-LIVE）—— 重启常显真执行 / API 知识库 / 峰谷常显 / 全域指纹 / 原子锁",
+      "requirement_version": "v4.27.0",
+      "requirement_version_derived": true,
+      "implementation_version": "v4.27.0",
+      "files": [],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-092": {
+      "title": "全域覆盖与版本贯通（GCM-SCOPE）—— 管控脱管清零 / 需求版本号贯通 / 反空架子判定",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": false,
+      "implementation_version": "v4.28.0",
+      "files": [
+        "scripts/scope_audit.mjs",
+        "scripts/req_version_audit.mjs",
+        "scripts/anti_hallucination_audit.mjs",
+        "rules/system/output_standard.md",
+        "ai-control/config/gates.conf"
+      ],
+      "missing_files": [],
+      "change_log": []
+    }
+  }
+}

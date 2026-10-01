@@ -228,7 +228,7 @@ export function checkFingerprintCoverage(managedFiles, ledgerText) {
         level: 'low',
         subject: '受管资产未登记指纹',
         a: { file: f, value: '未在指纹台账中出现' },
-        b: { file: 'memory/asset_fingerprint_ledger.md', value: '应有该资产的追踪记录' },
+        b: { file: 'indexes/fingerprint_index.json', value: '应有该资产的追踪记录（唯一真相源；人读台账仅作兜底）' },
         advice: '将该资产登记进指纹台账（路径 + 短哈希 + 新鲜度），使漂移可被发现。',
       })
     }
@@ -368,7 +368,15 @@ async function scan({ root, dirs }) {
 
   const ledgerText = await readOr(join(root, 'docs/requirements.md'))
   const ledger = ledgerVersion(ledgerText)
-  const legacyLedger = await readOr(join(root, 'memory/asset_fingerprint_ledger.md'))
+  // 指纹唯一真相源（REQ-091 / R5 之后）：`indexes/fingerprint_index.json`。
+  // 历史缺陷（REQ-092 实测）：L4 只读人读台账 `memory/asset_fingerprint_ledger.md`，
+  // 而该文件在 R5 之后已由生成器重写、并显式排除自产物 —— 于是新增的 7 个脚本
+  // 明明已进指纹索引，L4 仍报"未登记指纹"（检测器口径落后于被检测对象）。
+  // 现改为"索引优先、人读台账兜底"，避免再次分叉。
+  let legacyLedger = ''
+  const fpIndex = await readOr(join(root, 'indexes/fingerprint_index.json'))
+  if (fpIndex) legacyLedger += fpIndex
+  legacyLedger += '\n' + (await readOr(join(root, 'memory/asset_fingerprint_ledger.md')))
 
   const items = []
   const fileContents = {}

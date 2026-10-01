@@ -2,7 +2,7 @@
 
 > ### 🏷️ **版本信息与实施追踪**
 > - **文档类型**：需求文案（登记为 `REQ-090`，状态 `[EVOLVING]`）
-> - **当前系统实施总版本**：`v4.26.0`（本条目实施时先清偿 `v4.25.0` 欠账，再推进至 `v4.26.0`）
+> - **当前系统实施总版本**：`v4.28.0`（本条目实施时先清偿 `v4.25.0` 欠账，再推进至 `v4.26.0`）
 > - **本文档内容版本**：`v1.0.0`
 > - **提出时间**：2026-10-01
 > - **任务代号**：`GCM-OUT`（Output Contract：结构 · 反馈 · 档位）· 宿主侧子集 `UX-RESTART`
@@ -50,7 +50,7 @@
 | **R3** | 输出结构新增一句话总结 | 契约化位置与字数；与文末 `🎯【核心结论】` 用语一致（见 **D2**） | `rules/system/output_standard.md` §一句话总结 · `scripts/output_audit.mjs` | `node scripts/output_audit.mjs --check` | 首屏前 3 行内命中且 **≤30 汉字**；否则判红 |
 | **R4** | 无生僻字 · 言简意赅 | 常用字表探针 + 黑话词表 + 超长句探针，把口号变判定 | 新建 `data/common_chars.txt`（来源见 **D4**）· 新建 `scripts/language_audit.mjs` · `scripts/audit_execution.sh` 第 9 维 | `node scripts/language_audit.mjs --check` | 生僻字 **0** 且黑话命中 **0**；否则 exit 1 |
 | **R5** | 输出分浅白 / 专业两类 | 定义两档差异与显式开关；默认浅白档；**先裁决与"技术细节绝对静默"的冲突**（见 **D5**） | `rules/system/output_standard.md` §双档 · `scripts/output_audit.mjs` · `indexes/shortcuts_index.md`（触发词登记） | `node scripts/output_audit.mjs --check` | 浅白档：未随文解释的专业术语 ≤ 阈值；专业档：首行必须带档位标记 |
-| **R6** | 新增可视化按钮，点击重启 DSH | 双半插件：宿主半注册重启命令，客户端半注入按钮并调用它 | 新建 `skill-pool/plugins/dsh-plugin-restart/`（**双半结构**：`main` 宿主 + `exports["./client"]` 浏览器） | `node verify_restart_button.cjs` + **重启前后宿主 PID 比对** | **宿主 PID 发生变化 = 唯一合格证据**；只弹"重启指引"不算满足（见 R6-d / §3.4） |
+| **R6** | 新增可视化按钮，点击重启 DSH | 双半插件：宿主半注册重启命令，客户端半注入按钮并调用它 | 新建 `skill-pool/plugins/dsh-plugin-restart/`（**双半结构**：`main` 宿主 + `exports["./client"]` 浏览器） | `node skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs` + **重启前后宿主 PID 比对** | **宿主 PID 发生变化 = 唯一合格证据**；只弹"重启指引"不算满足（见 R6-d / §3.4） |
 
 ### 2.3 "触达物理实现层"的可判定判据（递归分裂的停止条件）
 
@@ -293,7 +293,7 @@ spawn(detached, unref) → osascript 退出 App → 轮询旧 PID 退出 → ope
 | R4 无生僻字 | ✅ 已落地 | `data/common_chars.txt`（6763 字）· `data/common_chars_allowlist.txt` · `scripts/gen_common_chars.mjs` · `scripts/language_audit.mjs` | 生成器 **13/13** 自检通过；判定器 **11/11** 自检通过；**全库扫描 0 命中**（存量已对齐） |
 | R4-d 审计接线 | ✅ 已落地 | `scripts/audit_execution.sh` 第 9 维 | 八维 → 九维；权重重算 `20+16+12+12+12+8+12+4+4=100`（第 8 维 8→4 分，显式留痕） |
 | R5 双档输出 | ✅ 契约已落地 | `rules/system/output_standard.md` §三 | 档位标记唯一性为硬判据；**术语密度仍是报告项**——按 D6 口径，没有外部权威边界的不升硬门 |
-| R6 插件本体 | ✅ 已建成 | `skill-pool/plugins/dsh-plugin-restart/`（双半 + 内核 + 构建器 + 自检 + 接口契约 + README） | `build_client.py --check` 未陈旧；`verify_restart_button.cjs` **84/84 通过**，含**反向变异**（故意改坏确认口令，行为断言确实失败） |
+| R6 插件本体 | ✅ 已建成 | `skill-pool/plugins/dsh-plugin-restart/`（双半 + 内核 + 构建器 + 自检 + 接口契约 + README） | `build_client.py --check` 未陈旧；`skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs` **84/84 通过**，含**反向变异**（故意改坏确认口令，行为断言确实失败） |
 | R6 装配进宿主 | ✅ 已装配 | `~/.dsh/profiles/desktop/node_modules/dsh-plugin-restart` + `dependencies` 登记 + `bundles` 追加（8 项） | 装配器回执 `status: installed` · `restart_required: true` · 备份 `package.json.bak-20261001-124813` 与 `cordis.patch.yml.bak-20261001-124813` 均在位；回滚命令已输出 |
 | R6 真机重启验证 | ⏳ **未做** | — | **只能由人点一次**：点击会中断当前会话，执行者不能自己把自己关掉；合格证据 = 重启前后宿主 PID 不同 |
 | 通道登记 | ✅ 已落地 | `indexes/shortcuts_index.md` 新增「专业档输出」「一键重启」两条通道 | `channel_audit.mjs --root .` → 通道 **36** 条 · 问题 **0** 项 |

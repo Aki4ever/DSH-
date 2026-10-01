@@ -108,6 +108,15 @@ export const Config = {
     // "门禁要求 X，而做 X 的工具被门禁拦住"。
     // 该脚本只做 add / commit / push，不改工程内容，且其提交信息由调用方显式给出。
     'scripts/git_sync_remote.sh',
+    // REQ-092 / R1+R3：三条新判定器同属"门禁没过时最需要它们"的诊断类工具。
+    // 不列入的后果与上面几条完全相同：G5 一旦判红，想跑判定器定位原因却被判定器自己的门禁拦住。
+    // 三者的 --check 均为只读（不打补丁、不改工程内容，只写自己的状态产物）。
+    'scripts/scope_audit.mjs',
+    'scripts/anti_hallucination_audit.mjs',
+    'scripts/req_version_audit.mjs',
+    'scripts/req_version_gen.mjs',
+    // 存量补课器：把管控入口铺到各工程（本身就是"修管控"的动作）
+    'scripts/backfill_scope.mjs',
   ],
   escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
   /** 是否在拒绝理由中附带看板摘要。 */
