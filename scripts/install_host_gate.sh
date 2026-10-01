@@ -10,14 +10,21 @@
 #   结论：规则在，机制不在——所有"必须"都只是 Markdown 里的一句话。
 #
 # 本脚本把"注册"变成一条幂等、可验证、可回滚的动作：
-#   install  幂等写入注册条目（已存在则只报告，不重复写）
-#   verify   机器判定：条目是否存在 + 宿主是否真的激活过它（isHost=true）
-#   uninstall 移除该条目（回滚）
+#   install  幂等注册**两条通道**：层栈补丁条目 + profile bundle 通道（写前自动备份）
+#   verify   机器判定：条目是否存在（任一通道）+ 宿主是否真的激活过它（isHost=true）
+#   uninstall 移除层栈补丁条目并摘掉 bundle 通道登记（回滚）
+#
+# 为什么 install 必须同时写 bundle 通道（2026-10-02 二次事故）：
+#   旧版 install 只往 `cordis.patch.yml` 追加条目，而该文件被本仓之外的写者
+#   整文件重写（实测 827 字节、条目消失），于是"注册过"的机制在宿主里再次不存在；
+#   profile 的 `dependencies` + `dsh.profile.bundles`（结构化清单）在同一时刻原样存活。
+#   判据早就认这条通道，但**没有任何动作去写它** —— 通道有判定、缺载体，等于没有。
+#   本版补上写入动作，并按"条目已存在"的同一幂等语义处理，避免重复登记。
 #
 # 用法：
-#   ./scripts/install_host_gate.sh verify        # 只查，退出码 1 表示未生效
-#   ./scripts/install_host_gate.sh install       # 补写条目（写前自动备份）
-#   ./scripts/install_host_gate.sh uninstall     # 回滚条目
+#   ./scripts/install_host_gate.sh verify        # 只查，退出码 1 表示载体坏了，2 表示已注册待重载
+#   ./scripts/install_host_gate.sh install       # 补写两条通道（写前自动备份）
+#   ./scripts/install_host_gate.sh uninstall     # 回滚两条通道
 #
 # 生效条件：DSH 需重新加载 profile（重启 App 或触发 HMR）；本脚本只保证"条目在位"，
 #           **不谎称已生效**——生效与否一律以 verify 的 isHost 与条目双证据为准。
@@ -58,6 +65,7 @@ NODE_BIN="$(find_node || true)"
 STATUS_FILE="$DSH_HOME_DIR/.dsh-control/plugin-status.txt"
 ENTRY_ID="ai-execution-control"
 LOADER_ABS="$ROOT/ai-control/plugin/loader.mjs"
+PLUGIN_DIR="$ROOT/ai-control/plugin"
 
 ACTION="${1:-verify}"
 
@@ -86,6 +94,62 @@ process.exit(dep&&bundle?0:1);
 ' "$pkgjson" "$ENTRY_PKG" 2>/dev/null
 }
 has_entry() { [ -f "$PATCH_FILE" ] && grep -q "id: $ENTRY_ID" "$PATCH_FILE"; }
+
+# ── bundle 通道写入/摘除（2026-10-02 补物理载体）────────────────────────────────
+# 结构化 JSON 用 node 改，不用 sed/grep：层栈补丁可以被整文件重写，但 package.json
+# 必须保持合法 JSON，否则宿主连 profile 都读不了 —— 改坏比不改更糟。
+# 幂等：dependencies 缺则补，bundles 缺则追加，已存在则逐项报告"已登记"，绝不重复写。
+write_bundles_entry() {
+  local pkgjson="$PROFILE_DIR/package.json"
+  if [ ! -f "$pkgjson" ]; then
+    echo "❌ 找不到 profile 清单：$pkgjson（bundle 通道无法登记）"
+    return 1
+  fi
+  "${NODE_BIN:-node}" -e '
+const fs = require("node:fs")
+const [file, name, dir] = process.argv.slice(1)
+const raw = fs.readFileSync(file, "utf8")
+let j
+try { j = JSON.parse(raw) } catch (e) { console.error("❌ package.json 不是合法 JSON：" + e.message); process.exit(1) }
+const dep = "file:" + dir
+let depChanged = false, bundleChanged = false
+if (!j.dependencies) j.dependencies = {}
+if (j.dependencies[name] === dep) { console.log("dependencies: ℹ️ 已登记（幂等，不重复写）") }
+else { j.dependencies[name] = dep; depChanged = true; console.log("dependencies: ✅ 已补登记") }
+if (!j.dsh) j.dsh = {}
+if (!j.dsh.profile) j.dsh.profile = {}
+if (!Array.isArray(j.dsh.profile.bundles)) j.dsh.profile.bundles = []
+if (j.dsh.profile.bundles.includes(name)) { console.log("dsh.profile.bundles: ℹ️ 已登记（幂等，不重复写）") }
+else { j.dsh.profile.bundles.push(name); bundleChanged = true; console.log("dsh.profile.bundles: ✅ 已补登记") }
+if (!depChanged && !bundleChanged) process.exit(0)
+const out = JSON.stringify(j, null, 2) + "\n"
+fs.writeFileSync(file, out, "utf8")
+// 写后读回：JSON 必须仍可解析且两处都在，否则拒绝报成功
+const back = JSON.parse(fs.readFileSync(file, "utf8"))
+const ok = !!(back.dependencies && back.dependencies[name]) &&
+           !!(back.dsh && back.dsh.profile && Array.isArray(back.dsh.profile.bundles) && back.dsh.profile.bundles.includes(name))
+if (!ok) { console.error("❌ 写后读回校验失败：两处登记未同时成立"); process.exit(1) }
+console.log("✅ 写后读回校验通过（dependencies + bundles 双登记）")
+' "$pkgjson" "$ENTRY_PKG" "$PLUGIN_DIR"
+}
+
+remove_bundles_entry() {
+  local pkgjson="$PROFILE_DIR/package.json"
+  [ -f "$pkgjson" ] || { echo "ℹ️ 无 profile 清单，bundle 通道无需回滚"; return 0; }
+  "${NODE_BIN:-node}" -e '
+const fs = require("node:fs")
+const [file, name] = process.argv.slice(1)
+const j = JSON.parse(fs.readFileSync(file, "utf8"))
+let changed = false
+if (j.dsh && j.dsh.profile && Array.isArray(j.dsh.profile.bundles)) {
+  const before = j.dsh.profile.bundles.length
+  j.dsh.profile.bundles = j.dsh.profile.bundles.filter(x => x !== name)
+  if (j.dsh.profile.bundles.length !== before) { changed = true; console.log("dsh.profile.bundles: ✅ 已摘除") }
+}
+console.log(changed ? "✅ bundle 通道已回滚" : "ℹ️ bundle 通道未登记，无需回滚")
+if (changed) fs.writeFileSync(file, JSON.stringify(j, null, 2) + "\n", "utf8")
+' "$pkgjson" "$ENTRY_PKG"
+}
 entry_channel() {
   if has_entry && has_entry_bundles; then printf '层栈补丁 + bundles 双通道'; return 0; fi
   if has_entry; then printf '层栈补丁（旧通道，宿主重写会丢）'; return 0; fi
@@ -173,7 +237,10 @@ case "$ACTION" in
     ;;
   install)
     if [ ! -f "$PATCH_FILE" ]; then echo "❌ 找不到 profile 配置：$PATCH_FILE"; exit 2; fi
-    if entry_channel >/dev/null; then echo "ℹ️ 条目已存在，无需重复写入（幂等；通道：$(entry_channel)）"; exit 0; fi
+    # 通道①：层栈补丁（幂等；已存在则跳过，但不影响通道②照常登记）
+    if has_entry; then
+      echo "ℹ️ 层栈补丁条目已存在，无需重复写入（幂等）"
+    else
     if ! cp "$PATCH_FILE" "$PATCH_FILE.bak-$(date +%Y%m%d-%H%M%S)-install-gate" 2>/dev/null; then
       echo "❌ 备份失败（profile 目录不可写）：$PATCH_FILE"
       echo "   处置：给宿主 profile 目录写权限，或以更高权限重跑本命令；未备份前不改配置。"
@@ -188,6 +255,7 @@ case "$ACTION" in
 # ── AI 执行流程管控 · 拦截层（由 scripts/install_host_gate.sh 写入）────────────
 # 为什么必须在这里插一行：本插件是宿主运行时的硬门禁与过程可见性来源。
 # 没有它，"待办常显/硬门禁/常显看板/自动命名"在物理上都不存在（只有文档写着）。
+# 注意：本文件会被宿主整文件重写，条目随时可能消失；真正抹不掉的是下方 bundle 通道。
 # 走 loader.mjs 而非 index.mjs：加载失败降级为空插件，避免管控故障拖垮桌面端。
 - insert:
     - id: $ENTRY_ID
@@ -202,14 +270,28 @@ EOF
       echo "❌ 写入后复核失败：文件中仍找不到条目 ${ENTRY_ID}，拒绝报成功"
       exit 1
     fi
-    echo "✅ 注册条目已写入并复核在位：$PATCH_FILE"
-    echo "▶ 下一步：重载 profile（重启 DSH 或触发 HMR）后运行：./scripts/install_host_gate.sh verify"
+    echo "✅ 层栈补丁条目已写入并复核在位：$PATCH_FILE"
+    fi
+    # 通道②：profile 结构化清单（dependencies + dsh.profile.bundles）
+    # 为什么必须补写（2026-10-02 二次事故）：判据早认这条通道，但**没有任何动作去写它**，
+    # 于是"通道有判定、缺载体"—— 层栈补丁被宿主重写后，机制在运行时静默消失。
+    if ! cp "$PROFILE_DIR/package.json" "$PROFILE_DIR/package.json.bak-$(date +%Y%m%d-%H%M%S)-install-gate" 2>/dev/null; then
+      echo "❌ profile 清单备份失败，拒绝改 package.json（未备份前不改配置）"
+      exit 1
+    fi
+    if ! write_bundles_entry; then
+      echo "❌ bundle 通道登记失败：宿主重写层栈补丁后拦截层仍会丢失"
+      exit 1
+    fi
+    echo "✅ 两条通道均已登记（层栈补丁 + bundles）"
+    echo "▶ 下一步：重载 profile（重启 DSH 桌面端）后运行：./scripts/install_host_gate.sh verify"
+    echo "   注：本脚本只保证「载体已登记」，**不谎称已生效**；运行时证据一律以 verify 为准。"
     ;;
   uninstall)
-    if ! has_entry; then echo "ℹ️ 条目不存在，无需回滚"; exit 0; fi
-    cp "$PATCH_FILE" "$PATCH_FILE.bak-$(date +%Y%m%d-%H%M%S)-uninstall-gate" 2>/dev/null || { echo "❌ 备份失败，拒绝改动配置"; exit 1; }
-    # 只删本条目的插入块：从注释行到 name 行，避免误伤其它插件配置
-    "$NODE_BIN" -e '
+    if has_entry; then
+      cp "$PATCH_FILE" "$PATCH_FILE.bak-$(date +%Y%m%d-%H%M%S)-uninstall-gate" 2>/dev/null || { echo "❌ 备份失败，拒绝改动配置"; exit 1; }
+      # 只删本条目的插入块：从注释行到 name 行，避免误伤其它插件配置
+      "$NODE_BIN" -e '
 const fs=require("node:fs")
 const file=process.argv[1], id=process.argv[2]
 const lines=fs.readFileSync(file,"utf8").split("\n")
@@ -222,7 +304,13 @@ for (const line of lines) {
 }
 fs.writeFileSync(file,out.join("\n").replace(/\n{3,}/g,"\n\n"),"utf8")
 ' "$PATCH_FILE" "$ENTRY_ID"
-    echo "✅ 注册条目已移除（备份已留存）"
+      echo "✅ 层栈补丁条目已移除（备份已留存）"
+    else
+      echo "ℹ️ 层栈补丁条目不存在，无需回滚"
+    fi
+    cp "$PROFILE_DIR/package.json" "$PROFILE_DIR/package.json.bak-$(date +%Y%m%d-%H%M%S)-uninstall-gate" 2>/dev/null || { echo "❌ profile 清单备份失败，拒绝改动"; exit 1; }
+    remove_bundles_entry || exit 1
+    echo "▶ 回滚完成（注：本命令不动 pnpm 依赖树，包文件仍在 node_modules，重启后不再由 bundles 加载）"
     ;;
   *)
     echo "用法：$0 {verify|install|uninstall}"; exit 2

@@ -1,10 +1,12 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.29.0`
+> - **当前系统实施总版本**：`v4.29.1`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-10-02
 > - **版本状态**：`[Release 稳定生效]`
+> - **本次 PATCH 递增说明**：`v4.29.0 → v4.29.1`，依据 REQ-095（宿主注册双通道接线与"可证实性自锁"清零）；
+>   接线与缺陷修复属 PATCH 级（向下兼容），故**不启用** REQ-093 预留的 `v4.30.0`。
 > - **历史跳号留痕**：`v4.24.0 → v4.26.0` 曾跳过 `v4.25.0`（`v4.25.0` 归 REQ-089、`v4.26.0` 归 REQ-090，两笔账一次结清）。
 > - **版本跳号说明**：`v4.26.0 → v4.28.0 → v4.29.0`，跳过 `v4.27.0`。原因：REQ-091 已认领目标版本 `v4.27.0`
 >   但其"所有页面常显"仍待人工 DOM 取证，**不满足递增条件**（未完成项不得冒充完成）；
@@ -2893,6 +2895,75 @@
   修复：改字符串级 `parseRawUrl`，只摘 `k` 参数、其余原样透传（升级请求同口径）。
   防回归：`--e2e` 增加"引导资源逐字节对拍"断言（10 个资源全等，含 10.4MB+2.2MB 两条拼接 URL），项数 7→8。
   同时修掉 `stop` 删状态导致下次 `start` 换 PIN 的体验缺陷（停服只摘 pid，PIN/密钥保留）。
+
+---
+
+### REQ-095: 宿主注册双通道接线与"可证实性自锁"清零（HOST-WIRE-1）
+> ### 🏷️ **资产元数据与生命周期标记**
+> - **文档类型 (Doc Type)**: `[REQUIREMENT 业务需求台账]`
+> - **清理定位 (Retention)**: `[PERSISTENT 长期受管]`
+> - **生成会话**: `[优规002][75分] 宿主注册双通道`
+> - **到期/清理条件**: `[随版本演进]`
+
+- **当前状态**：`[ACTIVE]` 物理载体已落地并实跑取证（4 项断点全部落到文件与配置）
+- **实施版本**：`v4.29.1`（PATCH 递增：接线与缺陷修复，向下兼容；`v4.30.0` 仍为 REQ-093 预留）
+- **需求版本**：`v1.0.0`
+- **提出时间**：2026-10-02
+- **最新更新**：2026-10-02
+- **责任归属**：用户（提出与授权判定） / AI 智能体（翻译、分裂与实施）
+- **需求文案**：[`docs/constraint_mechanism_optimize_11.md`](constraint_mechanism_optimize_11.md)（唯一权威出处，本条目只放指针不复述细则）
+
+#### 1. 提出背景与痛点
+
+用户要求"管控规则若颗粒度过大、没触达物理实现层，就递归分裂到更细执行层"，并授权"由你来判断"。
+按磁盘实况取证后，**4 项断点全部属于"判据有、载体无"或"载体自锁"**：
+
+| 编号 | 断点（事实） | 复跑证据 |
+| :--- | :--- | :--- |
+| G1 | `scripts/install_host_gate.sh` 的 `install` 只写层栈补丁一条通道，而同一脚本的 `has_entry_bundles()` 早已认可 bundles 通道 | 脚本源码 + `grep` |
+| G2 | profile `~/.dsh/profiles/desktop/package.json` 的 `dependencies` 有插件包，`dsh.profile.bundles` 无 | `todo_panel_audit --check` 判"⛔ 未登记" |
+| G3 | 拦截层 `readStatus` 任一读/解析失败即抹掉上一份好状态 → 后续改动型调用全判"状态不可证实"，**连修状态的命令也被拦** | 本会话实测踩到，用户侧需 `DSH_CONTROL_BYPASS=all` 解围 |
+| G4 | `bootstrapStatus` 超时 `8000ms`，而同一命令本机实测 **9.9s** | `time` 实测 + `selftest.mjs` 冷启动用例失败 |
+
+#### 2. 核心诉求与目标
+
+1. **双通道（W1）**：注册动作必须同时写层栈补丁与 profile bundle 通道，且逐项幂等、可备份、可回滚、写后读回；
+2. **不自锁（W2）**：修依据与自证类入口不得被"依据不可证实"拦住（否则"要求自证却禁止自证"）；
+3. **分得清（W3）**：把"瞬时读不到"与"依据真的不存在"分开 —— 前者保留好状态走陈旧放行，后者连续失败达阈值才失败关闭；
+4. **能自举（W4）**：冷启动自举超时按本机实测放宽，避免"自举被 kill → 全拦"。
+
+#### 3. 关联文件与影响范围
+
+- **改动**：`scripts/install_host_gate.sh`（双通道写入/回滚/写后读回）· `ai-control/plugin/index.mjs`（逃生舱白名单 + `readStatus` 容错 + 自举超时）；
+- **登记**：`docs/requirements.md`（本条）· `ai-control/requirements/req_versions.json`（机读台账）；
+- **接口契约**：`scripts/interfaces/install_host_gate.interface.json`（原为 `(待补)` 占位，本轮补全为真实契约）；
+- **索引与路由**：`indexes/capabilities_index.*`、`indexes/execution-layers.json`（执行层同步，跑 `--apply`）；
+- **宿主侧（不在仓库内）**：`~/.dsh/profiles/desktop/package.json`（bundle 登记的实际落点）；
+- **边界外（本轮不动）**：宿主 `app.asar`（已签名，改动需重装/重启桌面端）；
+  `skill-pool/plugins/dsh-plugin-control-jump` 的注册（源码在位、注册未注册，属另一条需求线，已显式留痕不冒充解决）。
+
+#### 4. 验收标准
+
+- [x] `bash scripts/install_host_gate.sh install` 退出码 0，输出两通道逐项结果 + 写后读回校验；
+- [x] profile `dependencies` + `dsh.profile.bundles` 双登记成立（磁盘读回为证）；
+- [x] `bash scripts/install_host_gate.sh verify` 退出码 0，通道显示"层栈补丁 + bundles 双通道"；
+- [x] `node scripts/todo_panel_audit.mjs --check` 退出码 0（不再报 bundles 未登记）；
+- [x] `node ai-control/plugin/selftest.mjs` 69/69 通过（含"冷启动 · 自举成功产出状态"）；
+- [x] `bash -n scripts/install_host_gate.sh` 与 `node --check ai-control/plugin/index.mjs` 双语法通过；
+- [ ] **运行时生效**：需重启 DSH 桌面端由宿主加载 bundles 通道 —— 未做，**不宣称已生效**。
+
+#### 5. 实施记录
+
+- **2026-10-02 [新建+落地]**：接收需求（含"严谨信息助理"六条作答纪律）并简化为可执行文案；
+  读盘取证定位 4 项断点（G1~G4）并递归分裂到物理实现层，逐项落地：`install` 双通道化
+  （幂等 + 时间戳备份 + 写后读回 + `uninstall` 两通道回滚）、逃生舱白名单补 4 条
+  （`install_host_gate.sh` / `progress_ledger.mjs` / `output_audit.mjs` / `todo_gate.sh`）、
+  `readStatus` 失败保留好状态（连续 3 次失败才失败关闭）、自举超时 8000 → 30000ms。
+  **实测复跑**：`install` exit 0 · `verify` exit 0（双通道）· `todo_panel_audit --check` exit 0 ·
+  `mechanism_audit` 硬性未触达 0 条 · `selftest` 69/69。
+- **诚实缺口**：① 运行时加载证据须重启桌面端后由 `verify` 的 `isHost` 回答；
+  ② profile `cordis.patch.yml` 被宿主整文件重写（本轮实测 07:18:32、07:24:03 两次），
+  **重写原因属推测范围、未取证**；本仓只保证"两通道都登记过、bundles 通道重写不掉"。
 
 ---
 

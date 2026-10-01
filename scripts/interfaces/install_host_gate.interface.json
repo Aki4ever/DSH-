@@ -3,32 +3,56 @@
   "layer": "脚本 (CLI)",
   "path": "scripts/install_host_gate.sh",
   "invoke": "bash scripts/install_host_gate.sh",
-  "summary": "(待补：从头部注释里没抽到功能描述)",
+  "summary": "管控拦截层的宿主注册器：把 ai-control/plugin 注册进 DSH profile 的两条通道（层栈补丁 cordis.patch.yml + 结构化清单 dependencies/dsh.profile.bundles），并机器判定是否真的被宿主激活。",
   "inputs": [
     {
-      "name": "(待补)",
-      "type": "unknown",
+      "name": "action",
+      "type": "enum",
       "required": false,
-      "desc": "header 注释里未声明入参，需人工补齐"
+      "desc": "verify（默认，只查不改）/ install（幂等写两条通道，写前备份、写后读回）/ uninstall（两通道回滚）"
+    },
+    {
+      "name": "DSH_HOME",
+      "type": "path",
+      "required": false,
+      "desc": "DSH 家目录，默认 ~/.dsh；profile 在其 profiles/*/ 下按磁盘实况解析，绝不猜"
+    },
+    {
+      "name": "DSH_PROFILE_DIR / DSH_PROFILE",
+      "type": "path|string",
+      "required": false,
+      "desc": "显式指定 profile 目录或名称，优先级高于磁盘探测"
     }
   ],
   "outputs": [
     {
-      "name": "stdout",
+      "name": "verdict",
       "type": "text",
-      "desc": "标准输出（待人工细化）"
+      "desc": "逐项判定行：条目存在（通道名）· 加载器在位 · 语法可解析 · 宿主激活凭据；install 另报两通道逐项写入结果与写后读回"
     }
   ],
   "exitCodes": {
-    "0": "成功",
-    "1": "失败/不通过"
+    "0": "verify：条目在位且宿主已有运行时激活凭据；install/uninstall：动作成功并复核通过",
+    "1": "载体坏了（条目缺失或加载器不存在/语法不过）；或写入/备份/读回校验失败而拒绝报成功",
+    "2": "已注册但宿主尚未落运行时凭据（未重载 profile）；或用法错误/找不到 profile 配置"
   },
-  "sideEffects": [],
-  "dependencies": [],
+  "sideEffects": [
+    "写 ~/.dsh/profiles/<profile>/cordis.patch.yml（层栈补丁条目；该文件可能被宿主整文件重写）",
+    "写 ~/.dsh/profiles/<profile>/package.json（dependencies + dsh.profile.bundles，结构化通道）",
+    "两处写前各留时间戳备份：cordis.patch.yml.bak-<ts>-install-gate 与 package.json.bak-<ts>-install-gate",
+    "不动 node_modules 与依赖树（uninstall 亦不自动 pnpm 卸载）"
+  ],
+  "dependencies": [
+    "scripts/lib/find_node.sh",
+    "ai-control/plugin/loader.mjs",
+    "ai-control/plugin/index.mjs"
+  ],
   "parallel": "exclusive",
   "examples": [
-    "bash scripts/install_host_gate.sh"
+    "bash scripts/install_host_gate.sh verify",
+    "bash scripts/install_host_gate.sh install",
+    "bash scripts/install_host_gate.sh uninstall"
   ],
-  "source": "extracted-from-header",
-  "verified": false
+  "source": "handwritten",
+  "verified": true
 }

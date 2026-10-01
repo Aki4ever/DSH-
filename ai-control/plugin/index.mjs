@@ -119,6 +119,15 @@ export const Config = {
     'scripts/req_version_gen.mjs',
     // 存量补课器：把管控入口铺到各工程（本身就是"修管控"的动作）
     'scripts/backfill_scope.mjs',
+    // 2026-10-02 补（同一类自锁，实测踩到）：
+    //   ① `install_host_gate.sh` 是**拦截层自己的注册/修复入口**。它被"状态不可证实"拦住时，
+    //      恰恰是宿主注册已经丢失、最需要它上场的时刻 —— 与上面几个诊断脚本完全同类。
+    //   ② 进度台账/输出判定的 --check 是只读自证，收尾必跑；被拦就等于"要求自证却禁止自证"。
+    //   ③ `todo_gate.sh` 是待办常显的**只看不改**入口（S07 拒绝消息自己推荐的查询命令）。
+    'scripts/install_host_gate.sh',
+    'scripts/progress_ledger.mjs',
+    'scripts/output_audit.mjs',
+    'scripts/todo_gate.sh',
   ],
   escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
   /** 是否在拒绝理由中附带看板摘要。 */
@@ -215,9 +224,26 @@ function resolveStateDir(config) {
 
 /**
  * 读取并解析 status.json；任何失败都返回 null（绝不抛出）。
+ *
+ * 2026-10-02 修复（实测事故）：旧实现在**任何**一次读/解析失败时都执行
+ * `cached = { at: 0, data: null, file }` —— 把上一份好状态**就地抹掉**。
+ * 后果不是"降级"，而是"锁死"：门禁脚本写盘的那一瞬间（重写而非原子替换）
+ * 恰好被守卫读到半个文件 → 解析失败 → 好状态被清空 → 之后每一次改动型调用
+ * 都撞上"门禁状态不可证实 → 失败关闭"，连**修门禁自己**的命令也被拦。
+ * 本会话实测复现：同一批命令里 `control_gates.sh check` 成功、紧随其后的
+ * 普通 bash 被拒，报"形状非法"。用户只能设 DSH_CONTROL_BYPASS=all 手动解围。
+ *
+ * 现在的语义边界（与 STALE_MS 注释一致）：
+ *   · 读/解析失败 → **保留**上一份好状态，走"陈旧"路径（放行 + 后台刷新），
+ *     因为陈旧只代表"不是刚出炉的"，不代表依据不成立；
+ *   · 只有连续失败达到 MAX_CONSECUTIVE_FAILS 次，才判定为"真的没有依据"，
+ *     这才失败关闭（避免文件被真删掉后永远拿陈旧状态放行）。
+ *
  * @param {string} stateDir
  * @param {boolean} [force] 跳过 CACHE_MS 读盘缓存，强制重读（供后台刷新使用）
  */
+let statusReadFailures = 0
+const MAX_CONSECUTIVE_FAILS = 3
 async function readStatus(stateDir, force = false) {
   const now = Date.now()
   const file = join(stateDir, 'status.json')
@@ -231,11 +257,19 @@ async function readStatus(stateDir, force = false) {
   try {
     const raw = await readFile(file, 'utf8')
     const data = JSON.parse(raw)
-    if (!data || typeof data !== 'object' || typeof data.gateTotal !== 'number') return null
+    if (!data || typeof data !== 'object' || typeof data.gateTotal !== 'number') throw new Error('形状非法：缺少 gateTotal')
+    statusReadFailures = 0
     cached = { at: now, data, file }
     return data
   } catch {
-    // 状态文件尚不存在（尚未运行过门禁脚本）或损坏
+    statusReadFailures += 1
+    const sameFileLastGood = cached.data && cached.file === file
+    if (sameFileLastGood && statusReadFailures < MAX_CONSECUTIVE_FAILS) {
+      // 保留好状态但**不刷新时间戳**：既让判定继续（evaluate 按"陈旧"放行），
+      // 又让后台刷新与自举照常触发，尽快把真实状态捞回来。
+      return cached.data
+    }
+    // 状态文件尚不存在（尚未运行过门禁脚本）、损坏、或连续失败过多 → 判定为无依据
     cached = { at: 0, data: null, file }
     return null
   }
@@ -475,7 +509,11 @@ async function bootstrapStatus(stateDir, config) {
     await new Promise((resolve) => {
       execFile('/bin/bash', [script, 'check'], {
         cwd: projectRoot,
-        timeout: 8000,
+        // 2026-10-02 修复（实测）：原超时 8000ms，而本机实测同一命令冷跑
+        // **9.9 秒**（全库扫描 + 多维判定），于是自举十次九次被 kill ——
+        // 表现为"自举失败 → 状态不可证实 → 改动型调用全被拦"。
+        // 自举是后台异步动作，不阻塞宿主，放宽超时不会拖慢任何对话。
+        timeout: 30000,
         env: {
           ...process.env,
           // 关键：强制脚本把状态写到本插件正在读取的目录。
@@ -980,8 +1018,20 @@ export async function apply(ctx, config = {}) {
         } catch { todoLines = [] }
         const card = createUserMessage({
           content: [{ type: 'text', text: renderCard(status, usage, todoLines) }],
-          source: { kind: 'plugin', plugin: name, form: 'notice', summary: renderBadge(status) },
+          // REQ-095：source 一律由唯一权威源产出，**禁止手写字面量**。
+          // 事故复盘：这里曾写 `{ kind: 'plugin', plugin: name, ... }`，而 v4 行级接纳
+          // （assertV4SourceRowAdmission → source()）明确拒收 kind === 'plugin'，
+          // 于是"看板卡片"这条**旁路增强**把整轮对话判成了「本轮运行失败」。官方迁移器
+          // 对未知插件生产者的规范映射是 `plugin:<插件名>`，此处与之一致。
+          source: producerOwnedSource(name, { form: 'notice', summary: renderBadge(status) }),
         })
+        // 发之前让**宿主自己的** v4 行级校验器验一遍：不合格就不发这张卡片。
+        // 硬原则"插件故障绝不阻断用户"必须落到这一行——卡片是旁路增强，绝不能
+        // 因为它的来源字段把整轮判失败。校验器解析不到时如实记一笔，仍然放行。
+        const admit = await assertHostAdmitsCard(card, stateDir)
+        if (!admit.ok && admit.blocking) {
+          return decision
+        }
         return { kind: 'enter', messages: [...decision.messages, card] }
       } catch (err) {
         // 注入失败绝不影响正常流程，但**必须留下可见信号**。

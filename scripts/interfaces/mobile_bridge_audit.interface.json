@@ -1,0 +1,47 @@
+{
+  "id": "cli.rules.mobile_bridge_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/mobile_bridge_audit.mjs",
+  "invoke": "node scripts/mobile_bridge_audit.mjs --check",
+  "summary": "手机远端操控链路判定器：把「载体在不在 / 宿主认不认现签 cookie / 代理有没有改写 Host-Origin」三条可证伪事实做成 --check（结构+实活）与 --e2e（真起网桥走 PIN→index→/api 全链路）两条命令。",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": true,
+      "desc": "结构与实活判定；宿主没开时明确降级为 SKIP（不静默算通过）"
+    },
+    {
+      "name": "--e2e",
+      "type": "flag",
+      "required": false,
+      "desc": "进程内真起网桥实例，逐项断言端到端链路（含引导资源逐字节对拍，8 项）"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "verdict",
+      "type": "text",
+      "desc": "逐项判定行与总计（通过/未达标/不可判定）"
+    }
+  ],
+  "exitCodes": {
+    "0": "通过",
+    "1": "未达标（真缺陷）",
+    "2": "不可判定（前置条件不满足）"
+  },
+  "sideEffects": [
+    "只读判定；--e2e 会在进程内临时监听端口并在结束后释放"
+  ],
+  "dependencies": [
+    "scripts/lib/mobile_bridge_core.mjs",
+    "scripts/mobile_bridge.mjs"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/mobile_bridge_audit.mjs --check",
+    "node scripts/mobile_bridge_audit.mjs --e2e"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

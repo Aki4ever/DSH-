@@ -1,0 +1,56 @@
+{
+  "id": "cli.rules.mobile_bridge",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/mobile_bridge.mjs",
+  "invoke": "node scripts/mobile_bridge.mjs",
+  "summary": "手机远端操控 DSH 的唯一物理载体：在 Mac 上开一个只服务私网的网桥，把只能回环访问的 DSH Web GUI 交给 iPhone/iPad 浏览器（持久化签名密钥现签 cookie，重启 DSH 也不换链接）。",
+  "inputs": [
+    {
+      "name": "command",
+      "type": "enum",
+      "required": true,
+      "desc": "start / status / url / doctor / stop / serve（serve 为前台运行，内部由 start 以守护进程方式调用）"
+    },
+    {
+      "name": "--port / --bind / --pin / --dsh-port",
+      "type": "flags",
+      "required": false,
+      "desc": "网桥端口（默认见 DEFAULT_BRIDGE_PORT）· 绑定地址 · 自定义 PIN · 被代理的宿主端口（默认 19387）"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "status 子命令输出机读 JSON"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "url",
+      "type": "text",
+      "desc": "手机可打开的一次性链接（PIN 已在链接内）与运行状态"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功",
+    "1": "检查未过或操作失败",
+    "2": "用法或前置条件不可判定"
+  },
+  "sideEffects": [
+    "以守护进程方式起本地监听端口（默认只绑私网地址）",
+    "写状态文件（STATE_FILE）与访问日志（ACCESS_LOG）",
+    "只读宿主凭据以现签 cookie，不改宿主 app.asar 与启动参数"
+  ],
+  "dependencies": [
+    "scripts/lib/mobile_bridge_core.mjs",
+    "scripts/lib/find_node.sh"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/mobile_bridge.mjs start --port 19388",
+    "node scripts/mobile_bridge.mjs url",
+    "node scripts/mobile_bridge.mjs doctor"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

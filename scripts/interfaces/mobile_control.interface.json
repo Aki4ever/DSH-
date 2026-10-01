@@ -1,0 +1,48 @@
+{
+  "id": "cli.rules.mobile_control",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/mobile_control.sh",
+  "invoke": "bash scripts/mobile_control.sh",
+  "summary": "手机操控 DSH 的日常入口薄壳：只做「找 node + 转发」，不复制任何判定与代理逻辑（唯一权威源是 mobile_bridge.mjs 与 lib/mobile_bridge_core.mjs）。",
+  "inputs": [
+    {
+      "name": "subcommand",
+      "type": "enum",
+      "required": true,
+      "desc": "start / url / status / doctor / stop / serve"
+    },
+    {
+      "name": "DSH_NODE_BIN",
+      "type": "path",
+      "required": false,
+      "desc": "显式指定 node；缺省走 scripts/lib/find_node.sh 解析"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "转发被调用 .mjs 的原样输出（手机链接 / 状态 / 体检结果）"
+    }
+  ],
+  "exitCodes": {
+    "0": "转发目标的成功码",
+    "1": "转发目标的失败码",
+    "2": "转发目标的不可判定码"
+  },
+  "sideEffects": [
+    "自身无副作用；副作用全部来自被转发的 mobile_bridge.mjs"
+  ],
+  "dependencies": [
+    "scripts/mobile_bridge.mjs",
+    "scripts/lib/find_node.sh"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/mobile_control.sh start",
+    "bash scripts/mobile_control.sh url",
+    "bash scripts/mobile_control.sh doctor"
+  ],
+  "source": "handwritten",
+  "verified": true
+}
