@@ -46,7 +46,7 @@
 | # | 用户原话 | 落成什么 | 物理载体（新建 N / 复用 R） | 判定入口 | 判红的条件 |
 | :-- | :--- | :--- | :--- | :--- | :--- |
 | **R1** | 可视化输出执行任务所需的执行层树状结构 | 任务→执行层子树的**解析 + 装配 + 出图 + 可追溯判定**四段链 | N `scripts/task_layer_tree.mjs`（解析+装配+出图，薄壳复用既有渲染器）· R `scripts/route_plan.mjs`、`skills/build-execution-tree/scripts/build_tree.py`、`scripts/generate_image.py`、`scripts/svg2png.*`、`assets/viewers/image_viewer.html` | `node scripts/task_layer_tree.mjs --check "<任务意图>"` | 树中出现**无法回溯到物理载体**的节点（悬空节点），或任务命中集与树节点集不一致，即退出码 1 |
-| **R2** | 插件安装允许并发，不要等任务空闲 | 安装请求**并发受理 + 队列化提交 + 进度可见**，取消"等空闲"的隐式前置 | N `scripts/plugin_install_queue.mjs`（受理/排队/进度/回收）· N `ai-control/reports/state/plugin_install_queue.json`（队列台账）· R DSH 宿主 `@deepseek-ai/dsh-plugin-manager` 既有 `installs` Map 与 profile 写锁 | `node scripts/plugin_install_queue.mjs --check` | 队列中任一请求处于"等待其他任务空闲"式**无界等待**（无进度、无超时、无终止条件），或同一 profile 出现两个持有写锁的提交者，即退出码 1 |
+| **R2** | 插件安装允许并发，不要等任务空闲 | 把"全体运行中会话"的**全局忙闸门**细化为**冲突域忙闸门**，并把"直接拒绝"改为**入队 + 进度可见** | 宿主侧 `dshmarket`：`src/routes.ts:5380-5389`（忙判据，运行态 `lib/routes.js:5193-5202`）、`src/agents.ts:26-42`（忙判据源）、`src/routes.ts:594-617`（单飞改排队，运行态 `lib/routes.js:499-518`）、`client/client.js:9845-9881` + `:8928-8936`（排空条件）· 宿主 `@deepseek-ai/dsh-plugin-manager/lib/index.js:2036-2057`（profile 写锁，保持互斥）· 本仓 `scripts/plugin_sync.sh:153,192` + `scripts/lib/atomic_lock.sh`（锁键按包分片）· N `ai-control/reports/state/plugin_install_queue.json`（队列台账，可观测） | `node scripts/plugin_install_queue.mjs --check` | 仍以"全体 running 会话数 > 0"作为拒绝条件；或第二笔请求被直接拒绝而非入队；或排空条件仍为"全局空闲"；或等待无进度、无剩余量、无超时，即退出码 1 |
 | **R3** | 管家可调配执行层并发，处理调度、拒绝死循环与死锁 | 管家侧**有界并发调度器**：锁集合声明 → 冲突/死锁检测 → 断言 → 派单 → 看护 | N `scripts/butler_scheduler.mjs`（受理→分组→派单→超时→回收）· R `skills/declare-lock-set/scripts/declare_lock_set.py`、`skills/detect-lock-conflict/scripts/detect_lock_conflict.py`、`skills/verify-no-lock-violation/scripts/verify_no_lock_violation.py`、`scripts/global_scheduler_lock.sh`、`skill-pool/docs/operations/instance-safety.json` | `node scripts/butler_scheduler.mjs --check` | `deadlock_cycles` / `conflicts` / `timeouts` 任一非空仍派单；或命中 AP-01（同任务相邻锁集合相同 ≥5 次）无阻断；或无界并发（无并发上限） |
 | **R4** | 管家优化管控机制：同等水准下压缩 token 与篇幅 | 管控机制**篇幅基线 + 保守裁剪 + 等价能力断言**三环，受管对象=管控机制本体（非全库） | R `skills/measure-token-budget/scripts/measure_tokens.py`、`skills/prune-redundant-context/scripts/prune_context.py`、`skills/verify-token-reduction/scripts/verify_reduction.py` · N `ai-control/config/token_budget.conf`（基线+目标降幅）· N `ai-control/reports/state/token_budget.json` | `python3 skills/verify-token-reduction/scripts/verify_reduction.py --target 0.30 --cases <管控机制证据串清单>` | 降幅达标但 `capability.missing` 非空（删掉了事实/编号/受管区块/验收证据）；或降幅未达标却宣称完成 |
 | **R5** | 审计管控机制，未触达物理层的全部落地 | 机制触达清零 + 技能层载体审计 + 并行安全单一口径 | R `scripts/mechanism_audit.mjs`、`scripts/anti_hallucination_audit.mjs` · N `scripts/skill_carrier_audit.mjs`（178 技能逐条判"有无可执行载体"）· N `ai-control/config/skill_carrier_exempt.txt`（规约型技能白名单） | `node scripts/mechanism_audit.mjs --exit && node scripts/skill_carrier_audit.mjs --check` | 任一条**判定器类**执行层无载体且不在白名单；或 4 项硬性未触达未清零（见 §3.2 G7） |
@@ -74,10 +74,11 @@ ELC-5 执行层并发调度与管控瘦身
 │   ├── R1-c 出图渲染：子树 → Mermaid 源码 + SVG/PNG（复用既有渲染器与查看器，禁止另写一套排版）
 │   └── R1-d 可追溯判定：每个节点必须能指到磁盘实体；悬空节点、孤儿节点、命中集/节点集不一致一律判红
 ├── R2 插件安装并发 (PLUGIN-CONC)
-│   ├── R2-a 并发受理：按请求 id 受理，互不阻塞（宿主 installs Map 已支持，禁止在受理口加互斥）
-│   ├── R2-b 队列化提交：profile 写锁保留（pnpm manifest 必须互斥），但改为**可见队列 + 超时 + 终止条件**
-│   ├── R2-c 隐式前置清除：不得在任何路径上要求用户"等任务空闲"；等待必须给出剩余量与进度
-│   └── R2-d 队列台账判定：--check 断言无无界等待、无双重持锁、无丢失请求
+│   ├── R2-a 忙判据细化：由"全体 running 会话 > 0"改为"是否真持有目标 profile 插件文件的冲突域"（发起方自己不得被判为阻塞源）
+│   ├── R2-b 拒绝改排队：第二笔安装请求由 409 改入队（复用既有 mutationChain，禁止另起一套队列实现）
+│   ├── R2-c 排空条件：客户端由"全局空闲"改为"本操作冲突域空闲"，且等待必须给出进度与剩余量
+│   ├── R2-d 宿主写锁保持互斥：profile `package.json` 写锁保留（pnpm manifest 必须互斥），只改锁粒度与可见性，不改语义
+│   └── R2-e 队列台账判定：--check 断言无"全体空闲"式无界等待、无双重持锁、无丢失请求
 ├── R3 管家并发调度 (BUTLER-SCHED)
 │   ├── R3-a 锁集合声明：declare_lock_set.py（已通电）· 缺锁即不派单
 │   ├── R3-b 冲突/死锁检测：detect_lock_conflict.py（已通电）· 三类零命中是并行的**前置条件**
@@ -128,7 +129,7 @@ ELC-5 执行层并发调度与管控瘦身
 | # | 缺口 | 现状证据（本轮实测，可复跑） |
 | :-- | :--- | :--- |
 | **G1** | **"任务级执行层树"无载体** | `route_plan.mjs` 只出"命中条目 / 通道"，**不装配树**；`execution-tree.json` 是**全域静态资产树**，与"本次任务所需"无关；无任何脚本能把两者缝起来，更无节点可追溯判定 |
-| **G2** | **插件安装被两处闸门串行，且等待不可见** | DSH 宿主 `@deepseek-ai/dsh-plugin-manager/lib/index.js`：`:2036-2058` 的 `change()` 把每次安装/卸载/启停包进 `withFileLock(<profile>/package.json, …, { waitMs: this.lockWaitMs })`，`lockWaitMs` 默认 **120 000 ms**（`:1357` 配置默认值）；`:2024-2031` 的 `configure()` 走 `hmr.runExclusive`；`README.zh.md:93` 明示「DSH HMR **串行**执行模块重载、文件监听和管理写入」。本仓拦截层**无队列、无进度、无超时提示** |
+| **G2** | **插件安装被"运行中会话守卫"挡住，且第二次请求直接拒绝、不排队** | 真凶是市场插件 `dshmarket` 自己的路由守卫，不是本仓脚本：① 忙判据 `~/.dsh/profiles/desktop/node_modules/dshmarket/src/routes.ts:5380-5389`（运行态 `lib/routes.js:5193-5202`）——`runningAgentsForGuard()` 非空即回 **409 + `agentsBusy:true`**，**而发起安装的当前会话本身就是 running agent**，故 agent 回合内点安装必然被拒；② 判据源 `src/agents.ts:26-42` 只认 `status==='running'`，不区分"是否真持有插件文件"；③ 单飞闸门 `src/routes.ts:594-617`（运行态 `lib/routes.js:499-518`）对第二笔请求**直接 409，不入队**；④ 客户端 `client/client.js:9845-9881` 每 2 秒轮询，**仅当 `runningAgents.length===0` 才排空队列**，`:8928-8936` 把 409 记成 `queued` → 表现为"必须等任务空闲"。实测留痕：`~/.dsh/profiles/desktop/.dsh-market/log.ndjson:7` = `{"level":"warn","event":"install-blocked","detail":"refused while agents are running — session-ad7f7498-…"}`（`:8` 为同类 `update-blocked`） |
 | **G3** | **并行锁门禁"有原子、无接入"** | 全仓检索 `declare_lock_set` / `detect_lock_conflict` / `verify_no_lock_violation`：**仅命中自身目录、catalog 与文档**，`scripts/` 下**无任何生产调用方**，即"原语在位、没人接线" |
 | **G4** | **并行安全两套口径** | `interface.json.parallel`（178 份，`verified:false`，由 `gen_skill_interfaces.mjs` 抽取）与 `instance-safety.json`（178 条）**各说一套**，同一事实两个权威源 |
 | **G5** | **管控机制篇幅未受管** | 实测字符数：`AGENTS.md` 7 227 · `rules/` 94 180 · `indexes/` 295 072 · `ai-control/` 172 352；**无篇幅基线、无降幅判定**，`token-economy-guard` 仅被文档引用、无运行凭据 |
@@ -168,7 +169,8 @@ ELC-5 执行层并发调度与管控瘦身
 | # | 分歧 | 备选 | 本条采用口径 |
 | :-- | :--- | :--- | :--- |
 | 1 | 需求 1 的"如图"缺档 | 圈等用户补图 ／ 按"任务级子树"默认解释先出文案 | **默认解释 + 显式登记**：树 = 本次任务所需执行层子树；用户补图后可回滚重写 |
-| 2 | "等到任务空闲"的归因 | 宿主 profile 写锁（120 秒） ／ HMR 串行闸门 ／ 本仓拦截层门禁 ／ Web GUI 忙碌禁用 | **三处并治**：宿主锁保留但队列化可见、HMR 串行不阻塞受理、本仓不得加"等空闲"前置。**不改宿主 bundle**（改宿主需重启桌面端，留待用户裁决） |
+| 2 | "等到任务空闲"的归因与改造边界 | 只改本仓 ／ 改 profile 内第三方插件副本 ／ 上报上游 | **三处并治、但分权重**：主因是 `dshmarket` 守卫（占 profile 内的第三方插件副本，改它属"改他人产物"，须用户明确授权并留备份）；宿主 profile 写锁**保持互斥**只改粒度；本仓 `plugin_sync` 锁键按包分片。**不改宿主 `app.asar`**（已签名，且需重启桌面端） |
+| 2b | 是否接受"改第三方插件副本" | 接受（治本，但会被插件升级覆盖） ／ 不接受（只入队等待 + 显式进度） | **先做"入队 + 进度可见 + 冲突域细化"（不改他人产物）**，把"直接拒绝"变成"可排队、看得见进度"；是否直接改 `dshmarket` 源码留给用户裁决 |
 | 3 | 瘦身是否允许删条 | 可删冗余条文 ／ 只可折叠重复 | **只折叠重复**：事实、需求编号、受管区块、验收证据**一律不得删**（沿用 `token-economy-guard` 既有口径） |
 | 4 | 并发度上界 | 无上限 ／ 固定 ／ 按实例安全声明动态 | **默认 4，可配**（`ai-control/config/gates.conf`），且只允许 `safe_multi` 无锁并发；`needs_lock` 必须带资源键；`single_only` 强制串行 |
 | 5 | 并行安全唯一口径 | 以 `instance-safety.json` 为准 ／ 以 `interface.json.parallel` 为准 | **以 `instance-safety.json` 为准**（有 `resource_keys` 与判据理由），`interface.json.parallel` 降为派生字段 |
@@ -178,8 +180,16 @@ ELC-5 执行层并发调度与管控瘦身
 ## 六、实施记录
 
 - **2026-10-02 [新建]**：接收 5 条口语需求，完成字面勘误（"导执行层→到执行层""这额个→这个""toeken→token"）、
-  需求简化与递归分裂（R1~R5，共 **24 个叶子**）；完成现状核查（可复用 8 项 / 实测缺口 8 项）；
-  登记 5 项待裁决分歧并给出本条采用口径。
+  需求简化与递归分裂（R1~R5，共 **24 个叶子**）；完成现状核查（可复用 8 项 / 实测缺口 8 类）；
+  登记 6 项待裁决分歧并给出本条采用口径。
+  **两项穿透到物理根因的取证**（均只读，未改任何文件）：
+  ① **插件安装"等空闲"**：根因不在本仓，而在市场插件 `dshmarket` 的 running-agent 守卫
+  （`lib/routes.js:5193-5202` 回 409 + `agentsBusy`），**发起安装的当前会话自己就是 running agent** → agent 回合内必然被拒；
+  客户端 2 秒轮询只在"全局无 running 会话"时才排空队列（`client/client.js:9845-9881`）。
+  有运行时留痕：`.dsh-market/log.ndjson:7` `install-blocked … refused while agents are running`。
+  ② **4 项机制判红**：逐项取到物理根因（S07 判据绑死进程会话号 / 拦截层条目被宿主整文件重写抹掉 /
+  任务列表面板判据指向已不存在的 `Resources/app/` 路径 / 重启插件源码晚于 bundle 且与 profile 硬链接），
+  最小修复载体见 §3.3。
   **本轮未改任何机制载体**（仅新增本文案），状态 `[EVOLVING]`。
 
 ---
@@ -193,7 +203,13 @@ ELC-5 执行层并发调度与管控瘦身
 > node scripts/build_capabilities_index.mjs --check         # catalog 登记 183 条 · 漂移 5 条
 > ls skills | wc -l                                         # 技能 178 条（有 scripts/ 100 · 无 78）
 > grep -rho "\[probe:[a-z]*\]" skills/*/SKILL.md | wc -l    # probe 声明 822 处（零声明技能 61 条）
+> head -10 ~/.dsh/profiles/desktop/.dsh-market/log.ndjson   # :7 install-blocked / :8 update-blocked
+> DSH_SESSION_ID=session-da4fd04c-… bash scripts/todo_gate.sh check   # exit 0（换会话号即 exit 1）
+> bash scripts/install_host_gate.sh verify                  # exit 1：条目⛔缺失 / 宿主激活✅
+> python3 skill-pool/plugins/dsh-plugin-restart/build_client.py --check  # {"success":false,"stale":true}
 > ```
 >
-> 宿主侧只读解包（`app.asar` 头部 JSON 定位 + 定点读取，未解包、未改动宿主）：
-> `@deepseek-ai/dsh-plugin-manager/lib/index.js:2024-2058`、`:1357`、`README.zh.md:93`。
+> 宿主侧只读解包（`app.asar` 头部 JSON 定位 + 定点读取，**未解包、未改动宿主**）：
+> `@deepseek-ai/dsh-plugin-manager/lib/index.js:2024-2058`、`:1357`、`README.zh.md:93`；
+> 归档内前端成品 `/dsh/node_modules/@deepseek-ai/dsh-client-ui-conversation/lib/client.js`。
+> 市场插件 `dshmarket` 是本机 profile 内的第三方包（源码 `src/` + 运行态 `lib/`），非本仓资产，本轮只读。

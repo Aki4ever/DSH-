@@ -2732,6 +2732,64 @@
 ---
 
 
+### REQ-093: 执行层并发调度与管控瘦身（ELC-5）—— 执行层树可视化 / 插件安装并发 / 管家并发调配 / 管控精简 / 落地审计清零
+> ### 🏷️ **资产元数据与生命周期标记**
+> - **文档类型 (Doc Type)**: `[REQUIREMENT 业务需求台账]`
+> - **清理定位 (Retention)**: `[PERSISTENT 长期受管]`
+> - **生成会话**: `[R093][3] 管控需求简化落地`
+> - **到期/清理条件**: `[随版本演进]`
+
+- **当前状态**：`[EVOLVING]` **仅完成需求文案与现状取证**（R1~R5 五条诉求已简化并递归分裂为 24 个叶子；**尚未改任何机制载体**）
+- **实施版本**：`v4.30.0`（规划目标；本条未落地，故当前系统实施总版本仍为 `v4.29.0`，不得提前递增）
+- **需求版本**：`v1.0.0`（需求自身的版本，随需求内容变更递增，与系统实施版本分开记）
+- **提出时间**：2026-10-02
+- **最新更新**：2026-10-02
+- **责任归属**：用户（提出与裁决） / AI 智能体（翻译、分裂与实施）
+- **需求文案**：[`docs/constraint_mechanism_optimize_10.md`](constraint_mechanism_optimize_10.md)（唯一权威出处，本条目只放指针不复述细则）
+
+#### 1. 提出背景与痛点
+用户提出 5 条优化诉求（执行层树可视化 / 插件安装并发 / 管家并发调度 / 管控机制瘦身 / 落地审计清零）。
+本轮**查重拦截**结论：R1、R3、R4、R5 四条**属于"既有能力积木已备、缺装配与接线"**（
+`route_plan` 不装配树、三把并行锁只有原语无调用方、token 三件套无受管对象、`mechanism_audit` 4 项判红），
+**只有 R2 是真外部成因**：真凶不在本仓，而在 profile 内第三方市场插件 `dshmarket` 的 running-agent 守卫
+（`lib/routes.js:5193-5202` 回 409 + `agentsBusy`），**发起安装的当前会话自己就是 running agent**，
+于是 agent 回合内点安装必然被拒，客户端只能排队等空闲——这正是"要等任务空闲"的物理来源。
+
+#### 2. 核心诉求与目标
+1. **可看（TREE-VIZ）**：能按任务列出"完成它需要哪些执行层"，出图且每个节点可回溯到磁盘实体；
+2. **可并（PLUGIN-CONC / BUTLER-SCHED）**：插件安装与管家派单都允许并发，忙闸门由"全体会话"细化为"冲突域"，
+   直接拒绝改为入队 + 进度可见；死锁靠字典序全序取锁、活锁复用 AP-01，**禁止另立判据**；
+3. **可瘦（TOKEN-TRIM）**：管控机制篇幅有基线、有降幅、有等价能力断言，**只折叠重复、不删事实与证据**；
+4. **可证（LAND-ZERO）**：机制触达 4 项判红逐项清零，技能层载体纳入审计，并行安全归并为单一真相源；
+5. **递归分裂铁律**：任何叶子若十条物理触达判据不全满足（前六条见 `optimize_6` §2.3、七八条见 `optimize_9` §2.3、
+   本条新增第九"并发安全判定"与第十"等量能力判定"），继续分裂，不得登记为完成。
+
+#### 3. 关联文件与影响范围
+- **需求文案**：[`docs/constraint_mechanism_optimize_10.md`](constraint_mechanism_optimize_10.md)（本条目唯一细则出处）；
+- **规划新建**：`scripts/task_layer_tree.mjs` · `scripts/plugin_install_queue.mjs` · `scripts/butler_scheduler.mjs` ·
+  `scripts/skill_carrier_audit.mjs` · `ai-control/config/token_budget.conf` · `ai-control/reports/state/plugin_install_queue.json`；
+- **规划改动**：`scripts/mechanism_audit.mjs`（4 项判据修复）· `scripts/lib/todo_gate_cli.mjs`（区分"无转录"与"无待办"）·
+  `scripts/install_host_gate.sh`（增 bundles 通道）· `skill-pool/plugins/dsh-plugin-restart`（重建 bundle 并同步）·
+  `scripts/plugin_sync.sh`（锁键按包分片）· `scripts/control_gates.sh`（接入新判定器）；
+- **边界外（需用户裁决，本轮不动）**：profile 内第三方包 `dshmarket` 源码、宿主 `app.asar`（已签名，改动需重启桌面端）。
+
+#### 4. 验收标准
+- [ ] `node scripts/task_layer_tree.mjs --check "<任务意图>"` 退出码 0，树内节点 100% 可回溯到磁盘实体；
+- [ ] `node scripts/plugin_install_queue.mjs --check` 退出码 0：无"全体空闲"式无界等待、无双重持锁、无丢失请求；
+- [ ] `node scripts/butler_scheduler.mjs --check` 退出码 0，并附必冲突反向用例证明有牙；
+- [ ] `python3 skills/verify-token-reduction/scripts/verify_reduction.py --target 0.30 --cases <清单>` 退出码 0 且 `capability.missing` 为空；
+- [ ] `node scripts/mechanism_audit.mjs --exit` 退出码 0（4 项硬性未触达清零）；`node scripts/skill_carrier_audit.mjs --check` 退出码 0；
+- [ ] 上述判定器**全部接入累积门禁**，未过不得结项。
+
+#### 5. 实施记录
+- **2026-10-02 [新建]**：接收 5 条口语需求，完成字面勘误（"导执行层→到执行层""这额个→这个""toeken→token"）、
+  **查重拦截**（结论：4 条是"有积木、缺接线"，1 条是外部成因）与递归分裂（R1~R5，共 **24 个叶子**）；
+  完成现状核查（可复用 8 项 / 实测缺口 8 类）；登记 6 项待裁决分歧并给出本条采用口径；
+  两项穿透到物理根因的只读取证（`dshmarket` running-agent 守卫；4 项机制判红逐项根因与最小修复载体）。
+  **本轮未改任何机制载体**（仅新增本文案与本条目），状态为 `[EVOLVING]`。
+
+---
+
 ## 📎 附：不计入条目数的资产变更留痕
 
 > 本节只是**资产与指针变更留痕**，不构成 `REQ-###` 需求条目、不新增规则、不改判定逻辑。
