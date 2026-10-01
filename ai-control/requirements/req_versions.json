@@ -1402,7 +1402,8 @@
         "scripts/req_version_audit.mjs",
         "scripts/anti_hallucination_audit.mjs",
         "rules/system/output_standard.md",
-        "ai-control/config/gates.conf"
+        "ai-control/config/gates.conf",
+        "indexes/fingerprint_index.json"
       ],
       "missing_files": [],
       "change_log": []
