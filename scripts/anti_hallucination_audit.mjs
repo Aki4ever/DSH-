@@ -107,10 +107,43 @@ export function collectDocs(root = ROOT) {
   return files
 }
 
-/** 判据八：全文扫悬空引用（仓库根口径 + 文档所在目录口径，两者皆不成立才算悬空）。 */
+/**
+ * 收集"规划中引用可豁免"的文档集合（REQ-092 修订 · 实测误伤修复）。
+ *
+ * 为什么必须分档（实测场景）：REQ-093 登记为 `[EVOLVING]`（仅出需求文案、未落地），
+ * 其文案里必然写着"新建 `scripts/xxx.mjs`"。若把规划期的路径也当悬空引用判红，
+ * 判定器就会**禁止一切前瞻性需求文档**存在 —— 而需求文档的本职就是先写清楚要建什么。
+ * 这与"引用真实性"要抓的东西（把不存在的文件说成已经存在、让人去跑一个不存在的命令）不是一回事。
+ *
+ * 判定口径：
+ *   · 需求台账里状态含"已实施/已落地"的条目 → 其文案里的引用**必须**真实存在（硬判据）；
+ *   · 状态为 `[EVOLVING]`/规划中的条目 → 其文案里尚未存在的引用记为 **pending（待建）**，
+ *     显式列出但不判红；
+ *   · 不在任何需求文案里的文档 → 引用必须存在（硬判据）。
+ */
+export function plannedDocSet(root = ROOT) {
+  const out = new Set()
+  const ledgerPath = join(root, 'docs', 'requirements.md')
+  if (!existsSync(ledgerPath)) return out
+  const text = readFileSync(ledgerPath, 'utf8')
+  const blocks = text.split(/^###\s+(REQ-\d+)\s*[:：]/m)
+  for (let i = 1; i < blocks.length; i += 2) {
+    const block = blocks[i + 1] || ''
+    const statusLine = (block.match(/^\s*-\s+\*\*当前状态\*\*[：:]\s*(.+)$/m) || [])[1] || ''
+    // 已实施完成的条目不豁免；仍在演进/规划中的条目豁免
+    const finished = /已实施完成|已闭环|\[ACTIVE\]/.test(statusLine) && !/EVOLVING|待拍板|未落地|仅完成需求文案/.test(statusLine)
+    if (finished) continue
+    for (const m of block.matchAll(/`(docs\/[^`\n]+\.md)`/g)) out.add(m[1])
+  }
+  return out
+}
+
+/** 判据八：全文扫悬空引用（仓库根 + 文档所在目录；规划中条目单独记为 pending）。 */
 export function danglingRefs(root = ROOT, opts = {}) {
   const docs = opts.docs || collectDocs(root)
+  const planned = opts.planned || plannedDocSet(root)
   const found = []
+  const pending = []
   let checked = 0
   for (const rel of docs) {
     let text = ''
@@ -121,10 +154,11 @@ export function danglingRefs(root = ROOT, opts = {}) {
       // 两种合法口径：相对仓库根，或相对该文档所在目录（README 常见写法）
       if (existsSync(join(root, ref))) continue
       if (existsSync(join(docDir, ref))) continue
-      found.push({ doc: rel, ref })
+      if (planned.has(rel)) pending.push({ doc: rel, ref })
+      else found.push({ doc: rel, ref })
     }
   }
-  return { checked, dangling: found, docs: docs.length }
+  return { checked, dangling: found, pending, docs: docs.length, plannedDocs: planned.size }
 }
 
 /** 判据七：逐条登记机制取"运行凭据"（新鲜度超限即判未通电）。 */
@@ -162,6 +196,8 @@ export function audit(root = ROOT, opts = {}) {
     checkedRefs: refs.checked,
     docsScanned: refs.docs,
     dangling: refs.dangling,
+    pending: refs.pending,
+    plannedDocs: refs.plannedDocs,
     powered: power,
     problems,
     generatedAt: new Date().toISOString(),
@@ -194,6 +230,10 @@ export function selftest() {
   writeFile(join(tmp, 'AGENTS.md'), '跑 `./scripts/does-not-exist.sh` 即可。\n')
   const bad = danglingRefs(tmp, { docs: ['AGENTS.md'] })
   add('临时仓库含悬空引用 → 判红', bad.dangling.length, 1)
+  add('非规划文档的悬空引用不计入 pending', bad.pending.length, 0)
+  const plannedCase = danglingRefs(tmp, { docs: ['AGENTS.md'], planned: new Set(['AGENTS.md']) })
+  add('规划中条目的引用 → 记为 pending 不判红', plannedCase.dangling.length, 0)
+  add('规划中条目的引用 → pending 显式记数', plannedCase.pending.length, 1)
   writeFile(join(tmp, 'AGENTS.md'), '跑 `./scripts/control.sh` 即可。\n')
   mkdirp(join(tmp, 'scripts'))
   writeFile(join(tmp, 'scripts/control.sh'), '#!/bin/bash\n')
@@ -222,6 +262,7 @@ function main() {
   if (argv.includes('--json')) { console.log(JSON.stringify(res, null, 2)); process.exit(res.ok ? 0 : 1) }
   console.log('🕳️ 反空架子与反幻觉审计')
   console.log(`   扫描治理文档 ${res.docsScanned} 份 · 校验仓库内引用 ${res.checkedRefs} 处 · 悬空 ${res.dangling.length} 处`)
+  if (res.pending?.length) console.log(`   ⏳ 规划中待建引用 ${res.pending.length} 处（需求未落地，显式列出不判红）`)
   const limit = Number(get('--limit', 20))
   for (const d of res.dangling.slice(0, limit)) console.log(`   ⛔ ${d.doc} → \`${d.ref}\`（磁盘不存在）`)
   if (res.dangling.length > limit) console.log(`   …另有 ${res.dangling.length - limit} 处`)
