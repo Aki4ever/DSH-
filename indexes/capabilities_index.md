@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：264**（技能 178 · 其他执行层 86）
+**执行层条目总数：266**（技能 178 · 其他执行层 88）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -523,7 +523,7 @@
 | 脚本 (CLI) | `cli.rules.agent_life` | `scripts/agent_life.mjs` | ✅ `scripts/interfaces/agent_life.interface.json` | `node scripts/agent_life.mjs` | agent_life.mjs |
 | 脚本 (CLI) | `cli.rules.align_version` | `scripts/align_version.mjs` | ✅ `scripts/interfaces/align_version.interface.json` | `node scripts/align_version.mjs` | 全库受管文档版本归位（把受管文档头部版本统一改到当前总版本） |
 | 脚本 (CLI) | `cli.rules.anti_hallucination_audit` | `scripts/anti_hallucination_audit.mjs` | ✅ `scripts/interfaces/anti_hallucination_audit.interface.json` | `node scripts/anti_hallucination_audit.mjs` | — |
-| 脚本 (CLI) | `cli.rules.app_restart` | `scripts/app_restart.mjs` | ⛔ 未声明 | `node scripts/app_restart.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.app_restart` | `scripts/app_restart.mjs` | ✅ `scripts/interfaces/app_restart.interface.json` | `node scripts/app_restart.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.atomic_lock_audit` | `scripts/atomic_lock_audit.mjs` | ✅ `scripts/interfaces/atomic_lock_audit.interface.json` | `node scripts/atomic_lock_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.audit_execution` | `scripts/audit_execution.sh` | ✅ `scripts/interfaces/audit_execution.interface.json` | `bash scripts/audit_execution.sh` | 对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片 |
 | 脚本 (CLI) | `cli.rules.backfill_scope` | `scripts/backfill_scope.mjs` | ✅ `scripts/interfaces/backfill_scope.interface.json` | `node scripts/backfill_scope.mjs` | — |
@@ -558,6 +558,7 @@
 | 脚本 (CLI) | `cli.rules.install_host_gate` | `scripts/install_host_gate.sh` | ✅ `scripts/interfaces/install_host_gate.interface.json` | `bash scripts/install_host_gate.sh` | — |
 | 脚本 (CLI) | `cli.rules.language_audit` | `scripts/language_audit.mjs` | ✅ `scripts/interfaces/language_audit.interface.json` | `node scripts/language_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.legacy_align_scan` | `scripts/legacy_align_scan.mjs` | ✅ `scripts/interfaces/legacy_align_scan.interface.json` | `node scripts/legacy_align_scan.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.market_guard_patch` | `scripts/market_guard_patch.mjs` | ✅ `scripts/interfaces/market_guard_patch.interface.json` | `node scripts/market_guard_patch.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.mechanism_audit` | `scripts/mechanism_audit.mjs` | ✅ `scripts/interfaces/mechanism_audit.interface.json` | `node scripts/mechanism_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.mobile_bridge` | `scripts/mobile_bridge.mjs` | ⛔ 未声明 | `node scripts/mobile_bridge.mjs` | 在 Mac 上开一个**只服务私网**的网桥，把只能回环访问的 DSH Web GUI |
 | 脚本 (CLI) | `cli.rules.mobile_bridge_audit` | `scripts/mobile_bridge_audit.mjs` | ⛔ 未声明 | `node scripts/mobile_bridge_audit.mjs` | — |
@@ -570,6 +571,7 @@
 | 脚本 (CLI) | `cli.rules.period_parity` | `scripts/period_parity.mjs` | ✅ `scripts/interfaces/period_parity.interface.json` | `node scripts/period_parity.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.physical_lock` | `scripts/physical_lock.sh` | ✅ `scripts/interfaces/physical_lock.interface.json` | `bash scripts/physical_lock.sh` | — |
 | 脚本 (CLI) | `cli.rules.plugin_install_queue` | `scripts/plugin_install_queue.mjs` | ✅ `scripts/interfaces/plugin_install_queue.interface.json` | `node scripts/plugin_install_queue.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.plugin_reload` | `scripts/plugin_reload.sh` | ⛔ 未声明 | `bash scripts/plugin_reload.sh` | — |
 | 脚本 (CLI) | `cli.rules.plugin_sync` | `scripts/plugin_sync.sh` | ✅ `scripts/interfaces/plugin_sync.interface.json` | `bash scripts/plugin_sync.sh` | — |
 | 脚本 (CLI) | `cli.rules.probe_long_output` | `scripts/probe_long_output.mjs` | ✅ `scripts/interfaces/probe_long_output.interface.json` | `node scripts/probe_long_output.mjs` | 长输出实测探针：验证 max_tokens 提高后单次回复能否突破旧上限（32768）。 |
 | 脚本 (CLI) | `cli.rules.probe_long_output_stream` | `scripts/probe_long_output_stream.mjs` | ✅ `scripts/interfaces/probe_long_output_stream.interface.json` | `node scripts/probe_long_output_stream.mjs` | 长输出触顶实测（流式版）：验证单次回复到底能有多长。 |

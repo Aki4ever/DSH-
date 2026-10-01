@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T22:18:26.182Z",
+  "generatedAt": "2026-10-01T22:20:40.727Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 264,
+  "total": 266,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 81
+    "脚本 (CLI)": 83
   },
-  "withInterface": 260,
+  "withInterface": 262,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1693,7 +1693,7 @@
       "desc": "==============================================================================",
       "invoke": "node scripts/app_restart.mjs",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/app_restart.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2003,6 +2003,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.market_guard_patch",
+      "path": "scripts/market_guard_patch.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/market_guard_patch.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/market_guard_patch.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.mechanism_audit",
       "path": "scripts/mechanism_audit.mjs",
       "desc": "==============================================================================",
@@ -2108,6 +2117,15 @@
       "invoke": "node scripts/plugin_install_queue.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/plugin_install_queue.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.plugin_reload",
+      "path": "scripts/plugin_reload.sh",
+      "desc": "",
+      "invoke": "bash scripts/plugin_reload.sh",
+      "invokeKind": "cli",
+      "interface": null
     },
     {
       "layer": "脚本 (CLI)",

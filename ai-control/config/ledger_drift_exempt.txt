@@ -14,10 +14,11 @@
 #   3) 未登记在此的漂移，一律照旧判红；
 #   4) 在途工作结束后，应删除对应行（豁免是临时状态，不是永久免责）。
 # ==============================================================================
-skill-pool/plugins/dsh-plugin-restart/src/restart-core.cjs | 该源文件由另一并发会话（REQ-091 重启插件批次）改写，本会话未改它、只据其重建了 bundle（lib/client.js 已对齐并通过 100/100 打桩自检）；源文件哈希仍归该会话登记，本会话登记会覆盖他人成果 | 2026-10-02
 docs/mobile_control_dsh.md | 另一并发会话正在新增移动端桥接能力（mobile_bridge / mobile_control），文件为在途新产物；本会话未改这些文件，登记其哈希会覆盖他人成果 | 2026-10-02
 scripts/lib/mobile_bridge_core.mjs | 另一并发会话正在新增移动端桥接能力（mobile_bridge / mobile_control），文件为在途新产物；本会话未改这些文件，登记其哈希会覆盖他人成果 | 2026-10-02
 scripts/mobile_bridge.mjs | 另一并发会话正在新增移动端桥接能力（mobile_bridge / mobile_control），文件为在途新产物；本会话未改这些文件，登记其哈希会覆盖他人成果 | 2026-10-02
 scripts/mobile_bridge_audit.mjs | 另一并发会话正在新增移动端桥接能力（mobile_bridge / mobile_control），文件为在途新产物；本会话未改这些文件，登记其哈希会覆盖他人成果 | 2026-10-02
 scripts/mobile_control.sh | 另一并发会话正在新增移动端桥接能力（mobile_bridge / mobile_control），文件为在途新产物；本会话未改这些文件，登记其哈希会覆盖他人成果 | 2026-10-02
 scripts/control.sh | 另一并发会话（移动端桥接能力）正在改写该入口薄壳，本会话未改该文件 | 2026-10-02
+ai-control/README.md | 该文档由另一并发会话（REQ-092/REQ-093 机制迭代）改写并已提交；本会话未改它，登记其哈希会覆盖他人成果，故按在途工作书面豁免 | 2026-10-02
+scripts/market_guard_patch.mjs | 另一并发会话正在新增该脚本（本机同时有多个会话在同仓工作，实测该文件在本会话收尾过程中被实时创建）；本会话未改它，不登记他人在途产物 | 2026-10-02
