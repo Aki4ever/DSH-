@@ -86,7 +86,7 @@ atomic_lock_acquire() {
     : # 持有者还活着
   else
     # 持有者已死 → 残留锁，回收并**留痕**
-    echo "⚠️ 原子锁残留回收：$key（原持有者 pid=${owner_pid:-未知} 已不存在）" >&2
+    echo "⚠️ 原子锁残留回收：${key}（原持有者 pid=${owner_pid:-未知} 已不存在）" >&2
     rm -f "$meta" 2>/dev/null || true
     if ( set -C; : > "$meta" ) 2>/dev/null; then
       printf '{"key":"%s","holder":"pid:%s@%s","pid":%s,"at":"%s","why":"%s","token":"%s"}\n' \
@@ -96,7 +96,7 @@ atomic_lock_acquire() {
     fi
   fi
   # 仍抢不到：**显式报错**，绝不静默等待
-  echo "⛔ 原子锁被占用：$key（持有者 pid=${owner_pid:-未知}${at_raw:+ · at=$at_raw}）" >&2
+  echo "⛔ 原子锁被占用：${key}（持有者 pid=${owner_pid:-未知}${at_raw:+ · at=$at_raw}）" >&2
   return 1
 }
 

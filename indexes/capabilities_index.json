@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T15:24:19.868Z",
+  "generatedAt": "2026-10-01T16:11:59.382Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 245,
+  "total": 246,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 62
+    "脚本 (CLI)": 63
   },
   "withInterface": 245,
   "entries": [
@@ -2018,6 +2018,15 @@
       "invoke": "bash scripts/physical_lock.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/physical_lock.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.plugin_sync",
+      "path": "scripts/plugin_sync.sh",
+      "desc": "",
+      "invoke": "bash scripts/plugin_sync.sh",
+      "invokeKind": "cli",
+      "interface": null
     },
     {
       "layer": "脚本 (CLI)",

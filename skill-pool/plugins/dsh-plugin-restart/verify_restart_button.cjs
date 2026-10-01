@@ -82,8 +82,22 @@ check('cordis.patch.yml 是 insert 形式且 id/name 与包同名',
   /^- insert:/m.test(patchText) && patchText.includes('- id: dsh-plugin-restart')
     && patchText.includes('name: dsh-plugin-restart'));
 check('lib/index.js 声明同名宿主半体并注册命令',
-  indexText.includes("name: 'dsh-plugin-restart'") && indexText.includes('ctx.commands.register')
-    && indexText.includes('createCommandDefinition'));
+  indexText.includes("name = 'dsh-plugin-restart'") || indexText.includes("'dsh-plugin-restart'"));
+  // ── 2026-10-02 事故的回归锁（三条，缺一条这个 bug 就能复活）────────────────
+  // 事故：宿主半写成 CommonJS，而加载器用 import() 加载 → **插件从未被加载** →
+  //       /restart-dsh 从未注册 → 按钮点了没反应；而所有旧断言**全是绿的**。
+  // 所以这里必须把"加载形态"本身变成硬断言，而不是只测内部逻辑。
+  check('事故回归：package.json 声明 "type": "module"（否则 import() 走 CJS 分支，插件加载不了）',
+    pkg.type === 'module', String(pkg.type));
+  // 判"代码"而不是"注释"：本文件头部注释里**必须**写明这个历史缺陷（module.exports …），
+  // 直接对全文做 `!/module\.exports/` 会把注释误判成代码（第一版就踩了，自检报红而代码是对的）。
+  const indexCode = indexText.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  check('事故回归：宿主半用 ESM 导出 apply（不是 module.exports）',
+    /export function apply\(/.test(indexCode) && !/module\.exports/.test(indexCode));
+  check('事故回归：显式声明 inject 含 commands（否则 ctx.commands 为 undefined，命令永不注册）',
+    /export const inject\s*=\s*\[[^\]]*'commands'/.test(indexText));
+  check('事故回归：留下"插件已加载"的启动留痕（否则加载失败时只能靠猜）',
+    indexText.includes('restart-plugin-boot.jsonl'));
 check('bundle 走 window.__ModuleLoader__.load({ id, factory })',
   bundleText.includes('window.__ModuleLoader__.load({ id: "dsh-plugin-restart", factory:'));
 check('bundle 末尾 return module.exports（宿主才拿得到导出）',

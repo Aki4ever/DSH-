@@ -13,6 +13,13 @@
  *   1) 显式环境契约：宿主启动时可注入 `DSH_IS_HOST=1` / `DSH_HOST_PID`；
  *   2) Electron NodeService 工具进程：argv 同时含 `DSH Desktop Helper`、
  *      `node.mojom.NodeService` 与 `DSH Desktop`；
+ *   2b) **当前真实宿主形态（2026-10-02 实测新增）**：argv 含
+ *      `@deepseek-ai/dsh-desktop-host/lib/index.js`。
+ *      实测宿主进程 argv：`/Applications/DeepSeek Harness.app/Contents/MacOS/DeepSeek Harness
+ *      --expose-internals …/@deepseek-ai/dsh-desktop-host/lib/index.js …` ——
+ *      它既不含 `DSH Desktop Helper`/`node.mojom.NodeService`（判据 2 不中，应用已更名），
+ *      也不含 `dsh/lib/bin.js`（判据 3 不中，那是旧入口），于是**三条全不中、isHost 恒 false**。
+ *      这正是"拦截层从来没被认成宿主激活"的根因之一，属判据未随宿主更名/改形对齐。
  *   3) 传统入口形态 `dsh/lib/bin.js`（兼容旧版宿主）。
  *
  * 反证据优先：命令行里出现本插件的自检/加载脚本时一律判非宿主，
@@ -31,5 +38,8 @@ export function isHostProcess(argv = process.argv, env = process.env) {
   if (env?.DSH_IS_HOST === '1') return true
   if (env?.DSH_HOST_PID !== undefined && env?.DSH_HOST_PID !== '') return true
   if (/DSH Desktop Helper/.test(joined) && /node\.mojom\.NodeService/.test(joined) && /DSH Desktop/.test(joined)) return true
+  // 2b) 当前宿主形态：desktop-host 入口（实测命中，见头部注释）
+  if (/@deepseek-ai[\\/]dsh-desktop-host[\\/]lib[\\/]index\.js/.test(joined)) return true
+  if (/dsh-desktop-host[\\/]lib[\\/]index\.js/.test(joined)) return true
   return /dsh[\\/]lib[\\/]bin\.js/.test(joined)
 }

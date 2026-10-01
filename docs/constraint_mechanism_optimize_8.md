@@ -202,6 +202,24 @@ R4 依赖 R3 提供权威口径，R1 依赖 R2 提供"点了真有用"的可信�
 
 ## 八、历史演进与变更记录
 
+- **2026-10-02 [实施 · 第二批 · 事故根因修复]**：用户实测「重启后按钮依然无效」，逐层取证后
+  定位到**两个互相叠加的独立故障**，二者都属于"仓库里代码是对的、但跑的根本不是这份代码"：
+
+  | 编号 | 根因 | 物理证据 | 修法 |
+  | :--- | :--- | :--- | :--- |
+  | **A** | **宿主半是 CommonJS，而加载器用 `import()` 加载** —— 插件**从未被加载** | 应用内自带技能 `cordis-plugin-development/references/host-plugin.md` 原文要求 ESM 形态：`export function apply(ctx, config)` + 可选 `export const inject`；官方 `dsh-command-compact` 实测声明 `const inject = ["commands", "compaction"]`。我们两者都没有 → `ctx.commands` 为 undefined → `/restart-dsh` 从未注册 → 点按钮宿主不认识该命令 → **什么都不会发生** | `package.json` 补 `"type": "module"`；`lib/index.js` 改 `export`；显式 `export const inject = ['commands']`；注册走 `ctx.effect(function*(){ yield ctx.commands.register(...) })` |
+  | **B** | **profile 里的插件文件是硬链接快照，重写源文件后链接断裂** —— 宿主读到的仍是旧版 | `stat` 实测：仓库 `lib/index.js` inode 108731772、profile 同一个文件 inode 108634302（内容一个是 ESM、一个是 CommonJS）；而 `package.json` 已被硬链接同步成 `"type": "module"` —— 组合成"加载必然报错"的最坏状态，且**完全静默** | 新建 `scripts/plugin_sync.sh`（`check`/`sync`/`list`/`install`）：逐文件 `cmp` 对齐 + 逐文件回读校验；把 `plugin_sync.sh check` 接进 `atomic_lock_audit --check` 作为**载具对齐硬判据** |
+  | **C** | **`dsh-plugin-usage-bar` 与 `dsh-plugin-control-jump` 从未装配进 profile** | profile `package.json` 的 `dependencies` 与 `dsh.profile.bundles` 实测只有 image-zoom / dmarket / restart → R4 要求的"峰谷时段全域常显"**物理上没有载体** | `plugin_sync.sh install` 幂等补齐依赖 + bundles + 文件；已装配 4 个插件并复核 |
+  | **D** | **shell 脚本里 `$var` 紧跟中文（全角括号）导致 bash 把中文并入变量名** | 实测：`atomic_lock.sh` 的两条残留锁告警路径全部崩溃（`key（…: unbound variable`）→ 锁库**在报错路径上自己出错**，把真实原因盖掉；`plugin_sync.sh` 同族 | 全仓 shell 扫描该模式并统一改为 `${var}`（1 文件 2 处；`plugin_sync.sh` 2 处） |
+
+  **追加的可见性改造（让下一次失败不必再靠猜）**：
+  - 客户端按钮失败时**弹出明确原因**（"宿主未提供 remote.commands.execute"＋排查提示），
+    不再静默 —— 这次事故里"没反应"与"客户端异常"外观完全相同，是拖长排查的主因；
+  - 宿主半每次 `apply` 追加一行到 `~/.dsh/.dsh-control/restart-plugin-boot.jsonl`
+    （含 PID、`hasCommands`、`hasEffect`、阶段），"插件到底有没有被加载"从此有据可查；
+  - 插件自检加 **4 条事故回归锁**：`type: module` / ESM 导出 / `inject['commands']` / 启动留痕，
+    任一缺失即判红（旧断言在事故期间**全是绿的**，所以才被瞒过去）。
+
 - **2026-10-01 [实施 · 第一批]**：用户下令「实施」后开工，落地 R1/R2/R4/R5/R6：
   - **R5 指纹索引**：新建 `scripts/fingerprint_index.mjs`（自检 14/14）+ `indexes/fingerprint_index.json`（234 条）。
     受管清单改由索引作为**唯一真相源**，`scripts/fingerprint_audit.sh` 改为消费它 ——

@@ -202,17 +202,41 @@ function handleRestartClick(ctx, sessionId, confirmFn) {
     }
   }
   if (confirmImpl && !confirmImpl(CONFIRM_MESSAGE)) {
-    return Promise.resolve({ ok: false, reason: 'cancelled' });
+    return finish({ ok: false, reason: 'cancelled' });
   }
   var exec = ctx && ctx.remote && ctx.remote.commands && ctx.remote.commands.execute;
   if (typeof exec !== 'function') {
-    return Promise.resolve({ ok: false, reason: '宿主未提供 remote.commands.execute' });
+    return finish({
+      ok: false,
+      reason: '宿主未提供 remote.commands.execute',
+      hint: '这一条通常意味着宿主半没被加载（或版本太旧）。可看 ~/.dsh/.dsh-control/restart-plugin-boot.jsonl 有无新记录。',
+    });
   }
   return Promise.resolve(exec(sessionId, CORE.CONFIRM_LINE, []))
     .then(function (result) { return { ok: true, result: result }; })
     .catch(function (err) {
-      return { ok: false, reason: (err && err.message) ? err.message : String(err) };
+      return finish({ ok: false, reason: (err && err.message) ? err.message : String(err) });
     });
+}
+
+/**
+ * 收尾：**把结果显式告诉用户**，而不是静默吞掉。
+ *
+ * 🔴 为什么必须加（2026-10-02 用户实测）：按钮点下去"没有效果"这句话，
+ *   在两种完全不同的故障下长得一模一样：
+ *     ① 宿主半没加载 → 命令不存在 → 请求被拒；
+ *     ② 客户端异常 → 请求根本没发出去。
+ *   没有可见反馈时，只能靠人猜，而猜错方向的代价是**又一次重启**。
+ *   所以这里把成败与原因直接弹给用户 —— 出错也要错得看得见。
+ */
+function finish(outcome) {
+  if (!outcome || outcome.ok) return Promise.resolve(outcome);
+  var text = '重启未执行：' + (outcome.reason || '未知原因') + (outcome.hint ? '\n\n' + outcome.hint : '');
+  try {
+    if (typeof window !== 'undefined' && typeof window.alert === 'function') window.alert(text);
+    else if (typeof console !== 'undefined') console.warn('[dsh-plugin-restart] ' + text);
+  } catch (err) { /* 提示失败绝不影响主流程 */ }
+  return Promise.resolve(outcome);
 }
 
 /** 构造注入给按钮的参数（官方插槽的 inject 回调按 sessionId 取参）。 */

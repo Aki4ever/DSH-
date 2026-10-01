@@ -1,0 +1,62 @@
+{
+  "id": "cli.rules.plugin_sync",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/plugin_sync.sh",
+  "invoke": "bash scripts/plugin_sync.sh check",
+  "summary": "插件装载同步器：把仓库里的插件源码逐文件对齐到宿主 profile（含依赖与 bundles），并逐文件回读校验，消除硬链接断裂导致的静默落后。",
+  "inputs": [
+    {
+      "name": "check",
+      "type": "string",
+      "required": false,
+      "desc": "判定 profile 与仓库是否逐字节一致；不一致退 1（默认动作）"
+    },
+    {
+      "name": "sync",
+      "type": "string",
+      "required": false,
+      "desc": "只对齐文件内容（不动依赖与 bundles），带原子锁"
+    },
+    {
+      "name": "list",
+      "type": "string",
+      "required": false,
+      "desc": "列出受管插件的目标路径与差异文件数"
+    },
+    {
+      "name": "install",
+      "type": "string",
+      "required": false,
+      "desc": "幂等装配：补齐 profile 的 dependencies 与 dsh.profile.bundles，并复制全部文件"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "逐插件的装配/差异结果与剩余待办提示"
+    }
+  ],
+  "exitCodes": {
+    "0": "一致或操作成功",
+    "1": "存在差异（check 模式）或加锁失败",
+    "2": "用法错误"
+  },
+  "sideEffects": [
+    "写宿主 profile 目录（node_modules 下的插件文件）",
+    "install 模式会改写 profile 的 package.json（写前自动备份）",
+    "在 .dsh_locks/ 下取用原子锁"
+  ],
+  "dependencies": [
+    "bash",
+    "cmp",
+    "scripts/lib/atomic_lock.sh"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "bash scripts/plugin_sync.sh check",
+    "bash scripts/plugin_sync.sh install"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

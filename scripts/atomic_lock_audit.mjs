@@ -76,6 +76,12 @@ export const LOCK_POINTS = [
     why: 'API 文档索引是整文件重写，两个同步器同时跑会互相截断',
     probe: /withLockSync\(|withLock\(/,
   },
+  {
+    file: 'scripts/plugin_sync.sh',
+    key: 'assets:plugin_profile_sync',
+    why: '把插件源码对齐进 profile（写仓库外文件），两处同时同步会写出半新半旧的插件',
+    probe: /atomic_lock\.sh|withLock/,
+  },
 ]
 
 /** 单个接入点的命中判定（纯函数，便于反向用例）。 */
@@ -99,6 +105,21 @@ export function checkLockDirParity(key = 'state:progress_ledger') {
     return { checked: true, ok: nodeDir === bashDir, key, nodeDir, bashDir }
   } catch (err) {
     return { checked: false, ok: false, key, reason: err && err.message ? err.message : String(err) }
+  }
+}
+
+/**
+ * 载具对齐判定：调用 `scripts/plugin_sync.sh check`。
+ * 返回 { ok, lines }；脚本不在或执行失败一律判**未对齐**（fail-closed）：
+ * "查不出来"与"确实不一致"在证据上等价，都不能当作通过。
+ */
+export function checkPluginAlignment() {
+  try {
+    execFileSync('bash', [join(ROOT, 'scripts/plugin_sync.sh'), 'check'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
+    return { ok: true, lines: [] }
+  } catch (err) {
+    const out = String((err && err.stdout) || '') + String((err && err.stderr) || '')
+    return { ok: false, lines: out.split('\n').map((l) => l.trim()).filter(Boolean) }
   }
 }
 
@@ -227,6 +248,14 @@ async function main() {
     return 2
   }
 
+  // ── 载具对齐判定（2026-10-02 事故后新增）────────────────────────────────
+  // 为什么放在这份审计里：这次事故的本质是"**载具断了**"——插件源码在仓库里是对的，
+  // 但 profile 里是旧版（硬链接断裂），于是宿主加载到的完全是另一份代码。
+  // 载具不对齐时，一切逻辑判定都是自欺欺人，所以必须与并发自证并列摆在最前面。
+  const align = checkPluginAlignment()
+  console.log(`载具对齐：${align.ok ? '✅ profile 与仓库逐字节一致' : '⛔ profile 落后于仓库'}`)
+  if (!align.ok) for (const l of align.lines.slice(0, 8)) console.log('   ' + l)
+
   console.log('🧪 原子锁接入与并发自证')
   console.log('-----------------------------------------')
   console.log(`接入点：${points.length - missing.length}/${points.length} 已加锁`)
@@ -245,7 +274,7 @@ async function main() {
     console.log(controlOk ? '✅ 无锁段确实丢失数据（证明检测器看得见竞态）' : '⛔ 无锁段零丢失 —— 并发没真跑起来，本次结论不可信')
     try { rmSync(locked.dir, { recursive: true, force: true }) } catch { /* ignore */ }
     try { rmSync(free.dir, { recursive: true, force: true }) } catch { /* ignore */ }
-    const pass = missing.length === 0 && lockOk && controlOk && (!parity.checked || parity.ok)
+    const pass = missing.length === 0 && lockOk && controlOk && (!parity.checked || parity.ok) && align.ok
     console.log('-----------------------------------------')
     console.log(pass ? '✅ 通过：接入覆盖 100% + 持锁 0 丢失 + 对照组可测出竞态' : '⛔ 未通过')
     return pass ? 0 : 1

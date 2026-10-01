@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T15:29:33.124Z",
+  "generatedAt": "2026-10-01T16:11:35.648Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -18,7 +18,7 @@
     "AGENTS.md",
     "README.md"
   ],
-  "count": 245,
+  "count": 246,
   "files": [
     {
       "path": "AGENTS.md",
@@ -71,10 +71,10 @@
     },
     {
       "path": "ai-control/lib/host_identity.mjs",
-      "short": "5107cc24",
-      "sha256": "5107cc24283bbafd430d144c9010f692613fcbf45f54e1db7d08d49c1b50c2a2",
-      "bytes": 2283,
-      "mtime": "2026-09-28T00:46:01.014Z"
+      "short": "8a65acc3",
+      "sha256": "8a65acc3815b9d3da18bf25591d9db986fa246c1098f3902856255f7f8109015",
+      "bytes": 3207,
+      "mtime": "2026-10-01T16:05:41.202Z"
     },
     {
       "path": "ai-control/plugin/index.mjs",
@@ -162,10 +162,10 @@
     },
     {
       "path": "docs/constraint_mechanism_optimize_8.md",
-      "short": "4ee6e92a",
-      "sha256": "4ee6e92a2040cec29e419ba16e7f57fa93e4393a115a468caef261867fc17e3c",
-      "bytes": 24233,
-      "mtime": "2026-10-01T15:24:28.819Z"
+      "short": "49b56d45",
+      "sha256": "49b56d454a6d76a9bb3eb57336d2f5b2c273fc0728398354191c884544c013b3",
+      "bytes": 27430,
+      "mtime": "2026-10-01T16:11:21.822Z"
     },
     {
       "path": "docs/constraint_mechanism_spec.md",
@@ -722,10 +722,10 @@
     },
     {
       "path": "scripts/atomic_lock_audit.mjs",
-      "short": "c77db5a6",
-      "sha256": "c77db5a6635874fa9b7a21fdcc7be5c5b0350550174bfc34550a312b1630d055",
-      "bytes": 18105,
-      "mtime": "2026-10-01T15:25:37.486Z"
+      "short": "c729742f",
+      "sha256": "c729742fb28a7e60ab2222abeb873f2cca7765829215bc47660d38a3b066aed9",
+      "bytes": 19777,
+      "mtime": "2026-10-01T16:11:14.720Z"
     },
     {
       "path": "scripts/audit_execution.sh",
@@ -1373,10 +1373,10 @@
     },
     {
       "path": "scripts/lib/atomic_lock.sh",
-      "short": "e56bcaff",
-      "sha256": "e56bcaff678dfa10b825753ba5d0ef301f3cee2f68a782e64facfc949d0827a2",
-      "bytes": 6021,
-      "mtime": "2026-10-01T15:19:02.940Z"
+      "short": "86f5e3ed",
+      "sha256": "86f5e3ede9fd7ac29f2d7a9c7d8a597a2e60daac3f56080af3ad1e47e31c71e2",
+      "bytes": 6025,
+      "mtime": "2026-10-01T16:11:05.981Z"
     },
     {
       "path": "scripts/lib/auto_naming.mjs",
@@ -1517,6 +1517,13 @@
       "sha256": "0a042f3116995dec329c9a47ca0d0e809cae82b374572138079c1f7c54c04e99",
       "bytes": 5704,
       "mtime": "2026-09-28T20:34:17.647Z"
+    },
+    {
+      "path": "scripts/plugin_sync.sh",
+      "short": "fa39b120",
+      "sha256": "fa39b12032b0d6f5bbca26c2831b4c2cff6ea71b6f7b5cf9e29d36169bf769e3",
+      "bytes": 8493,
+      "mtime": "2026-10-01T16:11:02.251Z"
     },
     {
       "path": "scripts/probe_long_output.mjs",
