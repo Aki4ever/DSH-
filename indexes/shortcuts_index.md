@@ -69,6 +69,7 @@
 | **“插件安装排队没”**<br>*(或“安装市场插件/插件并发”)* | **G1 干线** | 插件安装**并发受理 + 冲突域排队 + 进度可见**，杜绝"等任务空闲"式无界等待 | 实跑 `node scripts/plugin_install_queue.mjs list` 或 `probe` | 输出队列状态与被市场守卫（`agentsBusy`）拒绝的实证留痕，入口：[`scripts/plugin_install_queue.mjs`](../scripts/plugin_install_queue.mjs) |
 | **“技能有没有载体”**<br>*(或“空架子技能/技能物理触达”)* | **G1 干线** | 技能层 178 条逐条判**有无可执行载体** | 实跑 `node scripts/skill_carrier_audit.mjs --check` | 输出载体分布（自带/组合/引用/父门禁接管）与未豁免硬缺口清单，入口：[`scripts/skill_carrier_audit.mjs`](../scripts/skill_carrier_audit.mjs) |
 | **“管控机制瘦身”**<br>*(或“压缩管控篇幅/token 用量”)* | **G2 支线** | 管控机制**篇幅与 token 预算**：能力等价 + 只许减不许涨 | 实跑 `node scripts/token_budget_audit.mjs --check` | 输出逐文件 token 与总降幅、目标缺口；目标未达标如实显示不折算，入口：[`scripts/token_budget_audit.mjs`](../scripts/token_budget_audit.mjs) |
+| **“任务列表面板在跑吗”**<br>*(或“逐条进度/完成打钩面板”)* | **G1 干线** | 判定任务列表面板（逐条进度 + 完成打钩）是否真的触达物理层 | 实跑 `node scripts/todo_panel_audit.mjs --check` | 输出载体三项核验与**真实渲染的逐条打钩面板**（行为断言，不查字符串），入口：[`scripts/todo_panel_audit.mjs`](../scripts/todo_panel_audit.mjs) |
 | **“生态扩展”** | **G1 干线** | 查阅外部智能体扩展生态 | 读取 [`indexes/extension_ecosystem.md`](extension_ecosystem.md) | 输出 MCP / Skills / CLI / API 矩阵，提供入口：[`indexes/extension_ecosystem.md`](extension_ecosystem.md) |
 | **“生成图表”** | **G1 干线** | 查阅图表标准与决策树 | 读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 输出五大图表模版，提供入口：[`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) |
 | **“生成图片 <描述>”** | **G1 干线** | 用图像模型按描述创作图片（非手绘信息图） | 执行 [`scripts/generate_image.py`](../scripts/generate_image.py) | 自动生图，输出 `![描述](路径)` 并附带可点击打开链接 |

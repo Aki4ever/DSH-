@@ -30,6 +30,7 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
+import os from 'node:os'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
@@ -95,8 +96,48 @@ function loadCases(file) {
   }
 }
 
+/**
+ * 反向用例自证：能力等价判据必须**有牙**。
+ * 做法：故意把 after 语料换成"只剩标题、证据串全无"的文本，跑同一个判定器，
+ * 若它仍然报"证据串全部存活"，说明这盏灯是恒亮的，本判定器不合格。
+ */
+function selfTest() {
+  const conf = loadConf()
+  if (!conf) {
+    console.log('⛔ 取不到证据：token_budget.conf 不可读')
+    return 2
+  }
+  const scope = conf.TOKEN_SCOPE.split(/\s+/).filter(Boolean)
+  const casesFile = path.join(ROOT, conf.TOKEN_CASES_FILE || 'ai-control/config/token_budget_cases.json')
+  const tmp = path.join(os.tmpdir(), `token_budget_selftest_${process.pid}.md`)
+  fs.writeFileSync(tmp, '# 被掏空的语料\n\n证据串全部消失。\n', 'utf8')
+  let out = null
+  try {
+    out = JSON.parse(execFileSync('python3', [VERIFY, '--before', ...scope, '--after', tmp, '--target', '0.0001', '--cases', casesFile, '--json'], { cwd: ROOT, encoding: 'utf8' }))
+  } catch (error) {
+    const raw = (error && error.stdout) || ''
+    try {
+      out = JSON.parse(raw)
+    } catch {
+      out = null
+    }
+  } finally {
+    try { fs.rmSync(tmp, { force: true }) } catch { /* 清理失败不影响判定 */ }
+  }
+  const missing = (out && out.capability && out.capability.missing) || []
+  const caught = missing.length > 0
+  console.log('🧪 管控篇幅判定器 · 反向用例自检')
+  console.log('-----------------------------------------')
+  console.log(`   注入"被掏空的语料"（证据串全无）→ capability.missing = ${missing.length} 条`)
+  console.log(`   判定结果：${caught ? '已判红（✅ 能力判据有牙）' : '未判红（❌ 能力判据是恒亮绿灯）'}`)
+  console.log('-----------------------------------------')
+  console.log(caught ? '✅ 反向用例通过：削减能力必被判红' : '⛔ 反向用例失败')
+  return caught ? 0 : 1
+}
+
 function main() {
   const argv = process.argv.slice(2)
+  if (argv.includes('--self-test')) process.exit(selfTest())
   const conf = loadConf()
   if (!conf || !conf.TOKEN_SCOPE) {
     console.log(`⛔ 取不到证据：${path.relative(ROOT, CONF)} 缺失或未声明 TOKEN_SCOPE`)
@@ -155,7 +196,7 @@ function main() {
   try {
     const beforeList = baseline ? baseline.items.map((i) => i.path) : scope
     verifyOut = JSON.parse(
-      execFileSync('python3', [VERIFY, '--before', ...beforeList, '--after', ...scope, '--target', '0', '--cases', path.join(ROOT, casesFile), '--json'], {
+      execFileSync('python3', [VERIFY, '--before', ...beforeList, '--after', ...scope, '--target', '0.0001', '--cases', path.join(ROOT, casesFile), '--json'], {
         cwd: ROOT,
         encoding: 'utf8',
       }),
@@ -170,8 +211,14 @@ function main() {
       process.exit(2)
     }
   }
-  const missing = (verifyOut && verifyOut.capability && verifyOut.capability.missing) || []
+  if (!verifyOut || !verifyOut.capability || !Array.isArray(verifyOut.capability.missing)) {
+    console.log(`⛔ 取不到证据：能力等价判定器没有真的跑起来（${(verifyOut && verifyOut.error) || '缺少 capability.missing 字段'}）`)
+    console.log('   处置：这**不算通过** —— 恒绿的能力判据等于没有判据。')
+    process.exit(2)
+  }
+  const missing = verifyOut.capability.missing
   if (missing.length) issues.push(`能力被削减：${missing.length} 条证据串丢失 → ${missing.slice(0, 8).join(' · ')}`)
+  else reports.push(`能力等价：${cases.length} 条能力用例 · ${verifyOut.capability.cases_passed ?? cases.length}/${verifyOut.capability.cases_total ?? cases.length} 通过 · 证据串丢失 0 条`)
 
   // 硬判据②：篇幅不涨
   if (baseline) {

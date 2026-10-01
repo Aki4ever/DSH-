@@ -23,19 +23,15 @@
 | :--- | :--- | :--- |
 | **注入层** | 只放红线与路由指针，按需加载细则 | [`AGENTS.md`](../AGENTS.md)（项目级）、`$DSH_HOME/AGENTS.md`（宿主级）、[`indexes/shortcuts_index.md`](shortcuts_index.md) |
 | **状态层** | 由磁盘实况推导真值，产出 `status.json` | [`scripts/control_gates.sh`](../scripts/control_gates.sh)、[`ai-control/config/gates.conf`](../ai-control/config/gates.conf) |
-| **判定层** | 门禁判定 + 冗余与冲突双检 + 存量校准 + 通道审计 + **迭代检测 + 物理触达审计 + 输出结构契约判定 + 文字可读性判定 + 接口契约判定** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs)、[`scripts/progress_ledger.mjs`](../scripts/progress_ledger.mjs)、[`scripts/mechanism_audit.mjs`](../scripts/mechanism_audit.mjs)、[`scripts/output_audit.mjs`](../scripts/output_audit.mjs)、[`scripts/language_audit.mjs`](../scripts/language_audit.mjs)、[`scripts/gen_common_chars.mjs`](../scripts/gen_common_chars.mjs)、[`scripts/check_layer_interfaces.mjs`](../scripts/check_layer_interfaces.mjs) |
-| **流程管控层** | 流程依赖唯一权威源 + 效率最优排列 + 更新后一致性判定（REQ-087 R3） | [`ai-control/config/flow_graph.json`](../ai-control/config/flow_graph.json)（权威源）、[`scripts/flow_control.mjs`](../scripts/flow_control.mjs)（判定器）、[`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) §二之五（规则层）、[`scripts/process_supervisor.mjs`](../scripts/process_supervisor.mjs)（独立复核） |
-| **路由层** | 意图 → 条目匹配 + 调配决策（依赖/并行/锁冲突）+ 文档-实现一致性审计（REQ-089 R5） | [`scripts/route_plan.mjs`](../scripts/route_plan.mjs)（判定器 + 路线规划器）、[`indexes/navigation_router.md`](navigation_router.md)（模型说明）、[`indexes/capabilities_index.json`](capabilities_index.json)（条目真相源）、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs)（触发词匹配库） |
+| **判定层** | 门禁 + 双检 + 存量校准 + 通道审计 + 迭代检测 + 物理触达审计 + 输出结构与用字判定 + 接口契约 | 逐条命令见 [`AGENTS.md`](../AGENTS.md) §一（**唯一权威清单，此处不复述**） |
+| **流程管控层** | 流程依赖唯一权威源 + 效率最优排列 + 更新后一致性 | [`ai-control/config/flow_graph.json`](../ai-control/config/flow_graph.json)（权威源）、[`scripts/flow_control.mjs`](../scripts/flow_control.mjs)（判定器）、[`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) §二之五 |
+| **路由层** | 意图 → 条目匹配 + 调配决策（依赖/并行/锁冲突）+ 文档-实现一致性 | [`scripts/route_plan.mjs`](../scripts/route_plan.mjs)、[`indexes/navigation_router.md`](navigation_router.md)、[`indexes/capabilities_index.json`](capabilities_index.json)、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs) |
 | **拦截层** | 门禁未过时拒绝改动型工具调用 | [`ai-control/plugin/index.mjs`](../ai-control/plugin/index.mjs) |
 
 **四道基础门禁（累积语义，须按序全部通过）**：
 
-| 门禁 | 判定内容 | 量化指标 |
-| :--- | :--- | :--- |
-| **G1 项目初始化** | 仓库、骨架、防丢文件齐备 | 骨架齐备率 / 防丢覆盖率 |
-| **G2 工程结构化** | 目录有主、无孤儿目录、无散落垃圾 | 合规项 / 孤儿目录数 |
-| **G3 需求文档同步** | 台账条目数与 Git 工作树对齐 | 需求条目数 / 未提交变更数 |
-| **G4 冗余检测** | 实质重复率与重复标题在健康区 | 高相似块对 / 重复标题数 |
+**累积门禁 G0~G5 的定义与量化指标**：唯一权威源是 [`AGENTS.md`](../AGENTS.md) §一的门禁表（含 G0 会话命名与 G5 落地与版本一致性），本文只放指针、**不复述**。
+历史教训：同一张门禁表曾在本文件里**落后两代**（只写到 G4），与注入层各说一套——同一事实两处各写一份，改一处必漏一处。
 
 **双检与校准命令（相对项目根）**：
 

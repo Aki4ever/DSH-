@@ -14,7 +14,7 @@
 #   3) 未登记在此的漂移，一律照旧判红；
 #   4) 在途工作结束后，应删除对应行（豁免是临时状态，不是永久免责）。
 # ==============================================================================
-skill-pool/plugins/dsh-plugin-restart/src/restart-core.cjs | 另一并发会话（REQ-091 重启插件批次）正在改写该文件，bundle 待其重建；本会话未改该文件，登记其哈希会覆盖他人成果 | 2026-10-02
+skill-pool/plugins/dsh-plugin-restart/src/restart-core.cjs | 该源文件由另一并发会话（REQ-091 重启插件批次）改写，本会话未改它、只据其重建了 bundle（lib/client.js 已对齐并通过 100/100 打桩自检）；源文件哈希仍归该会话登记，本会话登记会覆盖他人成果 | 2026-10-02
 docs/mobile_control_dsh.md | 另一并发会话正在新增移动端桥接能力（mobile_bridge / mobile_control），文件为在途新产物；本会话未改这些文件，登记其哈希会覆盖他人成果 | 2026-10-02
 scripts/lib/mobile_bridge_core.mjs | 另一并发会话正在新增移动端桥接能力（mobile_bridge / mobile_control），文件为在途新产物；本会话未改这些文件，登记其哈希会覆盖他人成果 | 2026-10-02
 scripts/mobile_bridge.mjs | 另一并发会话正在新增移动端桥接能力（mobile_bridge / mobile_control），文件为在途新产物；本会话未改这些文件，登记其哈希会覆盖他人成果 | 2026-10-02

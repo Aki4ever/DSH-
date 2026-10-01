@@ -34,7 +34,7 @@ import { execFile } from 'node:child_process'
 import { existsSync, writeFileSync, appendFileSync, readFileSync } from 'node:fs'
 import { autoNameOnce, parseTitle as parseNamingTitle } from '../../scripts/lib/auto_naming.mjs'
 import { evaluatePhysicalLock, getLockState, advanceLockTo, STAGES } from '../../scripts/lib/physical_lock.mjs'
-import { checkTodoGate, recordTodoWriteSync } from '../../scripts/lib/todo_tracker.mjs'
+import { checkTodoGate, recordTodoWriteSync, resolveTodoEvidenceSync, summarize } from '../../scripts/lib/todo_tracker.mjs'
 import { buildCompactReport, writeCompactReport } from '../../scripts/lib/output_compactness.mjs'
 import { isHostProcess as isHostProcessImpl } from '../lib/host_identity.mjs'
 // REQ-092 / R1-d：全域覆盖快照读取（唯一真相源仍是全局规则的 scope_audit.mjs）
@@ -499,10 +499,37 @@ function progressBar(passed, total, width = 16) {
   return '█'.repeat(filled) + '░'.repeat(Math.max(0, width - filled))
 }
 
+/**
+ * 任务列表面板：逐条进度 + 完成打钩（REQ-083 / REQ-093-R5 载体迁移）。
+ *
+ * 载体为什么换：原路线是给**宿主前端成品包打补丁**（`scripts/patch_dsh_todo_progress.cjs`），
+ * 该文件已因"宿主更名 + 前端成品打进 app.asar"而永久失效（文件头 DEPRECATED 有实证）。
+ * 现载体 = **本插件的常显看板**：每步注入一条逐条进度、带完成打钩的任务列表。
+ * 判据不是"源码里有没有某个字符串"，而是 `scripts/todo_panel_audit.mjs` **真实调用本函数**并断言输出。
+ *
+ * 没有列表时返回空数组 —— 绝不画空进度条、绝不用假数字占位。
+ */
+export function renderTodoPanel(items, opts = {}) {
+  const list = Array.isArray(items) ? items : []
+  const s = summarize(list)
+  if (s.total === 0) return []
+  const width = Number.isInteger(opts.width) ? opts.width : 10
+  const lines = []
+  const filled = s.completed + s.inProgress * 0.5
+  lines.push(`**📋 任务列表** \`${progressBar(filled, s.total, width)}\` **${s.percent}%** · 完成 ${s.completed}/${s.total} · 进行中 ${s.inProgress} · 待办 ${s.pending}`)
+  for (const it of list) {
+    const status = it && it.status
+    const mark = status === 'completed' ? '✅' : status === 'in_progress' ? '🔄' : '⬜'
+    const raw = String((it && (it.content ?? it.text ?? it.activeForm)) || '').trim() || '(未命名)'
+    lines.push(status === 'in_progress' ? `- ${mark} **${raw}**` : `- ${mark} ${raw}`)
+  }
+  return lines
+}
+
 /** 渲染面向模型的常显看板（Markdown，DSH GUI 原生渲染）。支持全绿态高密度 Token 压缩。
  *  第二个参数 usage 是"用量常显行"（DeepSeek 时段 + 剩余额度），由本仓已审计的
  *  探针 CLI 产出；取不到时为空串，看板照常渲染，绝不用假数字占位。 */
-function renderCard(s, usage = '') {
+function renderCard(s, usage = '', todoLines = []) {
   const lines = []
   lines.push('<system-reminder>')
   if (s.execAllowed) {
@@ -516,6 +543,7 @@ function renderCard(s, usage = '') {
     lines.push(`> 指标实况：${[m0, m1, m2, m3].filter(Boolean).join(' · ')}`)
     if (usage) lines.push(usage)
     lines.push(`刷新：\`./scripts/control_gates.sh check\`（${s.generatedAt || '最新'}）`)
+    if (todoLines.length) { lines.push(''); lines.push(...todoLines) }
     lines.push('</system-reminder>')
     return lines.join('\n')
   }
@@ -541,6 +569,7 @@ function renderCard(s, usage = '') {
   lines.push('')
   lines.push(`刷新方式：\`./scripts/control_gates.sh check\`（快照时间 ${s.generatedAt || '未知'}）`)
   if (usage) lines.push(usage)
+  if (todoLines.length) { lines.push(''); lines.push(...todoLines) }
   lines.push('</system-reminder>')
   return lines.join('\n')
 }
@@ -937,8 +966,20 @@ export async function apply(ctx, config = {}) {
         const { createUserMessage } = llm
         // 用量行是旁路增强：探针失败/超时都只让这一行消失，不影响看板与门禁。
         const usage = await buildUsageLine().catch(() => '')
+        // 任务列表面板：证据取本会话的 todo 列表（插件文件与宿主转录取较新者）。
+        // 取不到就画空面板（renderTodoPanel 返回 []），绝不用假进度占位，也绝不影响看板与门禁。
+        let todoLines = []
+        try {
+          const agentRef = payload?.agent
+          const cardSid = typeof agentRef?.id === 'string' ? agentRef.id : agentRef?.session?.id
+          if (typeof cardSid === 'string' && cardSid) {
+            const todoHome = cfg.dshHome || process.env.DSH_HOME || join(homedir(), '.dsh')
+            const ev = resolveTodoEvidenceSync(cardSid, todoHome)
+            todoLines = renderTodoPanel(ev?.todos)
+          }
+        } catch { todoLines = [] }
         const card = createUserMessage({
-          content: [{ type: 'text', text: renderCard(status, usage) }],
+          content: [{ type: 'text', text: renderCard(status, usage, todoLines) }],
           source: { kind: 'plugin', plugin: name, form: 'notice', summary: renderBadge(status) },
         })
         return { kind: 'enter', messages: [...decision.messages, card] }

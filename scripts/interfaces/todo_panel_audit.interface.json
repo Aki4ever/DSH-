@@ -1,0 +1,45 @@
+{
+  "id": "cli.rules.todo_panel_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/todo_panel_audit.mjs",
+  "invoke": "node scripts/todo_panel_audit.mjs",
+  "summary": "任务列表面板（逐条进度 + 完成打钩）载体判定：真实调用渲染函数做行为断言，并核验已进宿主 bundles 通道。REQ-083 / REQ-093-R5。",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "判定：载体在位可解析 + 逐条打钩行为断言 + 已进宿主 dependencies 与 bundles"
+    },
+    {
+      "name": "--self-test",
+      "type": "flag",
+      "required": false,
+      "desc": "反向用例：注入假实现（永远返回空数组）必须判红"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "载体三项核验结论 + 面板真实渲染结果（逐条打钩与总进度）"
+    }
+  ],
+  "exitCodes": {
+    "0": "已触达：载体在位、行为断言通过、空列表不画假进度、已进宿主 bundles 通道",
+    "1": "未触达物理实现层（载体缺失/未导出渲染函数/行为断言未过/未进宿主）",
+    "2": "取不到证据（载体文件不存在）"
+  },
+  "sideEffects": [],
+  "dependencies": [
+    "cli.rules.mechanism_audit"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/todo_panel_audit.mjs",
+    "node scripts/todo_panel_audit.mjs --check",
+    "node scripts/todo_panel_audit.mjs --self-test"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

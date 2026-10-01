@@ -27,7 +27,7 @@ var module = { exports: {} }; var exports = module.exports;
 //   3) 按钮点击后若 `remote.commands` 不可用，如实返回失败原因，不假装已重启。
 'use strict';
 
-//#region restart-core sha256:c9c7a328e5143d5c（由 build_client.py 从 src/restart-core.cjs 内联，勿手改）
+//#region restart-core sha256:ee3dea56ccff5357（由 build_client.py 从 src/restart-core.cjs 内联，勿手改）
 'use strict';
 /**
  * restart-core.cjs — dsh-plugin-restart 的纯逻辑内核（宿主半与客户端半共用）
@@ -113,29 +113,56 @@ function parseRestartInput(rawInput) {
 function buildRelaunchScript(pid, opts) {
   const o = opts || {};
   const app = o.appName || APP_NAME;
-  const waitSec = Number.isInteger(o.waitSec) && o.waitSec > 0 ? o.waitSec : 30;
+  const waitSec = Number.isInteger(o.waitSec) && o.waitSec > 0 ? o.waitSec : 60;
+  const logFile = o.logFile || '';
   if (!Number.isInteger(pid) || pid <= 0) {
     throw new Error('buildRelaunchScript 只接受正整数 PID，收到：' + String(pid));
   }
   if (!/^[\w .\-]+$/.test(app)) {
     throw new Error('应用名含非法字符，拒绝拼进脚本：' + app);
   }
+  // 绝对可执行路径（open -a 失败时的兜底）。应用名固定为 APP_NAME，路径由它派生，不接受外部拼接。
+  const exePath = o.exePath || `/Applications/${app}.app/Contents/MacOS/${app}`;
+  if (!/^\/[\w .\-/]+$/.test(exePath)) {
+    throw new Error('可执行路径含非法字符，拒绝拼进脚本：' + exePath);
+  }
   const ticks = waitSec * 2; // 每 0.5 秒探一次
-  return [
+  const lines = [
     '#!/bin/sh',
     '# 由 dsh-plugin-restart 生成 —— 等旧宿主退出后重新打开应用。',
-    '# 为什么先等再开：宿主会随应用一起退出，立刻 open -a 只会聚焦到还未退出的旧窗口。',
+    '# 为什么先等再开：宿主会随应用一起退出；立刻 open 只会聚焦到还没退出的旧窗口。',
+    '# 为什么要有兜底：`open -a` 依赖 LaunchServices 注册，失败了应用就再也回不来（退出却打不开）。',
+    '# 所以备用一条"直接执行应用二进制"的路。',
+  ];
+  if (logFile && /^[\w .\-\/]+$/.test(logFile)) {
+    lines.push(
+      `LOG='${logFile}'`,
+      // 用字符串拼接而不是模板字面量：里面既有 $ 又有引号，容易被后续维护者改坏
+      'log() { printf "%s %s\\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$1" >> "$LOG" 2>/dev/null || true; }',
+      'log "启动重启脚本 old_pid=' + pid + '"',
+    )
+  } else {
+    lines.push('log() { :; }')
+  }
+  lines.push(
     'sleep 1',
-    "osascript -e 'quit app \"" + app + "\"' >/dev/null 2>&1 || true",
+    'log "请求退出应用"',
+    `osascript -e 'quit app "${app}"' >/dev/null 2>&1 || log "osascript quit 返回非 0（继续）"`,
     'i=0',
-    'while [ "$i" -lt ' + ticks + ' ]; do',
-    '  kill -0 ' + pid + ' 2>/dev/null || break',
+    `while [ "$i" -lt ${ticks} ]; do`,
+    `  kill -0 ${pid} 2>/dev/null || break`,
     '  sleep 0.5',
     '  i=$((i+1))',
     'done',
-    'open -a "' + app + '" >/dev/null 2>&1 || true',
+    'log "旧进程已消失或等待超时，准备重开"',
+    `if open -a "${app}" >/dev/null 2>&1; then log "已用 open -a 重开"; else`,
+    `  log "open -a 失败，改用可执行路径兜底"`,
+    `  "${exePath}" >/dev/null 2>&1 &`,
+    `  log "已用可执行路径重开"`,
+    'fi',
     '',
-  ].join('\n');
+  );
+  return lines.join('\n');
 }
 
 /**

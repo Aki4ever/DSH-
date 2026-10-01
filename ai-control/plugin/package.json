@@ -1,0 +1,20 @@
+{
+  "name": "dsh-plugin-execution-control",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DSH 拦截层插件（AI 执行流程管控）：硬门禁、待办常显、常显看板与首动改名。经 profile 的 dependencies + dsh.profile.bundles 通道装载，宿主重写 cordis.patch.yml 也抹不掉。",
+  "license": "MIT",
+  "type": "module",
+  "main": "loader.mjs",
+  "exports": {
+    ".": "./loader.mjs",
+    "./loader": "./loader.mjs",
+    "./index": "./index.mjs",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" }
+  },
+  "files": ["loader.mjs", "index.mjs", "cordis.patch.yml", "package.json"]
+}

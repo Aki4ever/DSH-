@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T16:59:06.806Z",
+  "generatedAt": "2026-10-01T17:08:52.182Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -18,14 +18,14 @@
     "AGENTS.md",
     "README.md"
   ],
-  "count": 287,
+  "count": 291,
   "files": [
     {
       "path": "AGENTS.md",
-      "short": "c0033f76",
-      "sha256": "c0033f76995ba6f56b05814ef6beda54c50aaca57563c8269a77dba7b7334310",
-      "bytes": 12441,
-      "mtime": "2026-10-01T16:55:31.237Z"
+      "short": "367928b4",
+      "sha256": "367928b4d254d7963e92f6b8114221d6376dc16c0afbfa7fdcea26c64415ae63",
+      "bytes": 12571,
+      "mtime": "2026-10-01T17:06:12.847Z"
     },
     {
       "path": "README.md",
@@ -57,10 +57,10 @@
     },
     {
       "path": "ai-control/config/ledger_drift_exempt.txt",
-      "short": "369ea277",
-      "sha256": "369ea2771e5eb87e09756dd5985a226f924baabeba236d58a7525a6c1ddd7f5b",
-      "bytes": 2649,
-      "mtime": "2026-10-01T16:58:51.177Z"
+      "short": "6b94375f",
+      "sha256": "6b94375ff34aedb6dd7deefebd693e4e6c78924d75a891add879248044813b94",
+      "bytes": 2747,
+      "mtime": "2026-10-01T17:07:52.366Z"
     },
     {
       "path": "ai-control/config/legacy_align_exempt.txt",
@@ -112,11 +112,18 @@
       "mtime": "2026-10-01T16:05:41.202Z"
     },
     {
+      "path": "ai-control/plugin/cordis.patch.yml",
+      "short": "278de8b0",
+      "sha256": "278de8b06664313c9ffc42a0d71bb7095c4ec9dce5110ed471934dd712d5713b",
+      "bytes": 1015,
+      "mtime": "2026-10-01T17:01:43.561Z"
+    },
+    {
       "path": "ai-control/plugin/index.mjs",
-      "short": "2efe08b6",
-      "sha256": "2efe08b667e8e585ad37963371f16be472386e0d996d41620b94f367c3ad377b",
-      "bytes": 59019,
-      "mtime": "2026-10-01T16:43:26.770Z"
+      "short": "11eb2fb0",
+      "sha256": "11eb2fb0e92870c1e33d13cad4d92e0ff3a02dbd64491019a268ccb149bc8b06",
+      "bytes": 61489,
+      "mtime": "2026-10-01T17:04:34.674Z"
     },
     {
       "path": "ai-control/plugin/loader.mjs",
@@ -124,6 +131,13 @@
       "sha256": "6290a5f4ac3d8b9bee1355d7ccbe9a11ef159a019e8b6727d739dfe460a7264a",
       "bytes": 5435,
       "mtime": "2026-09-28T00:46:13.955Z"
+    },
+    {
+      "path": "ai-control/plugin/package.json",
+      "short": "ed1fd92b",
+      "sha256": "ed1fd92b6a2202950ca5063bdfe28fa38eaf2afd82d4a258f02616d6992a4e09",
+      "bytes": 722,
+      "mtime": "2026-10-01T17:01:40.818Z"
     },
     {
       "path": "ai-control/plugin/selftest.mjs",
@@ -169,10 +183,10 @@
     },
     {
       "path": "docs/constraint_mechanism_optimize_10.md",
-      "short": "450bde4b",
-      "sha256": "450bde4becb9dd39de006a16686a2423dc0ffb8169fc18121a70446b65199ca6",
-      "bytes": 31385,
-      "mtime": "2026-10-01T16:57:38.608Z"
+      "short": "371f8710",
+      "sha256": "371f871073f9147cfd911f85a292563c3310380d9cbea0bea2e07fe3e8ab8a4d",
+      "bytes": 33664,
+      "mtime": "2026-10-01T17:08:52.152Z"
     },
     {
       "path": "docs/constraint_mechanism_optimize_3.md",
@@ -253,10 +267,10 @@
     },
     {
       "path": "docs/requirements.md",
-      "short": "03182218",
-      "sha256": "031822184098d9b259a59da62b80e3b7889562c18b377d3ceb7c223d77bc7d13",
-      "bytes": 247328,
-      "mtime": "2026-10-01T16:58:31.830Z"
+      "short": "ead4a9c0",
+      "sha256": "ead4a9c04d3d4f932c5fe20909a59a16e8f224d13b28711a3d3614b6cd5a68ea",
+      "bytes": 248605,
+      "mtime": "2026-10-01T17:08:52.153Z"
     },
     {
       "path": "docs/rules_tutorial.md",
@@ -288,17 +302,17 @@
     },
     {
       "path": "indexes/capabilities_index.json",
-      "short": "f64ccadb",
-      "sha256": "f64ccadb1aa1a7d9c5f3a3cfc02dfb025d61fa7d246bbdbdfd06b9ab1bf134fc",
-      "bytes": 119033,
-      "mtime": "2026-10-01T16:58:45.879Z"
+      "short": "a14d7121",
+      "sha256": "a14d7121eb97193298e950ec4b7380caaf599f587845ffb325750783aea887bf",
+      "bytes": 119413,
+      "mtime": "2026-10-01T17:06:06.215Z"
     },
     {
       "path": "indexes/capabilities_index.md",
-      "short": "d73ca600",
-      "sha256": "d73ca600811e1520687e0ded5baa8c881deb91a6b775997a7a5489a674100c9a",
-      "bytes": 122453,
-      "mtime": "2026-10-01T16:58:45.878Z"
+      "short": "ea3b758c",
+      "sha256": "ea3b758c93061aa0b6a49d25e8d96ba99ad973ae79fd26825c594c8064ca5b33",
+      "bytes": 122712,
+      "mtime": "2026-10-01T17:06:06.213Z"
     },
     {
       "path": "indexes/dsh_capabilities.md",
@@ -323,17 +337,17 @@
     },
     {
       "path": "indexes/rules_index.md",
-      "short": "4a2d08fa",
-      "sha256": "4a2d08fabc4a7668d2ed808275736c14ce6737a1a143a734a18d593f3b16a553",
-      "bytes": 28728,
-      "mtime": "2026-10-01T16:45:15.777Z"
+      "short": "27607645",
+      "sha256": "276076456e093e660c152d030a888d5f56bfb6b7c7776a08c856bb6a4caad086",
+      "bytes": 27763,
+      "mtime": "2026-10-01T17:08:40.553Z"
     },
     {
       "path": "indexes/shortcuts_index.md",
-      "short": "e9809449",
-      "sha256": "e98094497e2c9699898d849d236ddfbc91829a4af96ac2dbbe4b249a978b119f",
-      "bytes": 25295,
-      "mtime": "2026-10-01T16:56:18.388Z"
+      "short": "12bc143c",
+      "sha256": "12bc143ceda507203eafc75c6b0391a58c43d3204c2274b64b24228e45e2b6c3",
+      "bytes": 25721,
+      "mtime": "2026-10-01T17:06:12.847Z"
     },
     {
       "path": "indexes/tool_interfaces.md",
@@ -1009,10 +1023,10 @@
     },
     {
       "path": "scripts/install_host_gate.sh",
-      "short": "a0ec8534",
-      "sha256": "a0ec853472afc1cbe889b56ffe9b839530226b7af580edbbe55627484fa4a5a0",
-      "bytes": 11274,
-      "mtime": "2026-09-30T21:51:08.995Z"
+      "short": "29bd58c3",
+      "sha256": "29bd58c3fd20c52a3209d2a3357d9f4053bd522a18f5cbfaad4548d0e7b5e365",
+      "bytes": 12922,
+      "mtime": "2026-10-01T17:03:41.304Z"
     },
     {
       "path": "scripts/interfaces/agent_life.interface.json",
@@ -1519,6 +1533,13 @@
       "mtime": "2026-09-30T22:27:43.330Z"
     },
     {
+      "path": "scripts/interfaces/todo_panel_audit.interface.json",
+      "short": "4da3b24a",
+      "sha256": "4da3b24a409ec3cbf6dc5ea46b4e12684d3867d23f742843f001185f19533f67",
+      "bytes": 1527,
+      "mtime": "2026-10-01T17:06:06.159Z"
+    },
+    {
       "path": "scripts/interfaces/token_budget_audit.interface.json",
       "short": "05f120a4",
       "sha256": "05f120a421fe4c5bf073ee81648e55f3d9ad19be8b43e1be62baab4e331ae182",
@@ -1667,10 +1688,10 @@
     },
     {
       "path": "scripts/mechanism_audit.mjs",
-      "short": "f1d4c186",
-      "sha256": "f1d4c186b03b2b1c4720ef6ce64c498579ab8475842e5441cc5bc76bc3177e63",
-      "bytes": 29870,
-      "mtime": "2026-10-01T16:27:43.883Z"
+      "short": "74b0bbac",
+      "sha256": "74b0bbac517cc741274e96dbef6c289a1f1b959a1d5662786ff03afca8a52157",
+      "bytes": 30214,
+      "mtime": "2026-10-01T17:05:13.190Z"
     },
     {
       "path": "scripts/mobile_bridge.mjs",
@@ -1751,10 +1772,10 @@
     },
     {
       "path": "scripts/plugin_sync.sh",
-      "short": "aa2fee74",
-      "sha256": "aa2fee7423bd130992694dbc43f462b095da7cb47bcf354541c7d284ee199395",
-      "bytes": 8570,
-      "mtime": "2026-10-01T16:19:57.301Z"
+      "short": "c8d051f2",
+      "sha256": "c8d051f272b11f39792419af066993f5d17eebb69e865f4508c6f2ea94471d5d",
+      "bytes": 9245,
+      "mtime": "2026-10-01T17:01:52.220Z"
     },
     {
       "path": "scripts/probe_long_output.mjs",
@@ -1905,10 +1926,10 @@
     },
     {
       "path": "scripts/task_layer_tree.mjs",
-      "short": "9fc1a730",
-      "sha256": "9fc1a730c62348ff082f0b9ae9516825079539dcafda4653db69fbb716dd4a03",
-      "bytes": 21688,
-      "mtime": "2026-10-01T16:52:13.530Z"
+      "short": "778fc58e",
+      "sha256": "778fc58e88de390f551840b2f1c7f814b768a74d4a9191fe8b519e3c1f541bf2",
+      "bytes": 21964,
+      "mtime": "2026-10-01T16:59:39.184Z"
     },
     {
       "path": "scripts/test_auto_naming.mjs",
@@ -1939,11 +1960,18 @@
       "mtime": "2026-09-28T20:29:26.736Z"
     },
     {
+      "path": "scripts/todo_panel_audit.mjs",
+      "short": "5bebe038",
+      "sha256": "5bebe038a5a5816af324aa3f3cfcb1802a3dfb56ca8d1b4127b3f724170645c1",
+      "bytes": 8533,
+      "mtime": "2026-10-01T17:04:52.481Z"
+    },
+    {
       "path": "scripts/token_budget_audit.mjs",
-      "short": "9018736c",
-      "sha256": "9018736c95e037aebcac15e3edc07c5c9c6df1bd90e69981f804df076ae5f225",
-      "bytes": 9777,
-      "mtime": "2026-10-01T16:57:04.032Z"
+      "short": "235dae1a",
+      "sha256": "235dae1aca06b07c68042f1f9783bc2e35d49698c69256afe44d83c9d15d3814",
+      "bytes": 12302,
+      "mtime": "2026-10-01T17:08:31.460Z"
     },
     {
       "path": "scripts/verify_auto_naming_e2e.mjs",

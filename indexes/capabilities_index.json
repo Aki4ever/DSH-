@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T16:58:45.877Z",
+  "generatedAt": "2026-10-01T17:08:52.278Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 262,
+  "total": 263,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 79
+    "脚本 (CLI)": 80
   },
-  "withInterface": 259,
+  "withInterface": 260,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -2333,6 +2333,15 @@
       "invoke": "bash scripts/todo_gate.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/todo_gate.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.todo_panel_audit",
+      "path": "scripts/todo_panel_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/todo_panel_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/todo_panel_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

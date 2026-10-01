@@ -63,6 +63,7 @@ node scripts/process_supervisor.mjs --fast  # 流程监督员独立复核（不�
 node scripts/scope_audit.mjs --check     # 全域覆盖审计：其他 DSH 工程是否 100% 纳入管控（REQ-092）
 node scripts/req_version_audit.mjs --check        # 需求版本贯通：需求文案↔台账↔载体↔回执四处对拍
 node scripts/anti_hallucination_audit.mjs --check # 反空架子/反幻觉：悬空引用 + 机制通电凭据
+node scripts/todo_panel_audit.mjs --check      # 任务列表面板载体：逐条打钩行为断言 + 是否已进宿主 bundles
 node scripts/backfill_scope.mjs --apply  # 存量补课：为未接管工程铺入口、正引用并实跑留痕
 ```
 

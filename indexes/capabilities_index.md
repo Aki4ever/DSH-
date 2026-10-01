@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：262**（技能 178 · 其他执行层 84）
+**执行层条目总数：263**（技能 178 · 其他执行层 85）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -595,6 +595,7 @@
 | 脚本 (CLI) | `cli.rules.test_physical_lock` | `scripts/test_physical_lock.mjs` | ✅ `scripts/interfaces/test_physical_lock.interface.json` | `node scripts/test_physical_lock.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.test_v180_spec` | `scripts/test_v180_spec.sh` | ✅ `scripts/interfaces/test_v180_spec.interface.json` | `bash scripts/test_v180_spec.sh` | — |
 | 脚本 (CLI) | `cli.rules.todo_gate` | `scripts/todo_gate.sh` | ✅ `scripts/interfaces/todo_gate.interface.json` | `bash scripts/todo_gate.sh` | — |
+| 脚本 (CLI) | `cli.rules.todo_panel_audit` | `scripts/todo_panel_audit.mjs` | ✅ `scripts/interfaces/todo_panel_audit.interface.json` | `node scripts/todo_panel_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.token_budget_audit` | `scripts/token_budget_audit.mjs` | ✅ `scripts/interfaces/token_budget_audit.interface.json` | `node scripts/token_budget_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.verify_auto_naming_e2e` | `scripts/verify_auto_naming_e2e.mjs` | ✅ `scripts/interfaces/verify_auto_naming_e2e.interface.json` | `node scripts/verify_auto_naming_e2e.mjs` | 自动命名端到端验收（重启后运行，一次给出结论）。 |
 | 脚本 (CLI) | `cli.rules.verify_escape_hatch` | `scripts/verify_escape_hatch.sh` | ✅ `scripts/interfaces/verify_escape_hatch.interface.json` | `bash scripts/verify_escape_hatch.sh` | — |

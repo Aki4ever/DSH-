@@ -66,7 +66,32 @@ url_encode_path() {
   "${NODE_BIN:-node}" -e 'const p=process.argv[1];process.stdout.write("file://"+p.split("/").map(s=>encodeURIComponent(s)).join("/"))' "$1"
 }
 
+# 拦截层注册的两条通道（任一成立即算"条目在位"）：
+#   ① 旧通道：profile 层栈补丁 `cordis.patch.yml` 里的 `- insert: id: <ENTRY_ID>`；
+#   ② 新通道：profile `package.json` 的 `dependencies` + `dsh.profile.bundles`（结构化清单）。
+# 为什么必须认第二条（2026-10-02 实测事故）：层栈补丁文件会被**本仓之外的写者整文件重写**，
+# 实测 00:42 它从 1475 字节被改写成 829 字节，条目连同 4 条用户设置一起消失；
+# 而同一时刻 package.json 的 bundles 通道**原样存活**。判据只认单通道，就等于把机制押在最脆弱的那个文件上。
+ENTRY_PKG="dsh-plugin-execution-control"
+has_entry_bundles() {
+  local pkgjson="$PROFILE_DIR/package.json"
+  [ -f "$pkgjson" ] || return 1
+  "${NODE_BIN:-node}" -e '
+const fs=require("node:fs");
+const j=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));
+const name=process.argv[2];
+const dep=!!(j.dependencies&&j.dependencies[name]);
+const bundle=!!(j.dsh&&j.dsh.profile&&Array.isArray(j.dsh.profile.bundles)&&j.dsh.profile.bundles.includes(name));
+process.exit(dep&&bundle?0:1);
+' "$pkgjson" "$ENTRY_PKG" 2>/dev/null
+}
 has_entry() { [ -f "$PATCH_FILE" ] && grep -q "id: $ENTRY_ID" "$PATCH_FILE"; }
+entry_channel() {
+  if has_entry && has_entry_bundles; then printf '层栈补丁 + bundles 双通道'; return 0; fi
+  if has_entry; then printf '层栈补丁（旧通道，宿主重写会丢）'; return 0; fi
+  if has_entry_bundles; then printf 'bundles（宿主重写抹不掉）'; return 0; fi
+  printf '无'; return 1
+}
 
 # 宿主激活证据有两个来源，任一成立即算激活：
 #   1) 追加式台账 host-activation.log（只记 isHost=true 事件，测试进程覆盖不掉）——首选；
@@ -102,7 +127,7 @@ case "$ACTION" in
     fi
     echo "注册文件: $PATCH_FILE"
     local_ok=0
-    if has_entry; then echo "条目存在: ✅ id=$ENTRY_ID"; local_ok=1; else echo "条目存在: ⛔ 缺失"; fi
+    if entry_channel >/dev/null; then echo "条目存在: ✅ id=${ENTRY_ID}（通道：$(entry_channel)）"; local_ok=1; else echo "条目存在: ⛔ 缺失（两条通道均无：层栈补丁与 bundles）"; fi
     echo "加载器路径: $LOADER_ABS"
     [ -f "$LOADER_ABS" ] && echo "加载器文件: ✅ 存在" || { echo "加载器文件: ⛔ 不存在"; local_ok=0; }
     # 载体"能解析"才算在位（2026-09-29 新增）
@@ -148,7 +173,7 @@ case "$ACTION" in
     ;;
   install)
     if [ ! -f "$PATCH_FILE" ]; then echo "❌ 找不到 profile 配置：$PATCH_FILE"; exit 2; fi
-    if has_entry; then echo "ℹ️ 条目已存在，无需重复写入（幂等）"; exit 0; fi
+    if entry_channel >/dev/null; then echo "ℹ️ 条目已存在，无需重复写入（幂等；通道：$(entry_channel)）"; exit 0; fi
     if ! cp "$PATCH_FILE" "$PATCH_FILE.bak-$(date +%Y%m%d-%H%M%S)-install-gate" 2>/dev/null; then
       echo "❌ 备份失败（profile 目录不可写）：$PATCH_FILE"
       echo "   处置：给宿主 profile 目录写权限，或以更高权限重跑本命令；未备份前不改配置。"

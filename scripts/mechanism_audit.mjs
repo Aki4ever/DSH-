@@ -344,14 +344,18 @@ function buildRegistry() {
     {
       name: '任务列表面板（逐条进度 + 完成打钩）',
       claim: 'REQ-083',
+      // 载体已迁移（REQ-093 / R5）：判据**委托**给 `scripts/todo_panel_audit.mjs`，本处不复制第二套判定。
+      // 为什么不再查宿主前端产物：宿主已更名且前端成品打进 `app.asar`，那条路径**永远不存在**——
+      // 判据只会长期报红而没有任何东西会把机制重新落地。现行载体是拦截层插件的常显看板面板。
       check: () => {
-        const p = '/Applications/DSH Desktop.app/Contents/Resources/app/node_modules/@deepseek-ai/dsh-client-ui-conversation/lib/client.js'
-        if (!existsSync(p)) return { ok: false, detail: '找不到宿主前端产物', carrier: p }
-        const t = readFileSync(p, 'utf8')
-        const hasBar = t.includes('TodoPanel_module_css_default.barFill')
-        const hasRow = t.includes('itemStateText')
-        const hasCheck = /_item\[data-status="completed"\]\s*\.\w+_itemState::before/.test(t)
-        return { ok: hasBar && hasRow && hasCheck, detail: `总进度${hasBar ? '✅' : '⛔'} 逐条${hasRow ? '✅' : '⛔'} 打钩${hasCheck ? '✅' : '⛔'}`, carrier: 'scripts/patch_dsh_todo_progress.cjs' }
+        const script = join(ROOT, 'scripts', 'todo_panel_audit.mjs')
+        if (!existsSync(script)) return { ok: false, detail: '判定器缺失 scripts/todo_panel_audit.mjs', carrier: 'scripts/todo_panel_audit.mjs' }
+        const r = run(process.execPath, ['scripts/todo_panel_audit.mjs', '--check'])
+        return {
+          ok: r.exitCode === 0,
+          detail: r.exitCode === 0 ? '载体在位 · 逐条打钩与总进度行为断言通过 · 已进宿主 bundles' : `exit=${r.exitCode} · ${(r.out || '').split('\n').filter((l) => l.includes('⛔')).slice(-1)[0] || '未触达'}`,
+          carrier: 'ai-control/plugin/index.mjs',
+        }
       },
     },
     {

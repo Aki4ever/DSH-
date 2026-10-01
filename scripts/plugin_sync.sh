@@ -36,12 +36,19 @@ ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 MODE="${1:-check}"
 
 # 受管插件（仓库相对路径 → 包名）。新增插件必须登记在这里，否则同步不到。
+# 条目格式：<仓库相对路径> 或 <仓库相对路径>|<包名>（省略包名时取目录名）。
+# 为什么引入包名映射：拦截层实现放在 `ai-control/plugin/`，目录名 "plugin" 不能当包名用。
 PLUGIN_DIRS=(
   "skill-pool/plugins/dsh-plugin-restart"
   "skill-pool/plugins/dsh-plugin-usage-bar"
   "skill-pool/plugins/dsh-plugin-image-zoom"
   "skill-pool/plugins/dsh-plugin-control-jump"
+  "ai-control/plugin|dsh-plugin-execution-control"
 )
+# 取条目的包名（无映射时回退目录名）
+plugin_name() { local e="$1"; case "$e" in *"|"*) printf '%s' "${e##*|}" ;; *) printf '%s' "$(basename "${e%%|*}")" ;; esac; }
+# 取条目的路径（去掉包名映射）
+plugin_rel() { printf '%s' "${1%%|*}"; }
 
 DSH_HOME_DIR="${DSH_HOME:-$HOME/.dsh}"
 PROFILE="${DSH_PROFILE:-desktop}"
@@ -51,6 +58,8 @@ DEST_ROOT="$DSH_HOME_DIR/profiles/$PROFILE/node_modules"
 SYNC_FILES=(
   "package.json"
   "cordis.patch.yml"
+  "index.mjs"
+  "loader.mjs"
   "lib/index.js"
   "lib/client.js"
   "verify_restart_button.cjs"
@@ -86,9 +95,10 @@ run() {
   local mode="$1"
   diff_count=0
   changed_list=()
-  for rel in "${PLUGIN_DIRS[@]}"; do
+  for entry in "${PLUGIN_DIRS[@]}"; do
+    rel="$(plugin_rel "$entry")"
     local pkg
-    pkg="$(basename "$rel")"
+    pkg="$(plugin_name "$entry")"
     local dest="$DEST_ROOT/$pkg"
     if [ ! -d "$dest" ]; then
       echo "⚠️ 目标插件未安装：${dest}（跳过；如需安装请用宿主插件管理器）" >&2
@@ -155,16 +165,16 @@ case "$MODE" in
       exit 1
     fi
     rc=0
-    for rel in "${PLUGIN_DIRS[@]}"; do
-      install_plugin "$rel" "$(basename "$rel")" || rc=1
+    for entry in "${PLUGIN_DIRS[@]}"; do
+      install_plugin "$(plugin_rel "$entry")" "$(plugin_name "$entry")" || rc=1
     done
     atomic_lock_release "assets:plugin_profile_sync" || true
     echo "⚠️ 装配只改磁盘；**需重载 profile 才生效**（宿主启动时读取 bundles 列表）。"
     exit "$rc"
     ;;
   list)
-    for rel in "${PLUGIN_DIRS[@]}"; do
-      pkg="$(basename "$rel")"
+    for entry in "${PLUGIN_DIRS[@]}"; do
+      rel="$(plugin_rel "$entry")"; pkg="$(plugin_name "$entry")"
       dest="$DEST_ROOT/$pkg"
       [ -d "$dest" ] || { echo "⛔ 未安装  $pkg"; continue; }
       d=0

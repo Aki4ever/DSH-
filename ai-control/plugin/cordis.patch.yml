@@ -1,0 +1,14 @@
+# dsh bundle patch：拦截层插件自带的插入声明（本文件随包一起装进 profile，宿主不重写它）
+#
+# 为什么改走这条通道（2026-10-02 实测事故）：
+#   原先拦截层靠 `scripts/install_host_gate.sh install` 往 profile 的 `cordis.patch.yml`
+#   追加 `- insert:` 条目。实测 00:42 该文件被**本仓之外的写者整文件重写**为 829 字节，
+#   条目连同 4 条用户设置一起消失 —— 硬门禁在运行时静默消失，而判据只认那一个文件。
+#   宿主自己的 bundles 通道（dependencies + dsh.profile.bundles）在同一时刻**存活**，
+#   因为它是 profile 的 `package.json`（结构化清单），不是层栈补丁文件。
+#
+# name 用包名：loader.mjs 走 import() 加载真实实现，import 失败则降级为空插件，
+# 避免管控故障把桌面端一起拖垮（与 index.mjs 直连相比这是**故意的**一层隔离）。
+- insert:
+    - id: ai-execution-control
+      name: dsh-plugin-execution-control
