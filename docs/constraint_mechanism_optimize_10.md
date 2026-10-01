@@ -1,0 +1,199 @@
+# 需求文案：执行层并发调度与管控瘦身（ELC-5）· 执行层树可视化 / 插件安装并发 / 管家并发调配 / 管控精简 / 落地审计清零
+
+> ### 🏷️ **版本信息与实施追踪**
+> - **文档类型**：需求文案（登记为 `REQ-093`，状态 `[EVOLVING]`）
+> - **当前系统实施总版本**：`v4.29.0`（本条目实施完成后推进至 `v4.30.0`，**尚未落地**）
+> - **本文档内容版本**：`v1.0.0`
+> - **需求版本号**：`v1.0.0`（需求自身的版本，与系统实施版本分开记）
+> - **提出时间**：2026-10-02
+> - **任务代号**：`ELC-5`（Execution-Layer Concurrency，五条并发与瘦身诉求）
+> - **需求状态**：`[EVOLVING]` 已登记，待逐阶段实施
+> - **依据**：用户 5 条口语需求 + 本轮只读取证（`mechanism_audit.mjs` · `route_plan.mjs` ·
+>   `progress_ledger check` · `build_capabilities_index --check` · 技能层载体扫盘 ·
+>   DSH 宿主 `@deepseek-ai/dsh-plugin-manager` 源码只读解包）
+
+---
+
+## 一、原始需求（用户口语原文）
+
+> 以下是我对管控规则的优化需求,如果需求颗粒度过大导执行层(包括 skill、agent、plugin、插件、cli、mcp等)
+> 导致没触达物理实现层,就递归分裂成更细更落地的执行层去完成这额个需求;
+> 1、如图,可视化的输出执行任务所需的执行层树状结构;
+> 2、在插件安装时,应该允许并发执行(当前安装一个市场插件时经常需要等到任务空闲才可以执行,事实上要允许用户进行并发处理);
+> 3、管家新增功能,让管家可以调配执行层,允许他们并发处理,要处理好调度问题,拒绝死循环和死锁的情况;
+> 4、管家新增功能,让管家去优化提升整体管控机制,让管控机制在保持同等执行水准的情况去优化toeken使用量,压缩管控机制的篇幅,让管控机制精简有效;
+> 5、把当前的管控机制审计一遍,那些没能落地执行实触达到物理层的机制全部落实到物理执行层,如果颗粒度过大就拆分成更细更能落地的执行层去实现;
+>
+> 理解以上需求并简化成更利于你执行的需求文案;
+
+> 📌 **原文勘误（只做字面归一，不改语义）**："导执行层" = **到执行层**；"这额个需求" = **这个需求**；
+> "toeken" = **token**。
+>
+> 📌 **图片缺档声明**：需求 1 提到"如图"，但本轮**未收到任何图片附件**（会话输入中无图片载荷）。
+> 本条按可执行口径取默认解释并在 §5 分歧 1 显式登记：**"执行层树" = 完成本次任务所需的执行层子树**，
+> 不是全域静态资产树。若图中口径与之不同，以用户后续指认为准，本条可回滚重写。
+
+---
+
+## 二、整理后的可执行需求
+
+### 2.1 一句话定义
+
+**任务要能"看得见树"、多任务要能"并得起来还不打架"、管控文本要"瘦下去但能力不掉"。**
+
+### 2.2 五条口语需求 → 五条可机械判定的子需求
+
+| # | 用户原话 | 落成什么 | 物理载体（新建 N / 复用 R） | 判定入口 | 判红的条件 |
+| :-- | :--- | :--- | :--- | :--- | :--- |
+| **R1** | 可视化输出执行任务所需的执行层树状结构 | 任务→执行层子树的**解析 + 装配 + 出图 + 可追溯判定**四段链 | N `scripts/task_layer_tree.mjs`（解析+装配+出图，薄壳复用既有渲染器）· R `scripts/route_plan.mjs`、`skills/build-execution-tree/scripts/build_tree.py`、`scripts/generate_image.py`、`scripts/svg2png.*`、`assets/viewers/image_viewer.html` | `node scripts/task_layer_tree.mjs --check "<任务意图>"` | 树中出现**无法回溯到物理载体**的节点（悬空节点），或任务命中集与树节点集不一致，即退出码 1 |
+| **R2** | 插件安装允许并发，不要等任务空闲 | 安装请求**并发受理 + 队列化提交 + 进度可见**，取消"等空闲"的隐式前置 | N `scripts/plugin_install_queue.mjs`（受理/排队/进度/回收）· N `ai-control/reports/state/plugin_install_queue.json`（队列台账）· R DSH 宿主 `@deepseek-ai/dsh-plugin-manager` 既有 `installs` Map 与 profile 写锁 | `node scripts/plugin_install_queue.mjs --check` | 队列中任一请求处于"等待其他任务空闲"式**无界等待**（无进度、无超时、无终止条件），或同一 profile 出现两个持有写锁的提交者，即退出码 1 |
+| **R3** | 管家可调配执行层并发，处理调度、拒绝死循环与死锁 | 管家侧**有界并发调度器**：锁集合声明 → 冲突/死锁检测 → 断言 → 派单 → 看护 | N `scripts/butler_scheduler.mjs`（受理→分组→派单→超时→回收）· R `skills/declare-lock-set/scripts/declare_lock_set.py`、`skills/detect-lock-conflict/scripts/detect_lock_conflict.py`、`skills/verify-no-lock-violation/scripts/verify_no_lock_violation.py`、`scripts/global_scheduler_lock.sh`、`skill-pool/docs/operations/instance-safety.json` | `node scripts/butler_scheduler.mjs --check` | `deadlock_cycles` / `conflicts` / `timeouts` 任一非空仍派单；或命中 AP-01（同任务相邻锁集合相同 ≥5 次）无阻断；或无界并发（无并发上限） |
+| **R4** | 管家优化管控机制：同等水准下压缩 token 与篇幅 | 管控机制**篇幅基线 + 保守裁剪 + 等价能力断言**三环，受管对象=管控机制本体（非全库） | R `skills/measure-token-budget/scripts/measure_tokens.py`、`skills/prune-redundant-context/scripts/prune_context.py`、`skills/verify-token-reduction/scripts/verify_reduction.py` · N `ai-control/config/token_budget.conf`（基线+目标降幅）· N `ai-control/reports/state/token_budget.json` | `python3 skills/verify-token-reduction/scripts/verify_reduction.py --target 0.30 --cases <管控机制证据串清单>` | 降幅达标但 `capability.missing` 非空（删掉了事实/编号/受管区块/验收证据）；或降幅未达标却宣称完成 |
+| **R5** | 审计管控机制，未触达物理层的全部落地 | 机制触达清零 + 技能层载体审计 + 并行安全单一口径 | R `scripts/mechanism_audit.mjs`、`scripts/anti_hallucination_audit.mjs` · N `scripts/skill_carrier_audit.mjs`（178 技能逐条判"有无可执行载体"）· N `ai-control/config/skill_carrier_exempt.txt`（规约型技能白名单） | `node scripts/mechanism_audit.mjs --exit && node scripts/skill_carrier_audit.mjs --check` | 任一条**判定器类**执行层无载体且不在白名单；或 4 项硬性未触达未清零（见 §3.2 G7） |
+
+### 2.3 "触达物理实现层"的判据（递归分裂的停止条件）
+
+前六条沿用 [`docs/constraint_mechanism_optimize_6.md`](constraint_mechanism_optimize_6.md) §2.3，
+第七、八条沿用 [`docs/constraint_mechanism_optimize_9.md`](constraint_mechanism_optimize_9.md) §2.3（**均不复述**，避免实质冗余），
+本条目**新增第九、第十条**；十条全满足才算触达，否则继续分裂：
+
+| 序号 | 判据 | 探针类型 | 反例（判未触达） |
+| :--: | :--- | :--- | :--- |
+| 9 | **并发安全判定**：每个执行层必须有唯一来源的实例安全声明，且调度器**实际读取**该声明后才决定并发/串行 | `file` + `exitcode` | `instance-safety.json` 与 `interface.json.parallel` 各说一套；声明存在但调度执行时无人读（"有声明、无消费者"） |
+| 10 | **等量能力判定**：任何为省 token 而做的压缩，必须证明"证据串 100% 存活 + 降幅达标"双条件 | `regex` + `length` | 篇幅降了但事实、需求编号、受管区块或验收证据被删（能力被削减却仍报"优化完成"） |
+
+> **递归分裂铁律**：R1~R5 的任一叶子，若十条判据不全满足，则不得登记为完成，必须继续向下分裂出更细的执行层。
+
+### 2.4 递归分裂结果（粗颗粒 → 执行层叶子）
+
+```text
+ELC-5 执行层并发调度与管控瘦身
+├── R1 任务执行层树可视化 (TREE-VIZ)
+│   ├── R1-a 任务→条目解析：复用 route_plan.mjs "<意图>"（已通电），命中集为空时显式报"未命中"而不伪造路线
+│   ├── R1-b 子树装配：命中集 × execution-tree.json 的 composition 递归（深度上限 8）→ 只保留本次任务所需节点
+│   ├── R1-c 出图渲染：子树 → Mermaid 源码 + SVG/PNG（复用既有渲染器与查看器，禁止另写一套排版）
+│   └── R1-d 可追溯判定：每个节点必须能指到磁盘实体；悬空节点、孤儿节点、命中集/节点集不一致一律判红
+├── R2 插件安装并发 (PLUGIN-CONC)
+│   ├── R2-a 并发受理：按请求 id 受理，互不阻塞（宿主 installs Map 已支持，禁止在受理口加互斥）
+│   ├── R2-b 队列化提交：profile 写锁保留（pnpm manifest 必须互斥），但改为**可见队列 + 超时 + 终止条件**
+│   ├── R2-c 隐式前置清除：不得在任何路径上要求用户"等任务空闲"；等待必须给出剩余量与进度
+│   └── R2-d 队列台账判定：--check 断言无无界等待、无双重持锁、无丢失请求
+├── R3 管家并发调度 (BUTLER-SCHED)
+│   ├── R3-a 锁集合声明：declare_lock_set.py（已通电）· 缺锁即不派单
+│   ├── R3-b 冲突/死锁检测：detect_lock_conflict.py（已通电）· 三类零命中是并行的**前置条件**
+│   ├── R3-c 断言：verify_no_lock_violation.py（已通电）· 五项全过才放行
+│   ├── R3-d 调度器落地：scripts/butler_scheduler.mjs（**唯一阻塞点：现在没有任何生产调用方**）
+│   ├── R3-e 死锁/活锁治理：取锁顺序取字典序（全序即无环）· 超时 300 秒 · 有界并发 · 死循环复用 AP-01，禁止另立判据
+│   └── R3-f 判定器 + 反向用例：并造一个必冲突用例，证明调度器有牙（不允许恒绿）
+├── R4 管控机制瘦身 (TOKEN-TRIM)
+│   ├── R4-a 基线测量：measure_tokens.py 出 total_tokens / 分区基线（可复算，同输入同输出）
+│   ├── R4-b 保守裁剪：prune_context.py 只折叠重复，不改写语义
+│   ├── R4-c 等价能力断言：verify_reduction.py 出 capability.missing（必须为空）
+│   ├── R4-d 受管对象界定：管控机制本体 = AGENTS.md + rules/ + indexes/ + ai-control/（不含 docs/ 历史需求台账与 assets/）
+│   ├── R4-e 目标降幅：首轮目标 30%（不达标必须如实报未达标，不得折算通过）
+│   └── R4-f 接入门禁：纳入累积门禁，未过不得结项
+└── R5 落地审计清零 (LAND-ZERO)
+    ├── R5-a 机制触达审计：mechanism_audit.mjs（已通电）· 本轮 23 条登记中 4 项硬性判红
+    ├── R5-b 技能层载体审计：skill_carrier_audit.mjs 新建（178 技能逐条判载体，规约型走白名单）
+    ├── R5-c 四项清零（逐项根因与载体见 §3.3）：S07 待办判据会话作用域 · 拦截层注册通道 · 任务列表面板路径 · 一键重启 bundle
+    ├── R5-d 并行安全单一真相源：instance-safety.json 与 interface.json.parallel 双份口径归并为一份
+    └── R5-e 接入累积门禁 G5：不过不许结项，缺失一律记未达标
+```
+
+### 2.5 本条与本次交付的边界
+
+本文件**只做需求整理、字面勘误、查重拦截、现状核查与递归分裂**，**本轮未改任何机制载体**（状态 `[EVOLVING]`）。
+落地实施须另起批次，按 §四 验收标准逐条实跑取证。
+
+---
+
+## 三、现状核查（先说事实，再说改什么）
+
+### 3.1 已存在、可直接复用（不要再造一遍）
+
+| 已有资产 | 复用在哪条 | 实测证据（本轮只读实跑） |
+| :--- | :--- | :--- |
+| `scripts/route_plan.mjs` | R1-a | 实跑 `route_plan.mjs "安装一个市场插件"`：未命中时**显式声明"不生成路线，不回显关键词伪造路线"**，口径可直接复用 |
+| `skill-pool/docs/operations/execution-tree.json` / `.md` | R1-b | 在位：`json` 96 729 字节 · `md` 13 316 字节；生成器 `skills/build-execution-tree/scripts/build_tree.py`（含 composition 递归、环检测、孤儿检测、深度上限 8） |
+| `scripts/generate_image.py` · `scripts/svg2png.*` · `assets/viewers/image_viewer.html` | R1-c | 在位（此前已产出 `control_mechanism_beginner_flow_v1.svg/.png` 等图） |
+| `skills/declare-lock-set` · `detect-lock-conflict` · `verify-no-lock-violation` | R3-a~c | 三个 Python 脚本均在位；`detect_lock_conflict.py` 输出 `conflicts[] / deadlock_cycles[] / timeouts[] / parallel_groups[] / serialization_plan[]` 五件 |
+| `scripts/global_scheduler_lock.sh` | R3-d | 在位，自身版本 `v2.6.0`：`mkdir` 原子创建 + TTL 180 秒自愈 + `--acquire/--release/--status/--run/--clean` |
+| `skill-pool/docs/operations/instance-safety.json` | R3-e | 178 技能 100% 分类：`safe_multi` 158 · `needs_lock` 8 · `single_only` 12 · `issues` 0 |
+| `skills/measure-token-budget` · `prune-redundant-context` · `verify-token-reduction` | R4-a~c | 三个脚本均在位；`token-economy-guard` 已钉死"同等能力"判据=证据串全部存活，且**明文禁止**删除事实/编号/受管区块/验收证据 |
+| `scripts/mechanism_audit.mjs` | R5-a | 实跑：登记 23 条机制 · 已触达 18 · 硬性未触达 4 · 仅有文字无载体 1 |
+| `scripts/anti_hallucination_audit.mjs` | R5-e | 判据七通电凭据 5/5 · 判据八治理文档 100 份 / 引用 219 处 / **悬空 0 处** |
+
+### 3.2 实测缺口（用户要修的就是这些）
+
+| # | 缺口 | 现状证据（本轮实测，可复跑） |
+| :-- | :--- | :--- |
+| **G1** | **"任务级执行层树"无载体** | `route_plan.mjs` 只出"命中条目 / 通道"，**不装配树**；`execution-tree.json` 是**全域静态资产树**，与"本次任务所需"无关；无任何脚本能把两者缝起来，更无节点可追溯判定 |
+| **G2** | **插件安装被两处闸门串行，且等待不可见** | DSH 宿主 `@deepseek-ai/dsh-plugin-manager/lib/index.js`：`:2036-2058` 的 `change()` 把每次安装/卸载/启停包进 `withFileLock(<profile>/package.json, …, { waitMs: this.lockWaitMs })`，`lockWaitMs` 默认 **120 000 ms**（`:1357` 配置默认值）；`:2024-2031` 的 `configure()` 走 `hmr.runExclusive`；`README.zh.md:93` 明示「DSH HMR **串行**执行模块重载、文件监听和管理写入」。本仓拦截层**无队列、无进度、无超时提示** |
+| **G3** | **并行锁门禁"有原子、无接入"** | 全仓检索 `declare_lock_set` / `detect_lock_conflict` / `verify_no_lock_violation`：**仅命中自身目录、catalog 与文档**，`scripts/` 下**无任何生产调用方**，即"原语在位、没人接线" |
+| **G4** | **并行安全两套口径** | `interface.json.parallel`（178 份，`verified:false`，由 `gen_skill_interfaces.mjs` 抽取）与 `instance-safety.json`（178 条）**各说一套**，同一事实两个权威源 |
+| **G5** | **管控机制篇幅未受管** | 实测字符数：`AGENTS.md` 7 227 · `rules/` 94 180 · `indexes/` 295 072 · `ai-control/` 172 352；**无篇幅基线、无降幅判定**，`token-economy-guard` 仅被文档引用、无运行凭据 |
+| **G6** | **技能层载体从未审计** | 178 技能扫盘：有 `scripts/` **100** · 无 **78**；有 `[probe:*]` 声明 **117** · 零声明 **61**。其中若干 L3 判定类技能**声明了 `[probe:exitcode]` 却无任何可执行入口** |
+| **G7a** | **S07 待办常显判据绑死"跑命令那个进程的会话号"** | `scripts/lib/todo_gate_cli.mjs:25` 取 `process.env.DSH_SESSION_ID \|\| 'global_session'`；`scripts/lib/session_transcript.mjs:54` 据此拼转录目录、`:140` 认 `type==='todo/write'` 事件。实测：父会话转录**真实存在且有证据**（247 122 字节 · 209 帧 · 341 事件 · 1 条 `todo/write`），用父会话号跑即 `exit 0`；用子代理会话号跑 `exit 1`（该会话确实没有 todo/write）；`DSH_SESSION_ID` 缺失时空串兜底 `'global_session'` **永不命中任何真实目录**，且与"真无待办"共用同一句文案，掩盖根因。审计判红属**结构性必然**（审计跑在 `todo_write` 之前） |
+| **G7b** | **拦截层条目被宿主重写抹掉（非判据不认）** | `scripts/install_host_gate.sh:53` 锁定 `/Users/linqiyu/.dsh/profiles/desktop/cordis.patch.yml`（`:69` 单通道判定）。实证时序：`16:40:26` 写入并复核在位 → `16:40:29` 宿主重载落 `isHost=true` → 今日 `00:42` 该文件被**本仓之外的写者整文件重写**为 829 字节，`ai-execution-control` 连同 `permission`/`ui-theme`/`ui-conversation`/`subagent` 4 条用户设置条目**一并消失**（备份 `.bak-20261002-004027-install-gate` 1475 字节可对拍）。宿主自己的 `package.json → dsh.profile.bundles` 通道（本机 4 个插件全走此路）在同一时刻存活 |
+| **G7c** | **任务列表面板判据指向不存在的路径（更名 + 打包形态双重失效）** | `scripts/mechanism_audit.mjs:348` 写死 `/Applications/DSH Desktop.app/Contents/Resources/app/node_modules/...`。实测：`/Applications` 下**无** `DSH Desktop.app`，唯一宿主为 `DeepSeek Harness.app`（`CFBundleIdentifier=com.deepseek.dsh`）；且 `Contents/Resources/` 下**只有 `app.asar`(121 MB) 与 `app.asar.unpacked/`，没有 `app/` 目录**。因此即便只改应用名，只要仍指 `Resources/app/...`，该判据**永远无法转绿**；三条候选路径 `existsSync` 全为 `false` |
+| **G7d** | **一键重启按钮 bundle 陈旧且与 profile 硬链接脱链** | 源码 `skill-pool/plugins/dsh-plugin-restart/src/restart-core.cjs` mtime `00:22:19` **晚于**产物 `lib/client.js` mtime `00:19:29`；实跑 `python3 build_client.py --check` → `{"success":false,"stale":true}` `exit=1`。且仓库产物与 profile 侧副本 `/Users/linqiyu/.dsh/profiles/desktop/node_modules/dsh-plugin-restart/lib/client.js` 为**同一 inode（硬链接）**，重建换 inode 后必须再同步，否则静默脱链 |
+| **G8** | **同工程内并发写入无排他调度与归属标记** | 本轮取证期间观测到：同一批文件在两次读取之间被外部写入推进（系统总版本 `v4.28.0 → v4.29.0`），`node scripts/progress_ledger.mjs check` 实跑为 **记录 40 条 · 哈希漂移 6 · 未记录改动 2 · 退出码 1**。无论写入方是谁，事实是：**并发写同一工程没有调度层、没有锁集合声明、没有归属落款** |
+
+---
+
+### 3.3 四项判红的最小修复载体（逐项，均为只读取证所得）
+
+| 项 | 根因（一句话） | 最小修复载体 |
+| :--- | :--- | :--- |
+| S07 待办常显 | 判据绑定"跑命令那个进程的 `DSH_SESSION_ID`"，审计跑在 `todo_write` 之前即**结构性必然**判红；空会话号兜底 `'global_session'` 永不命中且与"真无待办"共用文案 | ① `scripts/lib/todo_gate_cli.mjs:25` 去掉 `'global_session'` 兜底，把"未找到会话转录"与 NO_TODO 分开报；② `scripts/mechanism_audit.mjs:229` 改为显式传入"最近一次含 `todo/write` 的会话号"再判 |
+| 拦截层宿主注册 | **条目真实丢失**（非判据不认）：`00:42` profile 的 `cordis.patch.yml` 被本仓之外的写者整文件重写为 829 字节，连 4 条用户设置条目一并抹掉；判定脚本只认 patch 单通道 | ① 在 `/Users/linqiyu/.dsh/profiles/desktop/package.json` 把拦截层做成 `file:` 依赖并登记进 `dsh.profile.bundles`（宿主重写抹不掉）；② `scripts/install_host_gate.sh:69` 的 `has_entry()` 增加 bundles 通道判定 |
+| 任务列表面板 | 判据写死旧应用名 + 旧布局：`/Applications` 下已无 `DSH Desktop.app`，`Contents/Resources/` 下已无 `app/` 目录，前端成品打进 `app.asar`，普通 `existsSync` **恒为 false** | 改 `scripts/mechanism_audit.mjs:348-355`：判据换到客户端插件产物（校验 `skill-pool/plugins/*/lib/client.js` 内三处标记）；若坚持校验宿主产物，必须改用 asar 读取器 |
+| 一键重启按钮 | 源码 mtime（`00:22:19`）晚于产物（`00:19:29`）→ bundle 陈旧；且仓库产物与 profile 副本是**同一 inode 硬链接**，重建换 inode 后静默脱链 | ① 运行 `python3 skill-pool/plugins/dsh-plugin-restart/build_client.py` 重建；② 再跑 `bash scripts/plugin_sync.sh sync` 把 profile 侧副本按内容对齐 |
+
+---
+
+## 四、验收标准（逐条可跑）
+
+- [ ] `node scripts/task_layer_tree.mjs --check "<任务意图>"` 退出码 0，且树内节点 100% 可回溯到磁盘实体（R1）
+- [ ] `node scripts/plugin_install_queue.mjs --check` 退出码 0：无无界等待、无双重持锁、无丢失请求，且每个等待项都有进度与剩余量（R2）
+- [ ] `node scripts/butler_scheduler.mjs --check` 退出码 0，并附**必冲突反向用例**证明有牙（R3）
+- [ ] `python3 skills/verify-token-reduction/scripts/verify_reduction.py --target 0.30 --cases <清单>` 退出码 0 且 `capability.missing` 为空数组（R4）
+- [ ] `node scripts/mechanism_audit.mjs --exit` 退出码 0（4 项硬性未触达清零）；`node scripts/skill_carrier_audit.mjs --check` 退出码 0（R5）
+- [ ] 上述五条判定器**全部接入累积门禁**，未过不得结项（R5-e）
+
+---
+
+## 五、待裁决分歧（不裁决不开工的部分）
+
+| # | 分歧 | 备选 | 本条采用口径 |
+| :-- | :--- | :--- | :--- |
+| 1 | 需求 1 的"如图"缺档 | 圈等用户补图 ／ 按"任务级子树"默认解释先出文案 | **默认解释 + 显式登记**：树 = 本次任务所需执行层子树；用户补图后可回滚重写 |
+| 2 | "等到任务空闲"的归因 | 宿主 profile 写锁（120 秒） ／ HMR 串行闸门 ／ 本仓拦截层门禁 ／ Web GUI 忙碌禁用 | **三处并治**：宿主锁保留但队列化可见、HMR 串行不阻塞受理、本仓不得加"等空闲"前置。**不改宿主 bundle**（改宿主需重启桌面端，留待用户裁决） |
+| 3 | 瘦身是否允许删条 | 可删冗余条文 ／ 只可折叠重复 | **只折叠重复**：事实、需求编号、受管区块、验收证据**一律不得删**（沿用 `token-economy-guard` 既有口径） |
+| 4 | 并发度上界 | 无上限 ／ 固定 ／ 按实例安全声明动态 | **默认 4，可配**（`ai-control/config/gates.conf`），且只允许 `safe_multi` 无锁并发；`needs_lock` 必须带资源键；`single_only` 强制串行 |
+| 5 | 并行安全唯一口径 | 以 `instance-safety.json` 为准 ／ 以 `interface.json.parallel` 为准 | **以 `instance-safety.json` 为准**（有 `resource_keys` 与判据理由），`interface.json.parallel` 降为派生字段 |
+
+---
+
+## 六、实施记录
+
+- **2026-10-02 [新建]**：接收 5 条口语需求，完成字面勘误（"导执行层→到执行层""这额个→这个""toeken→token"）、
+  需求简化与递归分裂（R1~R5，共 **24 个叶子**）；完成现状核查（可复用 8 项 / 实测缺口 8 项）；
+  登记 5 项待裁决分歧并给出本条采用口径。
+  **本轮未改任何机制载体**（仅新增本文案），状态 `[EVOLVING]`。
+
+---
+
+> ### 📎 附：本轮取证命令清单（均可复跑，数字即上文引用）
+>
+> ```bash
+> node scripts/mechanism_audit.mjs                          # 登记 23 条 · 已触达 18 · 硬性未触达 4
+> node scripts/route_plan.mjs "安装一个市场插件"            # 未命中即显式声明，不伪造路线
+> node scripts/progress_ledger.mjs check                    # 记录 40 条 · 漂移 6 · 未记录改动 2
+> node scripts/build_capabilities_index.mjs --check         # catalog 登记 183 条 · 漂移 5 条
+> ls skills | wc -l                                         # 技能 178 条（有 scripts/ 100 · 无 78）
+> grep -rho "\[probe:[a-z]*\]" skills/*/SKILL.md | wc -l    # probe 声明 822 处（零声明技能 61 条）
+> ```
+>
+> 宿主侧只读解包（`app.asar` 头部 JSON 定位 + 定点读取，未解包、未改动宿主）：
+> `@deepseek-ai/dsh-plugin-manager/lib/index.js:2024-2058`、`:1357`、`README.zh.md:93`。
