@@ -22,6 +22,7 @@
 #   ./scripts/control.sh version      # 需求版本贯通 + 受管文档版本归位（只读判定）
 #   ./scripts/control.sh scope        # 全域覆盖审计（只读判定）
 #   ./scripts/control.sh render       # 生成信息图 / 渲染类命令（透传）
+#   ./scripts/control.sh mobile start # 手机远端操控（REQ-094）：start/stop/status/url/doctor/e2e
 #   ./scripts/control.sh selfcheck    # 四机制入口逐条实跑并汇总（本脚本自身可证伪）
 #   ./scripts/control.sh path         # 打印全局规则根目录
 #
@@ -84,6 +85,15 @@ case "$ACTION" in
   render)
     run render bash "$GLOBAL_RULES/scripts/control_gates.sh" badge
     ;;
+  mobile)
+    # REQ-094：手机远端操控。子命令透传（start/stop/status/url/doctor/e2e）
+    shift || true
+    if [ "${1:-status}" = "e2e" ]; then
+      run mobile-e2e node "$GLOBAL_RULES/scripts/mobile_bridge_audit.mjs" --e2e
+    else
+      run mobile-"${1:-status}" bash "$GLOBAL_RULES/scripts/mobile_control.sh" "${1:-status}" "${@:2}"
+    fi
+    ;;
   selfcheck)
     failed=0
     for step in naming lock todo; do
@@ -106,7 +116,7 @@ case "$ACTION" in
     echo "$GLOBAL_RULES"
     ;;
   *)
-    echo "用法：$0 {check|lock|todo|naming|version|scope|render|selfcheck|path}" >&2
+    echo "用法：$0 {check|lock|todo|naming|version|scope|render|mobile|selfcheck|path}" >&2
     exit 2
     ;;
 esac
