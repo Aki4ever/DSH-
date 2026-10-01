@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T22:38:35.012Z",
+  "generatedAt": "2026-10-01T22:42:40.101Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -88,7 +88,7 @@
       "short": "fba4f3fc",
       "sha256": "fba4f3fca226223e7034a1159762da5ae422c995c815bd8f7db718e8ecd01c97",
       "bytes": 1741,
-      "mtime": "2026-10-01T22:38:27.875Z"
+      "mtime": "2026-10-01T22:42:40.073Z"
     },
     {
       "path": "ai-control/config/token_budget_cases.json",
@@ -165,7 +165,7 @@
       "short": "083794a7",
       "sha256": "083794a7f1baca34f2b0c02e31b937e28feb79a3b30304c2dbadbe38098e01f2",
       "bytes": 49741,
-      "mtime": "2026-10-01T17:08:52.232Z"
+      "mtime": "2026-10-01T22:38:35.158Z"
     },
     {
       "path": "docs/.gitkeep",
@@ -183,10 +183,10 @@
     },
     {
       "path": "docs/constraint_mechanism_optimize_10.md",
-      "short": "90932e55",
-      "sha256": "90932e553088adafcc6e41d6ea7fe183610359773e396b0154eb900fad7fb4bd",
-      "bytes": 37556,
-      "mtime": "2026-10-01T22:38:34.977Z"
+      "short": "f969e25f",
+      "sha256": "f969e25f249aba3b0a7129fe539db3f218f9a63e69651d10412eb92b64439eda",
+      "bytes": 39718,
+      "mtime": "2026-10-01T22:42:40.073Z"
     },
     {
       "path": "docs/constraint_mechanism_optimize_3.md",
@@ -302,17 +302,17 @@
     },
     {
       "path": "indexes/capabilities_index.json",
-      "short": "5957986b",
-      "sha256": "5957986bb902e5b176afb68a3cc4da1f6e0cc890a56b48c8c4d88519bd488157",
-      "bytes": 120404,
-      "mtime": "2026-10-01T22:20:40.729Z"
+      "short": "f9d26619",
+      "sha256": "f9d26619ebe56cc904e63e5de9bb122cce7dd9cb7dac89a1f429b6f1c0df4d7f",
+      "bytes": 120449,
+      "mtime": "2026-10-01T22:41:55.160Z"
     },
     {
       "path": "indexes/capabilities_index.md",
-      "short": "e633386e",
-      "sha256": "e633386e19a9384c6039efb3432ac6e2c7bf5d8eabc23d6376eb79d6324bdfe9",
-      "bytes": 123348,
-      "mtime": "2026-10-01T22:20:40.727Z"
+      "short": "2188cd46",
+      "sha256": "2188cd468ab7abef41b9b6b36ae576ede015877e01cf8b6b0036ac51cae28aa3",
+      "bytes": 123388,
+      "mtime": "2026-10-01T22:41:55.159Z"
     },
     {
       "path": "indexes/dsh_capabilities.md",
@@ -333,21 +333,21 @@
       "short": "c4f43ea2",
       "sha256": "c4f43ea241bf9916b62b805748de450e0521c145da63f385827ff2f2e142e52b",
       "bytes": 3440,
-      "mtime": "2026-10-01T22:35:07.877Z"
+      "mtime": "2026-10-01T22:42:24.682Z"
     },
     {
       "path": "indexes/rules_index.md",
       "short": "61ea3670",
       "sha256": "61ea3670e3599cf2a96a217c13c9f6d370b2e676228e23acfce8b1a67e84ddaa",
       "bytes": 17507,
-      "mtime": "2026-10-01T22:21:59.888Z"
+      "mtime": "2026-10-01T22:42:24.681Z"
     },
     {
       "path": "indexes/shortcuts_index.md",
       "short": "3221abb3",
       "sha256": "3221abb3a81d48060dbca13455d560e699f4e02221868dc2dc42c76c8fa86390",
       "bytes": 15599,
-      "mtime": "2026-10-01T22:30:13.411Z"
+      "mtime": "2026-10-01T22:42:24.681Z"
     },
     {
       "path": "indexes/tool_interfaces.md",
@@ -676,21 +676,21 @@
       "short": "b4ccddd1",
       "sha256": "b4ccddd1661f98d5d0df5fe3a9dd08432852a8a6bc6320217d126888877032fd",
       "bytes": 4554,
-      "mtime": "2026-10-01T22:20:55.675Z"
+      "mtime": "2026-10-01T22:42:24.681Z"
     },
     {
       "path": "rules/system/meta_rules.md",
       "short": "9f97fed5",
       "sha256": "9f97fed5d6515e8b7a868d6c25d27dfadfd8389962e45d2697a13e5eef0c3b2d",
       "bytes": 22175,
-      "mtime": "2026-10-01T22:25:21.945Z"
+      "mtime": "2026-10-01T22:42:24.680Z"
     },
     {
       "path": "rules/system/output_standard.md",
       "short": "95d19892",
       "sha256": "95d19892e9e5837a9f965cf747d811871195ed092e73729cbb59aa47e6c3e589",
       "bytes": 10680,
-      "mtime": "2026-10-01T22:31:20.649Z"
+      "mtime": "2026-10-01T22:42:24.681Z"
     },
     {
       "path": "rules/system/thinking_framework.md",
@@ -1716,10 +1716,10 @@
     },
     {
       "path": "scripts/market_guard_patch.mjs",
-      "short": "513e50ee",
-      "sha256": "513e50ee18a3f56aa82733f4ab49632aac29076560c5740ade43052555e817af",
-      "bytes": 12551,
-      "mtime": "2026-10-01T22:19:17.204Z"
+      "short": "f64bb6b3",
+      "sha256": "f64bb6b37ce4898ff608bcc73d4468f8cdd20b302ab707c4bf2fa750b53298ab",
+      "bytes": 13320,
+      "mtime": "2026-10-01T22:39:16.288Z"
     },
     {
       "path": "scripts/mechanism_audit.mjs",
@@ -2010,10 +2010,10 @@
     },
     {
       "path": "scripts/token_budget_audit.mjs",
-      "short": "32b66b44",
-      "sha256": "32b66b44b359cacaf7e822bc8b77f4b0c88befbd387d8102c00063322622e8a0",
-      "bytes": 12614,
-      "mtime": "2026-10-01T22:25:27.961Z"
+      "short": "706c663e",
+      "sha256": "706c663eda060b2589ba693b677533cd4c5528ac830cadb470f80deff941b120",
+      "bytes": 16025,
+      "mtime": "2026-10-01T22:41:39.760Z"
     },
     {
       "path": "scripts/verify_auto_naming_e2e.mjs",

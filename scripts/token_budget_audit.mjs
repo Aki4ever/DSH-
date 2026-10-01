@@ -135,6 +135,65 @@ function selfTest() {
   return caught ? 0 : 1
 }
 
+
+/**
+ * 结构保护下限估算：把"不许删"的东西的字符量算出来，换算成 tokens 下界。
+ *
+ * 保护类别（对应 REQ-093 硬约束「不删事实/编号/命令」）：
+ *   ① 全部 Markdown 链接（标签 + 目标路径）—— 可达性事实，删了就是悬空；
+ *   ② 全部行内代码（`…`）—— 命令、路径、配置键；
+ *   ③ 全部标题行与表格表头/分隔行 —— 结构与表头契约；
+ *   ④ 版本声明的必需行（align_version 判定要用）。
+ *
+ * 这是**下界**而非精确值：正文每个字都当成可压到 0，实际上不可能，
+ * 所以真实可达下限只会比它更高。用途是回答"目标到底可不可达"。
+ */
+function structuralFloor(files) {
+  const per = []
+  let totalChars = 0
+  for (const rel of files) {
+    let text = ''
+    try {
+      text = fs.readFileSync(path.join(ROOT, rel), 'utf8')
+    } catch {
+      continue
+    }
+    // 用**区间并集**统计，避免"链接里嵌行内代码"被重复计数（第一版就是重复计数，虚高了约 40%）
+    const spans = []
+    const push = (re) => {
+      for (const m of text.matchAll(re)) spans.push([m.index, m.index + m[0].length])
+    }
+    push(/\[[^\]]*\]\([^)]*\)/g)   // 链接（标签 + 目标路径）：可达性事实
+    push(/`[^`\n]+`/g)               // 行内代码：命令 / 路径 / 配置键
+    // 标题行、表格分隔行、版本声明行：整行受保护
+    let offset = 0
+    for (const line of text.split('\n')) {
+      const t = line.trim()
+      const whole =
+        /^#{1,6}\s/.test(t) ||
+        /^\|?\s*:?-{2,}/.test(t) ||
+        /^(>|\|).*(版本|实施版本)\*\*：/.test(t) ||
+        /^\|[^|]*\|[^|]*\|/.test(t) && /:?-{2,}/.test(t)
+      if (whole) spans.push([offset, offset + line.length])
+      offset += line.length + 1
+    }
+    spans.sort((a, b) => a[0] - b[0])
+    let chars = 0
+    let cur = -1
+    for (const [a, b] of spans) {
+      const lo = Math.max(a, cur)
+      if (b > lo) {
+        chars += b - lo
+        cur = b
+      }
+    }
+    totalChars += chars
+    per.push({ path: rel, protectedChars: chars })
+  }
+  const floorTokens = Math.round(totalChars / 2)
+  return { floorTokens, totalChars, per }
+}
+
 function main() {
   const argv = process.argv.slice(2)
   if (argv.includes('--self-test')) process.exit(selfTest())
@@ -182,6 +241,21 @@ function main() {
   }
 
   const growthExempt = loadGrowthExempt()
+  if (argv.includes('--floor')) {
+    const fl = structuralFloor(scope)
+    const tgt = Math.round((baseline ? baseline.total_tokens : measure(scope).data.total_tokens) * (1 - target))
+    console.log('🧱 结构保护下限估算（不删事实/编号/命令的前提下，理论上还能压到哪）')
+    console.log('-----------------------------------------')
+    for (const r of fl.per) console.log(`   保护字符 ${String(r.protectedChars).padStart(6)}  ${r.path}`)
+    console.log('')
+    console.log(`   保护字符合计 ≈ ${fl.totalChars} → 下限 ≈ ${fl.floorTokens} tokens（下界，真实可达下限只会更高）`)
+    console.log(`   30% 目标线 = ${tgt} tokens`)
+    console.log('-----------------------------------------')
+    console.log(fl.floorTokens > tgt
+      ? `⛔ 结论：保护下限 ${fl.floorTokens} > 目标线 ${tgt} —— 在不删事实/编号/命令的前提下，30% 目标**不可达**（差 ${fl.floorTokens - tgt} tokens）。`
+      : `✅ 结论：保护下限 ${fl.floorTokens} ≤ 目标线 ${tgt} —— 目标在理论上仍可达，差值空间 ${tgt - fl.floorTokens} tokens。`)
+    process.exit(0)
+  }
   const cases = loadCases(casesFile)
   if (cases === null) {
     console.log(`⛔ 取不到证据：能力证据串文件不可读或结构非法：${casesFile}`)
