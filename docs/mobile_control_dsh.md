@@ -103,7 +103,7 @@
 node scripts/mobile_bridge_audit.mjs --check          # 期望退出码 0
 
 # 2) 端到端：真起一个网桥，走完 PIN → index → /api 全链路
-node scripts/mobile_bridge_audit.mjs --e2e            # 期望 7/7 通过、退出码 0
+node scripts/mobile_bridge_audit.mjs --e2e            # 期望 8/8 通过、退出码 0
 
 # 3) 真机链路：起网桥后用局域网 IP 访问（不是 127.0.0.1，这一步才证明手机能连）
 ./scripts/mobile_control.sh start
@@ -141,9 +141,34 @@ curl -s -o /dev/null -w '%{http_code}\n' "http://<Mac的IP>:19388/"          # �
 
 ---
 
-## 九、未验证项与后续待裁决
+## 九、缺陷记录（真机/真浏览器实点后回填，含根因与修复）
 
-- **未在真机 iPhone 上实点验证**（本轮只有 Mac 侧 curl / Node 侧全链路断言），
+### 缺陷 1：手机打开链接后整页白屏，报 `Failed to load plugins`（2026-10-02 实点发现）
+
+- **现象**：页面骨架出来了，但停在 `HARNESS / Failed to load plugins`，
+  细字为 `client-modules: HTML did not preload @deepseek-ai/dsh-client-modules/client.js`。
+- **取证**：把 `index.html` 与宿主直连响应做逐字节对比 —— **完全相同**（38255 字节），
+  说明不是鉴权、也不是 HTML 被改写；继续对拍资源，定位到真正的差异点：
+  `GET /plugins/??@deepseek-ai/dsh-client-modules/client.js&rev=…`
+  **直连宿主 200 / 40330 字节，经网桥 404**。
+- **根因**：宿主的客户端插件走**拼接式 URL**（`/plugins/??a/client.js,b/client.js&rev=x`）。
+  网桥原先用 WHATWG `new URL()` 解析请求行，再调 `searchParams.delete('k')` ——
+  这一步会**重新序列化查询串**，把 `??@deepseek-ai/…` 转义成 `?%3F%40deepseek-ai%2F…`，
+  宿主按前缀匹配不到 → 404 → 引导脚本没注入 → 模块系统报错白屏。
+- **修复**：改为**字符串级**处理原始 URL（`parseRawUrl`），只摘掉网桥自己的 `k` 参数，
+  其余字节原样透传；WebSocket 升级请求同样按原始 URL 转发。
+- **防回归**：`--e2e` 增加"**引导资源逐字节对拍**"断言 —— 抓 `index.html` 里全部 `src`/`href`，
+  逐个"经网桥"与"直连宿主"比状态码与字节；当前 **10 个资源（含 2 条拼接式插件 URL，10.4MB + 2.2MB）全部一致**。
+  这条断言就是"页面能开、插件全挂"这类缺陷的兜底，端到端项数 7 → **8**。
+- **同时修掉的体验缺陷**：`stop` 原先会删掉状态文件，导致下次 `start` 换 PIN，
+  手机上已保存的主屏图标/书签直接失效。现改为**停服只摘 pid、保留 PIN 与会话密钥**，
+  需要换密钥时显式用 `start --new-pin`。
+
+---
+
+## 十、未验证项与后续待裁决
+
+- **未在真机 iPhone 上实点验证**（本轮只有 Mac 侧 curl、真浏览器一次实点与 Node 侧全链路断言），
   已把能自证的边界全部自动化到 `--e2e`；
 - **远端（跨网络）方案未实跑**：Tailscale 路径为设计方案，未装机验证；
 - **多设备并发会话**：同一 PIN 允许多台手机同时接入，未做"单设备独占"策略，

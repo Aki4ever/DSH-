@@ -178,12 +178,45 @@ async function runE2E() {
       cookie: forgeDshCookie(`127.0.0.1:${located.port}`, secret)
     })
     expect('现签 cookie 被宿主直接接受', direct.status, 200)
+
+    // 引导资源逐字节对拍 —— 这是"页面能开、插件全挂"这类缺陷的唯一兜底断言。
+    // 触发场景（2026-10-02 实测）：宿主客户端插件走拼接式 URL
+    // `/plugins/??a/client.js,b/client.js&rev=x`，任何对查询串的重新序列化都会把它转义成
+    // `%3F%40...` → 宿主 404 → 前端报 "HTML did not preload .../client.js" 后整页白屏。
+    const hostCookie = forgeDshCookie(`127.0.0.1:${located.port}`, secret)
+    const refs = [
+      ...new Set(
+        [...String(raw.text).matchAll(/(?:src|href)="([^"]+)"/gu)]
+          .map((m) => m[1].replaceAll('&amp;', '&'))
+          .filter((ref) => !/^(?:https?:|data:|#)/u.test(ref))
+          .map((ref) => (ref.startsWith('./') ? ref.slice(2) : ref))
+          .filter((ref) => ref !== '' && ref !== './')
+      )
+    ]
+    const mismatch = []
+    for (const ref of refs) {
+      const bridged = await rawBytes(`${base}/${ref}`, { cookie })
+      const home = await rawBytes(`http://127.0.0.1:${located.port}/${ref}`, { cookie: hostCookie })
+      if (bridged.status !== home.status || !bridged.buffer.equals(home.buffer)) {
+        mismatch.push(`${ref}（网桥 ${bridged.status}/${bridged.buffer.length}B ≠ 宿主 ${home.status}/${home.buffer.length}B）`)
+      }
+    }
+    expect(`引导资源逐字节对拍（${refs.length} 个，含拼接式插件 URL）`, mismatch.length, 0)
+    for (const line of mismatch.slice(0, 4)) say(`      · 不一致：${line}`)
   } finally {
     await new Promise((resolve) => server.close(resolve))
   }
   const failed = results.filter((r) => !r.pass)
   say(`端到端：${results.length - failed.length}/${results.length} 项通过`)
   return failed.length === 0 ? 0 : 1
+}
+
+/** 取字节（用于与宿主逐字节对拍静态资源与插件 bundle）。 */
+async function rawBytes(url, { cookie } = {}) {
+  const headers = {}
+  if (cookie !== undefined) headers.cookie = cookie
+  const response = await fetch(url, { headers })
+  return { status: response.status, buffer: Buffer.from(await response.arrayBuffer()) }
 }
 
 /** 取完整响应（含响应头），用于断言 Set-Cookie。 */

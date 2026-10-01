@@ -306,6 +306,45 @@ export function loginPage({ hint = '', port = 0 } = {}) {
 const HOP_BY_HOP = new Set(['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'upgrade'])
 
 /**
+ * 手工解析原始 URL，**绝不使用 WHATWG `new URL` 重建转发路径**。
+ * 为什么（2026-10-02 实测缺陷，症状是"页面能开、插件全挂"）：
+ *   宿主的客户端插件 bundle 走**拼接式 URL**：`/plugins/??a/client.js,b/client.js&rev=xxx`。
+ *   一旦把这种 URL 交给 `new URL` 再读 `searchParams`，查询串会被重新序列化并转义成
+ *   `/plugins/?%3F%40deepseek-ai%2F...`，宿主按前缀匹配不到 → 404 → 客户端报
+ *   `client-modules: HTML did not preload @deepseek-ai/dsh-client-modules/client.js`，整页白屏。
+ *   故这里只做**字符串级**处理：取出（并摘掉）网桥自己的 `k` 参数，其余字节原样透传。
+ * @param {string|undefined} rawUrl node:http 的 `req.url`（原始、未解码）。
+ * @returns {{path:string, queryKey:string|null, proxied:string}}
+ */
+function parseRawUrl(rawUrl) {
+  const raw = typeof rawUrl === 'string' && rawUrl !== '' ? rawUrl : '/'
+  const hashAt = raw.indexOf('#')
+  const target = hashAt === -1 ? raw : raw.slice(0, hashAt)
+  const queryAt = target.indexOf('?')
+  const path = queryAt === -1 ? target : target.slice(0, queryAt)
+  const query = queryAt === -1 ? '' : target.slice(queryAt + 1)
+  let queryKey = null
+  const kept = []
+  for (const segment of query === '' ? [] : query.split('&')) {
+    if (segment === 'k') {
+      queryKey = ''
+      continue
+    }
+    if (segment.startsWith('k=')) {
+      try {
+        queryKey = decodeURIComponent(segment.slice(2))
+      } catch {
+        queryKey = segment.slice(2)
+      }
+      continue
+    }
+    kept.push(segment)
+  }
+  const rest = kept.join('&')
+  return { path, queryKey, proxied: rest === '' ? path : `${path}?${rest}` }
+}
+
+/**
  * 创建网桥服务器（HTTP + WebSocket 透传）。
  * @param {{bridgePort:number, bind:string, dshPort:number, pin:string, key:string, allowPublic?:boolean, onEvent?:(e:object)=>void}} options
  * @returns {{server:import('node:http').Server, stats:object}}
@@ -346,11 +385,10 @@ export function createBridge(options) {
     failures.set(ip, list)
   }
   /** 会话判定：返回 'cookie' | 'key' | false，供调用点区分"要不要补发会话 cookie"。 */
-  const authorize = (req, url) => {
+  const authorize = (req, queryKey) => {
     const cookie = readCookie(req.headers.cookie, 'dsh-bridge')
     if (cookie !== undefined && verifyBridgeSession(key, cookie)) return 'cookie'
-    const fromQuery = url.searchParams.get('k')
-    if (fromQuery !== null && safeEqual(fromQuery, pin)) return 'key'
+    if (queryKey !== null && safeEqual(queryKey, pin)) return 'key'
     return false
   }
   const upstreamHeaders = (req) => {
@@ -377,19 +415,19 @@ export function createBridge(options) {
       denied(res, 403, '本网桥只服务局域网私有地址（如需公网请显式开启 --allow-public 并自担风险）')
       return
     }
-    const url = new URL(req.url ?? '/', 'http://bridge.invalid')
+    const { path, queryKey, proxied } = parseRawUrl(req.url)
 
-    if (url.pathname === '/__bridge/status' && isPrivateAddress(ip) && (ip === '127.0.0.1' || ip === '::1')) {
+    if (path === '/__bridge/status' && isPrivateAddress(ip) && (ip === '127.0.0.1' || ip === '::1')) {
       res.writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' })
       res.end(JSON.stringify({ ...stats, uptimeMs: Date.now() - stats.startedAt, dshPort, bridgePort, bind }))
       return
     }
-    if (url.pathname === '/__bridge/login' && req.method === 'GET') {
+    if (path === '/__bridge/login' && req.method === 'GET') {
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' })
       res.end(loginPage({ port: bridgePort }))
       return
     }
-    if (url.pathname === '/__bridge/login' && req.method === 'POST') {
+    if (path === '/__bridge/login' && req.method === 'POST') {
       let body = ''
       req.setEncoding('utf8')
       req.on('data', (chunk) => {
@@ -423,17 +461,17 @@ export function createBridge(options) {
       })
       return
     }
-    const via = authorize(req, url)
+    const via = authorize(req, queryKey)
     if (via === false) {
-      if (url.searchParams.get('k') !== null) {
+      if (queryKey !== null) {
         noteFailure(ip)
         record('key-fail', { ip })
       } else {
-        record('need-pin', { ip, path: url.pathname })
+        record('need-pin', { ip, path })
       }
-      if (url.pathname === '/' || url.pathname === '/index.html') {
+      if (path === '/' || path === '/index.html') {
         res.writeHead(401, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' })
-        res.end(loginPage({ hint: url.searchParams.get('k') === null ? '' : '链接里的 PIN 不正确。', port: bridgePort }))
+        res.end(loginPage({ hint: queryKey === null ? '' : '链接里的 PIN 不正确。', port: bridgePort }))
         return
       }
       denied(res, 401, '需要 PIN 授权：先打开 http://<Mac的IP>:端口/ 输入 PIN')
@@ -442,10 +480,8 @@ export function createBridge(options) {
     if (via === 'key') stats.loginOk += 1
 
     stats.requests += 1
-    url.searchParams.delete('k')
-    const path = `${url.pathname}${url.search}`
     const host = req.headers.host ?? `${bind}:${bridgePort}`
-    const upstream = httpRequest({ host: '127.0.0.1', port: dshPort, method: req.method, path, headers: upstreamHeaders(req) }, (up) => {
+    const upstream = httpRequest({ host: '127.0.0.1', port: dshPort, method: req.method, path: proxied, headers: upstreamHeaders(req) }, (up) => {
       const headers = {}
       for (const [name, value] of Object.entries(up.headers)) {
         if (name.toLowerCase() === 'set-cookie') continue
@@ -475,15 +511,15 @@ export function createBridge(options) {
       socket.destroy()
       return
     }
-    const url = new URL(req.url ?? '/', 'http://bridge.invalid')
-    if (!authorized(req, url)) {
-      record('upgrade-denied', { ip, path: url.pathname })
+    const { path, queryKey, proxied } = parseRawUrl(req.url)
+    if (authorize(req, queryKey) === false) {
+      record('upgrade-denied', { ip, path })
       socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n')
       socket.destroy()
       return
     }
     const headers = upstreamHeaders(req)
-    const lines = [`GET ${url.pathname}${url.search} HTTP/1.1`]
+    const lines = [`GET ${proxied} HTTP/1.1`]
     for (const [name, value] of Object.entries(headers)) {
       if (name.toLowerCase() === 'connection' || name.toLowerCase() === 'upgrade') continue
       lines.push(`${name}: ${value}`)

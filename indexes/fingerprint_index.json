@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T22:42:40.101Z",
+  "generatedAt": "2026-10-01T22:58:19.414Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -22,10 +22,10 @@
   "files": [
     {
       "path": "AGENTS.md",
-      "short": "b39b3bb5",
-      "sha256": "b39b3bb58c96f1746c419e281b20a210493d7047fd8d277b85c9c8028b2ef599",
-      "bytes": 11987,
-      "mtime": "2026-10-01T22:25:15.629Z"
+      "short": "bbee5245",
+      "sha256": "bbee5245bc7b710fb5cff7410f3431b3cc874afb52798f0a3e194cb119073b4e",
+      "bytes": 11569,
+      "mtime": "2026-10-01T22:56:27.457Z"
     },
     {
       "path": "README.md",
@@ -36,10 +36,10 @@
     },
     {
       "path": "ai-control/README.md",
-      "short": "cc3cb0bf",
-      "sha256": "cc3cb0bfcac5bd4417106f57205a63adb57e17e8d7b7c37bfc13c515e6d1b062",
-      "bytes": 6558,
-      "mtime": "2026-10-01T22:33:18.407Z"
+      "short": "b67a7f8d",
+      "sha256": "b67a7f8dd407e46cf25cf902b1176380c8add1741d706a1314980d9b6233d675",
+      "bytes": 5942,
+      "mtime": "2026-10-01T22:57:31.622Z"
     },
     {
       "path": "ai-control/config/flow_graph.json",
@@ -260,17 +260,17 @@
     },
     {
       "path": "docs/mobile_control_dsh.md",
-      "short": "d8f57b0a",
-      "sha256": "d8f57b0abc988954044362bad954faf66b1db11e5e946037f00714f549b59ffa",
-      "bytes": 10871,
-      "mtime": "2026-10-01T16:57:28.594Z"
+      "short": "102f1aec",
+      "sha256": "102f1aecee6610b33d5b049bf3deb24ea711cc5602d643aeaa4ebb15a71cdeda",
+      "bytes": 12886,
+      "mtime": "2026-10-01T22:58:06.442Z"
     },
     {
       "path": "docs/requirements.md",
-      "short": "28e4c123",
-      "sha256": "28e4c1231ea83352f62b5dcf03f20a451c26c6a7d97a9d84504aee361948aee2",
-      "bytes": 249581,
-      "mtime": "2026-10-01T22:38:34.978Z"
+      "short": "22b98f76",
+      "sha256": "22b98f7650e6bc12c4207e1f23aa2500c9a2697505dcff4e03eb7fd417409d59",
+      "bytes": 250513,
+      "mtime": "2026-10-01T22:58:06.443Z"
     },
     {
       "path": "docs/rules_tutorial.md",
@@ -302,17 +302,17 @@
     },
     {
       "path": "indexes/capabilities_index.json",
-      "short": "f9d26619",
-      "sha256": "f9d26619ebe56cc904e63e5de9bb122cce7dd9cb7dac89a1f429b6f1c0df4d7f",
+      "short": "d799abd4",
+      "sha256": "d799abd4f6998359a7879ae6c7e47611a5e93c1bbbc9fac1ef6cc1591228161e",
       "bytes": 120449,
-      "mtime": "2026-10-01T22:41:55.160Z"
+      "mtime": "2026-10-01T22:42:40.157Z"
     },
     {
       "path": "indexes/capabilities_index.md",
       "short": "2188cd46",
       "sha256": "2188cd468ab7abef41b9b6b36ae576ede015877e01cf8b6b0036ac51cae28aa3",
       "bytes": 123388,
-      "mtime": "2026-10-01T22:41:55.159Z"
+      "mtime": "2026-10-01T22:42:40.156Z"
     },
     {
       "path": "indexes/dsh_capabilities.md",
@@ -337,17 +337,17 @@
     },
     {
       "path": "indexes/rules_index.md",
-      "short": "61ea3670",
-      "sha256": "61ea3670e3599cf2a96a217c13c9f6d370b2e676228e23acfce8b1a67e84ddaa",
-      "bytes": 17507,
-      "mtime": "2026-10-01T22:42:24.681Z"
+      "short": "64b4b14a",
+      "sha256": "64b4b14ab3f0185b46d29ccbea3a253ba556e8996b5739b0a42f492f19b3e5f1",
+      "bytes": 17152,
+      "mtime": "2026-10-01T22:57:02.845Z"
     },
     {
       "path": "indexes/shortcuts_index.md",
-      "short": "3221abb3",
-      "sha256": "3221abb3a81d48060dbca13455d560e699f4e02221868dc2dc42c76c8fa86390",
-      "bytes": 15599,
-      "mtime": "2026-10-01T22:42:24.681Z"
+      "short": "ff3c45d9",
+      "sha256": "ff3c45d9bb3b4c36bd0dc04312373fa2e1326549346465284f42f27d7d033691",
+      "bytes": 15272,
+      "mtime": "2026-10-01T22:56:35.815Z"
     },
     {
       "path": "indexes/tool_interfaces.md",
@@ -673,24 +673,24 @@
     },
     {
       "path": "rules/system/language_standard.md",
-      "short": "b4ccddd1",
-      "sha256": "b4ccddd1661f98d5d0df5fe3a9dd08432852a8a6bc6320217d126888877032fd",
-      "bytes": 4554,
-      "mtime": "2026-10-01T22:42:24.681Z"
+      "short": "33f3836c",
+      "sha256": "33f3836c8097d339ee229cc86d66813c7412a43b2aecbe6b38378153ba8487a5",
+      "bytes": 4116,
+      "mtime": "2026-10-01T22:52:04.477Z"
     },
     {
       "path": "rules/system/meta_rules.md",
-      "short": "9f97fed5",
-      "sha256": "9f97fed5d6515e8b7a868d6c25d27dfadfd8389962e45d2697a13e5eef0c3b2d",
-      "bytes": 22175,
-      "mtime": "2026-10-01T22:42:24.680Z"
+      "short": "3565d1ee",
+      "sha256": "3565d1ee7edaaae6cb2929b1e93f98ff2c7a6a54f10cc2c7ab8072c2a0839582",
+      "bytes": 19982,
+      "mtime": "2026-10-01T22:50:34.245Z"
     },
     {
       "path": "rules/system/output_standard.md",
-      "short": "95d19892",
-      "sha256": "95d19892e9e5837a9f965cf747d811871195ed092e73729cbb59aa47e6c3e589",
-      "bytes": 10680,
-      "mtime": "2026-10-01T22:42:24.681Z"
+      "short": "c9010375",
+      "sha256": "c9010375eaca3ff12d7b8e69b23c0b73ae16f2df077f650e1c6d6f71ac311eb2",
+      "bytes": 9624,
+      "mtime": "2026-10-01T22:52:34.022Z"
     },
     {
       "path": "rules/system/thinking_framework.md",
@@ -1660,10 +1660,10 @@
     },
     {
       "path": "scripts/lib/mobile_bridge_core.mjs",
-      "short": "af91e003",
-      "sha256": "af91e003c14dad2aef70b425d040de6fe3b36f46f207989854a912275fdaf38b",
-      "bytes": 24290,
-      "mtime": "2026-10-01T16:55:32.072Z"
+      "short": "10633832",
+      "sha256": "10633832db8dbcbfe08d40dd8d251a96a55cd7f42cdb291de86d528d8d6fdac4",
+      "bytes": 25794,
+      "mtime": "2026-10-01T22:57:01.893Z"
     },
     {
       "path": "scripts/lib/output_compactness.mjs",
@@ -1730,17 +1730,17 @@
     },
     {
       "path": "scripts/mobile_bridge.mjs",
-      "short": "d704fc3e",
-      "sha256": "d704fc3e29ca5c03fe7c32cabe287484608697bc8a38851782aa6b534cfbbc20",
-      "bytes": 13139,
-      "mtime": "2026-10-01T16:55:50.718Z"
+      "short": "11c999e3",
+      "sha256": "11c999e3a48a630de86ffef1b65f7ca09bd86018e8d8f7c9bab05c4ed61b5cdd",
+      "bytes": 14002,
+      "mtime": "2026-10-01T22:57:38.863Z"
     },
     {
       "path": "scripts/mobile_bridge_audit.mjs",
-      "short": "f235d8de",
-      "sha256": "f235d8ded1cc43d7705d9a5dd051f41e89bf8c36f1d7d5d55f7568025d619fa8",
-      "bytes": 9532,
-      "mtime": "2026-10-01T16:57:09.872Z"
+      "short": "0ac3d6df",
+      "sha256": "0ac3d6dfd0c13b31a3c23fd4e274b469069b135d2c61a578bb420c74f95ecd94",
+      "bytes": 11370,
+      "mtime": "2026-10-01T22:57:28.262Z"
     },
     {
       "path": "scripts/mobile_control.sh",

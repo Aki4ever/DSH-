@@ -44,7 +44,6 @@ import {
   probeDshHost,
   readBrowserSessionSecret,
   readState,
-  clearState,
   writeState
 } from './lib/mobile_bridge_core.mjs'
 
@@ -113,8 +112,12 @@ function phoneUrls(port, pin) {
 async function cmdStart(args) {
   const port = Number(args.port ?? DEFAULT_BRIDGE_PORT)
   const bind = String(args.bind ?? '0.0.0.0')
-  const pin = String(args.pin ?? generatePin())
-  const key = generateKey()
+  // 重启默认**沿用**上次的 PIN 与会话密钥：否则手机上已保存的主屏图标/书签每重启一次就失效一次。
+  // 这是实测出来的体验缺陷（本轮修复）：stop 后 start 换 PIN，已被手机保存的链接直接 401。
+  const previous = readState()
+  const reuse = args['new-pin'] !== true && previous?.pin !== undefined
+  const pin = String(args.pin ?? (reuse ? previous.pin : generatePin()))
+  const key = previous?.key ?? generateKey()
 
   if (!/^\d{4,12}$/u.test(pin)) {
     say(`${BAD} --pin 必须是 4~12 位数字（当前：${pin}）`)
@@ -207,6 +210,16 @@ async function cmdServe() {
   return 0
 }
 
+/**
+ * 停服时**只摘掉 pid，不删状态文件**。
+ * 为什么：PIN 与会话密钥存在状态文件里，删了就等于每次停/起都换 PIN ——
+ * 手机上已保存的主屏图标与书签会直接 401（本轮实测的体验缺陷）。
+ * 需要彻底换密钥时用 `start --new-pin`。
+ */
+function markStopped(state) {
+  writeState({ ...state, pid: null, stoppedAt: new Date().toISOString() })
+}
+
 async function cmdStop() {
   const state = readState()
   if (state === undefined) {
@@ -214,16 +227,16 @@ async function cmdStop() {
     return 0
   }
   if (!pidAlive(state.pid)) {
-    clearState()
-    say(`${WARN} 记录的 pid ${state.pid ?? '(空)'} 已不存在，已清理残留状态。`)
+    markStopped(state)
+    say(`${WARN} 记录的 pid ${state.pid ?? '(空)'} 已不存在；已标记停止，PIN 与会话密钥保留。`)
     return 0
   }
   process.kill(state.pid, 'SIGTERM')
   const deadline = Date.now() + 5000
   while (Date.now() < deadline && pidAlive(state.pid)) await new Promise((r) => setTimeout(r, 150))
   const still = pidAlive(state.pid)
-  clearState()
-  say(still ? `${BAD} pid ${state.pid} 未在 5 秒内退出，请手动 kill。` : `${OK} 网桥已停止（端口 ${state.bridgePort} 已释放）。`)
+  markStopped(state)
+  say(still ? `${BAD} pid ${state.pid} 未在 5 秒内退出，请手动 kill。` : `${OK} 网桥已停止（端口 ${state.bridgePort} 已释放；PIN 保留）。`)
   return still ? 1 : 0
 }
 
