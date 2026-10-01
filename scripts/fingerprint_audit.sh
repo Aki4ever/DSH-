@@ -232,11 +232,21 @@ run_freshness_report() {
 # 两个扫描同时跑时，后启动的会先清空文件，前一个还在往里写 —— 双方都得到半截台账，
 # 而且**退出码仍然是 0**（最坏的一种脏数据：看着成功，内容残缺）。故整段加锁。
 FINGERPRINT_AUDIT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=lib/atomic_lock.sh
-. "$FINGERPRINT_AUDIT_DIR/lib/atomic_lock.sh"
+# 锁实现唯一一份；被单独拷到沙箱里跑时必须能降级（同 control_gates.sh 的处置）
+ATOMIC_LOCK_AVAILABLE=0
+if [ -f "$FINGERPRINT_AUDIT_DIR/lib/atomic_lock.sh" ]; then
+  # shellcheck source=lib/atomic_lock.sh
+  . "$FINGERPRINT_AUDIT_DIR/lib/atomic_lock.sh"
+  ATOMIC_LOCK_AVAILABLE=1
+fi
 
 # 生成全量持久化指纹台账（带锁入口）
 run_scan_and_update_ledger() {
+  if [ "$ATOMIC_LOCK_AVAILABLE" != "1" ]; then
+    echo "⚠️ 指纹台账无锁重写：未找到 scripts/lib/atomic_lock.sh（降级模式，仅沙箱场景）" >&2
+    run_scan_and_update_ledger_unlocked
+    return $?
+  fi
   if ! atomic_lock_acquire "assets:fingerprint_ledger" "指纹台账整文件重写"; then
     echo "⛔ 指纹台账未更新：原子锁被占用（另一个扫描正在进行）" >&2
     return 1

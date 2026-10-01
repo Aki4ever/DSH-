@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T15:26:18.181Z",
+  "generatedAt": "2026-10-01T15:29:33.124Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -799,10 +799,10 @@
     },
     {
       "path": "scripts/control_gates.sh",
-      "short": "19c898ca",
-      "sha256": "19c898ca1f1a247e0477b7dc27e460397fca020e6377555c84449afe3f52ac68",
-      "bytes": 57677,
-      "mtime": "2026-10-01T15:25:23.500Z"
+      "short": "b6243228",
+      "sha256": "b6243228e4ceba9589af16cc245ce2d7b7f379072b506775d531cf62c556778f",
+      "bytes": 58640,
+      "mtime": "2026-10-01T15:29:10.294Z"
     },
     {
       "path": "scripts/deepseek_key_setup.sh",
@@ -827,10 +827,10 @@
     },
     {
       "path": "scripts/fingerprint_audit.sh",
-      "short": "7b42d645",
-      "sha256": "7b42d645fb409304262e69d9c6261be8d662b8fe3d58a38c773daebe358863bd",
-      "bytes": 16659,
-      "mtime": "2026-10-01T15:23:34.087Z"
+      "short": "4b21a30d",
+      "sha256": "4b21a30d4e3a265b7cd43f5a502f7ef2a19f0868879113005c23a7f8aa27910d",
+      "bytes": 17112,
+      "mtime": "2026-10-01T15:29:23.941Z"
     },
     {
       "path": "scripts/fingerprint_index.mjs",

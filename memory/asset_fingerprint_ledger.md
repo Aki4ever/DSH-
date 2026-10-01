@@ -3,7 +3,7 @@
 > ### 🏷️ **版本信息与实施追踪**
 > - **当前台账版本**：`v4.26.0`
 > - **基线对齐版本**：`v4.26.0`
-> - **最后全盘扫描时间**：2026-10-01 23:26
+> - **最后全盘扫描时间**：2026-10-01 23:29
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)
 
 本文档记录工程全域受管资产（规则、知识库、架构索引、工程模板、自动化脚本与需求台账）的**数字指纹（SHA-256 8位短哈希）**、**最后修改时间**与**新鲜度等级**，为全域资产对齐与防止暗中代码漂移提供唯一客观事实依据。
@@ -140,11 +140,11 @@ v4.25.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/check_task_naming.sh` | `dd0c4068` | 2026-09-29 02:27 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/check_unique_identifiers.mjs` | `debfb819` | 2026-09-23 18:34 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/conflict_scan.mjs` | `e7d047c9` | 2026-10-01 23:26 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/control_gates.sh` | `19c898ca` | 2026-10-01 23:25 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/control_gates.sh` | `b6243228` | 2026-10-01 23:29 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/deepseek_key_setup.sh` | `5b69398f` | 2026-10-01 05:51 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/deepseek_usage_probe.mjs` | `ac69bf1d` | 2026-09-29 02:26 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/disk_check_and_cleanup.sh` | `a49d5115` | 2026-10-01 05:49 | `v4.24.0` | 🟡 TIER-1 | 待升级对齐 |
-| `scripts/fingerprint_audit.sh` | `7b42d645` | 2026-10-01 23:23 | `v4.24.0` | 🟡 TIER-1 | 待升级对齐 |
+| `scripts/fingerprint_audit.sh` | `4b21a30d` | 2026-10-01 23:29 | `v4.24.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/fingerprint_index.mjs` | `a8153764` | 2026-10-01 23:23 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/flow_control.mjs` | `25f6562e` | 2026-09-29 04:27 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/gate_selftest.sh` | `3cd99125` | 2026-10-01 05:47 | `-` | ⚪ TIER-2 | 指纹监控中 |

@@ -638,10 +638,25 @@ json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
 # 先写的那份会被后写的整段覆盖 —— 看板数字看上去对，实际丢了一次状态（脏数据）。
 # 锁实现是唯一一份：`scripts/lib/atomic_lock.sh`（与 Node 侧同一个锁根）。
 CONTROL_GATES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=lib/atomic_lock.sh
-. "$CONTROL_GATES_DIR/lib/atomic_lock.sh"
+# 锁实现是唯一一份（scripts/lib/atomic_lock.sh）。**按订单脚本被拷走单跑的场景必须降级**：
+# 实测缺陷：`gate_selftest.sh` 会把本脚本复制到沙箱目录里跑（只带桩件、不带 lib/），
+# 于是 `set -e` 下 source 失败 → 脚本当场退出、输出为空 → 自检 8/9 全红。
+# 处置：找不到锁实现时**显式声明"无锁降级"**（不静默），写入状态时跳过加锁但不丢功能。
+ATOMIC_LOCK_AVAILABLE=0
+if [ -f "$CONTROL_GATES_DIR/lib/atomic_lock.sh" ]; then
+  # shellcheck source=lib/atomic_lock.sh
+  . "$CONTROL_GATES_DIR/lib/atomic_lock.sh"
+  ATOMIC_LOCK_AVAILABLE=1
+fi
 
 write_status() {
+  # 锁实现不在位（例如被单独拷到沙箱里跑自检）→ 无锁写，但**必须显式说明**，
+  # 不许让人误以为"这次写是受锁保护的"。
+  if [ "$ATOMIC_LOCK_AVAILABLE" != "1" ]; then
+    echo "⚠️ 看板快照无锁落盘：未找到 scripts/lib/atomic_lock.sh（降级模式，仅自检/沙箱场景）" >&2
+    write_status_unlocked
+    return $?
+  fi
   # 抢不到锁就**显式报错**，绝不"降级为无锁照写"（那等于锁白加了）
   if ! atomic_lock_acquire "state:gates_snapshot" "看板状态快照落盘"; then
     echo "⛔ 看板快照未落盘：原子锁被占用（并发调用方正在写）" >&2
