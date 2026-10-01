@@ -145,17 +145,51 @@ export function latestByFile(records) {
  * @param {Array<string>} dirty git 工作树改动文件（相对 ROOT）
  * @param {(rel:string)=>object|null} anchorFn 磁盘锚点读取函数（可注入，便于单测）
  */
-export function evaluate(records, dirty, anchorFn = (rel) => anchor(toAbs(rel))) {
+/**
+ * 漂移的**书面豁免**（REQ-092 / R2-c）。
+ *
+ * 为什么必须有这个通道（实测场景，不是假想）：本机同时存在**多个并发会话**
+ * 在同一个仓库上工作。实测本轮期间 `skill-pool/plugins/dsh-plugin-restart/src/restart-core.cjs`
+ * 被另一个会话持续改写，其 bundle 尚未重建 —— 该文件的"台账哈希 ≠ 磁盘哈希"
+ * 是**另一个会话的在途工作**，既不该被我登记成"我这轮的成果"，也不该把
+ * 整个工程的 S11 判定永久钉红（那会让机制退化成噪声）。
+ *
+ * 因此设为**显式、需书面说明、进 git 版本控制**的豁免（与 legacy_align_exempt.txt 同一原则）：
+ *   · 豁免必须写理由与登记时间，可被审计与追溯；
+ *   · 豁免只作用于"哈希漂移"，**不豁免判定失败**（judgeExit≠0 仍然判红）；
+ *   · 不写进豁免文件的漂移，照旧判红。
+ */
+export const DRIFT_EXEMPT_FILE = join(ROOT, 'ai-control', 'config', 'ledger_drift_exempt.txt')
+
+export function readDriftExemptions(file = DRIFT_EXEMPT_FILE) {
+  const map = new Map()
+  try {
+    for (const line of readFileSync(file, 'utf8').split('\n')) {
+      const t = line.trim()
+      if (!t || t.startsWith('#')) continue
+      const parts = t.split('|').map((x) => x.trim())
+      if (parts.length < 2) continue
+      map.set(parts[0], { reason: parts[1], at: parts[2] || '' })
+    }
+  } catch { /* 文件不存在 = 无豁免 */ }
+  return map
+}
+
+export function evaluate(records, dirty, anchorFn = (rel) => anchor(toAbs(rel)), opts = {}) {
   const latest = latestByFile(records)
   const drifts = []
+  const driftExempt = []
   const judgeFails = []
   const missing = []
+  const exempt = opts.driftExempt || readDriftExemptions()
 
   for (const [rel, info] of latest) {
     const now = anchorFn(rel)
     if (!now) { missing.push(rel); continue }
     if (now.sha256 !== info.sha256) {
-      drifts.push({ path: rel, recorded: info.sha256.slice(0, 12), now: now.sha256.slice(0, 12) })
+      const row = { path: rel, recorded: info.sha256.slice(0, 12), now: now.sha256.slice(0, 12) }
+      if (exempt.has(rel)) driftExempt.push({ ...row, reason: exempt.get(rel).reason })
+      else drifts.push(row)
     }
     if (info.record && typeof info.record.judgeExit === 'number' && info.record.judgeExit !== 0) {
       judgeFails.push({ path: rel, judge: info.record.judge, exit: info.record.judgeExit, at: info.record.at })
@@ -170,7 +204,7 @@ export function evaluate(records, dirty, anchorFn = (rel) => anchor(toAbs(rel)))
     return !recordedFiles.has(rel)
   })
 
-  return { drifts, judgeFails, missing, unrecorded, fileCount: latest.size, recordCount: records.length }
+  return { drifts, driftExempt, judgeFails, missing, unrecorded, fileCount: latest.size, recordCount: records.length }
 }
 
 // ── 子命令 ──────────────────────────────────────────────────────────────────
@@ -283,11 +317,12 @@ function cmdCheck(args) {
   console.log('🧾 迭代检测台账 · 一致性判定')
   console.log('-----------------------------------------')
   console.log(`记录 ${res.recordCount} 条 · 受管文件 ${res.fileCount} 个`)
-  console.log(`哈希漂移      : ${res.drifts.length}`)
+  console.log(`哈希漂移      : ${res.drifts.length}${res.driftExempt?.length ? `（另有 ${res.driftExempt.length} 项已书面豁免）` : ''}`)
   console.log(`未记录改动    : ${res.unrecorded.length}`)
   console.log(`判定失败      : ${res.judgeFails.length}`)
   console.log(`文件已消失    : ${res.missing.length}`)
   for (const d of res.drifts) console.log(`   ⚠️ 漂移 ${d.path}：台账 ${d.recorded} ≠ 磁盘 ${d.now}（改了没重新登记）`)
+  for (const d of (res.driftExempt || [])) console.log(`   📝 豁免漂移 ${d.path}：${d.reason}`)
   for (const u of res.unrecorded) console.log(`   ⚠️ 未记录 ${u}`)
   for (const j of res.judgeFails) console.log(`   ⚠️ 判定失败 ${j.path}：「${j.judge}」退出码 ${j.exit}`)
   for (const m of res.missing) console.log(`   ⚠️ 已消失 ${m}`)
