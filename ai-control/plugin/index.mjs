@@ -37,6 +37,8 @@ import { evaluatePhysicalLock, getLockState, advanceLockTo, STAGES } from '../..
 import { checkTodoGate, recordTodoWriteSync } from '../../scripts/lib/todo_tracker.mjs'
 import { buildCompactReport, writeCompactReport } from '../../scripts/lib/output_compactness.mjs'
 import { isHostProcess as isHostProcessImpl } from '../lib/host_identity.mjs'
+// REQ-092 / R1-d：全域覆盖快照读取（唯一真相源仍是全局规则的 scope_audit.mjs）
+import { readScopeSnapshot } from '../../scripts/scope_audit.mjs'
 
 /** Cordis 插件名（用于诊断与事件来源标注）。 */
 export const name = 'ai-execution-control'
@@ -662,11 +664,51 @@ function evaluateTodoGate(execution, config) {
 }
 
 /**
+ * 取本次调用所在的工作目录（宿主会话头里的 cwd）。
+ * 为什么用会话头而不是 `process.cwd()`：插件跑在宿主进程里，进程 cwd 与会话工作区
+ * 并不等价；而 `agent.session.header.cwd` 是宿主自己维护的权威字段
+ * （插件里自动命名逻辑已在用同一条路径）。
+ */
+export function resolveWorkspaceCwd(execution) {
+  const a = execution?.agent
+  const cwd = a?.session?.header?.cwd ?? a?.cwd ?? a?.session?.header?.workspace
+  return typeof cwd === 'string' && cwd ? cwd : ''
+}
+
+/**
+ * 全域写拦截（REQ-092 / R1-d）：把"未接管工程"从**审计清单**升级为**运行时拒止**。
+ *
+ * 判定口径（刻意保守，宁可不拦也不误拦）：
+ *   · 取不到工作目录、或快照读不到 → 返回 undefined（放行，不制造误伤）；
+ *   · 工作目录所属工程名出现在快照的 uncovered 名单里 → 拒绝并给出补课命令；
+ *   · 其余一律放行。
+ *
+ * @returns 拒绝理由字符串；`undefined` 表示放行。
+ */
+export function evaluateDomainScope(execution, scopeSnapshot, controlProjectRoot = '') {
+  const cwd = resolveWorkspaceCwd(execution)
+  if (!cwd || !scopeSnapshot || !Array.isArray(scopeSnapshot.uncovered)) return undefined
+  // 主控仓库自身永远放行：它是"修管控"的地方，拦了就会死锁（同逃生舱原则）
+  const norm = (p) => String(p || '').replace(/\/+$/, '')
+  if (controlProjectRoot && norm(cwd) === norm(controlProjectRoot)) return undefined
+  const base = norm(cwd).split('/').filter(Boolean).pop() || ''
+  if (!scopeSnapshot.uncovered.includes(base)) return undefined
+  return [
+    `⛔ 全域管控硬门禁：拒绝本次 \`${String(execution?.name || '')}\` 调用 —— 当前工作区所属工程「${base}」未纳入管控。`,
+    `判定依据（磁盘快照，非模型自述）：${scopeSnapshot.uncovered.join('、')} 未接管 · 快照时间 ${scopeSnapshot.at || '未知'}`,
+    `工作目录：${cwd}`,
+    `补课动作（在主控仓库执行一次即可）：\`node scripts/backfill_scope.mjs --apply\``,
+    '只读工具（read/grep/glob）与 todo_write 始终可用。',
+    '若确需绕过：设置环境变量 DSH_CONTROL_GUARD=off（全局）或 DSH_CONTROL_BYPASS=all（单次）。',
+  ].join('\n')
+}
+
+/**
  * 判定是否应拦截该工具调用。
  * 导出以便自检脚本在不启动 DSH 的情况下验证判定逻辑。
  * @returns 拒绝理由字符串；`undefined` 表示放行。
  */
-export function evaluate(execution, status, config, cacheAgeMs = 0, lockState = null) {
+export function evaluate(execution, status, config, cacheAgeMs = 0, lockState = null, scopeSnapshot = null, controlProjectRoot = '') {
   const toolName = String(execution?.name || '')
   if (!toolName) return undefined
 
@@ -721,6 +763,11 @@ export function evaluate(execution, status, config, cacheAgeMs = 0, lockState = 
 
   // 6) 全部门禁通过且物理锁未阻断 → 放行
   if (status.execAllowed) {
+    // 6a) 全域写拦截（REQ-092 / R1-d）：门禁只证明"本仓库状态对不对"，
+    //     证明不了"这个工作区有没有被接管"。实测 4 个工程曾长期脱管而门禁全绿。
+    const domainDenied = evaluateDomainScope(execution, scopeSnapshot, controlProjectRoot)
+    if (domainDenied) return domainDenied
+
     // 6b) S07 待办常显硬门禁（REQ-080）刻意放在这里，而不是最前面：
     //     顺序语义是"先证明自己有资格执行（门禁/物理锁），再证明执行过程可见"。
     //     若放在最前，status.json 缺失时会先报待办缺失，把真正的根因（依据不可证实）
@@ -1032,7 +1079,11 @@ export async function apply(ctx, config = {}) {
           }
         } catch {}
         try {
-          return evaluate(execution, status, cfg, age, currentLockState)
+          // 全域覆盖快照：同步读磁盘文件（由 control_gates.sh 与门禁同节拍刷新），
+          // 守卫内绝不起子进程 —— 守卫是同步契约，被拖住就等于宿主被拖住。
+          let scopeSnapshot = null
+          try { scopeSnapshot = readScopeSnapshot(cfg.projectRoot || resolveProjectRoot(cfg, stateDir)) } catch { scopeSnapshot = null }
+          return evaluate(execution, status, cfg, age, currentLockState, scopeSnapshot, cfg.projectRoot || resolveProjectRoot(cfg, stateDir))
         } catch (err) {
           // 判定自身抛错 → 依据不可证实，失败关闭并留下可见原因。
           // 历史行为是 `return undefined`（静默放行），与"状态不可证实即失败关闭"矛盾。

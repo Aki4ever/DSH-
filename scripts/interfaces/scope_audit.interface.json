@@ -1,0 +1,27 @@
+{
+  "id": "cli.rules.scope_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/scope_audit.mjs",
+  "invoke": "node scripts/scope_audit.mjs --check",
+  "summary": "全域管控覆盖审计：逐工程核验入口在位/文档引用可达/运行留痕/版本登记四类物理事实（REQ-092 / R1）",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": true, "desc": "执行判定并写机读产物；不达标退出码 1" },
+    { "name": "--fast", "type": "arg", "required": false, "desc": "只读各工程本地留痕（跳过会话转录），供门禁/守卫高频调用" },
+    { "name": "--project <名称>", "type": "arg", "required": false, "desc": "只审计指定工程" },
+    { "name": "--root <路径>", "type": "arg", "required": false, "desc": "指定 DSH 工作根（默认自动探测）" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检 11 项：每条判据都必须能判红" },
+    { "name": "--json", "type": "arg", "required": false, "desc": "输出机读结论" }
+  ],
+  "outputs": [
+    { "name": "ai-control/reports/state/scope_audit.json", "type": "file", "desc": "权威报告（含会话转录证据）" },
+    { "name": "ai-control/reports/state/scope_audit_fast.json", "type": "file", "desc": "高频快照（仅本地留痕，供守卫同步消费）" },
+    { "name": "stdout", "type": "text", "desc": "逐工程覆盖明细与未接管名单" }
+  ],
+  "exitCodes": { "0": "全域工程均已接管", "1": "存在脱管工程（超过 SCOPE_MAX_UNCOVERED）", "2": "用法错误" },
+  "sideEffects": ["写 ai-control/reports/state/scope_audit*.json", "selftest 在临时目录内建/删测试工程"],
+  "dependencies": ["scripts/lib/gates_config.mjs", "scripts/lib/session_transcript.mjs"],
+  "parallel": "exclusive",
+  "examples": ["node scripts/scope_audit.mjs --check", "node scripts/scope_audit.mjs --check --fast", "node scripts/scope_audit.mjs --selftest"],
+  "source": "handwritten",
+  "verified": true
+}

@@ -1,0 +1,24 @@
+{
+  "id": "cli.rules.backfill_scope",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/backfill_scope.mjs",
+  "invoke": "node scripts/backfill_scope.mjs --apply",
+  "summary": "存量工程管控补课：为每个工程铺薄壳入口、注入可解析引用并实跑留痕（幂等；REQ-092 / R1-b）",
+  "inputs": [
+    { "name": "--apply", "type": "arg", "required": false, "desc": "真写盘并实跑自证（与 --dry-run 二选一）" },
+    { "name": "--dry-run", "type": "arg", "required": false, "desc": "只预览将要做的事，不写盘" },
+    { "name": "--project <名称>", "type": "arg", "required": false, "desc": "只补课指定工程" }
+  ],
+  "outputs": [
+    { "name": "<工程>/scripts/control.sh", "type": "file", "desc": "薄壳入口（0755，转发全局规则判定逻辑）" },
+    { "name": "<工程>/AGENTS.md", "type": "file", "desc": "注入带标记的管控接入段（引用均为真实存在路径）" },
+    { "name": "<工程>/.dsh-control/run-audit.jsonl", "type": "file", "desc": "调用留痕（运行证据）" }
+  ],
+  "exitCodes": { "0": "全部工程补课后复核接管", "1": "仍有工程未接管", "2": "用法错误（未指定 --apply/--dry-run）" },
+  "sideEffects": ["写各工程 scripts/control.sh 与 AGENTS.md", "在目标工程执行 selfcheck 追加留痕"],
+  "dependencies": ["scripts/scope_audit.mjs", "templates/project_control_shell.sh"],
+  "parallel": "exclusive",
+  "examples": ["node scripts/backfill_scope.mjs --dry-run", "node scripts/backfill_scope.mjs --apply"],
+  "source": "handwritten",
+  "verified": true
+}

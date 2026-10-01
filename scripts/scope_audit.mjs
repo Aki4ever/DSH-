@@ -157,6 +157,29 @@ function readFileSyncSafeText(p) {
   try { return readFileSync(p, 'utf8') } catch { return '' }
 }
 
+/**
+ * 判定某个工作目录所属工程是否**未被管控接管**（供宿主硬门禁同步消费）。
+ * 口径：以磁盘快照里的未接管名单为准；快照缺失/不可解析 → 返回 null（守卫放行，不误拦）。
+ * @returns {{ uncovered: string[], root: string, at: string }|null}
+ */
+export function readScopeSnapshot(projectRoot) {
+  // 优先读高频快照（与门禁同节拍），再回落权威报告
+  const candidates = [
+    join(projectRoot || ROOT, 'ai-control', 'reports', 'state', 'scope_audit_fast.json'),
+    join(projectRoot || ROOT, 'ai-control', 'reports', 'state', 'scope_audit.json'),
+    join(ROOT, 'ai-control', 'reports', 'state', 'scope_audit_fast.json'),
+    join(ROOT, 'ai-control', 'reports', 'state', 'scope_audit.json'),
+  ]
+  for (const p of candidates) {
+    if (!existsSync(p)) continue
+    try {
+      const j = JSON.parse(readFileSync(p, 'utf8'))
+      if (j && Array.isArray(j.uncovered)) return { uncovered: j.uncovered, root: j.dshRoot, at: j.generatedAt }
+    } catch { /* 损坏快照不做数 */ }
+  }
+  return null
+}
+
 /** 全域审计：遍历 DSH 工作根下的一级工程目录，逐工程取证。 */
 export function auditDomain(opts = {}) {
   const dshRoot = resolveDshRoot(opts.root)
@@ -247,8 +270,21 @@ function main() {
     process.exit(r.ok ? 0 : 1)
   }
 
-  const res = auditDomain({ root: get('--root'), only: get('--project'), globalRoot: ROOT })
-  const outPath = join(ROOT, 'ai-control', 'reports', 'state', 'scope_audit.json')
+  // --fast：跳过会话转录扫描（那是秒级开销），只认各工程本地留痕文件。
+  // 为什么需要它：宿主硬门禁要按节拍消费"全域覆盖"结论，若每次都扫全部会话转录，
+  // 会把插件拖慢到不可用（守卫是同步契约，不能被拖住）。
+  const fast = argv.includes('--fast')
+  const res = auditDomain({
+    root: get('--root'),
+    only: get('--project'),
+    globalRoot: ROOT,
+    skipTranscript: fast,
+  })
+  // 产物分两份，**禁止互相覆盖**（实测缺陷：--fast 曾把不带转录证据的弱口径结果
+  // 写进权威产物，等于让高频调用静默拉低审计强度）：
+  //   · scope_audit.json      权威报告（含会话转录证据，人读/结项用）
+  //   · scope_audit_fast.json 高频快照（仅本地留痕，供门禁与守卫按节拍消费）
+  const outPath = join(ROOT, 'ai-control', 'reports', 'state', fast ? 'scope_audit_fast.json' : 'scope_audit.json')
   try {
     mkdirSync(dirname(outPath), { recursive: true })
     writeFileSync(outPath, JSON.stringify(res, null, 2) + '\n', 'utf8')

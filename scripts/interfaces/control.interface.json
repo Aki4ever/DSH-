@@ -1,0 +1,28 @@
+{
+  "id": "cli.rules.control",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/control.sh",
+  "invoke": "bash scripts/control.sh selfcheck",
+  "summary": "工程侧管控薄壳入口：转发全局规则判定逻辑并留痕（不复制判定逻辑；REQ-092 / R1-b）",
+  "inputs": [
+    { "name": "check", "type": "arg", "required": false, "desc": "转发累积门禁看板" },
+    { "name": "lock", "type": "arg", "required": false, "desc": "转发物理锁阶梯状态" },
+    { "name": "naming", "type": "arg", "required": false, "desc": "转发会话命名判定（三态退出码）" },
+    { "name": "todo", "type": "arg", "required": false, "desc": "转发 S07 待办常显判定" },
+    { "name": "version", "type": "arg", "required": false, "desc": "转发需求版本贯通判定" },
+    { "name": "scope", "type": "arg", "required": false, "desc": "转发全域覆盖审计" },
+    { "name": "selfcheck", "type": "arg", "required": false, "desc": "四机制入口逐条实跑并汇总" },
+    { "name": "path", "type": "arg", "required": false, "desc": "打印全局规则根目录" }
+  ],
+  "outputs": [
+    { "name": ".dsh-control/run-audit.jsonl", "type": "file", "desc": "每次调用的动作与真实退出码留痕" },
+    { "name": "stdout", "type": "text", "desc": "被转发脚本的原样输出" }
+  ],
+  "exitCodes": { "0": "转发动作成功", "1": "转发动作不达标（或 selfcheck 有失败项）", "2": "用法错误或找不到全局规则仓库" },
+  "sideEffects": ["追加 .dsh-control/run-audit.jsonl"],
+  "dependencies": ["templates/project_control_shell.sh（同源模板）"],
+  "parallel": "shared",
+  "examples": ["bash scripts/control.sh selfcheck", "bash scripts/control.sh check"],
+  "source": "handwritten",
+  "verified": true
+}

@@ -588,7 +588,8 @@ check_integrity() {
   for entry in \
     "scope_audit.mjs|全域管控覆盖" \
     "req_version_audit.mjs|需求版本贯通" \
-    "anti_hallucination_audit.mjs|无悬空引用与空架子"; do
+    "anti_hallucination_audit.mjs|无悬空引用与空架子" \
+    "domain_scope_selftest.mjs|全域写拦截判定有牙"; do
     name="${entry%%|*}"; label="${entry##*|}"
     if [ ! -f "$script_dir/$name" ]; then
       # 判定器缺失 = 不可判定，绝不折算为通过（元规则第三十六条）
@@ -629,6 +630,26 @@ check_integrity() {
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
+# 全域覆盖快照（REQ-092 / R1-d）—— 供宿主硬门禁同步消费
+# ══════════════════════════════════════════════════════════════════════════════
+# 为什么必须由本脚本产出：守卫是**同步契约**，不能在调用点跑子进程做全域扫描；
+# 而"哪个工程还没被接管"必须有一份可同步读到的磁盘快照。
+# 因此由看板（每隔 TTL 秒被插件自举一次）顺带刷新该快照，守卫只读文件。
+refresh_scope_snapshot() {
+  local script_dir; script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local node_bin="${DSH_NODE_BIN:-}"
+  if [ -z "$node_bin" ] && [ -f "$script_dir/lib/find_node.sh" ]; then
+    # shellcheck disable=SC1091
+    . "$script_dir/lib/find_node.sh"
+    node_bin="$(find_node || true)"
+  fi
+  [ -n "$node_bin" ] || node_bin="node"
+  [ -f "$PROJECT_ROOT/scripts/scope_audit.mjs" ] || return 0
+  # --fast：只读各工程本地留痕，不扫会话转录（秒级→毫秒级），适合按节拍刷新
+  ( cd "$PROJECT_ROOT" && "$node_bin" scripts/scope_audit.mjs --check --fast >/dev/null 2>&1 ) || true
+}
+
+# ══════════════════════════════════════════════════════════════════════════════
 # 主流程
 # ══════════════════════════════════════════════════════════════════════════════
 compute_all() {
@@ -662,6 +683,9 @@ compute_all() {
   for r in "${RESULTS[@]}"; do [ "$r" = "pass" ] && PASSED=$((PASSED+1)); done
   TOTAL_GATES=${#GATE_IDS[@]}
   PCT=$(( PASSED * 100 / TOTAL_GATES ))
+
+  # 全域覆盖快照：与门禁状态同节拍刷新，供宿主硬门禁同步读取（REQ-092 / R1-d）
+  refresh_scope_snapshot
 
   if (( FIRST_BLOCK >= 0 )); then
     CURRENT_ID="${GATE_IDS[$FIRST_BLOCK]}"

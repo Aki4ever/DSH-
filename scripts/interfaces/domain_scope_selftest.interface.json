@@ -1,0 +1,18 @@
+{
+  "id": "cli.rules.domain_scope_selftest",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/domain_scope_selftest.mjs",
+  "invoke": "node scripts/domain_scope_selftest.mjs",
+  "summary": "全域写拦截判定自检：证明\"未接管工程拒写\"既有牙又零误伤（9 用例；REQ-092 / R1-d）",
+  "inputs": [],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "逐用例期望/实际（拒绝或放行）" }
+  ],
+  "exitCodes": { "0": "全部用例符合预期", "1": "存在不符用例" },
+  "sideEffects": [],
+  "dependencies": ["ai-control/plugin/index.mjs"],
+  "parallel": "shared",
+  "examples": ["node scripts/domain_scope_selftest.mjs"],
+  "source": "handwritten",
+  "verified": true
+}

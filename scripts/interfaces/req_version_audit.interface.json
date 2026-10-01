@@ -1,0 +1,25 @@
+{
+  "id": "cli.rules.req_version_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/req_version_audit.mjs",
+  "invoke": "node scripts/req_version_audit.mjs --check",
+  "summary": "需求版本贯通判定：需求文案 ↔ 需求台账 ↔ 实施载体 ↔ 回复回执四处对拍（REQ-092 / R2-d）",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": true, "desc": "执行四处对拍判定" },
+    { "name": "--req <编号>", "type": "arg", "required": false, "desc": "指定需求条目（默认 REQ-092）" },
+    { "name": "--receipt <文件>", "type": "arg", "required": false, "desc": "显式传入回复正文；显式传入即必须判" },
+    { "name": "--require-receipt", "type": "arg", "required": false, "desc": "发布前强校验：回执未披露需求版本号即判红" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检 10 项" },
+    { "name": "--json", "type": "arg", "required": false, "desc": "输出机读结论" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "四处版本号取值与差异清单" }
+  ],
+  "exitCodes": { "0": "版本号一致（回执项未显式要求时不计入判定）", "1": "存在不一致", "2": "用法错误" },
+  "sideEffects": [],
+  "dependencies": ["scripts/req_version_gen.mjs", "scripts/align_version.mjs", "scripts/lib/session_transcript.mjs"],
+  "parallel": "shared",
+  "examples": ["node scripts/req_version_audit.mjs --check", "node scripts/req_version_audit.mjs --check --require-receipt"],
+  "source": "handwritten",
+  "verified": true
+}

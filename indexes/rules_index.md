@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.28.0`
-> - **对应实施版本**：`v4.28.0`
+> - **当前文档版本**：`v4.29.0`
+> - **对应实施版本**：`v4.29.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -166,6 +166,8 @@ node scripts/align_version.mjs --dry-run                            # 升版预�
 | **管控机制** | [`scripts/req_version_gen.mjs`](../scripts/req_version_gen.mjs) | 需求版本机读台账生成（REQ-092 / R2-c）：从主台账抽出编号/需求版本/实施版本/承载文件 |
 | **管控机制** | [`scripts/req_version_audit.mjs`](../scripts/req_version_audit.mjs) | 需求版本贯通判定（REQ-092 / R2-d）：需求文案 ↔ 需求台账 ↔ 实施载体 ↔ 回复回执四处对拍 |
 | **管控机制** | [`scripts/anti_hallucination_audit.mjs`](../scripts/anti_hallucination_audit.mjs) | 反空架子与反幻觉（REQ-092 / R3）：判据七"通电凭据" + 判据八"引用真实性"，悬空引用即判红 |
+| **管控机制** | [`scripts/domain_scope_selftest.mjs`](../scripts/domain_scope_selftest.mjs) | 全域写拦截判定自检（REQ-092 / R1-d）：证明"未接管工程拒写"既有牙又零误伤（9 用例） |
+| **管控机制** | [`scripts/push_external_projects.sh`](../scripts/push_external_projects.sh) | 外部工程推送闭环（REQ-092 / R1-b）：逐工程判远程/待推送/推没推成，不采信自述 |
 | **管控机制** | [`scripts/verify_guard_live.sh`](../scripts/verify_guard_live.sh) | 拦截层上线验证：**重启桌面端后**检查守卫/看板是否真实生效（源码契约 + 插件自检 + 门禁实况 + 人工观察清单） |
 | **管控机制** | [`scripts/verify_escape_hatch.sh`](../scripts/verify_escape_hatch.sh) | 逃生舱重启后验证：**宿主是否已加载最新代码**（进程启动时间 vs 插件改动时间）+ 逃生舱判定逻辑 7 项 + 宿主级实弹步骤；只读，不制造门禁未过状态 |
 | **管控机制** | [`scripts/physical_lock.sh`](../scripts/physical_lock.sh) | 底层物理锁：查看、自适应同步与单向推进物理锁状态，全项目强制执行串行工序硬阻断 |

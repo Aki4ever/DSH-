@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T16:27:24.327Z",
+  "generatedAt": "2026-10-01T16:45:42.962Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 252,
+  "total": 254,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 69
+    "脚本 (CLI)": 71
   },
-  "withInterface": 246,
+  "withInterface": 254,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1684,7 +1684,7 @@
       "desc": "",
       "invoke": "node scripts/anti_hallucination_audit.mjs",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/anti_hallucination_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -1711,7 +1711,7 @@
       "desc": "",
       "invoke": "node scripts/backfill_scope.mjs",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/backfill_scope.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -1801,7 +1801,7 @@
       "desc": "",
       "invoke": "bash scripts/control.sh",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/control.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -1838,6 +1838,15 @@
       "invoke": "bash scripts/disk_check_and_cleanup.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/disk_check_and_cleanup.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.domain_scope_selftest",
+      "path": "scripts/domain_scope_selftest.mjs",
+      "desc": "",
+      "invoke": "node scripts/domain_scope_selftest.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/domain_scope_selftest.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2102,6 +2111,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.push_external_projects",
+      "path": "scripts/push_external_projects.sh",
+      "desc": "",
+      "invoke": "bash scripts/push_external_projects.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/push_external_projects.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.redundancy_scan",
       "path": "scripts/redundancy_scan.mjs",
       "desc": "==============================================================================",
@@ -2125,7 +2143,7 @@
       "desc": "",
       "invoke": "node scripts/req_version_audit.mjs",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/req_version_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2134,7 +2152,7 @@
       "desc": "",
       "invoke": "node scripts/req_version_gen.mjs",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/req_version_gen.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2179,7 +2197,7 @@
       "desc": "",
       "invoke": "node scripts/scope_audit.mjs",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/scope_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

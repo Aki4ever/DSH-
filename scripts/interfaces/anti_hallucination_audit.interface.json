@@ -1,0 +1,23 @@
+{
+  "id": "cli.rules.anti_hallucination_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/anti_hallucination_audit.mjs",
+  "invoke": "node scripts/anti_hallucination_audit.mjs --check",
+  "summary": "反空架子与反幻觉审计：判据七\"通电凭据\" + 判据八\"引用真实性\"（REQ-092 / R3）",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": true, "desc": "执行两条判据判定" },
+    { "name": "--json", "type": "arg", "required": false, "desc": "输出机读结论" },
+    { "name": "--limit <n>", "type": "arg", "required": false, "desc": "悬空引用最多列几条（默认 20）" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检 12 项" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "悬空引用清单与通电凭据逐项状态" }
+  ],
+  "exitCodes": { "0": "无悬空引用且登记机制均有运行凭据", "1": "存在悬空引用或未通电机制", "2": "用法错误" },
+  "sideEffects": ["selftest 在临时目录内建/删测试仓库"],
+  "dependencies": [],
+  "parallel": "shared",
+  "examples": ["node scripts/anti_hallucination_audit.mjs --check", "node scripts/anti_hallucination_audit.mjs --selftest"],
+  "source": "handwritten",
+  "verified": true
+}

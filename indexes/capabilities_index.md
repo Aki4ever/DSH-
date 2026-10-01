@@ -1,8 +1,8 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.28.0`
-> - **对应实施版本**：`v4.28.0`
+> - **当前文档版本**：`v4.29.0`
+> - **对应实施版本**：`v4.29.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
 > - **生效状态**：`[Release 稳定生效]`
@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：252**（技能 178 · 其他执行层 74）
+**执行层条目总数：254**（技能 178 · 其他执行层 76）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -522,10 +522,10 @@
 | 插件 (Plugin) | `plugin.skillpool.dsh-plugin-usage-bar` | `skill-pool/plugins/dsh-plugin-usage-bar` | ✅ `skill-pool/plugins/dsh-plugin-usage-bar/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-usage-bar` | — |
 | 脚本 (CLI) | `cli.rules.agent_life` | `scripts/agent_life.mjs` | ✅ `scripts/interfaces/agent_life.interface.json` | `node scripts/agent_life.mjs` | agent_life.mjs |
 | 脚本 (CLI) | `cli.rules.align_version` | `scripts/align_version.mjs` | ✅ `scripts/interfaces/align_version.interface.json` | `node scripts/align_version.mjs` | 全库受管文档版本归位（把受管文档头部版本统一改到当前总版本） |
-| 脚本 (CLI) | `cli.rules.anti_hallucination_audit` | `scripts/anti_hallucination_audit.mjs` | ⛔ 未声明 | `node scripts/anti_hallucination_audit.mjs` | — |
+| 脚本 (CLI) | `cli.rules.anti_hallucination_audit` | `scripts/anti_hallucination_audit.mjs` | ✅ `scripts/interfaces/anti_hallucination_audit.interface.json` | `node scripts/anti_hallucination_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.atomic_lock_audit` | `scripts/atomic_lock_audit.mjs` | ✅ `scripts/interfaces/atomic_lock_audit.interface.json` | `node scripts/atomic_lock_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.audit_execution` | `scripts/audit_execution.sh` | ✅ `scripts/interfaces/audit_execution.interface.json` | `bash scripts/audit_execution.sh` | 对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片 |
-| 脚本 (CLI) | `cli.rules.backfill_scope` | `scripts/backfill_scope.mjs` | ⛔ 未声明 | `node scripts/backfill_scope.mjs` | — |
+| 脚本 (CLI) | `cli.rules.backfill_scope` | `scripts/backfill_scope.mjs` | ✅ `scripts/interfaces/backfill_scope.interface.json` | `node scripts/backfill_scope.mjs` | — |
 | 脚本 (CLI) | `cli.rules.batch_fix_sidebar_titles` | `scripts/batch_fix_sidebar_titles.mjs` | ✅ `scripts/interfaces/batch_fix_sidebar_titles.interface.json` | `node scripts/batch_fix_sidebar_titles.mjs` | 全量穿透修复前端侧边栏及权威存储中的全部存量会话标题 |
 | 脚本 (CLI) | `cli.rules.batch_rename_sessions` | `scripts/batch_rename_sessions.mjs` | ✅ `scripts/interfaces/batch_rename_sessions.interface.json` | `node scripts/batch_rename_sessions.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.build_capabilities_index` | `scripts/build_capabilities_index.mjs` | ✅ `scripts/interfaces/build_capabilities_index.interface.json` | `node scripts/build_capabilities_index.mjs` | ============================================================================== |
@@ -535,11 +535,12 @@
 | 脚本 (CLI) | `cli.rules.check_task_naming` | `scripts/check_task_naming.sh` | ✅ `scripts/interfaces/check_task_naming.interface.json` | `bash scripts/check_task_naming.sh` | 检查「当前会话」的任务命名是否符合规范，供看板常显与流程判定使用 |
 | 脚本 (CLI) | `cli.rules.check_unique_identifiers` | `scripts/check_unique_identifiers.mjs` | ✅ `scripts/interfaces/check_unique_identifiers.interface.json` | `node scripts/check_unique_identifiers.mjs` | check_unique_identifiers.mjs |
 | 脚本 (CLI) | `cli.rules.conflict_scan` | `scripts/conflict_scan.mjs` | ✅ `scripts/interfaces/conflict_scan.interface.json` | `node scripts/conflict_scan.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.control` | `scripts/control.sh` | ⛔ 未声明 | `bash scripts/control.sh` | — |
+| 脚本 (CLI) | `cli.rules.control` | `scripts/control.sh` | ✅ `scripts/interfaces/control.interface.json` | `bash scripts/control.sh` | — |
 | 脚本 (CLI) | `cli.rules.control_gates` | `scripts/control_gates.sh` | ✅ `scripts/interfaces/control_gates.interface.json` | `bash scripts/control_gates.sh` | — |
 | 脚本 (CLI) | `cli.rules.deepseek_key_setup` | `scripts/deepseek_key_setup.sh` | ✅ `scripts/interfaces/deepseek_key_setup.interface.json` | `bash scripts/deepseek_key_setup.sh` | — |
 | 脚本 (CLI) | `cli.rules.deepseek_usage_probe` | `scripts/deepseek_usage_probe.mjs` | ✅ `scripts/interfaces/deepseek_usage_probe.interface.json` | `node scripts/deepseek_usage_probe.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.disk_check_and_cleanup` | `scripts/disk_check_and_cleanup.sh` | ✅ `scripts/interfaces/disk_check_and_cleanup.interface.json` | `bash scripts/disk_check_and_cleanup.sh` | DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位) |
+| 脚本 (CLI) | `cli.rules.domain_scope_selftest` | `scripts/domain_scope_selftest.mjs` | ✅ `scripts/interfaces/domain_scope_selftest.interface.json` | `node scripts/domain_scope_selftest.mjs` | — |
 | 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | ✅ `scripts/interfaces/fingerprint_audit.interface.json` | `bash scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
 | 脚本 (CLI) | `cli.rules.fingerprint_index` | `scripts/fingerprint_index.mjs` | ✅ `scripts/interfaces/fingerprint_index.interface.json` | `node scripts/fingerprint_index.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.flow_control` | `scripts/flow_control.mjs` | ✅ `scripts/interfaces/flow_control.interface.json` | `node scripts/flow_control.mjs` | ============================================================================== |
@@ -569,15 +570,16 @@
 | 脚本 (CLI) | `cli.rules.probe_max_tokens` | `scripts/probe_max_tokens.mjs` | ✅ `scripts/interfaces/probe_max_tokens.interface.json` | `node scripts/probe_max_tokens.mjs` | 探测服务端对 max_tokens 的接受范围。 |
 | 脚本 (CLI) | `cli.rules.process_supervisor` | `scripts/process_supervisor.mjs` | ✅ `scripts/interfaces/process_supervisor.interface.json` | `node scripts/process_supervisor.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.progress_ledger` | `scripts/progress_ledger.mjs` | ✅ `scripts/interfaces/progress_ledger.interface.json` | `node scripts/progress_ledger.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.push_external_projects` | `scripts/push_external_projects.sh` | ✅ `scripts/interfaces/push_external_projects.interface.json` | `bash scripts/push_external_projects.sh` | — |
 | 脚本 (CLI) | `cli.rules.redundancy_scan` | `scripts/redundancy_scan.mjs` | ✅ `scripts/interfaces/redundancy_scan.interface.json` | `node scripts/redundancy_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.rename_session` | `scripts/rename_session.sh` | ✅ `scripts/interfaces/rename_session.interface.json` | `bash scripts/rename_session.sh` | 通过 DSH 后台 HTTP RPC 接口，为当前会话重命名并锁定侧边栏标题 |
-| 脚本 (CLI) | `cli.rules.req_version_audit` | `scripts/req_version_audit.mjs` | ⛔ 未声明 | `node scripts/req_version_audit.mjs` | — |
-| 脚本 (CLI) | `cli.rules.req_version_gen` | `scripts/req_version_gen.mjs` | ⛔ 未声明 | `node scripts/req_version_gen.mjs` | — |
+| 脚本 (CLI) | `cli.rules.req_version_audit` | `scripts/req_version_audit.mjs` | ✅ `scripts/interfaces/req_version_audit.interface.json` | `node scripts/req_version_audit.mjs` | — |
+| 脚本 (CLI) | `cli.rules.req_version_gen` | `scripts/req_version_gen.mjs` | ✅ `scripts/interfaces/req_version_gen.interface.json` | `node scripts/req_version_gen.mjs` | — |
 | 脚本 (CLI) | `cli.rules.restart_verify` | `scripts/restart_verify.mjs` | ✅ `scripts/interfaces/restart_verify.interface.json` | `node scripts/restart_verify.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.restore_skill_pool` | `scripts/restore_skill_pool.mjs` | ✅ `scripts/interfaces/restore_skill_pool.interface.json` | `node scripts/restore_skill_pool.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.route_navigate` | `scripts/route_navigate.mjs` | ✅ `scripts/interfaces/route_navigate.interface.json` | `node scripts/route_navigate.mjs` | route_navigate.mjs |
 | 脚本 (CLI) | `cli.rules.route_plan` | `scripts/route_plan.mjs` | ✅ `scripts/interfaces/route_plan.interface.json` | `node scripts/route_plan.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.scope_audit` | `scripts/scope_audit.mjs` | ⛔ 未声明 | `node scripts/scope_audit.mjs` | — |
+| 脚本 (CLI) | `cli.rules.scope_audit` | `scripts/scope_audit.mjs` | ✅ `scripts/interfaces/scope_audit.interface.json` | `node scripts/scope_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.session_naming_audit` | `scripts/session_naming_audit.mjs` | ✅ `scripts/interfaces/session_naming_audit.interface.json` | `node scripts/session_naming_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.svg2png` | `scripts/svg2png.sh` | ✅ `scripts/interfaces/svg2png.interface.json` | `bash scripts/svg2png.sh` | 把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节） |
 | 脚本 (CLI) | `cli.rules.sync_api_docs` | `scripts/sync_api_docs.mjs` | ✅ `scripts/interfaces/sync_api_docs.interface.json` | `node scripts/sync_api_docs.mjs` | ============================================================================== |

@@ -1,0 +1,20 @@
+{
+  "id": "cli.rules.push_external_projects",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/push_external_projects.sh",
+  "invoke": "bash scripts/push_external_projects.sh",
+  "summary": "外部工程远程推送闭环：逐工程判远程/待推送/推没推成（不采信自述；REQ-092 / R1-b）",
+  "inputs": [
+    { "name": "[工程名...]", "type": "arg", "required": false, "desc": "指定工程；缺省遍历 DSH 工作根下全部工程仓库" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "每个工程的闭环状态（已闭环/待推送/无远程/推送失败）" }
+  ],
+  "exitCodes": { "0": "全部工程已闭环", "1": "仍有工程未闭环" },
+  "sideEffects": ["对目标仓库执行 git push origin HEAD"],
+  "dependencies": ["git"],
+  "parallel": "exclusive",
+  "examples": ["bash scripts/push_external_projects.sh", "bash scripts/push_external_projects.sh DSH股票"],
+  "source": "handwritten",
+  "verified": true
+}

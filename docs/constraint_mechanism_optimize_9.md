@@ -2,12 +2,12 @@
 
 > ### 🏷️ **版本信息与实施追踪**
 > - **文档类型**：需求文案（登记为 `REQ-092`，状态 `[EVOLVING]`）
-> - **当前系统实施总版本**：`v4.28.0`（本条目实施完成后推进至 `v4.28.0`，已落地）
+> - **当前系统实施总版本**：`v4.29.0`（第一批 v4.28.0 已落地；第二批 v4.29.0 已落地）
 > - **本文档内容版本**：`v1.0.0`
-> - **需求版本号**：`v1.0.0`（需求自身的版本，随需求内容变更递增，与系统实施版本分开记）
+> - **需求版本号**：`v1.1.0`（v1.1.0 = 新增「全域写拦截」与「推送闭环」两条验收标准）
 > - **提出时间**：2026-10-02
 > - **任务代号**：`GCM-SCOPE`（Scope：全域覆盖面 · Version：版本贯通面 · Enforce：反空架子面）
-> - **需求状态**：`[EVOLVING]` 已登记，待逐阶段实施
+> - **需求状态**：`[EVOLVING]` **已实施两批**（覆盖/版本/反空架子 → 拦截层通电/全域写拦截/推送闭环）
 > - **依据**：用户 3 条口语需求 + 本轮只读取证（`mechanism_audit.mjs` · `install_host_gate.sh verify` ·
 >   `align_version.mjs --check` · `normalize_all_projects.mjs --dry-run` · 16 个外部工程会话转录扫描）
 
@@ -110,6 +110,9 @@ GCM-SCOPE
 - [ ] `node scripts/anti_hallucination_audit.mjs --check` 退出码 0，悬空引用清零（R3）
 - [ ] 三条判定器各自带反向用例（改坏后必须判红，不允许恒绿）（R3-d）
 - [ ] 三条判定器全部进入累积门禁，未过不得结项（R1-d / R3-d）
+- [x] `bash scripts/install_host_gate.sh verify` 报出宿主激活凭据（`isHost=true`）（R1-d，v1.1.0）
+- [x] `node scripts/domain_scope_selftest.mjs` 退出码 0：未接管工程拒写、其余零误伤（R1-d，v1.1.0）
+- [ ] `bash scripts/push_external_projects.sh` 退出码 0：全部工程远程推送已闭环（v1.1.0，当前 1/4）
 
 ---
 
