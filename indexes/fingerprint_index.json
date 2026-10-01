@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T23:29:05.610Z",
+  "generatedAt": "2026-10-01T23:30:55.706Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -18,7 +18,7 @@
     "AGENTS.md",
     "README.md"
   ],
-  "count": 302,
+  "count": 303,
   "files": [
     {
       "path": "AGENTS.md",
@@ -120,10 +120,10 @@
     },
     {
       "path": "ai-control/plugin/index.mjs",
-      "short": "75177d9f",
-      "sha256": "75177d9fabacc5febe97a58ad7ddcd84759437e666abd38096585be45d3ed9ad",
-      "bytes": 65463,
-      "mtime": "2026-10-01T23:29:05.479Z"
+      "short": "be1b28a8",
+      "sha256": "be1b28a8d1dea88b5e1dded898c1990f0c316a27c36df68dbd9ae7d923450a06",
+      "bytes": 69441,
+      "mtime": "2026-10-01T23:29:34.717Z"
     },
     {
       "path": "ai-control/plugin/loader.mjs",
@@ -309,17 +309,17 @@
     },
     {
       "path": "indexes/capabilities_index.json",
-      "short": "461bb4d3",
-      "sha256": "461bb4d3f266b726c3d38ea8cecfdeba512d9d056db73f5565e0c422f7454e06",
-      "bytes": 120449,
-      "mtime": "2026-10-01T23:27:44.202Z"
+      "short": "9d04fd56",
+      "sha256": "9d04fd5664e63392db701f17d9f290b09824600b3d726f7625573bfbb28707e9",
+      "bytes": 120857,
+      "mtime": "2026-10-01T23:30:55.669Z"
     },
     {
       "path": "indexes/capabilities_index.md",
-      "short": "b1c239a6",
-      "sha256": "b1c239a6b856d22aa0a2589f49fbed3c20f45e40ce5db6b93d78de02a3574815",
-      "bytes": 123388,
-      "mtime": "2026-10-01T23:28:07.990Z"
+      "short": "dd13370f",
+      "sha256": "dd13370f292d57c86e41ef83b7d2c761877b90960085579db220bd4a6721829a",
+      "bytes": 123668,
+      "mtime": "2026-10-01T23:30:55.667Z"
     },
     {
       "path": "indexes/dsh_capabilities.md",
@@ -1965,6 +1965,13 @@
       "sha256": "fe353407c65b50147800ef4f8791951558d4170a104d0f27fc357df9518e56aa",
       "bytes": 13141,
       "mtime": "2026-09-24T10:55:36.256Z"
+    },
+    {
+      "path": "scripts/session_source_audit.mjs",
+      "short": "74d6842c",
+      "sha256": "74d6842c4a3eaa19acfeb8edc28ad618c6ed3b5d31553c32cc728c89ff35e0cf",
+      "bytes": 16267,
+      "mtime": "2026-10-01T23:30:03.337Z"
     },
     {
       "path": "scripts/skill_carrier_audit.mjs",

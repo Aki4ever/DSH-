@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：266**（技能 178 · 其他执行层 88）
+**执行层条目总数：267**（技能 178 · 其他执行层 89）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -560,9 +560,9 @@
 | 脚本 (CLI) | `cli.rules.legacy_align_scan` | `scripts/legacy_align_scan.mjs` | ✅ `scripts/interfaces/legacy_align_scan.interface.json` | `node scripts/legacy_align_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.market_guard_patch` | `scripts/market_guard_patch.mjs` | ✅ `scripts/interfaces/market_guard_patch.interface.json` | `node scripts/market_guard_patch.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.mechanism_audit` | `scripts/mechanism_audit.mjs` | ✅ `scripts/interfaces/mechanism_audit.interface.json` | `node scripts/mechanism_audit.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.mobile_bridge` | `scripts/mobile_bridge.mjs` | ⛔ 未声明 | `node scripts/mobile_bridge.mjs` | 在 Mac 上开一个**只服务私网**的网桥，把只能回环访问的 DSH Web GUI |
-| 脚本 (CLI) | `cli.rules.mobile_bridge_audit` | `scripts/mobile_bridge_audit.mjs` | ⛔ 未声明 | `node scripts/mobile_bridge_audit.mjs` | — |
-| 脚本 (CLI) | `cli.rules.mobile_control` | `scripts/mobile_control.sh` | ⛔ 未声明 | `bash scripts/mobile_control.sh` | 薄壳。只做"找 node + 转发"，不复制任何判定/代理逻辑 |
+| 脚本 (CLI) | `cli.rules.mobile_bridge` | `scripts/mobile_bridge.mjs` | ✅ `scripts/interfaces/mobile_bridge.interface.json` | `node scripts/mobile_bridge.mjs` | 在 Mac 上开一个**只服务私网**的网桥，把只能回环访问的 DSH Web GUI |
+| 脚本 (CLI) | `cli.rules.mobile_bridge_audit` | `scripts/mobile_bridge_audit.mjs` | ✅ `scripts/interfaces/mobile_bridge_audit.interface.json` | `node scripts/mobile_bridge_audit.mjs` | — |
+| 脚本 (CLI) | `cli.rules.mobile_control` | `scripts/mobile_control.sh` | ✅ `scripts/interfaces/mobile_control.interface.json` | `bash scripts/mobile_control.sh` | 薄壳。只做"找 node + 转发"，不复制任何判定/代理逻辑 |
 | 脚本 (CLI) | `cli.rules.name_me` | `scripts/name_me.sh` | ✅ `scripts/interfaces/name_me.interface.json` | `bash scripts/name_me.sh` | **立刻**给"当前会话"改名——开工第一动作，一条命令，任何目录可用 |
 | 脚本 (CLI) | `cli.rules.naming_watchdog` | `scripts/naming_watchdog.mjs` | ✅ `scripts/interfaces/naming_watchdog.interface.json` | `node scripts/naming_watchdog.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.normalize_all_projects` | `scripts/normalize_all_projects.mjs` | ✅ `scripts/interfaces/normalize_all_projects.interface.json` | `node scripts/normalize_all_projects.mjs` | 全域存量 DSH 工程文件夹批量合规与规范化治理脚本 |
@@ -589,6 +589,7 @@
 | 脚本 (CLI) | `cli.rules.route_plan` | `scripts/route_plan.mjs` | ✅ `scripts/interfaces/route_plan.interface.json` | `node scripts/route_plan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.scope_audit` | `scripts/scope_audit.mjs` | ✅ `scripts/interfaces/scope_audit.interface.json` | `node scripts/scope_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.session_naming_audit` | `scripts/session_naming_audit.mjs` | ✅ `scripts/interfaces/session_naming_audit.interface.json` | `node scripts/session_naming_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.session_source_audit` | `scripts/session_source_audit.mjs` | ⛔ 未声明 | `node scripts/session_source_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.skill_carrier_audit` | `scripts/skill_carrier_audit.mjs` | ✅ `scripts/interfaces/skill_carrier_audit.interface.json` | `node scripts/skill_carrier_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.svg2png` | `scripts/svg2png.sh` | ✅ `scripts/interfaces/svg2png.interface.json` | `bash scripts/svg2png.sh` | 把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节） |
 | 脚本 (CLI) | `cli.rules.sync_api_docs` | `scripts/sync_api_docs.mjs` | ✅ `scripts/interfaces/sync_api_docs.interface.json` | `node scripts/sync_api_docs.mjs` | ============================================================================== |

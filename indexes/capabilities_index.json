@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T23:27:44.200Z",
+  "generatedAt": "2026-10-01T23:30:55.667Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 266,
+  "total": 267,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 83
+    "脚本 (CLI)": 84
   },
-  "withInterface": 263,
+  "withInterface": 266,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -2026,7 +2026,7 @@
       "desc": "在 Mac 上开一个**只服务私网**的网桥，把只能回环访问的 DSH Web GUI",
       "invoke": "node scripts/mobile_bridge.mjs",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/mobile_bridge.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2035,7 +2035,7 @@
       "desc": "",
       "invoke": "node scripts/mobile_bridge_audit.mjs",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/mobile_bridge_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2044,7 +2044,7 @@
       "desc": "薄壳。只做\"找 node + 转发\"，不复制任何判定/代理逻辑",
       "invoke": "bash scripts/mobile_control.sh",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/mobile_control.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2279,6 +2279,15 @@
       "invoke": "node scripts/session_naming_audit.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/session_naming_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.session_source_audit",
+      "path": "scripts/session_source_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/session_source_audit.mjs",
+      "invokeKind": "cli",
+      "interface": null
     },
     {
       "layer": "脚本 (CLI)",
