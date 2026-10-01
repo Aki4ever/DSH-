@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T16:11:35.648Z",
+  "generatedAt": "2026-10-01T16:20:14.892Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -18,7 +18,7 @@
     "AGENTS.md",
     "README.md"
   ],
-  "count": 246,
+  "count": 247,
   "files": [
     {
       "path": "AGENTS.md",
@@ -162,10 +162,10 @@
     },
     {
       "path": "docs/constraint_mechanism_optimize_8.md",
-      "short": "49b56d45",
-      "sha256": "49b56d454a6d76a9bb3eb57336d2f5b2c273fc0728398354191c884544c013b3",
-      "bytes": 27430,
-      "mtime": "2026-10-01T16:11:21.822Z"
+      "short": "50f3e19c",
+      "sha256": "50f3e19c43941d9b0f92e99e5415cdac8eab0a5d487525fce1217757c5b77497",
+      "bytes": 29647,
+      "mtime": "2026-10-01T16:20:14.856Z"
     },
     {
       "path": "docs/constraint_mechanism_spec.md",
@@ -225,17 +225,17 @@
     },
     {
       "path": "indexes/capabilities_index.json",
-      "short": "0c2a4266",
-      "sha256": "0c2a4266a1a87ab0034356ddce18e0b0adb155dc0871c37298838da57600046c",
-      "bytes": 113483,
-      "mtime": "2026-10-01T15:24:19.870Z"
+      "short": "e8dee94e",
+      "sha256": "e8dee94e274b7752ba03637177777f35ec48101b21381633fc26a1cea37e75f6",
+      "bytes": 113720,
+      "mtime": "2026-10-01T16:11:59.384Z"
     },
     {
       "path": "indexes/capabilities_index.md",
-      "short": "ed6401c2",
-      "sha256": "ed6401c23916b20ea0cb243002d3424ed56d58b36716f37eab733d04d4c1343e",
-      "bytes": 118917,
-      "mtime": "2026-10-01T15:24:19.867Z"
+      "short": "ff69a74b",
+      "sha256": "ff69a74bdaf93892c66e47943d1fd8ae8959f16edde21129e52178b2669e0448",
+      "bytes": 119041,
+      "mtime": "2026-10-01T16:11:59.382Z"
     },
     {
       "path": "indexes/dsh_capabilities.md",
@@ -1197,6 +1197,13 @@
       "mtime": "2026-09-30T22:27:43.327Z"
     },
     {
+      "path": "scripts/interfaces/plugin_sync.interface.json",
+      "short": "5b81aadd",
+      "sha256": "5b81aadd857462521eec52d04f96784fd90065b425c202a698fbed9cdce4478b",
+      "bytes": 1823,
+      "mtime": "2026-10-01T16:12:07.623Z"
+    },
+    {
       "path": "scripts/interfaces/probe_long_output.interface.json",
       "short": "c587b8e0",
       "sha256": "c587b8e05bb37bca757028cba5405f269d3cdc05bf22109324b02ba97025f866",
@@ -1520,10 +1527,10 @@
     },
     {
       "path": "scripts/plugin_sync.sh",
-      "short": "fa39b120",
-      "sha256": "fa39b12032b0d6f5bbca26c2831b4c2cff6ea71b6f7b5cf9e29d36169bf769e3",
-      "bytes": 8493,
-      "mtime": "2026-10-01T16:11:02.251Z"
+      "short": "aa2fee74",
+      "sha256": "aa2fee7423bd130992694dbc43f462b095da7cb47bcf354541c7d284ee199395",
+      "bytes": 8570,
+      "mtime": "2026-10-01T16:19:57.301Z"
     },
     {
       "path": "scripts/probe_long_output.mjs",

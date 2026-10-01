@@ -189,10 +189,22 @@ try { React = require('react'); } catch (err) { React = null; }
 
 /**
  * 点击处理（**抽成纯函数以便无宿主单测**）。
+ *
+ * 🔴 2026-10-02 第二次事故修正（留痕，防止再犯）：
+ *   旧实现只对 `exec(...)` **抛出的异常**做了处理，而官方 RPC 的失败**根本不抛**，
+ *   它是"正常返回一个结果对象"：
+ *     · 成功          → `{ ok:true,  value:{ result:{ kind,text } } }`
+ *     · 被拒/超时     → `{ ok:false, error:{ code, message } }`
+ *     · 命令名不认识  → `{ ok:true,  value: undefined }`
+ *   旧代码拿到这些返回值后**一律当作成功**，什么都不显示：
+ *     → 用户点完看到"确认框一闪、然后什么都没发生"，**和没反应完全一样**。
+ *   修法：逐一识别这三种返回值并给明确文案；同时把 alert 本身包上 try/catch
+ *   （弹窗被环境禁止时，绝不能让"报错"这件事再抛一次错，否则又是静默）。
+ *
  * @param {object} ctx 客户端插件上下文
  * @param {string} sessionId 当前会话 ID（由插槽注入）
  * @param {function} [confirmFn] 二次确认实现（测试时可注入桩）
- * @returns {Promise<{ok:boolean, reason?:string, result?:any}>}
+ * @returns {Promise<{ok:boolean, reason?:string, text?:string, result?:any}>}
  */
 function handleRestartClick(ctx, sessionId, confirmFn) {
   var confirmImpl = confirmFn;
@@ -204,6 +216,7 @@ function handleRestartClick(ctx, sessionId, confirmFn) {
   if (confirmImpl && !confirmImpl(CONFIRM_MESSAGE)) {
     return finish({ ok: false, reason: 'cancelled' });
   }
+
   var exec = ctx && ctx.remote && ctx.remote.commands && ctx.remote.commands.execute;
   if (typeof exec !== 'function') {
     return finish({
@@ -212,30 +225,77 @@ function handleRestartClick(ctx, sessionId, confirmFn) {
       hint: '这一条通常意味着宿主半没被加载（或版本太旧）。可看 ~/.dsh/.dsh-control/restart-plugin-boot.jsonl 有无新记录。',
     });
   }
-  return Promise.resolve(exec(sessionId, CORE.CONFIRM_LINE, []))
-    .then(function (result) { return { ok: true, result: result }; })
-    .catch(function (err) {
-      return finish({ ok: false, reason: (err && err.message) ? err.message : String(err) });
-    });
+
+  // 同步抛错也要接住（属性访问、参数校验都可能在返回 Promise 之前就抛）
+  var call;
+  try {
+    call = exec(sessionId, CORE.CONFIRM_LINE, []);
+  } catch (err) {
+    return finish({ ok: false, reason: '调用命令通道时抛错：' + ((err && err.message) ? err.message : String(err)) });
+  }
+
+  return Promise.resolve(call).then(function (result) {
+    // ① RPC 层失败：官方是"正常返回 ok:false"，不是抛异常
+    if (result && result.ok === false) {
+      var e = result.error || {};
+      return finish({
+        ok: false,
+        reason: '宿主拒绝执行：' + (e.code || '未给错误码') + (e.message ? ' · ' + e.message : ''),
+        hint: '若错误码与"未找到命令"相关，说明 /' + CORE.COMMAND_NAME + ' 没注册（宿主半未加载）。',
+        result: result,
+      });
+    }
+    // ② 命令名不认识：宿主返回 value 为空
+    if (result && result.ok === true && result.value === undefined) {
+      return finish({
+        ok: false,
+        reason: '宿主不认识命令 ' + CORE.CONFIRM_LINE,
+        hint: '宿主半没有注册这个命令 —— 检查 ~/.dsh/.dsh-control/restart-plugin-boot.jsonl 里有没有 hasCommands=true 的记录。',
+        result: result,
+      });
+    }
+    // ③ 正常返回：把宿主回执文本展示出来，让"已排定重启"和"什么都没发生"不再长得一样
+    var inner = result && result.value && result.value.result;
+    var text = (inner && inner.text) ? inner.text : '宿主已受理重启请求。';
+    return finish({ ok: true, text: text, result: result }, true);
+  }).catch(function (err) {
+    return finish({ ok: false, reason: (err && err.message) ? err.message : String(err) });
+  });
 }
 
 /**
  * 收尾：**把结果显式告诉用户**，而不是静默吞掉。
  *
  * 🔴 为什么必须加（2026-10-02 用户实测）：按钮点下去"没有效果"这句话，
- *   在两种完全不同的故障下长得一模一样：
+ *   在三种完全不同的故障下长得一模一样：
  *     ① 宿主半没加载 → 命令不存在 → 请求被拒；
- *     ② 客户端异常 → 请求根本没发出去。
- *   没有可见反馈时，只能靠人猜，而猜错方向的代价是**又一次重启**。
- *   所以这里把成败与原因直接弹给用户 —— 出错也要错得看得见。
+ *     ② 客户端异常 → 请求根本没发出去；
+ *     ③ 请求发出去了但返回值没人看 → 出事了也没人知道。
+ *   所以这里把成败与原因直接弹给用户 —— **出错也要错得看得见**；
+ *   成功时也给一句回执，避免"成功"与"没反应"视觉上无法区分。
+ *
+ * @param {object} outcome 结果
+ * @param {boolean} [isSuccess] 是否成功（成功也要给回执）
  */
-function finish(outcome) {
-  if (!outcome || outcome.ok) return Promise.resolve(outcome);
-  var text = '重启未执行：' + (outcome.reason || '未知原因') + (outcome.hint ? '\n\n' + outcome.hint : '');
+function finish(outcome, isSuccess) {
+  if (!outcome) return Promise.resolve(outcome);
+  var text = '';
+  if (isSuccess) {
+    text = outcome.text || '已排定重启。';
+  } else if (outcome.ok) {
+    return Promise.resolve(outcome);
+  } else if (outcome.reason === 'cancelled') {
+    return Promise.resolve(outcome); // 用户主动取消，不打扰
+  } else {
+    text = '重启未执行：' + (outcome.reason || '未知原因') + (outcome.hint ? '\n\n' + outcome.hint : '');
+  }
   try {
     if (typeof window !== 'undefined' && typeof window.alert === 'function') window.alert(text);
     else if (typeof console !== 'undefined') console.warn('[dsh-plugin-restart] ' + text);
-  } catch (err) { /* 提示失败绝不影响主流程 */ }
+  } catch (err) {
+    // 弹窗被禁止时**降级到控制台**，绝不让"报错"再抛一次错（那又变成静默）
+    try { if (typeof console !== 'undefined') console.warn('[dsh-plugin-restart] ' + text); } catch (e2) { /* 彻底放弃 */ }
+  }
   return Promise.resolve(outcome);
 }
 

@@ -3,7 +3,7 @@
 > ### 🏷️ **版本信息与实施追踪**
 > - **当前台账版本**：`v4.26.0`
 > - **基线对齐版本**：`v4.26.0`
-> - **最后全盘扫描时间**：2026-10-02 00:11
+> - **最后全盘扫描时间**：2026-10-02 00:20
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)
 
 本文档记录工程全域受管资产（规则、知识库、架构索引、工程模板、自动化脚本与需求台账）的**数字指纹（SHA-256 8位短哈希）**、**最后修改时间**与**新鲜度等级**，为全域资产对齐与防止暗中代码漂移提供唯一客观事实依据。
@@ -47,7 +47,7 @@ v4.25.0` | 🟡 TIER-1 | 待升级对齐 |
 | `docs/constraint_mechanism_optimize_7.md` | `ac86e76b` | 2026-10-01 12:48 | `v4.26.0
 v4.25.0
 v4.26.0` | 🟡 TIER-1 | 待升级对齐 |
-| `docs/constraint_mechanism_optimize_8.md` | `49b56d45` | 2026-10-02 00:11 | `v4.26.0
+| `docs/constraint_mechanism_optimize_8.md` | `50f3e19c` | 2026-10-02 00:20 | `v4.26.0
 v4.27.0` | 🟡 TIER-1 | 待升级对齐 |
 | `docs/constraint_mechanism_spec.md` | `b6502e3f` | 2026-10-01 12:39 | `v4.26.0` | 🟢 TIER-0 | 最新基线 |
 | `docs/diagram_generation_guide.md` | `5e858de4` | 2026-10-01 12:39 | `v4.26.0` | 🟢 TIER-0 | 最新基线 |
@@ -57,8 +57,8 @@ v4.27.0` | 🟡 TIER-1 | 待升级对齐 |
 | `docs/visual_learning_research.md` | `88a3f000` | 2026-10-01 12:39 | `v4.26.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/.gitkeep` | `e3b0c442` | 2026-09-16 15:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `indexes/README.md` | `fdcd7814` | 2026-09-16 15:36 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `indexes/capabilities_index.json` | `0c2a4266` | 2026-10-01 23:24 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `indexes/capabilities_index.md` | `ed6401c2` | 2026-10-01 23:24 | `v4.26.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/capabilities_index.json` | `e8dee94e` | 2026-10-02 00:11 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `indexes/capabilities_index.md` | `ff69a74b` | 2026-10-02 00:11 | `v4.26.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/dsh_capabilities.md` | `770ea864` | 2026-10-01 12:39 | `v4.26.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/extension_ecosystem.md` | `e007eb1f` | 2026-10-01 12:39 | `v4.26.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/navigation_router.md` | `afc79383` | 2026-10-01 12:39 | `v4.26.0` | 🟢 TIER-0 | 最新基线 |
@@ -197,6 +197,7 @@ v4.25.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/interfaces/patch_dsh_todo_progress.interface.json` | `31685614` | 2026-10-01 06:27 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/interfaces/period_parity.interface.json` | `9747e538` | 2026-10-01 23:24 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/interfaces/physical_lock.interface.json` | `8b076efe` | 2026-10-01 06:27 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/interfaces/plugin_sync.interface.json` | `5b81aadd` | 2026-10-02 00:12 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/interfaces/probe_long_output.interface.json` | `c587b8e0` | 2026-10-01 06:27 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/interfaces/probe_long_output_stream.interface.json` | `b473b467` | 2026-10-01 06:27 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/interfaces/probe_max_tokens.interface.json` | `5d636002` | 2026-10-01 06:27 | `-` | ⚪ TIER-2 | 指纹监控中 |
@@ -243,7 +244,7 @@ v4.25.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/patch_dsh_todo_progress.cjs` | `d136c4e7` | 2026-10-01 06:26 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/period_parity.mjs` | `97904a9b` | 2026-10-01 23:23 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/physical_lock.sh` | `0a042f31` | 2026-09-29 04:34 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/plugin_sync.sh` | `fa39b120` | 2026-10-02 00:11 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/plugin_sync.sh` | `aa2fee74` | 2026-10-02 00:19 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/probe_long_output.mjs` | `52c32d04` | 2026-09-23 15:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/probe_long_output_stream.mjs` | `34445721` | 2026-09-23 15:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/probe_max_tokens.mjs` | `6be3205d` | 2026-09-23 15:11 | `-` | ⚪ TIER-2 | 指纹监控中 |
