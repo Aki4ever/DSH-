@@ -2554,6 +2554,73 @@
 
 ---
 
+### REQ-091: 常显与自证层强化（GCM-LIVE）—— 重启常显真执行 / API 知识库 / 峰谷常显 / 全域指纹 / 原子锁
+> ### 🏷️ **资产元数据与生命周期标记**
+> - **文档类型 (Doc Type)**: `[REQUIREMENT 业务需求台账]`
+> - **清理定位 (Retention)**: `[PERSISTENT 长期受管]`
+> - **生成会话**: `[新需001][70分] 管控六项优化`
+> - **到期/清理条件**: `[随版本演进]`
+
+- **当前状态**：`[EVOLVING]` 演进中（**需求文案待用户拍板，尚未实施**；本轮只做需求翻译、递归分裂与现状取证）
+- **实施版本**：`v4.27.0`（规划目标；未实施前不得声称已生效）
+- **提出时间**：2026-10-01
+- **最新更新**：2026-10-01
+- **责任归属**：用户（提出与裁决） / AI 智能体（翻译、分裂与实施）
+- **需求文案**：[`docs/constraint_mechanism_optimize_8.md`](constraint_mechanism_optimize_8.md)（唯一权威出处，本条目只放指针不复述细则）
+
+#### 1. 提出背景与痛点
+用户提出 6 条优化诉求（重启按钮全域常显、点击真重启、API 文档知识库、峰谷时段常显实时、全域指纹、原子锁）。
+本轮**查重拦截**实测结论：这 6 条里有 **4 条属"有原语、没接入"**，不是从零新建——
+① 重启插件已建成且自检 84/84，但只挂会话页，且**全库无 PID 判定器**（"重启成功没有"物理上不可判）；
+② 峰谷时段探针与底栏插件都在，但前者未上全域常显面、后者**在客户端重算时段**（双实现漂移）；
+③ 指纹审计脚本已产出 234 个受管资产报表，但**无机读产物、无查询入口**，且 167 个资产未声明版本；
+④ 原子锁原语（`mkdir` 目录锁 + 技能池 `atomic_lock.py`）齐备，但**没有任何自动化脚本调用**。
+同族症状本轮再次实测到：管控拦截层插件 `isHost=false`（`install_host_gate.sh verify` 报"条目缺失 + 无激活凭据"），
+而 `control_gates.sh check` 仍显示 4/4 · 100%——**看板只证明工程内文件对不对，证明不了机制在不在跑**。
+唯一真空白是 **API 文档知识库**（全库仅 3 处命中，且只监控定价页指纹、不落正文）。
+
+#### 2. 核心诉求与目标
+1. **常显侧（UX-RESTART-2）**：重启按钮从会话页席位扩到**全域常显席位**（`sidebar.footer.action`，root scope），
+   并以 **PID 变化**为唯一合格证据打通"点击 → 真重启"全链路；
+2. **知识侧（KB-API）**：官方 `https://api-docs.deepseek.com/zh-cn/` 落成本地知识库（页清单 + 正文镜像 + 逐页指纹 + 同步器），
+   成为峰谷时段口径的权威出处；
+3. **读数侧（PERIOD-LIVE）**：高峰/空闲时段做成全页面常显、可复跑的实时读数，读数与探针输出逐字相等；
+4. **自证侧（FINGERPRINT）**：全域受管资产统一发指纹并产出机读索引，支持"一眼查某文件改没改"；
+5. **并发侧（ATOMIC-WIRE）**：把已存在但未被调用的锁原语接到真实写路径的 choke point，
+   并发压测须同时证明"持锁 0 重叠"与"无锁 >0 重叠"；
+6. **递归分裂铁律**：任何子需求若 6 条物理触达判据（文案 §2.3）不全满足，继续分裂，不得登记为完成。
+
+#### 3. 关联文件与影响范围
+- **需求文案**：[`docs/constraint_mechanism_optimize_8.md`](constraint_mechanism_optimize_8.md)（本条目唯一细则出处）；
+- **新建（规划）**：`knowledge/api/deepseek/` · `scripts/sync_api_docs.mjs` · `indexes/fingerprint_index.json` ·
+  `scripts/fingerprint_index.mjs` · `scripts/lib/atomic_lock.mjs` · `scripts/lib/atomic_lock.sh` ·
+  `scripts/lib/host_pid.mjs` · `scripts/restart_verify.mjs` · `scripts/atomic_lock_audit.mjs`；
+- **改动（规划）**：`skill-pool/plugins/dsh-plugin-restart/`（席位常量 + 双席位挂载 + 自检扩项）·
+  `skill-pool/plugins/dsh-plugin-usage-bar/`（时段改读探针输出）· `scripts/fingerprint_audit.sh`（接机读产物）·
+  `memory/asset_fingerprint_ledger.md`（降为生成器产物）· `scripts/control_gates.sh` / `progress_ledger.mjs` /
+  `deepseek_usage_probe.mjs` / `ai-control/plugin/index.mjs`（写路径加锁）·
+  `knowledge/README.md`（新增 api 分层口径）· `ai-control/config/gates.conf`（新鲜度阈值外置）。
+
+#### 4. 验收标准
+- [ ] R1~R6 各自的判定命令可跑出退出码，且每条都带**反向用例**（检测器恒绿一律判未触达）；
+- [ ] 递归分裂的 27 个叶子逐一按 6 条物理触达判据过检，未触达者显式列为未完成；
+- [ ] R2 以"重启前后宿主 PID 变化"为唯一合格证据；做不到时按降级方案**显式标注未满足**，不得含糊成"已修复"；
+- [ ] R3 页清单覆盖率 100%、每页 sha256 可复算，抓取失败有显式报错路径（不手写正文）；
+- [ ] R4 常显读数与 `deepseek_usage_probe.mjs --json` 逐字相等，读数过期必须显式标注；
+- [ ] R5 覆盖受管资产 ≥234 且漂移判定可判红；R6 接入点 100% 命中且压测"持锁 0 / 无锁 >0"；
+- [ ] 8 项待裁决分歧（D1~D8）经用户裁决后写入文案；
+- [ ] 全量复跑 `control_gates.sh` · `gate_selftest.sh` · `mechanism_audit` · `process_supervisor` ·
+  `progress_ledger` · 双检与存量校准全绿，并推送远程。
+
+#### 5. 历史演进与变更记录
+- **2026-10-01 [新建]**：接收 6 条口语需求，完成字面勘误（"导执行层→到执行层""这额个→这个"）、
+  **查重拦截**（结论：4 条为"有原语没接入"、1 条为"位置不对"、1 条为真空白）与递归分裂（R1~R6，共 27 个叶子）；
+  完成现状核查（可复用 9 项 / 实测缺口 9 项 / 本轮新发现 4 项，
+  含 `shell.leading` 仅在 macOS 折叠态挂载这一关键落点事实）；登记 8 项待裁决分歧。
+  本轮**未改任何机制载体**（仅新增本文案与台账条目），状态为 `[EVOLVING]` 待拍板。
+
+---
+
 
 ## 📎 附：不计入条目数的资产变更留痕
 

@@ -54,6 +54,11 @@
 | **CR-040** | REQ-085 | `v4.23.0` | 执行层全量入索引层与覆盖率硬判定 | `[ACTIVE]` |
 | **CR-041** | REQ-086 | `v4.23.0` | 物理触达审计与"无载体机制"清零 | `[ACTIVE]` |
 | **CR-042** | REQ-088 | `v4.24.0` | V4 缺陷系统修复："检测器退出码 0 + 空输出即算通过"清零（失败关闭 + 交叉校验 + 行为级回归锁） | `[ACTIVE]` |
+| **CR-043** | REQ-091 | `v4.27.0`（规划） | 常显与自证层强化（重启常显真执行 · API 知识库 · 峰谷常显 · 全域指纹 · 原子锁） | `[EVOLVING]` |
+
+> ℹ️ **本表缺口留痕（非静默）**：`CR-038`~`CR-042` 五条已在上表登记，但下文"详细台账"章节尚无对应小节
+> （`### CR-038` 之后直接跳到 `CR-037` 的历史排序）。此为本轮实读发现，**未在本轮补齐**，
+> 以免与 REQ-091 的裁决范围混淆；补写与否请随 D1~D8 一并拍板。
 
 ---
 
@@ -799,4 +804,34 @@
   - [x] `install_host_gate.sh verify` 退出码 0，`plugin-status.txt` 显示 `isHost=true`；
   - [x] 常显看板在真实会话逐步刷新；
   - [x] 硬门禁在宿主真实生效（实测拒绝发生的物理凭据已留痕）。
+
+### CR-043: 常显与自证层强化（重启常显真执行 · API 知识库 · 峰谷常显 · 全域指纹 · 原子锁）
+- **当前状态**：`[EVOLVING]` 演进中（**需求文案待用户拍板，尚未实施**）
+- **实施版本**：`v4.27.0`（规划目标；未实施前不得声称已生效）
+- **对应全局台账**：`REQ-091`
+- **提出时间**：2026-10-01
+- **核心诉求与目标**：
+  1. **重启按钮全域常显**：客户端半从会话页席位扩到全域常显席位（`sidebar.footer.action`，root scope）；
+  2. **点击必须真重启**：以**重启前后宿主 PID 变化**为唯一合格证据打通全链路，并补 PID 判定器；
+  3. **API 文档知识库**：官方中文文档站落成本地知识库（页清单 + 正文镜像 + 逐页指纹 + 同步器）；
+  4. **峰谷时段常显实时**：读数与已审计的 `deepseek_usage_probe.mjs --json` 逐字相等，过期即标注；
+  5. **全域资产指纹**：产出机读指纹索引与查询入口，支持"一眼查某文件改没改"；
+  6. **原子锁接入**：把已存在但未被调用的锁原语接到真实写路径 choke point，并发压测须"持锁 0 / 无锁 >0"。
+- **关联产出物**：
+  - `docs/constraint_mechanism_optimize_8.md`（唯一权威文案）
+  - 规划新建：`knowledge/api/deepseek/` · `indexes/fingerprint_index.json` · `scripts/sync_api_docs.mjs` ·
+    `scripts/fingerprint_index.mjs` · `scripts/lib/atomic_lock.mjs` · `scripts/lib/atomic_lock.sh` ·
+    `scripts/lib/host_pid.mjs` · `scripts/restart_verify.mjs` · `scripts/atomic_lock_audit.mjs`
+  - `docs/requirements.md`（`REQ-091`）
+- **验收标准**：
+  - [ ] R1~R6 判定命令均可跑出退出码且带反向用例；
+  - [ ] R2 以宿主 PID 变化为唯一合格证据（做不到则显式标注未满足）；
+  - [ ] R3 页清单覆盖 100% 且逐页 sha256 可复算；
+  - [ ] R4 常显读数与探针输出逐字相等；
+  - [ ] R5 覆盖受管资产 ≥234、漂移可判红；R6 接入点 100% 且压测"持锁 0 / 无锁 >0"。
+- **本轮实况取证（可复跑）**：`install_host_gate.sh verify` → 条目缺失 + 无激活凭据（`isHost=false`，与看板 4/4 冲突）·
+  `deepseek_usage_probe.mjs --check` → 空闲时段（国庆）exit 0 · `verify_restart_button.cjs` → 84/84 ·
+  `fingerprint_audit.sh` → 受管 234（新鲜 55 / 落后 12 / 未声明 167）·
+  `app.asar` 只读解析 → `sidebar.footer.action` 为 `list`/`root` 全域席位，而 `shell.leading` 仅 macOS 折叠态挂载。
+
 
