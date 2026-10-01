@@ -25,6 +25,7 @@ import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { zstdDecompressSync } from 'node:zlib'
 import { execFile, execFileSync } from 'node:child_process'
+import { findTranscript } from './session_transcript.mjs'
 
 /** 会话标题规范：`[分类中文/字母+3位编号][难度分?] 概述`。兼容存量字母与新中文语义分类 */
 export const TITLE_RE = /^\[(新需|调研|优规|修漏|重构|巡检|测验|[RFDSOQ])(\d{3})\]\[(\d{1,3})(?:分)?\]\s+(\S.*)$/
@@ -88,18 +89,70 @@ export async function isRegisteredSession(dshHome, sessionId) {
   return false
 }
 
-/** 读取标题权威存储。 */
+/**
+ * 读取标题权威存储——**兼容两种落盘布局**。
+ *
+ * 为什么必须兼容（REQ-097 实测根因之二）：
+ *   原实现只读单文件 `storages/session_projcache.json`；而当前宿主已改为
+ *   **按会话分片** `storages/session_projcache/sessions/<sid>.json`
+ *   （实测单文件**根本不存在**）。后果：`readSessionStore()` 恒返回 null
+ *   → `naming_watchdog` 直接判「读不到会话存储」并**一条都不巡**
+ *   → 自动命名链路物理上从未运行，而外观只是"巡了一圈、检查 0 条"。
+ *
+ * 返回形状与旧单文件保持一致（`{tables:{sessions:{<sid>:{rows:{...}}}}}`），
+ * 使 `currentTitle()` / `nextNumber()` 等既有消费者零改动。
+ */
 export async function readSessionStore(dshHome) {
+  // ① 新版宿主：按会话分片
+  const shardDir = join(dshHome, 'storages', 'session_projcache', 'sessions')
+  const merged = { tables: { sessions: {} } }
+  let shardCount = 0
   try {
-    return JSON.parse(await readFile(join(dshHome, 'storages', 'session_projcache.json'), 'utf8'))
-  } catch {
-    return null
+    for (const f of await readdir(shardDir)) {
+      if (!f.endsWith('.json')) continue
+      const sid = f.slice(0, -5)
+      try {
+        const d = JSON.parse(await readFile(join(shardDir, f), 'utf8'))
+        const rows = d?.record?.rows
+        if (rows) { merged.tables.sessions[sid] = { rows }; shardCount++ }
+      } catch { /* 坏分片跳过，不让一条脏数据毁掉整轮巡更 */ }
+    }
+  } catch { /* 分片目录不存在，落回单文件 */ }
+
+  // ② 旧版宿主：单文件（分片存在时也并入，保证老会话标题仍可见）
+  let single = null
+  try {
+    single = JSON.parse(await readFile(join(dshHome, 'storages', 'session_projcache.json'), 'utf8'))
+  } catch { /* 不存在即跳过 */ }
+  if (single?.tables?.sessions) {
+    for (const [sid, e] of Object.entries(single.tables.sessions)) {
+      if (!merged.tables.sessions[sid]) merged.tables.sessions[sid] = e
+    }
   }
+
+  if (shardCount > 0 || single) return merged
+  return null
 }
 
 /** 取会话当前标题。 */
 export function currentTitle(store, sessionId) {
   return store?.tables?.sessions?.[sessionId]?.rows?.title?.val ?? undefined
+}
+
+/**
+ * 定位会话转录文件的**本模块唯一入口**。
+ *
+ * 为什么必须收敛（REQ-097 实测根因）：
+ *   原实现在 `sessionCwd()` 与 `firstUserMessage()` 两处**各自硬编码**
+ *   `session.jsonl.zstd`；而当前宿主落盘的是 `session.v4.jsonl.zstd`
+ *   （历史版本另有 `session.v3.jsonl.zstd`）。后果：两个函数在本机**全部返回 null**
+ *   → `buildTitle()` 恒为 null → 自动命名/看门狗改名链路整条**静默失效**，
+ *   外观上只是"巡了一圈什么都没改"，极难归因。
+ *   现复用 `lib/session_transcript.mjs` 的 `findTranscript()`：
+ *   它按 `/^session.*\.jsonl\.zstd$/` 匹配并取最新一份，宿主再改版本号也不会失效。
+ */
+export function resolveSessionFile(dshHome, sessionId) {
+  return findTranscript(sessionId, dshHome)
 }
 
 /**
@@ -111,24 +164,19 @@ export function currentTitle(store, sessionId) {
  */
 export async function sessionCwd(dshHome, sessionId) {
   try {
-    const root = join(dshHome, 'sessions')
-    const dirs = await readdir(root, { withFileTypes: true })
-    for (const d of dirs) {
-      if (!d.isDirectory()) continue
-      const file = join(root, d.name, sessionId, 'session.jsonl.zstd')
-      if (!existsSync(file)) continue
-      const buf = await readFile(file)
-      const magic = Buffer.from([0x28, 0xb5, 0x2f, 0xfd])
-      const start = buf.indexOf(magic)
-      if (start === -1) return null
-      const next = buf.indexOf(magic, start + 4)
-      const first = zstdDecompressSync(buf.subarray(start, next === -1 ? buf.length : next)).toString('utf8')
-      const line = first.split('\n').find((l) => l.trim())
-      if (!line) return null
-      const ev = JSON.parse(line)
-      // 首帧形如 {"type":"session",...,"cwd":"/Users/..."}
-      return typeof ev?.cwd === 'string' ? ev.cwd : null
-    }
+    const file = resolveSessionFile(dshHome, sessionId)
+    if (!file || !existsSync(file)) return null
+    const buf = await readFile(file)
+    const magic = Buffer.from([0x28, 0xb5, 0x2f, 0xfd])
+    const start = buf.indexOf(magic)
+    if (start === -1) return null
+    const next = buf.indexOf(magic, start + 4)
+    const first = zstdDecompressSync(buf.subarray(start, next === -1 ? buf.length : next)).toString('utf8')
+    const line = first.split('\n').find((l) => l.trim())
+    if (!line) return null
+    const ev = JSON.parse(line)
+    // 首帧形如 {"type":"session",...,"cwd":"/Users/..."}
+    return typeof ev?.cwd === 'string' ? ev.cwd : null
   } catch { /* 读不到就返回 null，由调用方兜底 */ }
   return null
 }
@@ -145,36 +193,31 @@ export async function sessionCwd(dshHome, sessionId) {
  */
 export async function firstUserMessage(dshHome, sessionId, maxFrames = 60) {
   try {
-    const root = join(dshHome, 'sessions')
-    const dirs = await readdir(root, { withFileTypes: true })
-    for (const d of dirs) {
-      if (!d.isDirectory()) continue
-      const file = join(root, d.name, sessionId, 'session.jsonl.zstd')
-      if (!existsSync(file)) continue
-      const buf = await readFile(file)
-      const magic = Buffer.from([0x28, 0xb5, 0x2f, 0xfd])
-      const starts = []
-      let i = 0
-      while ((i = buf.indexOf(magic, i)) !== -1) { starts.push(i); i += 4 }
-      if (!starts.length) return null
-      const limit = Math.min(starts.length, maxFrames + 1)
-      for (let k = 0; k < limit; k++) {
-        const end = k + 1 < starts.length ? starts[k + 1] : buf.length
-        let text
-        try { text = zstdDecompressSync(buf.subarray(starts[k], end)).toString('utf8') } catch { continue }
-        for (const line of text.split('\n')) {
-          if (!line.trim()) continue
-          let ev
-          try { ev = JSON.parse(line) } catch { continue }
-          if (ev.type !== 'user/message') continue
-          if (ev.data?.source?.kind !== 'user') continue
-          const txt = (ev.data?.content ?? [])
-            .filter((p) => p?.type === 'text').map((p) => p.text).join('\n')
-          if (txt.trim()) return txt
-        }
+    const file = resolveSessionFile(dshHome, sessionId)
+    if (!file || !existsSync(file)) return null
+    const buf = await readFile(file)
+    const magic = Buffer.from([0x28, 0xb5, 0x2f, 0xfd])
+    const starts = []
+    let i = 0
+    while ((i = buf.indexOf(magic, i)) !== -1) { starts.push(i); i += 4 }
+    if (!starts.length) return null
+    const limit = Math.min(starts.length, maxFrames + 1)
+    for (let k = 0; k < limit; k++) {
+      const end = k + 1 < starts.length ? starts[k + 1] : buf.length
+      let text
+      try { text = zstdDecompressSync(buf.subarray(starts[k], end)).toString('utf8') } catch { continue }
+      for (const line of text.split('\n')) {
+        if (!line.trim()) continue
+        let ev
+        try { ev = JSON.parse(line) } catch { continue }
+        if (ev.type !== 'user/message') continue
+        if (ev.data?.source?.kind !== 'user') continue
+        const txt = (ev.data?.content ?? [])
+          .filter((p) => p?.type === 'text').map((p) => p.text).join('\n')
+        if (txt.trim()) return txt
       }
-      return null
     }
+    return null
   } catch { /* 读不到就当没有 */ }
   return null
 }

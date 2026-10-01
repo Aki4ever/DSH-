@@ -1,0 +1,36 @@
+{
+  "id": "cli.rules.session_source_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/session_source_audit.mjs",
+  "invoke": "node scripts/session_source_audit.mjs --check",
+  "summary": "会话消息来源合规审计：判据一\"代码里不得手写退休 kind\" + 判据二\"宿主自己的 v4 校验器实跑对拍\"（REQ-096）",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": false, "desc": "默认动作：判据一 + 判据二（不传等同）" },
+    { "name": "--fast", "type": "arg", "required": false, "desc": "只跑判据一，不抽取宿主校验器" },
+    { "name": "--json", "type": "arg", "required": false, "desc": "输出机读结论（含命中清单与对拍明细）" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检：每条判据都必须能判红（7 条）" },
+    { "name": "DSH_APP_ASAR", "type": "env", "required": false, "desc": "宿主 app.asar 绝对路径（换名/换版本时覆盖自动探测）" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "两条判据逐项状态 + 命中清单（file:line）+ 结论行" },
+    { "name": "ai-control/reports/state/session_source_audit.json", "type": "file", "desc": "机读产物：verdict / 静态命中 / 对拍明细" }
+  ],
+  "exitCodes": {
+    "0": "两条判据全绿",
+    "1": "存在手写退休 kind 生产点，或宿主对拍失败",
+    "2": "不可判定（取不到宿主 app.asar / 校验器依赖闭包不全）或用法错误"
+  },
+  "sideEffects": [
+    "抽取宿主校验器依赖闭包到系统临时目录（按 asar 大小+mtime 缓存，带 .ready 标记）",
+    "写入 ai-control/reports/state/session_source_audit.json"
+  ],
+  "dependencies": ["scripts/lib/session_source.mjs"],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/session_source_audit.mjs --check",
+    "node scripts/session_source_audit.mjs --check --fast",
+    "node scripts/session_source_audit.mjs --selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

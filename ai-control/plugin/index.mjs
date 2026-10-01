@@ -986,6 +986,12 @@ export async function apply(ctx, config = {}) {
         // 若不区分，测试留下的标记会被误读成"宿主已激活"（实测踩过这个假阳性）。
         `isHost=${isHostProcess}`,
         `argv1=${process.argv[1] ?? ''}`,
+        // REQ-095 补：**插件自证它从哪个物理文件被加载**。
+        // 为什么必须自证：本机的插件存在"仓库一份 + profile 副本一份"两个物理载体，
+        // 而"宿主究竟读哪一份"历史上只能靠 inode 推断/事后猜（同一类事故反复出现：
+        // 改的是 A、跑的是 B，且完全静默）。import.meta.url 是唯一不可伪造的答案。
+        `pluginPath=${fileURLToPath(import.meta.url)}`,
+        `pluginSize=${(() => { try { return readFileSync(fileURLToPath(import.meta.url), 'utf8').length + 'B' } catch { return '(不可读)' } })()}`,
         `tools 服务可用=${typeof ctx?.tools === 'object' && ctx.tools !== null}`,
         `showCard=${!!cfg.showCard} enforce=${!!cfg.enforce}`,
         `stateDir=${stateDir}`,

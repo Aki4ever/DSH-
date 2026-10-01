@@ -1,7 +1,7 @@
 # 项目 DSH 赋能规划卡标准模板 (Project DSH Bootstrap Template)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前模板版本**：`v4.29.1`
+> - **当前模板版本**：`v4.29.2`
 > - **实施版本**：`v4.29.1`
 > - **遵循规范**：[`rules/system/meta_rules.md`](../rules/system/meta_rules.md) 第十八条
 

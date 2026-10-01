@@ -61,6 +61,7 @@ node scripts/process_supervisor.mjs --fast  # 流程监督员独立复核（不�
 node scripts/scope_audit.mjs --check     # 全域覆盖：其他工程是否 100% 纳入管控（REQ-092）
 node scripts/req_version_audit.mjs --check        # 需求版本贯通：文案↔台账↔载体↔回执对拍
 node scripts/anti_hallucination_audit.mjs --check # 反空架子：悬空引用 + 机制通电凭据
+node scripts/session_source_audit.mjs --check  # 会话来源合规：禁手写 retired kind + 宿主校验器实跑对拍
 node scripts/todo_panel_audit.mjs --check      # 任务列表面板：逐条打钩行为断言 + 已进宿主 bundles
 node scripts/market_guard_patch.mjs --check   # 市场安装守卫：忙是否已放宽为并发（可 --apply/--revert）
 node scripts/backfill_scope.mjs --apply  # 存量补课：铺入口、正引用并实跑留痕

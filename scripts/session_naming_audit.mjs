@@ -24,6 +24,7 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
 import { zstdDecompressSync } from 'node:zlib'
+import { findTranscript } from './lib/session_transcript.mjs'
 
 /** zstd 帧魔数：0x28B52FFD */
 const ZSTD_MAGIC = Buffer.from([0x28, 0xb5, 0x2f, 0xfd])
@@ -189,7 +190,11 @@ function main() {
     }
   }
 
-  // 建立 sessionId → session.jsonl.zstd 绝对路径 的索引
+  // 建立 sessionId → 会话转录文件绝对路径 的索引
+  // 为什么不再硬编码文件名（REQ-097 实测根因）：宿主当前落盘 `session.v4.jsonl.zstd`
+  // （历史版本另有 `session.v3.jsonl.zstd`），只认 `session.jsonl.zstd` 会让**全部会话**
+  // 判成"无落盘文件"→ firstUserMessage/draftSummary 恒空，存量自动命名的底稿生成整条失效。
+  // 统一复用 lib/session_transcript.mjs 的 findTranscript()，宿主再改版本号也不会失效。
   const fileOf = new Map()
   if (existsSync(sessRoot)) {
     for (const wsDir of readdirSync(sessRoot)) {
@@ -197,8 +202,8 @@ function main() {
       let entries = []
       try { entries = readdirSync(abs) } catch { continue }
       for (const e of entries) {
-        const f = join(abs, e, 'session.jsonl.zstd')
-        if (existsSync(f)) fileOf.set(e, f)
+        const f = findTranscript(e, home)
+        if (f) fileOf.set(e, f)
       }
     }
   }

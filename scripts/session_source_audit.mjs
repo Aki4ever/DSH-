@@ -35,6 +35,7 @@ import { join, dirname, extname, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createRequire } from 'node:module'
+import { execFileSync } from 'node:child_process'
 import { legacyKindLiteralPattern, V4_SOURCE_ERROR_TEXT, producerOwnedSource, LEGACY_PLUGIN_KIND } from './lib/session_source.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -113,6 +114,17 @@ function* walkCode(dir, depth = 0) {
 }
 
 /**
+ * 注释行判定：`//`、`/*`、`*`（块注释续行）、`#`（shell/yaml）、`<!--`。
+ * 口径的理由：注释不是可执行生产点，而本仓与第三方插件的注释里**必须**
+ * 能描述这个退休语法（否则说明写不清）。只认整行注释，不做行内剔除。
+ * @param {string} line
+ */
+function isCommentLine(line) {
+  const t = line.trim()
+  return t.startsWith('//') || t.startsWith('/*') || t.startsWith('*') || t.startsWith('#') || t.startsWith('<!--')
+}
+
+/**
  * 判据一：找出代码里手写的退休 kind 字面量。
  * @returns {{file: string, line: number, text: string}[]}
  */
@@ -152,6 +164,9 @@ export function scanProducers(roots = SCAN_ROOTS) {
         const line = lines[i]
         re.lastIndex = 0
         if (!re.test(line)) continue
+        // 注释行不算生产点：治理文档/源码注释**必须**能描述这个退休语法
+        // （本仓与第三方插件都存在这类说明行；误报会让判据失去可信度）。
+        if (isCommentLine(line)) continue
         if (line.includes(ALLOW_MARK)) continue
         hits.push({ file: f.replace(ROOT + '/', ''), line: i + 1, text: line.trim().slice(0, 160) })
       }
@@ -163,8 +178,14 @@ export function scanProducers(roots = SCAN_ROOTS) {
 // ── 判据二：用宿主真校验器实跑对拍 ──────────────────────────────────────────
 const CLOSURE_SEED = '@deepseek-ai/dsh-session-format-v3-to-v4'
 
-/** 抽取宿主校验器依赖闭包到临时目录。返回 {root, rounds} 或 null（取不到）。 */
-function extractOracle() {
+/**
+ * 抽取宿主校验器依赖闭包到临时目录。返回 {root, rounds} 或 null（取不到）。
+ *
+ * 就绪判据是**真的 import 成功**，不是"包路径能解析"：
+ * 实测踩过——只验 resolve 时，闭包缺 `@deepseek-ai/dsh-session-format-v2-to-v3`，
+ * 于是抽出半个闭包、判定当场异常。宁可多抽几轮，也不许"看起来就绪"。
+ */
+async function extractOracle() {
   const asarPath = asarCandidates().find((p) => existsSync(p))
   if (!asarPath) return null
   const st = statSync(asarPath)
@@ -187,20 +208,32 @@ function extractOracle() {
     return true
   }
 
-  let fetched = new Set()
+  const fetched = new Set()
   for (let round = 0; round < 24; round++) {
+    let entry
     try {
-      const req = createRequire(join(cache, 'probe.mjs'))
-      req.resolve(CLOSURE_SEED)
+      entry = createRequire(join(cache, 'probe.mjs')).resolve(CLOSURE_SEED)
+    } catch (e) {
+      const m = String(e.message || '').match(/Cannot find (?:package|module) '([^']+)'/)
+      if (!m || fetched.has(m[1])) return null
+      fetched.add(m[1])
+      if (!writePkg(m[1])) return null
+      continue
+    }
+    // 就绪验证必须在**子进程**里做：ESM 模块作业会被缓存（含失败），
+    // 同一进程重试同一 URL 永远拿到第一次的解析错误 —— 实测踩过，
+    // 表现为"闭包补全了却始终判不就绪"。
+    try {
+      execFileSync(process.execPath, ['-e',
+        `import(${JSON.stringify(pathToFileURL(entry).href)}).then(()=>process.exit(0),e=>{console.error(String(e&&e.message||e));process.exit(3)})`,
+      ], { stdio: ['ignore', 'ignore', 'pipe'] })
       writeFileSync(marker, String(Date.now()))
       return { root: cache, asarPath, cached: false, rounds: round }
     } catch (e) {
-      const m = String(e.message || '').match(/Cannot find (?:package|module) '([^']+)'/)
-      if (!m) return null
-      const name = m[1]
-      if (fetched.has(name)) return null
-      fetched.add(name)
-      if (!writePkg(name)) return null
+      const m = String(e.stderr || e.message || '').match(/Cannot find (?:package|module) '([^']+)'/)
+      if (!m || fetched.has(m[1])) return null
+      fetched.add(m[1])
+      if (!writePkg(m[1])) return null
     }
   }
   return null
@@ -259,7 +292,7 @@ function saveReport(payload) {
 }
 
 // ── 自测：每条判据都要能判红（不能判红的判据不算判据）─────────────────────
-function selftest() {
+async function selftest() {
   const cases = []
   const tmp = join(tmpdir(), `ssa-selftest-${process.pid}`)
   mkdirSync(tmp, { recursive: true })
@@ -275,28 +308,30 @@ function selftest() {
     cases.push({ id: '判据一·合规写法不误报', pass: hits2.length === 1, detail: JSON.stringify(hits2.map((h) => h.file)) })
 
     const allowFile = join(tmp, 'allow.mjs')
-    writeFileSync(allowFile, `const s = { kind: 'plugin' } // ${ALLOW_MARK}\n`, 'utf8')
+    // 该夹具行本身含字面量 → 必须显式豁免（这正是"标记有用"的活证据）
+    writeFileSync(allowFile, `const s = { kind: 'plugin' } // ${ALLOW_MARK}\n`, 'utf8') // session-source-audit:allow
     const hits3 = scanProducers([tmp])
     cases.push({ id: '判据一·显式豁免标记被尊重', pass: hits3.length === 1, detail: JSON.stringify(hits3.map((h) => h.file)) })
+
+    const commentFile = join(tmp, 'comment.mjs')
+    writeFileSync(commentFile, `// 说明行：退休语法是 kind: 'plugin'\n`, 'utf8') // session-source-audit:allow
+    const hits4 = scanProducers([tmp])
+    cases.push({ id: '判据一·注释行不误报', pass: hits4.length === 1, detail: JSON.stringify(hits4.map((h) => h.file)) })
   } finally {
     rmSync(tmp, { recursive: true, force: true })
   }
 
-  const oracle = extractOracle()
+  const oracle = await extractOracle()
   if (!oracle) {
     cases.push({ id: '判据二·宿主校验器可抽取', pass: false, detail: '未取到 app.asar（不可判定）' })
   } else {
-    return probeOracle(oracle.root).then((res) => {
-      for (const r of res.results) cases.push({ id: `判据二·${r.id}`, pass: r.pass, detail: r.detail })
-      const ok = cases.every((c) => c.pass)
-      console.log(ok ? '✅ 自测通过：两条判据均可判红/可判绿' : '⛔ 自测失败')
-      for (const c of cases) console.log(`  ${c.pass ? '✅' : '⛔'} ${c.id}${c.pass ? '' : ' → ' + c.detail}`)
-      process.exit(ok ? 0 : 1)
-    })
+    const res = await probeOracle(oracle.root)
+    for (const r of res.results || []) cases.push({ id: `判据二·${r.id}`, pass: r.pass, detail: r.detail })
+    if (!res.results?.length) cases.push({ id: '判据二·宿主校验器可用', pass: false, detail: res.reason || '无结果' })
   }
 
   const ok = cases.every((c) => c.pass)
-  console.log(ok ? '✅ 自测通过（判据二未跑）' : '⛔ 自测失败')
+  console.log(ok ? '✅ 自测通过：两条判据均可判红/可判绿' : '⛔ 自测失败')
   for (const c of cases) console.log(`  ${c.pass ? '✅' : '⛔'} ${c.id}${c.pass ? '' : ' → ' + c.detail}`)
   process.exit(ok ? 0 : 1)
 }
@@ -313,7 +348,7 @@ async function main() {
 
   let probe = { ran: false, ok: false, results: [], note: '' }
   if (!fast) {
-    const oracle = extractOracle()
+    const oracle = await extractOracle()
     if (!oracle) {
       probe = { ran: false, ok: false, results: [], note: '未取到宿主 app.asar：判据二不可判定' }
     } else {

@@ -1,7 +1,7 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.1`
+> - **当前文档版本**：`v4.29.2`
 > - **对应实施版本**：`v4.29.1`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：267**（技能 178 · 其他执行层 89）
+**执行层条目总数：268**（技能 178 · 其他执行层 90）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -548,6 +548,7 @@
 | 脚本 (CLI) | `cli.rules.flow_control` | `scripts/flow_control.mjs` | ✅ `scripts/interfaces/flow_control.interface.json` | `node scripts/flow_control.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.gate_selftest` | `scripts/gate_selftest.sh` | ✅ `scripts/interfaces/gate_selftest.interface.json` | `bash scripts/gate_selftest.sh` | — |
 | 脚本 (CLI) | `cli.rules.gen_common_chars` | `scripts/gen_common_chars.mjs` | ✅ `scripts/interfaces/gen_common_chars.interface.json` | `node scripts/gen_common_chars.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.gen_control_map` | `scripts/gen_control_map.mjs` | ✅ `scripts/interfaces/gen_control_map.interface.json` | `node scripts/gen_control_map.mjs` | 把「管控机制当前实况」画成一张简单明了的单页图（SVG） |
 | 脚本 (CLI) | `cli.rules.gen_skill_interfaces` | `scripts/gen_skill_interfaces.mjs` | ✅ `scripts/interfaces/gen_skill_interfaces.interface.json` | `node scripts/gen_skill_interfaces.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.generate_image` | `scripts/generate_image.py` | ✅ `scripts/interfaces/generate_image.interface.json` | `python3 scripts/generate_image.py` | — |
 | 脚本 (CLI) | `cli.rules.generate_naming_plan` | `scripts/generate_naming_plan.mjs` | ✅ `scripts/interfaces/generate_naming_plan.interface.json` | `node scripts/generate_naming_plan.mjs` | ============================================================================== |
@@ -589,7 +590,7 @@
 | 脚本 (CLI) | `cli.rules.route_plan` | `scripts/route_plan.mjs` | ✅ `scripts/interfaces/route_plan.interface.json` | `node scripts/route_plan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.scope_audit` | `scripts/scope_audit.mjs` | ✅ `scripts/interfaces/scope_audit.interface.json` | `node scripts/scope_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.session_naming_audit` | `scripts/session_naming_audit.mjs` | ✅ `scripts/interfaces/session_naming_audit.interface.json` | `node scripts/session_naming_audit.mjs` | ============================================================================== |
-| 脚本 (CLI) | `cli.rules.session_source_audit` | `scripts/session_source_audit.mjs` | ⛔ 未声明 | `node scripts/session_source_audit.mjs` | — |
+| 脚本 (CLI) | `cli.rules.session_source_audit` | `scripts/session_source_audit.mjs` | ✅ `scripts/interfaces/session_source_audit.interface.json` | `node scripts/session_source_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.skill_carrier_audit` | `scripts/skill_carrier_audit.mjs` | ✅ `scripts/interfaces/skill_carrier_audit.interface.json` | `node scripts/skill_carrier_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.svg2png` | `scripts/svg2png.sh` | ✅ `scripts/interfaces/svg2png.interface.json` | `bash scripts/svg2png.sh` | 把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节） |
 | 脚本 (CLI) | `cli.rules.sync_api_docs` | `scripts/sync_api_docs.mjs` | ✅ `scripts/interfaces/sync_api_docs.interface.json` | `node scripts/sync_api_docs.mjs` | ============================================================================== |

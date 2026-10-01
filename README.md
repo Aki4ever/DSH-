@@ -1,7 +1,7 @@
 # 全局规则工程 (Global Rules Project)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.29.1`
+> - **当前系统实施总版本**：`v4.29.2`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -77,6 +77,7 @@
 ├── scripts/                         # 【自动化辅助工具】
 │   ├── generate_image.py            # 图形生成、自动保存与图显渲染脚本（含手写 SVG 精确出图模式）
 │   ├── svg2png.sh                   # 手写 SVG 精确栅格化（WebKit 渲染，保留原始排版）
+│   ├── gen_control_map.mjs          # 【管控机制·自证层】管控实况单页图（读磁盘实况出图，不采信自述）
 │   ├── svg_rasterize.swift          # 上述渲染器的源码（首次调用自动编译并缓存）
 │   ├── rename_session.sh            # 会话一键重命名并锁定 RPC 脚本（含命名规范 R1~R7 硬校验）
 │   ├── check_task_naming.sh         # 判定当前会话命名是否合规（看板常显 + 流程门禁判据）

@@ -1,11 +1,13 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.29.1`
+> - **当前系统实施总版本**：`v4.29.2`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-10-02
 > - **版本状态**：`[Release 稳定生效]`
-> - **本次 PATCH 递增说明**：`v4.29.0 → v4.29.1`，依据 REQ-095（宿主注册双通道接线与"可证实性自锁"清零）；
+> - **本次 PATCH 递增说明**：`v4.29.1 → v4.29.2`，依据 REQ-096（会话消息来源合规与"整轮判失败"清零）；
+>   属缺陷修复 + 只读判定器接入（向下兼容），故**不启用** REQ-093 预留的 `v4.30.0`。
+> - **上一次 PATCH 递增说明**：`v4.29.0 → v4.29.1`，依据 REQ-095（宿主注册双通道接线与"可证实性自锁"清零）；
 >   接线与缺陷修复属 PATCH 级（向下兼容），故**不启用** REQ-093 预留的 `v4.30.0`。
 > - **历史跳号留痕**：`v4.24.0 → v4.26.0` 曾跳过 `v4.25.0`（`v4.25.0` 归 REQ-089、`v4.26.0` 归 REQ-090，两笔账一次结清）。
 > - **版本跳号说明**：`v4.26.0 → v4.28.0 → v4.29.0`，跳过 `v4.27.0`。原因：REQ-091 已认领目标版本 `v4.27.0`
@@ -2964,6 +2966,75 @@
 - **诚实缺口**：① 运行时加载证据须重启桌面端后由 `verify` 的 `isHost` 回答；
   ② profile `cordis.patch.yml` 被宿主整文件重写（本轮实测 07:18:32、07:24:03 两次），
   **重写原因属推测范围、未取证**；本仓只保证"两通道都登记过、bundles 通道重写不掉"。
+
+---
+
+### REQ-096: 会话消息来源合规与"整轮判失败"清零（SESSION-SOURCE-1）
+> ### 🏷️ **资产元数据与生命周期标记**
+> - **文档类型 (Doc Type)**: `[REQUIREMENT 业务需求台账]`
+> - **清理定位 (Retention)**: `[PERSISTENT 长期受管]`
+> - **生成会话**: `[优规003][65分] 会话源类型v4合规`
+> - **到期/清理条件**: `[随版本演进]`
+
+- **当前状态**：`[ACTIVE]` 生产者已修 + 两条判据落地 + 运行载体已对齐（宿主重载后生效）
+- **实施版本**：`v4.29.2`（PATCH 递增：缺陷修复 + 只读判定器接入，向下兼容；`v4.30.0` 仍为 REQ-093 预留）
+- **需求版本**：`v1.0.0`
+- **提出时间**：2026-10-02
+- **最新更新**：2026-10-02
+- **责任归属**：用户（提出与授权判定） / AI 智能体（取证、分裂与实施）
+- **需求文案**：[`docs/constraint_mechanism_optimize_12.md`](constraint_mechanism_optimize_12.md)（唯一权威出处，本条目只放指针不复述细则）
+
+#### 1. 提出背景与痛点
+
+用户截图报错：`处理失败 / 本轮运行失败  format v4 message requires a producer-owned source kind`——
+**一个旁路增强（看板卡片）的来源字段写法，把整个回合判成了失败**。
+
+读盘取证后，事实如下（均可复跑）：
+
+| 编号 | 事实 | 复跑证据 |
+| :--- | :--- | :--- |
+| S1 | v4 行级接纳拒收 `source.kind === 'plugin'`；槽位含 `agent/inbox/spliced` 的 `data.inserted` | 读 `app.asar` 内 `dsh-session-format-v3-to-v4` |
+| S2 | 生产点唯一：`ai-control/plugin/index.mjs` 的看板卡片 `source` 手写字面量 | `session_source_audit.mjs --check` |
+| S3 | 官方迁移器对未知插件生产者的正解 = `plugin:<插件名>`；本机真实落盘会话已有 `plugin:hindsight` 且 0 条 `kind:"plugin"` | 解压会话 JSONL 统计 |
+| S4 | profile 内同名插件是**独立副本**且会落后于仓库（本次实测仍停在旧代码第 983 行） | `bash scripts/plugin_sync.sh check` |
+
+#### 2. 核心诉求与目标
+
+1. **改对（SS1）**：来源字段由唯一权威源产出，形态与宿主官方迁移口径一致；
+2. **看得住（SS2）**：新增只读判定器，静态普查所有生产者载体，并参与门禁放行；
+3. **可证（SS3）**：用**宿主自己的**校验器实跑对拍，反例必被拒收、正例必被接纳，且要能判红；
+4. **不杀主流程（SS4）**：卡片注入前两段自检，不合格就不注入，绝不判整轮失败；
+5. **载体对齐（SS5）**：仓库与运行载体逐字节一致（复用既有 `plugin_sync.sh`，不另造机制）。
+
+#### 3. 关联文件与影响范围
+
+- **新增**：`scripts/lib/session_source.mjs`（唯一权威源）· `scripts/session_source_audit.mjs`（判定器）·
+  `docs/constraint_mechanism_optimize_12.md`（需求文案）；
+- **改动**：`ai-control/plugin/index.mjs`（卡片来源 + 注入前两段自检 + 自证 `pluginPath` + 逃生舱白名单）·
+  `scripts/control_gates.sh`（G5 接入判定器）· `AGENTS.md`（命令清单一行）· 本台账与机读版台账；
+- **宿主侧（不在仓库内）**：`~/.dsh/profiles/desktop/node_modules/dsh-plugin-execution-control/`（运行载体，已 `sync` 对齐）；
+- **边界外（不动）**：宿主 `app.asar`（已签名）；第三方插件 `dsh-better-sidebar` 仅被普查、不被修改。
+
+#### 4. 验收标准
+
+- [x] `node scripts/session_source_audit.mjs --check` 退出码 0（判据一 0 命中 · 判据二 3/3 通过）；
+- [x] `node scripts/session_source_audit.mjs --selftest` 退出码 0（7 条用例，含 4 条判据一反向/排除用例）；
+- [x] 仓库与运行载体 `md5` 一致（`plugin_sync.sh check` 判"逐字节一致"）；
+- [x] `node --check` 通过：`ai-control/plugin/index.mjs` · `scripts/lib/session_source.mjs` · `scripts/session_source_audit.mjs`；
+- [x] `node scripts/control_gates.sh check` 未因本判据判红；
+- [ ] **宿主进程内生效**：需重载 profile / 重启桌面端，由 `plugin-status.txt` 的 `pluginPath=` 自证 —— 未做，**不宣称已生效**。
+
+#### 5. 实施记录
+
+- **2026-10-02 [新建+落地]**：接收需求（含随文截图）并简化为可执行文案；取证定位 S1~S4；
+  递归分裂到物理实现层：唯一权威源 → 生产者修复 → 运行时两段自检 → 只读判定器（两条判据 + 反向自测）
+  → 接入 G5 门禁 → 逃生舱白名单 → 载体对齐。
+  **实测复跑**：`session_source_audit --check` exit 0 · `--selftest` exit 0 ·
+  `plugin_sync.sh check` exit 0（逐字节一致）· 两侧 `md5` 相同（`91ef2639…`）。
+- **诚实缺口**：① 宿主重载需重启桌面端（本轮不代用户重启，避免中断会话）；
+  ② 判据二依赖本机 App 路径，取不到即退出码 2（不折算通过）；
+  ③ `plugin_sync.sh` 的"宿主只读 profile"前提对**宿主侧 bundle 插件**是否成立，
+  本轮以"两侧都已对齐"回避该分歧：无论宿主读哪一份，读到的都是修好的那一份。
 
 ---
 

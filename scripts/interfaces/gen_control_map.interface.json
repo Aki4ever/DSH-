@@ -1,0 +1,46 @@
+{
+  "id": "cli.rules.gen_control_map",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/gen_control_map.mjs",
+  "invoke": "node scripts/gen_control_map.mjs",
+  "summary": "把管控机制当前实况（门禁/物理锁/拦截层/全域覆盖/留痕）画成一张单页可视化 SVG",
+  "inputs": [
+    {
+      "name": "[输出.svg]",
+      "type": "arg",
+      "required": false,
+      "desc": "输出路径，默认 assets/generated_images/control_mechanism_now_v5.svg"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "svg",
+      "type": "file",
+      "desc": "单页实况图（四段式：主干 / 门禁细看 / 运行时 / 证据链）"
+    },
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "门禁通过数、物理锁阶、留痕行数、全域接管数的一行摘要"
+    }
+  ],
+  "exitCodes": {
+    "0": "成功出图"
+  },
+  "sideEffects": [
+    "写入输出 SVG 文件"
+  ],
+  "dependencies": [
+    "ai-control/reports/state/status.json",
+    "ai-control/reports/state/scope_audit.json",
+    ".dsh-control/run-audit.jsonl",
+    "scripts/check_task_naming.sh"
+  ],
+  "parallel": "readonly-except-output",
+  "examples": [
+    "node scripts/gen_control_map.mjs",
+    "node scripts/gen_control_map.mjs /tmp/map.svg"
+  ],
+  "source": "manual",
+  "verified": true
+}

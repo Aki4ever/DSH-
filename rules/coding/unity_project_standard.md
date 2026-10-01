@@ -1,7 +1,7 @@
 # Unity 结构化工程目录与文件形式全局规范 (Unity Project & File Standard)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.1`
+> - **当前文档版本**：`v4.29.2`
 > - **对应实施版本**：`v4.29.1`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-22

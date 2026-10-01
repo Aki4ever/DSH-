@@ -1,7 +1,7 @@
 # 快速通道指令路由与地图式高速干道导航索引
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.1`
+> - **当前文档版本**：`v4.29.2`
 > - **对应实施版本**：`v4.29.1`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
@@ -57,7 +57,7 @@
 |**“远程同步”**（“提交并推送/git同步”）|G1干线|触发任务收尾远程 Git 强同步|执行 [`scripts/git_sync_remote.sh`](../scripts/git_sync_remote.sh) `<ID> <Title> <Summary>`|
 |**“调度锁”**（“资源锁/防冲突/排队看盘”）|G1干线|查看全局资源锁占用大盘与自愈清理|执行 [`scripts/global_scheduler_lock.sh`](../scripts/global_scheduler_lock.sh) `--status`|
 |**“门禁看板”**（“闸门状态/门禁状态”）|G1干线|四道门禁是否全过|执行 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `check`|
-|**“看看管控机制”**（“管控机制全貌/管控机制/机制全貌”）|G1干线|门禁+双检+存量校准+通道清单|依次 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `check`、[`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)|
+|**“看看管控机制”**（“管控机制全貌/管控机制/机制全貌”）|G1干线|门禁+双检+存量校准+通道清单|依次 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `check`、[`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)；要一页图则执行 [`scripts/gen_control_map.mjs`](../scripts/gen_control_map.mjs)|[`assets/generated_images/control_mechanism_now_v5.svg`](../assets/generated_images/control_mechanism_now_v5.svg)|
 |**“看图学管控”**（“管控出图/一图看懂管控/出管控图”）|G1干线|看懂四道门禁状态与各门查什么|执行 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `graph`（默认输出 `ai-control/reports/gate_graph.svg`）|`DSH_CONTROL_GRAPH_OUT=<路径>`|
 |**“流程管控”**（“流程一致性/流程顺序/迭代台账/物理进度/独立复核”）|G1干线|看真实物理进度：顺序是否最优一致、改动是否都有记录、复核是否独立通过|依次 [`scripts/flow_control.mjs`](../scripts/flow_control.mjs) `--check`、[`scripts/progress_ledger.mjs`](../scripts/progress_ledger.mjs) `check`、[`scripts/process_supervisor.mjs`](../scripts/process_supervisor.mjs) `--fast`|
 |**“查啰嗦”**（“冗余检测/重复内容”）|G1干线|检出同一内容被写两遍|执行 [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs) `--root .`|

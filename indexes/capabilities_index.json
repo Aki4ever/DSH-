@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T23:30:55.667Z",
+  "generatedAt": "2026-10-01T23:37:44.549Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 267,
+  "total": 268,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 84
+    "脚本 (CLI)": 85
   },
-  "withInterface": 266,
+  "withInterface": 268,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1913,6 +1913,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.gen_control_map",
+      "path": "scripts/gen_control_map.mjs",
+      "desc": "把「管控机制当前实况」画成一张简单明了的单页图（SVG）",
+      "invoke": "node scripts/gen_control_map.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/gen_control_map.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.gen_skill_interfaces",
       "path": "scripts/gen_skill_interfaces.mjs",
       "desc": "==============================================================================",
@@ -2287,7 +2296,7 @@
       "desc": "",
       "invoke": "node scripts/session_source_audit.mjs",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/session_source_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

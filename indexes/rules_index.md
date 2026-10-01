@@ -1,7 +1,7 @@
 # 全局规则与体系全景总索引
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.1`
+> - **当前文档版本**：`v4.29.2`
 > - **对应实施版本**：`v4.29.1`
 > - **版本治理规范**：[`versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-24
@@ -149,6 +149,7 @@
 | **自动化脚本** | [`fingerprint_audit.sh`](../scripts/fingerprint_audit.sh) | 指纹防漂移 |
 | **自动化脚本** | [`disk_check_and_cleanup.sh`](../scripts/disk_check_and_cleanup.sh) | 磁盘巡检清理 |
 | **自动化脚本** | [`generate_image.py`](../scripts/generate_image.py) | 图形生成渲染 |
+| **自动化脚本** | [`gen_control_map.mjs`](../scripts/gen_control_map.mjs) | 管控实况单页图 |
 | **自动化脚本** | [`rename_session.sh`](../scripts/rename_session.sh) | 会话改名锁定 |
 | **自动化脚本** | [`init_dir.sh`](../scripts/init_dir.sh) | 目录四件套 |
 | **自动化脚本** | [`route_navigate.mjs`](../scripts/route_navigate.mjs) | 导航式路由 |
