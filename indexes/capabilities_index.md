@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：263**（技能 178 · 其他执行层 85）
+**执行层条目总数：264**（技能 178 · 其他执行层 86）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -523,6 +523,7 @@
 | 脚本 (CLI) | `cli.rules.agent_life` | `scripts/agent_life.mjs` | ✅ `scripts/interfaces/agent_life.interface.json` | `node scripts/agent_life.mjs` | agent_life.mjs |
 | 脚本 (CLI) | `cli.rules.align_version` | `scripts/align_version.mjs` | ✅ `scripts/interfaces/align_version.interface.json` | `node scripts/align_version.mjs` | 全库受管文档版本归位（把受管文档头部版本统一改到当前总版本） |
 | 脚本 (CLI) | `cli.rules.anti_hallucination_audit` | `scripts/anti_hallucination_audit.mjs` | ✅ `scripts/interfaces/anti_hallucination_audit.interface.json` | `node scripts/anti_hallucination_audit.mjs` | — |
+| 脚本 (CLI) | `cli.rules.app_restart` | `scripts/app_restart.mjs` | ⛔ 未声明 | `node scripts/app_restart.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.atomic_lock_audit` | `scripts/atomic_lock_audit.mjs` | ✅ `scripts/interfaces/atomic_lock_audit.interface.json` | `node scripts/atomic_lock_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.audit_execution` | `scripts/audit_execution.sh` | ✅ `scripts/interfaces/audit_execution.interface.json` | `bash scripts/audit_execution.sh` | 对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片 |
 | 脚本 (CLI) | `cli.rules.backfill_scope` | `scripts/backfill_scope.mjs` | ✅ `scripts/interfaces/backfill_scope.interface.json` | `node scripts/backfill_scope.mjs` | — |

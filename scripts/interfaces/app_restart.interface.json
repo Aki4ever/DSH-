@@ -1,0 +1,66 @@
+{
+  "id": "cli.rules.app_restart",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/app_restart.mjs",
+  "invoke": "node scripts/app_restart.mjs --probe",
+  "summary": "应用层重启入口：不依赖界面与插件链路，直接按宿主 PID 分离派出重启脚本（退出应用并重开），支持干跑、通道探测与延迟生效。",
+  "inputs": [
+    {
+      "name": "--probe",
+      "type": "flag",
+      "required": false,
+      "desc": "只探测三条通道（osascript quit / open -a / 可执行路径兜底）是否可用，不产生副作用"
+    },
+    {
+      "name": "--dry-run",
+      "type": "flag",
+      "required": false,
+      "desc": "打印将要分离执行的脚本全文与目标 PID，不动作"
+    },
+    {
+      "name": "--delay 秒",
+      "type": "number",
+      "required": false,
+      "desc": "延迟若干秒再退出应用（默认 2，用于让当前对话回执先送达）"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "通道探测结果 / 干跑脚本 / 派出回执（含分离进程 pid 与旧宿主 PID）"
+    },
+    {
+      "name": "~/.dsh/.dsh-control/restart-relaunch.log",
+      "type": "text",
+      "desc": "重启脚本自身的执行留痕（退出/等待/重开各步）"
+    },
+    {
+      "name": "ai-control/reports/state/host_pid.json",
+      "type": "json",
+      "desc": "重启前宿主 PID 基准，供 restart_verify --compare 比对"
+    }
+  ],
+  "exitCodes": {
+    "0": "已派出重启脚本（或探测/干跑通过）",
+    "1": "环境不具备（取不到宿主 PID 或通道不可用）",
+    "2": "用法错误"
+  },
+  "sideEffects": [
+    "延迟结束后退出 DSH 应用并重新打开（会中断当前会话）",
+    "写重启留痕与 PID 基准"
+  ],
+  "dependencies": [
+    "osascript",
+    "open",
+    "scripts/lib/host_pid.mjs",
+    "skill-pool/plugins/dsh-plugin-restart/src/restart-core.cjs"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/app_restart.mjs --probe",
+    "node scripts/app_restart.mjs --delay 60"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

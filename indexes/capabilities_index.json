@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T17:08:52.278Z",
+  "generatedAt": "2026-10-01T22:18:26.182Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 263,
+  "total": 264,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 80
+    "脚本 (CLI)": 81
   },
   "withInterface": 260,
   "entries": [
@@ -1685,6 +1685,15 @@
       "invoke": "node scripts/anti_hallucination_audit.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/anti_hallucination_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.app_restart",
+      "path": "scripts/app_restart.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/app_restart.mjs",
+      "invokeKind": "cli",
+      "interface": null
     },
     {
       "layer": "脚本 (CLI)",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T17:08:52.182Z",
+  "generatedAt": "2026-10-01T22:18:36.760Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -18,7 +18,7 @@
     "AGENTS.md",
     "README.md"
   ],
-  "count": 291,
+  "count": 293,
   "files": [
     {
       "path": "AGENTS.md",
@@ -165,7 +165,7 @@
       "short": "083794a7",
       "sha256": "083794a7f1baca34f2b0c02e31b937e28feb79a3b30304c2dbadbe38098e01f2",
       "bytes": 49741,
-      "mtime": "2026-10-01T16:58:45.762Z"
+      "mtime": "2026-10-01T17:08:52.232Z"
     },
     {
       "path": "docs/.gitkeep",
@@ -302,17 +302,17 @@
     },
     {
       "path": "indexes/capabilities_index.json",
-      "short": "a14d7121",
-      "sha256": "a14d7121eb97193298e950ec4b7380caaf599f587845ffb325750783aea887bf",
-      "bytes": 119413,
-      "mtime": "2026-10-01T17:06:06.215Z"
+      "short": "b7a835f0",
+      "sha256": "b7a835f043ab0918a6c9d67f94dd50779322e726348fd23e58b0e9d39d495611",
+      "bytes": 119730,
+      "mtime": "2026-10-01T22:18:26.184Z"
     },
     {
       "path": "indexes/capabilities_index.md",
-      "short": "ea3b758c",
-      "sha256": "ea3b758c93061aa0b6a49d25e8d96ba99ad973ae79fd26825c594c8064ca5b33",
-      "bytes": 122712,
-      "mtime": "2026-10-01T17:06:06.213Z"
+      "short": "f8e05711",
+      "sha256": "f8e05711210ea3f9abca1fdd6e89bf526685235c9faddb63b4f97e210be83807",
+      "bytes": 122913,
+      "mtime": "2026-10-01T22:18:26.182Z"
     },
     {
       "path": "indexes/dsh_capabilities.md",
@@ -805,6 +805,13 @@
       "mtime": "2026-10-01T16:47:19.275Z"
     },
     {
+      "path": "scripts/app_restart.mjs",
+      "short": "61213193",
+      "sha256": "61213193d4e66e78d4ea90be0266d4f01275c17fe551c472ddda4b705d6ec7f0",
+      "bytes": 6646,
+      "mtime": "2026-10-01T22:18:17.690Z"
+    },
+    {
       "path": "scripts/atomic_lock_audit.mjs",
       "short": "c729742f",
       "sha256": "c729742fb28a7e60ab2222abeb873f2cca7765829215bc47660d38a3b066aed9",
@@ -1048,6 +1055,13 @@
       "sha256": "b896973e0a7bdcf56ee1a3053d56fc879cefcb294577642bd1514d230aa84613",
       "bytes": 1286,
       "mtime": "2026-10-01T16:45:40.668Z"
+    },
+    {
+      "path": "scripts/interfaces/app_restart.interface.json",
+      "short": "172c8b04",
+      "sha256": "172c8b0497f0ab1f4f728c93aad97c985647a3d0ab232c69824dfb54ef5b26d1",
+      "bytes": 2122,
+      "mtime": "2026-10-01T22:18:29.663Z"
     },
     {
       "path": "scripts/interfaces/atomic_lock_audit.interface.json",
