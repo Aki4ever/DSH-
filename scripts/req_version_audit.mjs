@@ -120,7 +120,7 @@ function latestAssistantText(sessionId) {
 }
 
 /** 主判定：四处对拍。返回结构化结论（不打印，便于自检复用）。 */
-export function audit({ reqId = 'REQ-092', receiptText = null, sessionId = process.env.DSH_SESSION_ID } = {}) {
+export function audit({ reqId = 'REQ-092', receiptText = null, sessionId = process.env.DSH_SESSION_ID, requireReceipt = false } = {}) {
   const problems = []
   const facts = {}
 
@@ -175,11 +175,27 @@ export function audit({ reqId = 'REQ-092', receiptText = null, sessionId = proce
     receiptSource = lt.path || '（未取到转录）'
   }
   const receiptVersion = pickRequirementVersion(receipt)
-  facts.receipt = { source: receiptSource, version: receiptVersion }
-  if (receipt && !receiptVersion) {
+  facts.receipt = { source: receiptSource, version: receiptVersion, checked: false, note: '' }
+  // ④ 何时参与判定（设计取舍，写清楚避免"看起来判了、其实没判"）：
+  //    · **显式传入**回执（--receipt）→ 必须判：未披露判红、版本对不上判红；
+  //    · 未传、或会话转录里还没有含版本号的回复 → 本项**不计入判定**，
+  //      但显式降级为 note 并在输出里打印。
+  //   为什么不把"会话最后一轮没披露版本号"当硬红：G5 累积门禁会跑本判定器，
+  //   而"本轮回复"在跑判定时尚未产生 —— 拿上一轮回复去否掉这一轮的放行，
+  //   会把门禁变成"永远红一次"的噪声源（同 REQ-090 "陈旧快照永久钉红"的教训）。
+  //   回执格式本身由 output_audit 的 OUT_RECEIPT_FIELDS 硬判据守住（缺字段即判红）。
+  if (receipt && receiptVersion) {
+    facts.receipt.checked = true
+    if (entry?.requirementVersion && receiptVersion !== entry.requirementVersion) {
+      problems.push(`回复回执需求版本 ${receiptVersion} ≠ 台账需求版本 ${entry.requirementVersion}`)
+    }
+  } else if (requireReceipt) {
+    facts.receipt.checked = true
     problems.push('回复回执里没有披露「需求版本号」（输出结构契约硬判据）')
-  } else if (receiptVersion && entry?.requirementVersion && receiptVersion !== entry.requirementVersion) {
-    problems.push(`回复回执需求版本 ${receiptVersion} ≠ 台账需求版本 ${entry.requirementVersion}`)
+  } else if (receipt) {
+    facts.receipt.note = '本轮取到的回复未披露需求版本号 → 本项未纳入判定（格式由 output_audit 硬判据守）'
+  } else {
+    facts.receipt.note = '未提供回执且会话转录里没有可用回复 → 本项未纳入判定（格式由 output_audit 硬判据守）'
   }
 
   return { ok: problems.length === 0, reqId, problems, facts }
@@ -202,7 +218,10 @@ export function selftest() {
   add('回执版本对不上 → 判红', badReceipt.ok, false)
 
   const noReceipt = audit({ reqId: 'REQ-092', receiptText: '本回复没有披露需求版本号' })
-  add('回执未披露需求版本号 → 判红', noReceipt.ok, false)
+  add('回执未披露 → 本项未纳入判定（不误伤）', noReceipt.ok, true)
+  add('回执未披露但显式要求 → 判红', noReceipt.facts.receipt.checked, false)
+  const strict = audit({ reqId: 'REQ-092', receiptText: '本回复没有披露需求版本号', requireReceipt: true })
+  add('--require-receipt 下未披露 → 判红', strict.ok, false)
 
   const badReq = audit({ reqId: 'REQ-999', receiptText: '- **需求版本号**：`v1.0.0`' })
   add('台账里没有该条目 → 判红', badReq.ok, false)
@@ -227,7 +246,7 @@ function main() {
   const reqId = get('--req', 'REQ-092')
   const receiptFile = get('--receipt', null)
   const receiptText = receiptFile ? (existsSync(receiptFile) ? readFileSync(receiptFile, 'utf8') : null) : null
-  const res = audit({ reqId, receiptText })
+  const res = audit({ reqId, receiptText, requireReceipt: argv.includes('--require-receipt') })
 
   if (asJson) { console.log(JSON.stringify(res, null, 2)); process.exit(res.ok ? 0 : 1) }
 
@@ -236,14 +255,14 @@ function main() {
   console.log(`   需求文案：${res.facts.spec?.file || '（缺）'} → 需求版本 ${res.facts.spec?.version || '（缺）'}`)
   console.log(`   需求台账：需求版本 ${res.facts.ledger?.requirementVersion || '（缺）'} · 实施版本 ${res.facts.ledger?.implementationVersion || '（缺）'} · 状态 ${(res.facts.ledger?.status || '').slice(0, 24)}`)
   console.log(`   实施载体：声明文件 ${res.facts.carrier?.files ?? '（缺）'} 个 · 缺 ${res.facts.carrier?.missing?.length ?? '—'} 个`)
-  console.log(`   回复回执：需求版本 ${res.facts.receipt?.version || '（未披露）'}`)
+  console.log(`   回复回执：需求版本 ${res.facts.receipt?.version || '（未披露）'}${res.facts.receipt?.checked ? '' : ' · 本项未纳入判定'}${res.facts.receipt?.note ? `（${res.facts.receipt.note}）` : ''}`)
   console.log(`   系统总版本：${res.facts.systemVersion || '（缺）'}`)
   if (!res.ok) {
     console.error('\n⛔ 判定不通过：')
     for (const p of res.problems) console.error(`   · ${p}`)
     process.exit(1)
   }
-  console.log('\n✅ 四处版本号一致')
+  console.log(res.facts.receipt?.checked ? '\n✅ 四处版本号一致' : '\n✅ 版本号一致（回执项本项未纳入判定：' + (res.facts.receipt?.note || '未提供回执') + '）')
   process.exit(0)
 }
 
