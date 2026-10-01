@@ -169,9 +169,12 @@ export function buildTree(intent, opts = {}) {
   }
   if (channel) {
     const seen = new Set()
+    // 去重：通道目标与执行层条目指向同一个文件时，只保留执行层节点
+    // （执行层节点带并行档位与实例安全等更丰富的信息，文档节点是它的退化形式）
+    for (const n of nodes) seen.add(path.normalize(n.path))
     for (const t of channel.targets) {
       const rel = path.normalize(path.join('indexes', String(t)))
-      if (seen.has(rel) || exists(rel) === false && /^https?:/.test(String(t))) continue
+      if (seen.has(rel) || (exists(rel) === false && /^https?:/.test(String(t)))) continue
       seen.add(rel)
       nodes.push({
         kind: 'doc',
