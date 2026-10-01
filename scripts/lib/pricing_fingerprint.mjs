@@ -22,6 +22,7 @@
 
 import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync } from 'node:fs'
+import { withLockSync } from './atomic_lock.mjs'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
 
@@ -78,23 +79,34 @@ export function readPricingState() {
   }
 }
 
-/** 原子写状态文件（临时文件 + rename），保证重复执行不留半截文件。 */
+/**
+ * 原子写状态文件（临时文件 + rename + **跨进程原子锁**）。
+ *
+ * 为什么 rename 还不够（REQ-091 / R6 实测）：
+ *   rename 只保证"单个文件不出现半截内容"，**不保证两次读-改-写不互相覆盖**。
+ *   本文件的状态是"读旧 state → 改 lastCheckedAt/changedToday → 写回"，
+ *   而触发它的有三方：用量探针、宿主插件常显行、命名看门狗 —— 同一秒内并发时，
+ *   后写的会把先写的整段吞掉（典型的 lost update，脏数据）。
+ *   加锁后：读-改-写整体串行，rename 仍保留（防半截文件）。
+ */
 function writeStateAtomic(state) {
   const dir = resolveControlDir()
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
   const target = pricingStatePath()
   const tmp = `${target}.tmp-${process.pid}`
-  try {
-    writeFileSync(tmp, `${JSON.stringify(state, null, 2)}\n`, 'utf8')
-    renameSync(tmp, target)
-  } catch (err) {
+  withLockSync('state:pricing_fingerprint', () => {
     try {
-      if (existsSync(tmp)) unlinkSync(tmp)
-    } catch {
-      /* 清理失败不影响主错误上报 */
+      writeFileSync(tmp, `${JSON.stringify(state, null, 2)}\n`, 'utf8')
+      renameSync(tmp, target)
+    } catch (err) {
+      try {
+        if (existsSync(tmp)) unlinkSync(tmp)
+      } catch {
+        /* 清理失败不影响主错误上报 */
+      }
+      throw err
     }
-    throw err
-  }
+  }, { why: '定价指纹状态落盘', staleMs: 30_000 })
 }
 
 /** 计算 sha256 十六进制指纹。 */

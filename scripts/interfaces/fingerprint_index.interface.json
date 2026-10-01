@@ -1,0 +1,74 @@
+{
+  "id": "cli.rules.fingerprint_index",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/fingerprint_index.mjs",
+  "invoke": "node scripts/fingerprint_index.mjs --check",
+  "summary": "全域资产指纹索引：扫描全部受管资产产出机读 sha256 索引 indexes/fingerprint_index.json，并提供漂移判定与单文件查询。",
+  "inputs": [
+    {
+      "name": "--scan",
+      "type": "flag",
+      "required": false,
+      "desc": "重算并写索引（原子锁保护，整文件重写）"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "判定索引与磁盘是否逐字节一致（漂移/消失/新增 全为 0）"
+    },
+    {
+      "name": "--drift",
+      "type": "flag",
+      "required": false,
+      "desc": "只输出漂移清单 JSON"
+    },
+    {
+      "name": "--query <相对路径>",
+      "type": "string",
+      "required": false,
+      "desc": "查询单个文件是否改动，打印索引指纹与磁盘指纹"
+    },
+    {
+      "name": "selftest",
+      "type": "flag",
+      "required": false,
+      "desc": "自检：受管判定正反用例 + 篡改/缺条/幽灵条目三类反向用例"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "indexes/fingerprint_index.json",
+      "type": "json",
+      "desc": "机读索引：schemaVersion/generatedAt/algorithm/count/files[path,short,sha256,bytes,mtime]"
+    },
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "扫描统计或漂移明细"
+    }
+  ],
+  "exitCodes": {
+    "0": "通过（索引与磁盘一致，或扫描完成）",
+    "1": "判定不过（存在漂移/消失/新增）",
+    "2": "用法错误",
+    "3": "查询的路径不在索引中"
+  },
+  "sideEffects": [
+    "重写 indexes/fingerprint_index.json",
+    "在 .dsh_locks/ 下取用原子锁"
+  ],
+  "dependencies": [
+    "node:crypto",
+    "node:fs",
+    "scripts/lib/atomic_lock.mjs",
+    "scripts/fingerprint_audit.sh（受管清单来源）"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/fingerprint_index.mjs --scan",
+    "node scripts/fingerprint_index.mjs --query docs/requirements.md"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

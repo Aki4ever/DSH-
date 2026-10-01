@@ -806,8 +806,9 @@
   - [x] 硬门禁在宿主真实生效（实测拒绝发生的物理凭据已留痕）。
 
 ### CR-043: 常显与自证层强化（重启常显真执行 · API 知识库 · 峰谷常显 · 全域指纹 · 原子锁）
-- **当前状态**：`[EVOLVING]` 演进中（**需求文案待用户拍板，尚未实施**）
-- **实施版本**：`v4.27.0`（规划目标；未实施前不得声称已生效）
+- **当前状态**：`[EVOLVING]` **已实施第一批**（R1/R2/R4/R5/R6 落地并自检通过；R3 由并行子任务交付；
+  R1 的"所有页面常显"仍待人工 DOM 取证 —— 当前宿主进程早于本次改动启动，浏览器仍在跑旧 bundle）
+- **实施版本**：`v4.27.0`（规划目标；**全量端到端验收完成前不递增总版本**）
 - **对应全局台账**：`REQ-091`
 - **提出时间**：2026-10-01
 - **核心诉求与目标**：
@@ -829,6 +830,14 @@
   - [ ] R3 页清单覆盖 100% 且逐页 sha256 可复算；
   - [ ] R4 常显读数与探针输出逐字相等；
   - [ ] R5 覆盖受管资产 ≥234、漂移可判红；R6 接入点 100% 且压测"持锁 0 / 无锁 >0"。
+- **第一批落地证据（可复跑）**：
+  - R5 `node scripts/fingerprint_index.mjs --check` → 234 条 · 漂移 0（自检 14/14）；
+  - R6 `node scripts/atomic_lock_audit.mjs --check` → 接入 5/5 · 持锁段丢失 0 · 无锁对照段丢失 60+（自检 15/15）；
+  - R2 `node scripts/restart_verify.mjs selftest` → 9/9；基准 PID 已记录（84747 · lsof:Tcp:19387）；
+  - R1 `node skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs` → 96/96（含双席位与 PID 语义断言）；
+  - R4 `node scripts/period_parity.mjs --check` → 18 基准点全等（自检 6/6），并修复一处真实错价；
+  - 接口契约 `node scripts/check_layer_interfaces.mjs --check` → CLI 层声明覆盖率 100%。
+- **仍未闭环**：R1 的 DOM 常显取证、R2 的真机 PID 比对（两者都要求应用重启，会中断当前会话，只能由人做）。
 - **本轮实况取证（可复跑）**：`install_host_gate.sh verify` → 条目缺失 + 无激活凭据（`isHost=false`，与看板 4/4 冲突）·
   `deepseek_usage_probe.mjs --check` → 空闲时段（国庆）exit 0 · `verify_restart_button.cjs` → 84/84 ·
   `fingerprint_audit.sh` → 受管 234（新鲜 55 / 落后 12 / 未声明 167）·

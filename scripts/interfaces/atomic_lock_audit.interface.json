@@ -1,0 +1,79 @@
+{
+  "id": "cli.rules.atomic_lock_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/atomic_lock_audit.mjs",
+  "invoke": "node scripts/atomic_lock_audit.mjs --check",
+  "summary": "原子锁接入审计与并发自证：核对写路径 choke point 是否真的调了锁（清单驱动），并跑并发压测证明持锁段零丢失、无锁对照段可测出竞态。",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "判定模式：接入覆盖 100% + 持锁 0 丢失 + 对照组可测出竞态，任一不满足退 1"
+    },
+    {
+      "name": "--list",
+      "type": "flag",
+      "required": false,
+      "desc": "只打印接入点清单与命中情况"
+    },
+    {
+      "name": "--stress",
+      "type": "flag",
+      "required": false,
+      "desc": "只跑并发压测（较慢）"
+    },
+    {
+      "name": "--procs=N",
+      "type": "number",
+      "required": false,
+      "desc": "压测并发进程数（默认 8）"
+    },
+    {
+      "name": "--rounds=N",
+      "type": "number",
+      "required": false,
+      "desc": "每进程轮数（默认 10）"
+    },
+    {
+      "name": "selftest",
+      "type": "flag",
+      "required": false,
+      "desc": "核心正确性 + 反向用例自检（含 Node/Bash 锁目录对拍）"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "接入点命中表 + 持锁段/无锁段丢失数与互斥击穿次数"
+    },
+    {
+      "name": "exitcode",
+      "type": "number",
+      "desc": "0 达标 / 1 判定不过 / 2 用法错误"
+    }
+  ],
+  "exitCodes": {
+    "0": "达标（接入覆盖 100% 且并发自证通过）",
+    "1": "判定不过（有写路径未接入，或并发结论不成立）",
+    "2": "用法错误"
+  },
+  "sideEffects": [
+    "在 .dsh_locks/ 下创建并清理压测用的锁目录",
+    "在系统临时目录创建压测计数文件并清理"
+  ],
+  "dependencies": [
+    "node:child_process",
+    "node:fs",
+    "node:os",
+    "scripts/lib/atomic_lock.mjs"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/atomic_lock_audit.mjs --check",
+    "node scripts/atomic_lock_audit.mjs selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

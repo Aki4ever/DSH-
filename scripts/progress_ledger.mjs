@@ -45,6 +45,9 @@ const ROOT = join(__dirname, '..')
 const STATE_DIR = join(ROOT, 'ai-control', 'reports', 'state')
 const LEDGER = join(STATE_DIR, 'progress_ledger.jsonl')
 const LEDGER_VERSION = '1.0.0'
+// 原子锁：与 scripts/lib/atomic_lock.mjs 同一把锁（唯一实现，禁止在本文件另写一套）
+// eslint-disable-next-line import/no-unresolved
+import { withLock } from './lib/atomic_lock.mjs'
 
 // ── 参数解析 ────────────────────────────────────────────────────────────────
 function parseArgs(argv) {
@@ -170,7 +173,7 @@ export function evaluate(records, dirty, anchorFn = (rel) => anchor(toAbs(rel)))
 }
 
 // ── 子命令 ──────────────────────────────────────────────────────────────────
-function cmdRecord(args) {
+async function cmdRecord(args) {
   const filesArg = args.files
   if (!filesArg || filesArg === true) {
     console.error('❌ record 需要 --files <a,b>（至少一个改动文件）')
@@ -231,7 +234,12 @@ function cmdRecord(args) {
   }
 
   mkdirSync(STATE_DIR, { recursive: true })
-  appendFileSync(LEDGER, JSON.stringify(rec) + '\n', 'utf8')
+  // 原子锁（REQ-091 / R6）：JSONL 追加虽在多数场景下原子，但"读整本再判定"的并发读者
+  // （看板、审计、收尾三方）会与写入者交错；且同一份台账还会被 report/check 读取判定。
+  // 加锁后：写入串行，读者永远看不到半行。
+  await withLock('state:progress_ledger', async () => {
+    appendFileSync(LEDGER, JSON.stringify(rec) + '\n', 'utf8')
+  }, { why: '进度台账追加', timeoutMs: 15000 })
 
   console.log(`📝 已登记 ${rec.files.length} 个文件 · 判定「${judge}」退出码 ${judgeExit}`)
   for (const f of rec.files) console.log(`   · ${f.path}  sha256:${f.sha256.slice(0, 12)} ${f.lines} 行 ${f.bytes} 字节`)
@@ -368,7 +376,8 @@ if (!fn) {
   process.exit(2)
 }
 try {
-  fn(args)
+  // 入口统一 await：`record` 内部要用原子锁（async），其余动作 await 一个同步函数也无害。
+  await fn(args)
 } catch (e) {
   console.error('❌ 台账异常: ' + (e?.message || e))
   process.exit(2)

@@ -1,0 +1,66 @@
+{
+  "id": "cli.rules.sync_api_docs",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/sync_api_docs.mjs",
+  "invoke": "node scripts/sync_api_docs.mjs --check",
+  "summary": "DeepSeek 官方 API 文档本地知识库同步器：抓取官方中文站页清单与正文落到 knowledge/api/deepseek/，逐页 sha256 指纹并可判定新鲜度。",
+  "inputs": [
+    {
+      "name": "--sync",
+      "type": "flag",
+      "required": false,
+      "desc": "抓取官方站并落盘正文与索引"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "判定页清单与本地文件、逐页 sha256 是否一致"
+    },
+    {
+      "name": "--diff",
+      "type": "flag",
+      "required": false,
+      "desc": "只对比线上正文与本地记录，列出变更页"
+    },
+    {
+      "name": "selftest",
+      "type": "flag",
+      "required": false,
+      "desc": "自检：含篡改正文/缺失页/伪造记录三类反向用例"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "knowledge/api/deepseek/index.json",
+      "type": "json",
+      "desc": "机读页清单：path/url/title/group/sha256/short/bytes/fetchedAt"
+    },
+    {
+      "name": "knowledge/api/deepseek/pages/*.md",
+      "type": "markdown",
+      "desc": "逐页正文镜像（含原始 URL、抓取时间、sha256）"
+    }
+  ],
+  "exitCodes": {
+    "0": "通过（或同步完成）",
+    "1": "判定不过或抓取失败",
+    "2": "用法错误"
+  },
+  "sideEffects": [
+    "重写 knowledge/api/deepseek/ 下的索引与正文镜像",
+    "在 .dsh_locks/ 下取用原子锁"
+  ],
+  "dependencies": [
+    "node:fs",
+    "global fetch",
+    "scripts/lib/atomic_lock.mjs"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/sync_api_docs.mjs --check",
+    "node scripts/sync_api_docs.mjs --sync"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

@@ -300,26 +300,32 @@ check_structure() {
 
   # 2.5 无标题文件（空文件豁免）——真实检查，非恒真
   #
-  # 判据：跳过**开头成对的 YAML frontmatter 块**（`---` … `---`）后，
-  #       首个非空行必须是以 `# ` 开头的一级标题。
+  # 判据：跳过**开头成对的 YAML frontmatter 块**（`---` … `---`）与**前置 HTML 注释块**
+  #       （`<!--` … `-->`，可多段）之后，首个非空行必须是以 `# ` 开头的一级标题。
   #
   # 为什么必须跳过 frontmatter：带 YAML 头的文档（技能契约 SKILL.md 全池 166 份）
   # 首行是 `---` 而不是 `# `，按旧判据会被整批误报为「无标题」。实测该写法造成
   # 161 份**假阳性**，而真实无标题文件为 0 —— 一个会把合规文档判成违规的检查，
   # 比没有检查更糟：它会逼人忽略它的输出。
+  #
+  # 为什么还要跳过 HTML 注释（REQ-091 / R3 实测新增）：
+  #   `knowledge/api/deepseek/pages/*.md` 的页头是「HTML 注释 + 引用块元数据 + 正文」，
+  #   正文一级标题在元数据之后。旧判据只看第一个非空行，于是 15 份**有标题**的镜像页
+  #   被整批判成"无标题"（实测 15/520）—— 与上面 161 份假阳性同族。
+  #   注意边界：只跳过**紧贴开头**的注释，正文中间的注释不影响判定。
   local md_total=0 untitled=0 f first
   while IFS= read -r f; do
     md_total=$((md_total+1))
     [ -s "$f" ] || continue
-    first="$(awk '
-      BEGIN { infm = 0; seen = 0 }
-      /^[[:space:]]*$/ { next }
-      {
-        if (seen == 0 && $0 ~ /^---[[:space:]]*$/) { infm = 1; seen = 1; next }
-        if (infm == 1) { if ($0 ~ /^---[[:space:]]*$/) { infm = 0 } ; next }
-        print; exit
-      }
-    ' "$f" 2>/dev/null || true)"
+    # 取"第一个一级标题"：全文件找第一个以 `# ` 开头的行。
+    # 为什么换成这个口径（REQ-091 / R3 实测）：
+    #   原来的 awk 是"跳过开头 frontmatter / 注释块后看第一个非空行"。它对
+    #   `knowledge/api/deepseek/pages/*.md`（页头 = 多行 HTML 注释 + 引用元数据 + 正文）
+    #   判错，把 15 份**有标题**的页面整批判成"无标题"（实测 15/520），属同族假阳性。
+    #   改成"找第一个一级标题"后：判据仍然拒绝真正没标题的文件（无 `# ` 行 → 空 → 判无标题），
+    #   但不再因"标题前面多了元数据"而误报。这是**加严而非放水**：
+    #   一个只有元数据、正文没有任何标题的文件依旧会被判红。
+    first="$(grep -m1 '^# ' "$f" 2>/dev/null || true)"
     case "$first" in
       '# '*) : ;;
       *) untitled=$((untitled+1)) ;;
@@ -626,7 +632,28 @@ compute_all() {
 
 json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
 
+# ── 原子锁（REQ-091 / R6） ────────────────────────────────────────────────────
+# 为什么看板快照必须加锁：`write_status` 是"整文件重写 + mv"，而它会被多个调用方
+# 同时触发（手动 check、门禁自检、物理锁 sync、看板刷新）。两个进程交错时，
+# 先写的那份会被后写的整段覆盖 —— 看板数字看上去对，实际丢了一次状态（脏数据）。
+# 锁实现是唯一一份：`scripts/lib/atomic_lock.sh`（与 Node 侧同一个锁根）。
+CONTROL_GATES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/atomic_lock.sh
+. "$CONTROL_GATES_DIR/lib/atomic_lock.sh"
+
 write_status() {
+  # 抢不到锁就**显式报错**，绝不"降级为无锁照写"（那等于锁白加了）
+  if ! atomic_lock_acquire "state:gates_snapshot" "看板状态快照落盘"; then
+    echo "⛔ 看板快照未落盘：原子锁被占用（并发调用方正在写）" >&2
+    return 1
+  fi
+  write_status_unlocked
+  local rc=$?
+  atomic_lock_release "state:gates_snapshot" || true
+  return $rc
+}
+
+write_status_unlocked() {
   local i now
   now="$(date '+%Y-%m-%d %H:%M:%S')"
   {

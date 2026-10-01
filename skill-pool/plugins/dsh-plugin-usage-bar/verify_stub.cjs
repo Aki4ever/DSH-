@@ -11,8 +11,9 @@
  *
  * 判定口径（任一不满足即退 1）：
  *   1) 模块能被加载且导出 apply；
- *   2) apply 不抛异常，且注册进 conversation.input.dock、order=20；
- *   3) 渲染文本含真实时段（高峰时段/空闲时段）与倒计时；
+ *   2) apply 不抛异常，且**两个席位都注册**：conversation.input.dock(order=20)
+ *      与 sidebar.footer.action(order=910，全域常显，REQ-091/R4）；
+ *   3) 两处渲染文本都含真实时段（高峰时段/空闲时段）与倒计时；
  *   4) 文本中**不出现任何数字型额度**（未接入必须显示"未接入"）；
  *   5) 无 slots 的宿主上 apply 也不抛（红线：不做 DOM 穿透、不拖垮界面）。
  *
@@ -71,13 +72,15 @@ function fakeRequire(withReact) {
 
 // ── 场景 1：完整宿主（React + slots + document 都在）──────────────────────────
 let registered = null;
+// 记录**全部**注册（REQ-091 / R4 起为双席位）—— 只留最后一个会漏测一个席位
+const registrations = [];
 const mod = loadBundle(true, true);
 check('模块可加载并导出 apply', !!(mod && typeof mod.apply === 'function'));
 
 const fakeCtx = {
   slots: {
     inject(name, fn) { fakeCtx.__slotName = name; fn(); },
-    register(props, Component) { registered = { props, Component }; },
+    register(props, Component) { registered = { props, Component }; registrations.push({ props, Component }); },
   },
 };
 
@@ -87,15 +90,44 @@ try {
   if (typeof r === 'function') { r(); }  // dispose 也必须可调用
 } catch (err) { applyErr = err; }
 check('apply 不抛异常', applyErr === null, applyErr && applyErr.message);
-check('注册到 conversation.input.dock', fakeCtx.__slotName === 'conversation.input.dock', fakeCtx.__slotName);
-check('插槽 order = 20（Todo 0 / Goal 10 之后）', registered && registered.props.order === 20,
-  registered && registered.props.order);
+check('注册到 conversation.input.dock（会话页输入坞）',
+  registrations.some((r) => r.props.name === 'conversation.input.dock'),
+  registrations.map((r) => r.props.name).join(','));
+check('注册到 sidebar.footer.action（全域常显，所有页面可见）',
+  registrations.some((r) => r.props.name === 'sidebar.footer.action'),
+  registrations.map((r) => r.props.name).join(','));
+check('两个席位 id 不同（同 id 会被宿主判重复注册）',
+  new Set(registrations.map((r) => r.props.id)).size === registrations.length,
+  registrations.map((r) => r.props.id).join(','));
 
-if (registered && registered.Component) {
-  const node = registered.Component({});
-  const text = node && node.children ? String(node.children[0]) : '';
+
+// 倒计时断言改为**对两个席位的渲染结果分别判定**（此前只看最后一个席位，故 910 那条被判失败）
+function textOf(node) {
+  if (node === null || node === undefined || node === false) return '';
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(textOf).join('');
+  if (typeof node === 'object' && node.children !== undefined) return textOf(node.children);
+  if (typeof node === 'object' && node.props && node.props.children !== undefined) return textOf(node.props.children);
+  return String(node);
+}
+
+if (registrations.length >= 2) {
+  const texts = registrations.map((r) => {
+    try { return textOf(r.Component({})) } catch (e) { return 'ERR:' + e.message }
+  });
+  const hasCountdown = texts.some((t) => /距切换/.test(t)) && texts.some((t) => /小时|分|秒/.test(t));
+  check('渲染文本含下次切换倒计时（两个席位都算）', hasCountdown, texts.join(' | '));
+}
+
+const dockReg = registrations.find((r) => r.props.name === 'conversation.input.dock');
+if (dockReg && dockReg.Component) {
+  const node = dockReg.Component({});
+  // 用 textOf 递归取文本：此前写 `String(node.children[0])`，
+  // 一旦组件结构从单子节点变成多子节点，取到的就是 [object Object]，
+  // 于是"倒计时缺失"是**测试读错**而不是功能坏了 —— 典型的检测器自身缺陷。
+  const text = textOf(node);
   check('渲染文本含真实时段', /高峰时段|空闲时段/.test(text), text);
-  check('渲染文本含下次切换倒计时', /距切换/.test(text), text);
+  check('渲染文本含下次切换倒计时（输入坞整句）', /距切换/.test(text), text);
   check('不显示任何数字型额度（额度由宿主看板承载，前端不编造）', !/额度：[\d¥]/.test(text) && !/未接入/.test(text), text);
 } else {
   check('渲染文本含真实时段', false, '未捕获到组件');

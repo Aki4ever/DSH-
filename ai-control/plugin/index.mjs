@@ -741,7 +741,7 @@ export function evaluate(execution, status, config, cacheAgeMs = 0, lockState = 
  * @param {import('@deepseek-ai/cordis').Context} ctx
  * @param {Partial<typeof Config>} [config]
  */
-export function apply(ctx, config = {}) {
+export async function apply(ctx, config = {}) {
   const cfg = { ...Config, ...config }
   const stateDir = resolveStateDir(cfg)
 
@@ -762,7 +762,22 @@ export function apply(ctx, config = {}) {
   // 判据唯一的写法见该模块头部注释。
   const isHostProcess = isHostProcessImpl()
   try {
-    writeFileSync(
+    // 原子锁（REQ-091 / R6）：这份状态文件有**两个写入者** —— 真宿主插件进程与自检脚本，
+    // 且是整文件覆盖写。无锁交错时，"宿主激活"这条关键凭据会被测试进程覆盖掉
+    // （历史已因此误报"未激活"一次）。加锁后写入串行，谁写谁负责。
+    // 锁实现唯一一份：scripts/lib/atomic_lock.mjs（与 shell 侧同锁根）。
+    // 注意：插件可能被宿主在**没有仓库路径**的环境下加载，因此这里是**可选依赖** ——
+    // 拿不到锁模块时降级为无锁写并在文件里显式留痕，绝不因为加锁失败而拖垮宿主。
+    let withLockSyncImpl = null
+    try {
+      // 用 file URL 定位：插件可能被软链/装配到 profile 下，相对路径不可靠。
+      // 拿不到就降级为无锁写（并在下方写进诊断说明），绝不因为加锁失败拖垮宿主。
+      const lockUrl = new URL('../../scripts/lib/atomic_lock.mjs', import.meta.url).href
+      const mod = await import(lockUrl)
+      withLockSyncImpl = typeof mod.withLockSync === 'function' ? mod.withLockSync : null
+    } catch { withLockSyncImpl = null }
+    const writeStatus = () => {
+      writeFileSync(
       join(stateDir, 'plugin-status.txt'),
       [
         `插件已激活（apply 执行）: ${new Date().toISOString()}`,
@@ -779,7 +794,13 @@ export function apply(ctx, config = {}) {
         '',
       ].join('\n'),
       'utf8',
-    )
+      )
+    }
+    if (typeof withLockSyncImpl === 'function') {
+      withLockSyncImpl('state:plugin_status', writeStatus, { why: '宿主插件状态留痕', staleMs: 30_000 })
+    } else {
+      writeStatus()
+    }
     // 追加式宿主激活台账：只记 isHost=true 的事件，任何测试进程都覆盖不了它。
     if (isHostProcess) {
       appendFileSync(

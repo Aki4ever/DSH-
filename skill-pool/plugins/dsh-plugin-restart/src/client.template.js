@@ -8,9 +8,13 @@ var module = { exports: {} }; var exports = module.exports;
 //   * React 由 bundle 的 require('react') 提供（seed 模块）；
 //   * ctx.effect(fn, label) 注册可回收副作用。
 //
-// 挂载点：`conversation.session.header.actions`（kind=list / scope=session 的头部动作条，
-//   官方 dsh-client-ui-jobs 的 JobsPopover 就挂在这里）。选它的理由：重启是高危动作，
-//   放在会话头部动作条而不是输入坞，避免日常打字时误触。
+// 挂载点（REQ-091 / R1 起为**双席位**，唯一真相源是内核的 CORE.SLOT_NAMES）：
+//   ① `conversation.session.header.actions`（kind=list / scope=session）—— 会话页头部动作条；
+//   ② `sidebar.footer.action`（kind=list / scope=root）—— **全域常显席位**，挂在侧栏底部，
+//      不随路由切换卸载，这是"所有页面都能看到重启按钮"的物理落点。
+//   用户口径："重启按钮需要在所有页面都常显" —— 只有 ② 满足；
+//   ① 保留是因为它离会话上下文最近，日常使用顺手（两处共用同一套注入逻辑，不写两套）。
+//   为什么不用 `shell.leading`：实测它只在 macOS 折叠侧栏时挂载，会变成"时有时无"的假常显。
 //
 // 触发链路（REQ-090 / R6 主推方案 A1，全程走官方插件面）：
 //   点按钮 → 模态二次确认 → ctx.remote.commands.execute(sessionId, '/restart-dsh confirm', [])
@@ -112,17 +116,35 @@ function apply(ctx) {
     return;
   }
 
-  var dispose = ctx.slots.inject(CORE.SLOT_NAME, function () {
-    return ctx.slots.register(
-      { name: CORE.SLOT_NAME, id: CORE.BUTTON_ID, order: CORE.SLOT_ORDER, inject: buildInjected(ctx) },
-      buildComponent(ctx)
-    );
+  // 逐个席位注册。席位清单来自内核（唯一真相源），此处不硬编码第二个名字 ——
+  // 否则"加席位"这件事又会在模板与内核两处各写一份。
+  var slots = (CORE.SLOT_NAMES && CORE.SLOT_NAMES.length ? CORE.SLOT_NAMES : [CORE.SLOT_NAME]);
+  var disposers = [];
+  slots.forEach(function (slotName, index) {
+    var order = slotName === CORE.GLOBAL_SLOT_NAME ? CORE.GLOBAL_SLOT_ORDER : (CORE.SLOT_ORDER + index);
+    var dispose = ctx.slots.inject(slotName, function () {
+      return ctx.slots.register(
+        {
+          name: slotName,
+          // 席位不同 → id 必须不同，否则宿主注册表会判"重复注册"直接抛错
+          id: CORE.BUTTON_ID + (slotName === CORE.GLOBAL_SLOT_NAME ? '_global' : ''),
+          order: order,
+          inject: buildInjected(ctx),
+        },
+        buildComponent(ctx)
+      );
+    });
+    disposers.push(dispose);
+    notes.push('已注入席位：' + slotName);
   });
 
   if (ctx && typeof ctx.effect === 'function') {
-    ctx.effect(function () { return dispose; }, 'dsh-plugin-restart: header action button');
+    ctx.effect(function () {
+      return function () { disposers.forEach(function (d) { if (typeof d === 'function') d(); }); };
+    }, 'dsh-plugin-restart: header + global action buttons');
   }
   module.exports.__diagnostics = notes;
+  module.exports.__slots = slots;
 }
 
 module.exports.inject = ['slots', 'remote', 'remote.commands'];

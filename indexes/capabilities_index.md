@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：240**（技能 178 · 其他执行层 62）
+**执行层条目总数：245**（技能 178 · 其他执行层 67）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -522,6 +522,7 @@
 | 插件 (Plugin) | `plugin.skillpool.dsh-plugin-usage-bar` | `skill-pool/plugins/dsh-plugin-usage-bar` | ✅ `skill-pool/plugins/dsh-plugin-usage-bar/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-usage-bar` | — |
 | 脚本 (CLI) | `cli.rules.agent_life` | `scripts/agent_life.mjs` | ✅ `scripts/interfaces/agent_life.interface.json` | `node scripts/agent_life.mjs` | agent_life.mjs |
 | 脚本 (CLI) | `cli.rules.align_version` | `scripts/align_version.mjs` | ✅ `scripts/interfaces/align_version.interface.json` | `node scripts/align_version.mjs` | 全库受管文档版本归位（把受管文档头部版本统一改到当前总版本） |
+| 脚本 (CLI) | `cli.rules.atomic_lock_audit` | `scripts/atomic_lock_audit.mjs` | ✅ `scripts/interfaces/atomic_lock_audit.interface.json` | `node scripts/atomic_lock_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.audit_execution` | `scripts/audit_execution.sh` | ✅ `scripts/interfaces/audit_execution.interface.json` | `bash scripts/audit_execution.sh` | 对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片 |
 | 脚本 (CLI) | `cli.rules.batch_fix_sidebar_titles` | `scripts/batch_fix_sidebar_titles.mjs` | ✅ `scripts/interfaces/batch_fix_sidebar_titles.interface.json` | `node scripts/batch_fix_sidebar_titles.mjs` | 全量穿透修复前端侧边栏及权威存储中的全部存量会话标题 |
 | 脚本 (CLI) | `cli.rules.batch_rename_sessions` | `scripts/batch_rename_sessions.mjs` | ✅ `scripts/interfaces/batch_rename_sessions.interface.json` | `node scripts/batch_rename_sessions.mjs` | ============================================================================== |
@@ -537,6 +538,7 @@
 | 脚本 (CLI) | `cli.rules.deepseek_usage_probe` | `scripts/deepseek_usage_probe.mjs` | ✅ `scripts/interfaces/deepseek_usage_probe.interface.json` | `node scripts/deepseek_usage_probe.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.disk_check_and_cleanup` | `scripts/disk_check_and_cleanup.sh` | ✅ `scripts/interfaces/disk_check_and_cleanup.interface.json` | `bash scripts/disk_check_and_cleanup.sh` | DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位) |
 | 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | ✅ `scripts/interfaces/fingerprint_audit.interface.json` | `bash scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
+| 脚本 (CLI) | `cli.rules.fingerprint_index` | `scripts/fingerprint_index.mjs` | ✅ `scripts/interfaces/fingerprint_index.interface.json` | `node scripts/fingerprint_index.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.flow_control` | `scripts/flow_control.mjs` | ✅ `scripts/interfaces/flow_control.interface.json` | `node scripts/flow_control.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.gate_selftest` | `scripts/gate_selftest.sh` | ✅ `scripts/interfaces/gate_selftest.interface.json` | `bash scripts/gate_selftest.sh` | — |
 | 脚本 (CLI) | `cli.rules.gen_common_chars` | `scripts/gen_common_chars.mjs` | ✅ `scripts/interfaces/gen_common_chars.interface.json` | `node scripts/gen_common_chars.mjs` | ============================================================================== |
@@ -556,6 +558,7 @@
 | 脚本 (CLI) | `cli.rules.normalize_all_projects` | `scripts/normalize_all_projects.mjs` | ✅ `scripts/interfaces/normalize_all_projects.interface.json` | `node scripts/normalize_all_projects.mjs` | 全域存量 DSH 工程文件夹批量合规与规范化治理脚本 |
 | 脚本 (CLI) | `cli.rules.output_audit` | `scripts/output_audit.mjs` | ✅ `scripts/interfaces/output_audit.interface.json` | `node scripts/output_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.patch_dsh_todo_progress` | `scripts/patch_dsh_todo_progress.cjs` | ✅ `scripts/interfaces/patch_dsh_todo_progress.interface.json` | `node scripts/patch_dsh_todo_progress.cjs` | ⛔⛔⛔ [DEPRECATED 已废弃 · 2026-10-01 · REQ-089 D4] ⛔⛔⛔ |
+| 脚本 (CLI) | `cli.rules.period_parity` | `scripts/period_parity.mjs` | ✅ `scripts/interfaces/period_parity.interface.json` | `node scripts/period_parity.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.physical_lock` | `scripts/physical_lock.sh` | ✅ `scripts/interfaces/physical_lock.interface.json` | `bash scripts/physical_lock.sh` | — |
 | 脚本 (CLI) | `cli.rules.probe_long_output` | `scripts/probe_long_output.mjs` | ✅ `scripts/interfaces/probe_long_output.interface.json` | `node scripts/probe_long_output.mjs` | 长输出实测探针：验证 max_tokens 提高后单次回复能否突破旧上限（32768）。 |
 | 脚本 (CLI) | `cli.rules.probe_long_output_stream` | `scripts/probe_long_output_stream.mjs` | ✅ `scripts/interfaces/probe_long_output_stream.interface.json` | `node scripts/probe_long_output_stream.mjs` | 长输出触顶实测（流式版）：验证单次回复到底能有多长。 |
@@ -564,11 +567,13 @@
 | 脚本 (CLI) | `cli.rules.progress_ledger` | `scripts/progress_ledger.mjs` | ✅ `scripts/interfaces/progress_ledger.interface.json` | `node scripts/progress_ledger.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.redundancy_scan` | `scripts/redundancy_scan.mjs` | ✅ `scripts/interfaces/redundancy_scan.interface.json` | `node scripts/redundancy_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.rename_session` | `scripts/rename_session.sh` | ✅ `scripts/interfaces/rename_session.interface.json` | `bash scripts/rename_session.sh` | 通过 DSH 后台 HTTP RPC 接口，为当前会话重命名并锁定侧边栏标题 |
+| 脚本 (CLI) | `cli.rules.restart_verify` | `scripts/restart_verify.mjs` | ✅ `scripts/interfaces/restart_verify.interface.json` | `node scripts/restart_verify.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.restore_skill_pool` | `scripts/restore_skill_pool.mjs` | ✅ `scripts/interfaces/restore_skill_pool.interface.json` | `node scripts/restore_skill_pool.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.route_navigate` | `scripts/route_navigate.mjs` | ✅ `scripts/interfaces/route_navigate.interface.json` | `node scripts/route_navigate.mjs` | route_navigate.mjs |
 | 脚本 (CLI) | `cli.rules.route_plan` | `scripts/route_plan.mjs` | ✅ `scripts/interfaces/route_plan.interface.json` | `node scripts/route_plan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.session_naming_audit` | `scripts/session_naming_audit.mjs` | ✅ `scripts/interfaces/session_naming_audit.interface.json` | `node scripts/session_naming_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.svg2png` | `scripts/svg2png.sh` | ✅ `scripts/interfaces/svg2png.interface.json` | `bash scripts/svg2png.sh` | 把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节） |
+| 脚本 (CLI) | `cli.rules.sync_api_docs` | `scripts/sync_api_docs.mjs` | ✅ `scripts/interfaces/sync_api_docs.interface.json` | `node scripts/sync_api_docs.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.sync_control_requirements` | `scripts/sync_control_requirements.mjs` | ✅ `scripts/interfaces/sync_control_requirements.interface.json` | `node scripts/sync_control_requirements.mjs` | 管控机制专属需求同步校验脚本 (Control Requirements Sync Verifier) |
 | 脚本 (CLI) | `cli.rules.test_auto_naming` | `scripts/test_auto_naming.mjs` | ✅ `scripts/interfaces/test_auto_naming.interface.json` | `node scripts/test_auto_naming.mjs` | 自动命名逻辑测试（在**不重启宿主**的前提下验证）。 |
 | 脚本 (CLI) | `cli.rules.test_physical_lock` | `scripts/test_physical_lock.mjs` | ✅ `scripts/interfaces/test_physical_lock.interface.json` | `node scripts/test_physical_lock.mjs` | ============================================================================== |

@@ -39,6 +39,9 @@ knowledge/
 │   ├── README.md                      # 来源层定位、登记规约与双向寻址
 │   ├── SOURCE-001-dont-make-me-think.md  # 《Don't Make Me Think, Revisited》3rd Ed. · Steve Krug
 │   └── SOURCE-002-gestalt-psychology.md  # 格式塔心理学组织律原始文献 (Wertheimer 1923 / Köhler 1929 / Koffka 1935)
+├── api/                               # 【官方 API 文档镜像层】(REQ-091 R3 · 外部原文镜像，不进 common/projects)
+│   └── deepseek/                      # DeepSeek 官方文档中文站本地镜像 (README / index.json / pages/*.md)
+│       └── 判定入口：`node scripts/sync_api_docs.mjs --check`（更新 --sync / 比站 --diff / 自检 selftest）
 └── projects/                          # 【第二层：项目专属知识库】(按工程物理隔离，严禁串扰)
     ├── README.md                      # 项目隔离规约与清单
     └── aether_echo/                   # 示例核心项目：源能回响 (Aether Echo - 游戏工程)

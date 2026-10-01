@@ -1,0 +1,73 @@
+{
+  "id": "cli.rules.restart_verify",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/restart_verify.mjs",
+  "invoke": "node scripts/restart_verify.mjs --record",
+  "summary": "一键重启端到端判定器：记录重启前宿主 PID，重启后比对，PID 变化是唯一合格证据；取不到与未变化一律判未证明。",
+  "inputs": [
+    {
+      "name": "--record",
+      "type": "flag",
+      "required": false,
+      "desc": "记录重启前宿主 PID 基准（含取数来源）"
+    },
+    {
+      "name": "--status",
+      "type": "flag",
+      "required": false,
+      "desc": "查看基准与当前 PID 及差异"
+    },
+    {
+      "name": "--compare",
+      "type": "flag",
+      "required": false,
+      "desc": "重启后比对并写入判定台账"
+    },
+    {
+      "name": "selftest",
+      "type": "flag",
+      "required": false,
+      "desc": "自检：PID 判定的正反用例（同值/缺侧/非数字/0 与负数）"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "ai-control/reports/state/host_pid.json",
+      "type": "json",
+      "desc": "重启前基准快照：pid/via/port/at/phase"
+    },
+    {
+      "name": "ai-control/reports/state/restart_verify.jsonl",
+      "type": "text",
+      "desc": "每次比对的判定留痕（追加式）"
+    },
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "人类可读判定结论与排查顺序"
+    }
+  ],
+  "exitCodes": {
+    "0": "已证明重启（PID 确实变化）",
+    "1": "未证明重启（PID 相同或取不到）",
+    "2": "用法错误"
+  },
+  "sideEffects": [
+    "写宿主 PID 基准快照与判定台账",
+    "在 .dsh_locks/ 下取用原子锁"
+  ],
+  "dependencies": [
+    "lsof",
+    "ps",
+    "node:child_process",
+    "scripts/lib/host_pid.mjs",
+    "scripts/lib/atomic_lock.mjs"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/restart_verify.mjs --record",
+    "node scripts/restart_verify.mjs --compare"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

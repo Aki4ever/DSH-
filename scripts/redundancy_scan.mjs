@@ -329,7 +329,14 @@ if (args.selfTest) selfTest()
 
 const config = {
   scanDirs: ['rules', 'knowledge', 'indexes', 'docs', 'templates', 'memory'],
-  excludeGlobs: ['docs/requirements.md'],
+  excludeGlobs: [
+    // 需求台账：条目之间天然共享模板化句式（版本块/验收清单），纳入判定会造成永久报告噪声
+    'docs/requirements.md',
+    // API 文档正文镜像（REQ-091 / R3）：抓取生成物，页间共享官方站的导航、页脚与接口
+    // 模板段落。实测纳入后一次产出 126 个高相似对（全部来自这 15 页），把真实冗余淹没。
+    // 它的"是否变化"由 knowledge/api/deepseek/index.json 的逐页 sha256 负责，不是本扫描的职责。
+    'knowledge/api/deepseek/pages/',
+  ],
 }
 const result = await scan({
   root: args.root,

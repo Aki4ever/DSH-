@@ -220,8 +220,24 @@ async function clientChecks() {
   const remoteCalls = [];
   const ctxStub = {
     slots: {
-      inject(slotName, fn) { this.injectedSlot = slotName; this.injectedFn = fn; return () => {}; },
-      register(reg, Comp) { this.registered = reg; this.component = Comp; return () => {}; },
+      // 记录**全部**席位（REQ-091 / R1 起为双席位），只留最后一个会漏判。
+      injectedSlots: [],
+      injectedFns: [],
+      registrations: [],
+      inject(slotName, fn) {
+        this.injectedSlot = slotName;
+        this.injectedSlots.push(slotName);
+        this.injectedFn = fn;
+        // 两个席位各有自己的 inject 回调，必须全部留住 —— 只记最后一个会漏测一个席位
+        this.injectedFns.push(fn);
+        return () => {};
+      },
+      register(reg, Comp) {
+        this.registered = reg; // 兼容旧断言：最后一个注册
+        this.registrations.push(reg);
+        this.component = Comp;
+        return () => {};
+      },
     },
     remote: {
       commands: {
@@ -234,17 +250,31 @@ async function clientChecks() {
     effect(fn, label) { this.effectLabel = label; return () => {}; },
   };
   exported.apply(ctxStub);
-  check('apply：注册到 conversation.session.header.actions 插槽',
-    ctxStub.slots.injectedSlot === 'conversation.session.header.actions', ctxStub.slots.injectedSlot);
+  // REQ-091 / R1：必须**两个席位都注入** —— 会话页头部 + 全域常显席位。
+  // 只测一个会漏掉"所有页面常显"这条用户诉求（正是本次要修的那条）。
+  check('apply：注入会话页头部席位 conversation.session.header.actions',
+    ctxStub.slots.injectedSlots.includes('conversation.session.header.actions'),
+    ctxStub.slots.injectedSlots.join(','));
+  check('apply：注入全域常显席位 sidebar.footer.action（所有页面可见）',
+    ctxStub.slots.injectedSlots.includes('sidebar.footer.action'),
+    ctxStub.slots.injectedSlots.join(','));
+  check('apply：席位清单来自内核 SLOT_NAMES（不硬编码第二个名字）',
+    Array.isArray(exported.__slots) && exported.__slots.length === 2, JSON.stringify(exported.__slots));
   // 宿主契约：slots.inject 是**惰性**的 —— 回调由宿主在渲染该插槽时才调用。
   // 因此测试必须显式触发一次，否则 register 永远不会发生（这一条本身就是契约断言）。
   check('apply：inject 回调是惰性的（apply 期间尚未 register）',
     ctxStub.slots.registered === undefined);
-  if (typeof ctxStub.slots.injectedFn === 'function') ctxStub.slots.injectedFn();
+  // 宿主会为**每个**席位各触发一次回调，测试也必须逐个触发（否则只注册了一个席位）
+  ctxStub.slots.injectedFns.forEach(function (fn) { if (typeof fn === 'function') fn(); });
   check('宿主触发 inject 回调后才真正 register',
     ctxStub.slots.registered !== undefined);
   check('apply：插槽注册 id = dsh_restart_button',
-    !!(ctxStub.slots.registered && ctxStub.slots.registered.id === 'dsh_restart_button'));
+    ctxStub.slots.registrations.some((r) => r.id === 'dsh_restart_button'));
+  check('apply：全域席位注册 id = dsh_restart_button_global（两席位 id 必须不同）',
+    ctxStub.slots.registrations.some((r) => r.id === 'dsh_restart_button_global'),
+    ctxStub.slots.registrations.map((r) => r.id).join(','));
+  check('apply：两个席位各注册一次（共 2 条）',
+    ctxStub.slots.registrations.length === 2, String(ctxStub.slots.registrations.length));
   check('apply：插槽注册 order 是数字',
     !!(ctxStub.slots.registered && typeof ctxStub.slots.registered.order === 'number'));
   check('apply：注入了组件', typeof ctxStub.slots.component === 'function');
@@ -313,6 +343,31 @@ clientChecks().then(() => {
   for (const r of results) {
     console.log(`${r.pass ? '✅' : '❌'} ${r.name}${r.detail ? `（${r.detail}）` : ''}`);
   }
+  // ── REQ-091 / R2：端到端语义（PID 是唯一合格证据） ────────────────────────
+  // 为什么这几条必须有：用户实测"点了没重启"，而当时**没有任何东西**能判定
+  // "重启了没有"。R2 把判据定成"宿主 PID 必须变化"，这里就把该判据锁进回归。
+  check('R2：重启脚本必须内嵌**当前宿主 PID**（否则等的是别人的进程）',
+    /kill -0 12345/.test(CORE.buildRelaunchScript(12345)));
+  check('R2：重启脚本必须"先退出再重开"，且退出在 open 之前',
+    (function () {
+      const sc = CORE.buildRelaunchScript(4242);
+      const quitAt = sc.indexOf('quit app');
+      const openAt = sc.indexOf('open -a');
+      return quitAt > 0 && openAt > quitAt;
+    })());
+  check('R2：PID 比对 —— 不同才算重启成功',
+    CORE.pidChanged(111, 222) === true);
+  check('R2 反向：PID 相同 → 未证明重启',
+    CORE.pidChanged(111, 111) === false);
+  check('R2 反向：取不到任一侧 PID → 未证明重启（fail-closed）',
+    CORE.pidChanged(111, null) === false && CORE.pidChanged(undefined, 222) === false);
+  check('R2 反向：非数字 PID → 未证明重启',
+    CORE.pidChanged('abc', '222') === false);
+  check('R2 反向：非法 PID 不得生成脚本（拒绝注入面）',
+    (function () { try { CORE.buildRelaunchScript('12345; rm -rf /'); return false; } catch (e) { return true; } })());
+  check('R2：成功回执必须提示用 PID 比对确认（不许只说"已重启"）',
+    /PID/.test(CORE.describeResult({ ok: true }, true)));
+
   console.log('-----------------------------------------');
   console.log(`共 ${results.length} 项 · ${failed.length ? `❌ ${failed.length} 项未过` : '🎉 全部通过'}`);
   process.exit(failed.length ? 1 : 0);

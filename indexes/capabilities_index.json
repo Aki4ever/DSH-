@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T04:46:19.476Z",
+  "generatedAt": "2026-10-01T15:24:19.868Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 240,
+  "total": 245,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 57
+    "脚本 (CLI)": 62
   },
-  "withInterface": 240,
+  "withInterface": 245,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1679,6 +1679,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.atomic_lock_audit",
+      "path": "scripts/atomic_lock_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/atomic_lock_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/atomic_lock_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.audit_execution",
       "path": "scripts/audit_execution.sh",
       "desc": "对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片",
@@ -1811,6 +1820,15 @@
       "invoke": "bash scripts/fingerprint_audit.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/fingerprint_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.fingerprint_index",
+      "path": "scripts/fingerprint_index.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/fingerprint_index.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/fingerprint_index.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -1985,6 +2003,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.period_parity",
+      "path": "scripts/period_parity.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/period_parity.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/period_parity.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.physical_lock",
       "path": "scripts/physical_lock.sh",
       "desc": "",
@@ -2057,6 +2084,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.restart_verify",
+      "path": "scripts/restart_verify.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/restart_verify.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/restart_verify.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.restore_skill_pool",
       "path": "scripts/restore_skill_pool.mjs",
       "desc": "==============================================================================",
@@ -2099,6 +2135,15 @@
       "invoke": "bash scripts/svg2png.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/svg2png.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.sync_api_docs",
+      "path": "scripts/sync_api_docs.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/sync_api_docs.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/sync_api_docs.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

@@ -8,9 +8,13 @@ var module = { exports: {} }; var exports = module.exports;
 //   * React 由 bundle 的 require('react') 提供（seed 模块）；
 //   * ctx.effect(fn, label) 注册可回收副作用。
 //
-// 挂载点：`conversation.session.header.actions`（kind=list / scope=session 的头部动作条，
-//   官方 dsh-client-ui-jobs 的 JobsPopover 就挂在这里）。选它的理由：重启是高危动作，
-//   放在会话头部动作条而不是输入坞，避免日常打字时误触。
+// 挂载点（REQ-091 / R1 起为**双席位**，唯一真相源是内核的 CORE.SLOT_NAMES）：
+//   ① `conversation.session.header.actions`（kind=list / scope=session）—— 会话页头部动作条；
+//   ② `sidebar.footer.action`（kind=list / scope=root）—— **全域常显席位**，挂在侧栏底部，
+//      不随路由切换卸载，这是"所有页面都能看到重启按钮"的物理落点。
+//   用户口径："重启按钮需要在所有页面都常显" —— 只有 ② 满足；
+//   ① 保留是因为它离会话上下文最近，日常使用顺手（两处共用同一套注入逻辑，不写两套）。
+//   为什么不用 `shell.leading`：实测它只在 macOS 折叠侧栏时挂载，会变成"时有时无"的假常显。
 //
 // 触发链路（REQ-090 / R6 主推方案 A1，全程走官方插件面）：
 //   点按钮 → 模态二次确认 → ctx.remote.commands.execute(sessionId, '/restart-dsh confirm', [])
@@ -23,7 +27,7 @@ var module = { exports: {} }; var exports = module.exports;
 //   3) 按钮点击后若 `remote.commands` 不可用，如实返回失败原因，不假装已重启。
 'use strict';
 
-//#region restart-core sha256:3660a5c2e9eaa6ed（由 build_client.py 从 src/restart-core.cjs 内联，勿手改）
+//#region restart-core sha256:c9c7a328e5143d5c（由 build_client.py 从 src/restart-core.cjs 内联，勿手改）
 'use strict';
 /**
  * restart-core.cjs — dsh-plugin-restart 的纯逻辑内核（宿主半与客户端半共用）
@@ -56,8 +60,33 @@ const CONFIRM_LINE = '/' + COMMAND_NAME + ' ' + CONFIRM_TOKEN;
 const APP_NAME = 'DeepSeek Harness';
 /** 客户端按钮与插槽标识。 */
 const BUTTON_ID = 'dsh_restart_button';
+/**
+ * 会话页头部席位（原席位，保留）。
+ * `kind=list` / `scope=session`，官方 `dsh-client-ui-jobs` 的 JobsPopover 就挂这里。
+ */
 const SLOT_NAME = 'conversation.session.header.actions';
+/**
+ * **全域常显席位**（REQ-091 / R1 新增）。
+ *
+ * 为什么必须换/加席位：用户实测"重启按钮需要在所有页面都常显"，
+ * 而 `conversation.session.header.actions` 是 **scope=session** 的席位 ——
+ * 只有会话页且只有会话上下文存在时才渲染，首页/设置/记忆页一律看不到。
+ *
+ * 席位经 `app.asar` 只读解析实测（节选 `dsh-client-ui-sidebar` 的注册表）：
+ *   `sidebar.footer.action` → `kind: "list"` · `scope: "root"`，
+ *   挂在侧栏底部 `footArea`，**不随路由切换卸载** —— 这是"所有页面常显"的物理落点。
+ *
+ * 反例（为什么不选 `shell.leading`，实测过）：
+ *   它只在 **macOS 且侧栏处于折叠态**时才被 frame 挂载（`leadingMounted = darwin && sidebarCollapsed`），
+ *   拿它当常显落点会得到"时有时无"的假常显。
+ */
+const GLOBAL_SLOT_NAME = 'sidebar.footer.action';
+/** 按钮在多个席位里的挂载顺序（越小越靠前）。 */
 const SLOT_ORDER = 90;
+/** 全域席位的顺序：放末尾，避免挤掉侧栏原有的设置/新建等入口。 */
+const GLOBAL_SLOT_ORDER = 900;
+/** 全部挂载席位（客户端半按此数组逐个注册；数组是唯一真相源）。 */
+const SLOT_NAMES = [SLOT_NAME, GLOBAL_SLOT_NAME];
 
 /**
  * 解析命令入参，判断是否放行重启。
@@ -138,7 +167,10 @@ module.exports = {
   APP_NAME,
   BUTTON_ID,
   SLOT_NAME,
+  GLOBAL_SLOT_NAME,
+  SLOT_NAMES,
   SLOT_ORDER,
+  GLOBAL_SLOT_ORDER,
   parseRestartInput,
   buildRelaunchScript,
   pidChanged,
@@ -231,17 +263,35 @@ function apply(ctx) {
     return;
   }
 
-  var dispose = ctx.slots.inject(CORE.SLOT_NAME, function () {
-    return ctx.slots.register(
-      { name: CORE.SLOT_NAME, id: CORE.BUTTON_ID, order: CORE.SLOT_ORDER, inject: buildInjected(ctx) },
-      buildComponent(ctx)
-    );
+  // 逐个席位注册。席位清单来自内核（唯一真相源），此处不硬编码第二个名字 ——
+  // 否则"加席位"这件事又会在模板与内核两处各写一份。
+  var slots = (CORE.SLOT_NAMES && CORE.SLOT_NAMES.length ? CORE.SLOT_NAMES : [CORE.SLOT_NAME]);
+  var disposers = [];
+  slots.forEach(function (slotName, index) {
+    var order = slotName === CORE.GLOBAL_SLOT_NAME ? CORE.GLOBAL_SLOT_ORDER : (CORE.SLOT_ORDER + index);
+    var dispose = ctx.slots.inject(slotName, function () {
+      return ctx.slots.register(
+        {
+          name: slotName,
+          // 席位不同 → id 必须不同，否则宿主注册表会判"重复注册"直接抛错
+          id: CORE.BUTTON_ID + (slotName === CORE.GLOBAL_SLOT_NAME ? '_global' : ''),
+          order: order,
+          inject: buildInjected(ctx),
+        },
+        buildComponent(ctx)
+      );
+    });
+    disposers.push(dispose);
+    notes.push('已注入席位：' + slotName);
   });
 
   if (ctx && typeof ctx.effect === 'function') {
-    ctx.effect(function () { return dispose; }, 'dsh-plugin-restart: header action button');
+    ctx.effect(function () {
+      return function () { disposers.forEach(function (d) { if (typeof d === 'function') d(); }); };
+    }, 'dsh-plugin-restart: header + global action buttons');
   }
   module.exports.__diagnostics = notes;
+  module.exports.__slots = slots;
 }
 
 module.exports.inject = ['slots', 'remote', 'remote.commands'];

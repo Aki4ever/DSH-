@@ -30,8 +30,33 @@ const CONFIRM_LINE = '/' + COMMAND_NAME + ' ' + CONFIRM_TOKEN;
 const APP_NAME = 'DeepSeek Harness';
 /** 客户端按钮与插槽标识。 */
 const BUTTON_ID = 'dsh_restart_button';
+/**
+ * 会话页头部席位（原席位，保留）。
+ * `kind=list` / `scope=session`，官方 `dsh-client-ui-jobs` 的 JobsPopover 就挂这里。
+ */
 const SLOT_NAME = 'conversation.session.header.actions';
+/**
+ * **全域常显席位**（REQ-091 / R1 新增）。
+ *
+ * 为什么必须换/加席位：用户实测"重启按钮需要在所有页面都常显"，
+ * 而 `conversation.session.header.actions` 是 **scope=session** 的席位 ——
+ * 只有会话页且只有会话上下文存在时才渲染，首页/设置/记忆页一律看不到。
+ *
+ * 席位经 `app.asar` 只读解析实测（节选 `dsh-client-ui-sidebar` 的注册表）：
+ *   `sidebar.footer.action` → `kind: "list"` · `scope: "root"`，
+ *   挂在侧栏底部 `footArea`，**不随路由切换卸载** —— 这是"所有页面常显"的物理落点。
+ *
+ * 反例（为什么不选 `shell.leading`，实测过）：
+ *   它只在 **macOS 且侧栏处于折叠态**时才被 frame 挂载（`leadingMounted = darwin && sidebarCollapsed`），
+ *   拿它当常显落点会得到"时有时无"的假常显。
+ */
+const GLOBAL_SLOT_NAME = 'sidebar.footer.action';
+/** 按钮在多个席位里的挂载顺序（越小越靠前）。 */
 const SLOT_ORDER = 90;
+/** 全域席位的顺序：放末尾，避免挤掉侧栏原有的设置/新建等入口。 */
+const GLOBAL_SLOT_ORDER = 900;
+/** 全部挂载席位（客户端半按此数组逐个注册；数组是唯一真相源）。 */
+const SLOT_NAMES = [SLOT_NAME, GLOBAL_SLOT_NAME];
 
 /**
  * 解析命令入参，判断是否放行重启。
@@ -112,7 +137,10 @@ module.exports = {
   APP_NAME,
   BUTTON_ID,
   SLOT_NAME,
+  GLOBAL_SLOT_NAME,
+  SLOT_NAMES,
   SLOT_ORDER,
+  GLOBAL_SLOT_ORDER,
   parseRestartInput,
   buildRelaunchScript,
   pidChanged,

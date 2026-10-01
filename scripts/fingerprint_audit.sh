@@ -116,7 +116,41 @@ get_declared_version() {
 }
 
 # 扫描并收集所有文件指标
+# ── 受管清单唯一真相源：`scripts/fingerprint_index.mjs`（REQ-091 / R5） ──────
+# 为什么要改：本脚本与 `fingerprint_index.mjs` 各自扫一遍盘，两侧口径一旦分叉
+# （实测：239 vs 235，差的是 4 个 macOS 秒级回填的 `.DS_Store`），
+# "受管资产数"就有了两个都能自证合理的数字 —— 正是本工程最忌讳的"同一事实两种说法"。
+# 改法：清单以指纹索引 JSON 为唯一真相源；索引缺失时降级为本地扫描并**显式提示**。
+INDEX_FILE="$CURRENT_DIR/indexes/fingerprint_index.json"
+
 collect_assets() {
+  # ① 首选：读指纹索引（与 --check 判定同源，天然一致）
+  if [ -f "$INDEX_FILE" ] && command -v node >/dev/null 2>&1; then
+    local from_index
+    from_index="$(node -e '
+      const fs=require("fs");
+      try{const j=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));
+      if(!j||!Array.isArray(j.files))process.exit(1);
+      process.stdout.write(j.files.map(f=>f.path).join("\n"))}catch(e){process.exit(1)}
+    ' "$INDEX_FILE" 2>/dev/null)" || from_index=""
+    if [ -n "$from_index" ]; then
+      echo "$from_index"
+      return 0
+    fi
+  fi
+  # ①b 索引在场但**已过期**时显式提示：否则会"用旧清单算新实况"，
+  #     覆盖率看着 100%，实际漏掉刚新增的文件（本工程最忌讳的静默失真）。
+  if [ -f "$INDEX_FILE" ] && command -v node >/dev/null 2>&1; then
+    if ! node "$CURRENT_DIR/scripts/fingerprint_index.mjs" --check >/dev/null 2>&1; then
+      echo "⚠️ 指纹索引与磁盘已不一致（indexes/fingerprint_index.json 过期）—— 建议先跑 node scripts/fingerprint_index.mjs --scan" >&2
+    fi
+  fi
+  # ② 降级：索引不在时按本地规则扫盘，并显式告知（绝不静默）
+  echo "⚠️ 指纹索引不可用，已降级为本地扫盘（口径可能与 indexes/fingerprint_index.json 有差）" >&2
+  collect_assets_local
+}
+
+collect_assets_local() {
   local files=()
   for dir in "${MANAGED_DIRS[@]}"; do
     if [ -d "$CURRENT_DIR/$dir" ]; then
@@ -194,8 +228,26 @@ run_freshness_report() {
   echo "=========================================================="
 }
 
-# 生成全量持久化指纹台账
+# 原子锁（REQ-091 / R6）：指纹台账是**整文件重写**（先 `>` 清空再逐行追加）。
+# 两个扫描同时跑时，后启动的会先清空文件，前一个还在往里写 —— 双方都得到半截台账，
+# 而且**退出码仍然是 0**（最坏的一种脏数据：看着成功，内容残缺）。故整段加锁。
+FINGERPRINT_AUDIT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/atomic_lock.sh
+. "$FINGERPRINT_AUDIT_DIR/lib/atomic_lock.sh"
+
+# 生成全量持久化指纹台账（带锁入口）
 run_scan_and_update_ledger() {
+  if ! atomic_lock_acquire "assets:fingerprint_ledger" "指纹台账整文件重写"; then
+    echo "⛔ 指纹台账未更新：原子锁被占用（另一个扫描正在进行）" >&2
+    return 1
+  fi
+  run_scan_and_update_ledger_unlocked
+  local rc=$?
+  atomic_lock_release "assets:fingerprint_ledger" || true
+  return $rc
+}
+
+run_scan_and_update_ledger_unlocked() {
   echo "🔍 正在扫描工程全量受管资产并更新指纹台账..."
   local all_files=($(collect_assets))
   local now=$(date "+%Y-%m-%d %H:%M")

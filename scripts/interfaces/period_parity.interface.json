@@ -1,0 +1,57 @@
+{
+  "id": "cli.rules.period_parity",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/period_parity.mjs",
+  "invoke": "node scripts/period_parity.mjs --check",
+  "summary": "峰谷时段口径对拍器：把客户端插件的本地时段算法与已审计的官方口径探针逐点比对，消除同一事实两种说法。",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "逐点判定两侧时段/折扣一致、下次切换时刻符合裁决"
+    },
+    {
+      "name": "--list",
+      "type": "flag",
+      "required": false,
+      "desc": "打印每个基准点两侧的完整结果"
+    },
+    {
+      "name": "selftest",
+      "type": "flag",
+      "required": false,
+      "desc": "自检：真实两侧一致 + 四类反向用例（改坏任一侧、只错倒计时）"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "基准点一致数与不一致明细（含不一致原因）"
+    },
+    {
+      "name": "exitcode",
+      "type": "number",
+      "desc": "0 全等 / 1 存在不一致或基准点不足 / 2 用法错误"
+    }
+  ],
+  "exitCodes": {
+    "0": "通过（逐点全等，且基准点数达标）",
+    "1": "不通过（口径分叉或覆盖不足）",
+    "2": "用法错误"
+  },
+  "sideEffects": [],
+  "dependencies": [
+    "scripts/deepseek_usage_probe.mjs",
+    "scripts/lib/gates_config.mjs",
+    "skill-pool/plugins/dsh-plugin-usage-bar/src/usage-core.cjs"
+  ],
+  "parallel": "shared",
+  "examples": [
+    "node scripts/period_parity.mjs --check",
+    "node scripts/period_parity.mjs selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

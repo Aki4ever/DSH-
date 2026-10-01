@@ -277,11 +277,15 @@ export function checkLinks(file, text, existsFn) {
   while ((m = re.exec(stripCode(text)))) {
     let target = m[1].trim()
     if (/^(https?:|mailto:|#)/.test(target)) continue
+    // **站点绝对路径**（以 `/` 开头）不是本地文件路径，而是"以某站点根为基准"的引用：
+    //   · 文档镜像（`knowledge/api/deepseek/pages/*.md`，REQ-091 / R3）里的
+    //     `/zh-cn/quick_start/pricing` 指的是官方站路径，本仓库当然没有这个文件；
+    //   · 旧实现把它当**文件系统绝对路径**去 existsFn，于是 41 处真实存在的引用被报成"死链"。
+    // 判定：跳过（与 http/mailto/锚点同类），只查真正的**相对**链接 —— 那才可能出现仓库内断裂。
+    if (target.startsWith('/')) continue
     target = target.split('#')[0].trim()
     if (!target) continue
-    let abs
-    if (target.startsWith('/')) abs = target
-    else abs = resolve(dirname(file), target)
+    const abs = resolve(dirname(file), target)
     if (!existsFn(abs)) {
       out.push({
         type: 'C5-死链冲突',
