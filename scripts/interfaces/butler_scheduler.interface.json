@@ -1,0 +1,84 @@
+{
+  "id": "cli.rules.butler_scheduler",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/butler_scheduler.mjs",
+  "invoke": "node scripts/butler_scheduler.mjs",
+  "summary": "管家侧有界并发调度器：先证明可并行再派单；锁冲突、死锁环、超时、AP-01 活锁、无界并发一律拒单。REQ-093/R3。",
+  "inputs": [
+    {
+      "name": "--plan <tasks.jsonl>",
+      "type": "arg",
+      "required": false,
+      "desc": "只出调度方案，不执行（默认模式）"
+    },
+    {
+      "name": "--run <tasks.jsonl>",
+      "type": "arg",
+      "required": false,
+      "desc": "真派单，逐条执行任务里的 cmd"
+    },
+    {
+      "name": "--concurrency <n>",
+      "type": "arg",
+      "required": false,
+      "desc": "并发上界，必须在 1~4 之间（超出即拒单，拒绝无界并发）"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "五类固化用例逐条实跑判定"
+    },
+    {
+      "name": "--self-test",
+      "type": "flag",
+      "required": false,
+      "desc": "同 --check（保留别名）"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "机器可读输出"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "波次计划 / 拒单原因与证据"
+    },
+    {
+      "name": "ai-control/reports/state/butler_scheduler.json",
+      "type": "file",
+      "desc": "最近一次裁决与派单结果"
+    },
+    {
+      "name": "ai-control/reports/state/butler_scheduler.jsonl",
+      "type": "file",
+      "desc": "追加留痕，供 AP-01 活锁判据读取历史"
+    }
+  ],
+  "exitCodes": {
+    "0": "方案成立（可并行的任务真能并行）",
+    "1": "拒单（冲突 / 死锁环 / 超时 / AP-01 活锁 / 无界并发 / 派单中断言未过）",
+    "2": "取不到证据（输入不可读或依赖脚本不可用）"
+  },
+  "sideEffects": [
+    "写 ai-control/reports/state/butler_scheduler.json 与 .jsonl",
+    "--run 时执行任务中的 cmd"
+  ],
+  "dependencies": [
+    "skill.pool.declare-lock-set",
+    "skill.pool.detect-lock-conflict",
+    "skill.pool.verify-no-lock-violation"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/butler_scheduler.mjs --plan tasks.jsonl",
+    "node scripts/butler_scheduler.mjs --run tasks.jsonl --concurrency 2",
+    "node scripts/butler_scheduler.mjs --check"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

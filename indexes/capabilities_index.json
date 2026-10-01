@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T16:45:42.962Z",
+  "generatedAt": "2026-10-01T16:58:45.877Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 254,
+  "total": 262,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 71
+    "脚本 (CLI)": 79
   },
-  "withInterface": 254,
+  "withInterface": 259,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1742,6 +1742,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.butler_scheduler",
+      "path": "scripts/butler_scheduler.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/butler_scheduler.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/butler_scheduler.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.channel_audit",
       "path": "scripts/channel_audit.mjs",
       "desc": "快速通道注册审计器 —— 校验\"通道表\"是否真的可用（对应 REQ-045）",
@@ -1994,6 +2003,33 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.mobile_bridge",
+      "path": "scripts/mobile_bridge.mjs",
+      "desc": "在 Mac 上开一个**只服务私网**的网桥，把只能回环访问的 DSH Web GUI",
+      "invoke": "node scripts/mobile_bridge.mjs",
+      "invokeKind": "cli",
+      "interface": null
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.mobile_bridge_audit",
+      "path": "scripts/mobile_bridge_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/mobile_bridge_audit.mjs",
+      "invokeKind": "cli",
+      "interface": null
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.mobile_control",
+      "path": "scripts/mobile_control.sh",
+      "desc": "薄壳。只做\"找 node + 转发\"，不复制任何判定/代理逻辑",
+      "invoke": "bash scripts/mobile_control.sh",
+      "invokeKind": "cli",
+      "interface": null
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.name_me",
       "path": "scripts/name_me.sh",
       "desc": "**立刻**给\"当前会话\"改名——开工第一动作，一条命令，任何目录可用",
@@ -2054,6 +2090,15 @@
       "invoke": "bash scripts/physical_lock.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/physical_lock.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.plugin_install_queue",
+      "path": "scripts/plugin_install_queue.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/plugin_install_queue.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/plugin_install_queue.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2210,6 +2255,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.skill_carrier_audit",
+      "path": "scripts/skill_carrier_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/skill_carrier_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/skill_carrier_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.svg2png",
       "path": "scripts/svg2png.sh",
       "desc": "把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节）",
@@ -2234,6 +2288,15 @@
       "invoke": "node scripts/sync_control_requirements.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/sync_control_requirements.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.task_layer_tree",
+      "path": "scripts/task_layer_tree.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/task_layer_tree.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/task_layer_tree.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2270,6 +2333,15 @@
       "invoke": "bash scripts/todo_gate.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/todo_gate.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.token_budget_audit",
+      "path": "scripts/token_budget_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/token_budget_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/token_budget_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

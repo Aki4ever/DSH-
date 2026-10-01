@@ -3,7 +3,7 @@
   "note": "机读需求版本台账：由 scripts/req_version_gen.mjs 从 docs/requirements.md 生成；人工只维护 requirement_version_override 与 change_log 两个字段。",
   "source": "docs/requirements.md",
   "generated_by": "scripts/req_version_gen.mjs",
-  "requirement_count": 93,
+  "requirement_count": 94,
   "override_count": 0,
   "entries": {
     "REQ-001": {
@@ -1411,9 +1411,18 @@
     },
     "REQ-093": {
       "title": "执行层并发调度与管控瘦身（ELC-5）—— 执行层树可视化 / 插件安装并发 / 管家并发调配 / 管控精简 / 落地审计清零",
-      "requirement_version": "v1.0.0",
+      "requirement_version": "v1.2.0",
       "requirement_version_derived": false,
       "implementation_version": "v4.30.0",
+      "files": [],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-094": {
+      "title": "手机远端操控 DSH（MBC-1）—— LAN 网桥 / 现签鉴权 cookie / PIN 闸门 / 端到端判定",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": false,
+      "implementation_version": "v4.29.0",
       "files": [],
       "missing_files": [],
       "change_log": []

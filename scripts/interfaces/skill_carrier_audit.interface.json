@@ -1,0 +1,51 @@
+{
+  "id": "cli.rules.skill_carrier_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/skill_carrier_audit.mjs",
+  "invoke": "node scripts/skill_carrier_audit.mjs",
+  "summary": "技能层物理载体审计：178 条技能逐条判「有没有可跑的东西」，声明 exitcode 探针却无入口的判硬缺口。REQ-093/R5。",
+  "inputs": [
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "机器可读输出"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "判定：存在未豁免的无载体技能即退出码 1"
+    },
+    {
+      "name": "--self-test",
+      "type": "flag",
+      "required": false,
+      "desc": "反向用例：临时造一条无载体技能，必须判红"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "载体分布（自带 / 组合 / 引用 / 父门禁接管 / 无载体）与硬缺口清单"
+    }
+  ],
+  "exitCodes": {
+    "0": "全部有载体或已逐条豁免",
+    "1": "存在未豁免的无载体技能",
+    "2": "取不到证据（skills/ 不可读）"
+  },
+  "sideEffects": [
+    "--self-test 会在 skills/ 下临时创建并删除桩件目录"
+  ],
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/skill_carrier_audit.mjs",
+    "node scripts/skill_carrier_audit.mjs --check",
+    "node scripts/skill_carrier_audit.mjs --self-test"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

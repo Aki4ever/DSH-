@@ -1,0 +1,77 @@
+{
+  "id": "cli.rules.task_layer_tree",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/task_layer_tree.mjs",
+  "invoke": "node scripts/task_layer_tree.mjs",
+  "summary": "把一次任务所需的执行层装配成可视图树（文本树 + Mermaid + SVG/PNG），每个节点必须能回溯到磁盘实体。REQ-093/R1。",
+  "inputs": [
+    {
+      "name": "<任务意图>",
+      "type": "arg",
+      "required": false,
+      "desc": "任务意图或关键词；命中判定一律来自 route_plan.mjs --json，本脚本不自行判定命中"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "输出机器可读 JSON（含 judge 结论）"
+    },
+    {
+      "name": "--svg <路径>",
+      "type": "arg",
+      "required": false,
+      "desc": "只写出 SVG（与 --png 互斥）"
+    },
+    {
+      "name": "--png <基名>",
+      "type": "arg",
+      "required": false,
+      "desc": "写出 <基名>.svg 并栅格化为 <基名>.png"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "对通道样本逐条实跑判定（样本取自 indexes/shortcuts_index.md，非硬编码）"
+    },
+    {
+      "name": "--self-test",
+      "type": "flag",
+      "required": false,
+      "desc": "反向用例：注入悬空节点必须判红"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "文本树 + Mermaid 源码 + 节点/悬空/组合边统计"
+    },
+    {
+      "name": "<基名>.svg / <基名>.png",
+      "type": "file",
+      "desc": "--png 时的可视图产物"
+    }
+  ],
+  "exitCodes": {
+    "0": "树已装配且每个节点都指回磁盘实体",
+    "1": "判红（任务未命中 / 出现悬空节点 / 命中集与节点集不一致）",
+    "2": "取不到证据（route_plan 不可用或输出不可解析）"
+  },
+  "sideEffects": [
+    "--png/--svg 时写出图片文件；其余模式只读"
+  ],
+  "dependencies": [
+    "cli.rules.route_plan"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/task_layer_tree.mjs \"生成信息图\"",
+    "node scripts/task_layer_tree.mjs \"看看当前dsh体系能力\" --png ai-control/reports/task_layer_tree_demo",
+    "node scripts/task_layer_tree.mjs --check",
+    "node scripts/task_layer_tree.mjs --self-test"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

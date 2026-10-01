@@ -1,0 +1,65 @@
+{
+  "id": "cli.rules.token_budget_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/token_budget_audit.mjs",
+  "invoke": "node scripts/token_budget_audit.mjs",
+  "summary": "管控机制篇幅与 token 预算审计：能力等价（证据串全存活）与篇幅只许减不许涨为硬判据，降幅目标单独判。REQ-093/R4。",
+  "inputs": [
+    {
+      "name": "--measure",
+      "type": "flag",
+      "required": false,
+      "desc": "测量并写入基线 ai-control/reports/state/token_budget.json"
+    },
+    {
+      "name": "--report",
+      "type": "flag",
+      "required": false,
+      "desc": "只看数字（与默认行为一致）"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "判定硬判据：能力等价 + 篇幅未膨胀"
+    },
+    {
+      "name": "--enforce-target",
+      "type": "flag",
+      "required": false,
+      "desc": "连目标降幅一起判（未达标即判红）"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "逐文件 token 与增减、总降幅、目标缺口"
+    },
+    {
+      "name": "ai-control/reports/state/token_budget.json",
+      "type": "file",
+      "desc": "--measure 时写出的篇幅基线"
+    }
+  ],
+  "exitCodes": {
+    "0": "能力等价且篇幅未膨胀（未启用 --enforce-target 时不对目标降幅判红）",
+    "1": "能力被削减 / 篇幅膨胀 / （启用 --enforce-target 时）目标降幅未达成",
+    "2": "取不到证据（配置缺失或测量脚本不可用）"
+  },
+  "sideEffects": [
+    "--measure 时写 ai-control/reports/state/token_budget.json"
+  ],
+  "dependencies": [
+    "skill.pool.measure-token-budget",
+    "skill.pool.verify-token-reduction"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/token_budget_audit.mjs --report",
+    "node scripts/token_budget_audit.mjs --check",
+    "node scripts/token_budget_audit.mjs --check --enforce-target"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

@@ -66,23 +66,15 @@ node scripts/anti_hallucination_audit.mjs --check # 反空架子/反幻觉：悬
 node scripts/backfill_scope.mjs --apply  # 存量补课：为未接管工程铺入口、正引用并实跑留痕
 ```
 
-> **为什么后四条必须常跑（REQ-087 实测根因）**：门禁看板只能证明"工程内文件对不对"，
-> 证明不了"规则要求的机制在不在运行"。实测发现拦截层插件从未被宿主加载（`isHost=false`），
-> 于是"待办常显/硬门禁/常显看板"物理上全部不存在，而看板依旧 100%。
-> 判定必须穿透到**载体是否活着**，否则它证明的只是文档自洽。
->
-> 同批实测还揪出三条同类断点，分别由后四条命令兜住：
-> ① 待办证据原先**只有拦截层插件会写**，插件不跑 → `todo_gate` 永远判不过；
-> 现改读**宿主会话转录**（`scripts/lib/session_transcript.mjs`），不再依赖插件；
-> ② 状态快照写 `~/.dsh/.dsh-control/` 在沙箱下被拒 → 看板数字照算、状态留不下，
-> 现降级落盘 `ai-control/reports/state/` 并在看板显式提示，绝不静默；
-> ③ 进度只能靠自我宣称 → `progress_ledger` 以「文件 sha256 + 判定命令 + 实跑退出码 + 回读断言」
-> 三件套落盘，改了没登记、登记对不上磁盘，一律判不通过。
->
-> **REQ-092 新增四条为何也在此列**：实测 `normalize_all_projects.mjs` 按"文本在不在"给 4 个工程
-> 发"完全合规"绿灯，而它们从未跑过任何管控脚本（`name_me`/`control_gates`/`physical_lock`/`todo_gate`
-> 在 16 个会话里命中数全为 0）。判据只有穿透到"工程里到底有没有可跑入口、跑没跑过、文档引用是否真实存在"，
-> 才算证明机制在管；这四条即该判据的载体，并已并入累积门禁 **G5**，未过不得结项。
+> **为什么后四条必须常跑（REQ-087 实测根因）**：门禁看板只能证明"工程内文件对不对"，证明不了"机制在不在运行"。
+> 实测拦截层插件从未被宿主加载（`isHost=false`），"待办常显/硬门禁/常显看板"物理上全不存在，而看板依旧 100%；
+> 判定必须穿透到**载体是否活着**，否则证明的只是文档自洽。同批三处断点分别由后四条兜住：
+> ① 待办证据原只由拦截层插件写（插件不跑即永判不过）→ 改读宿主会话转录 `scripts/lib/session_transcript.mjs`；
+> ② 状态快照写 `~/.dsh/.dsh-control/` 被沙箱拒 → 降级落盘 `ai-control/reports/state/` 并在看板显式提示，绝不静默；
+> ③ 进度原只能靠自我宣称 → `progress_ledger` 以「文件 sha256 + 判定命令 + 实跑退出码 + 回读断言」三件套落盘。
+> **REQ-092 四条同理**：`normalize_all_projects.mjs` 曾按"文本在不在"给 4 个未跑过任何管控脚本的工程发绿灯
+> （`name_me`/`control_gates`/`physical_lock`/`todo_gate` 在 16 个会话命中数全为 0）；判据须穿透到
+> "工程里有无可跑入口、跑没跑过、引用是否真实存在"，这四条即该判据的载体，已并入 **G5**，未过不得结项。
 
 | 门禁 | 含义 | 量化指标 |
 | :--- | :--- | :--- |
@@ -167,17 +159,6 @@ node scripts/legacy_align_scan.mjs --root .    # 存量：遇碰即对齐清单�
 
 ## 六、当前工程结构速查
 
-```text
-rules/       规则法典（system / workflow / coding / security）
-knowledge/   分层知识库（common 通用 / projects 项目专属）
-indexes/     能力索引与快速通道路由
-docs/        需求台账与指南
-memory/      长短期记忆中枢
-templates/   标准模板资产
-scripts/     自动化工具（含管控门禁脚本）
-ai-control/  管控机制实现目录（判定层 + 拦截层）
-data/        判定器基准数据（通用汉字表等，有出处、可复现）
-assets/      图形资产
-```
-
-完整说明见 `README.md` 与 `indexes/rules_index.md`。
+`rules/`（法典）· `knowledge/`（分层知识库）· `indexes/`（能力索引与路由）· `docs/`（需求台账）·
+`memory/`（记忆中枢）· `templates/`（模板）· `scripts/`（自动化工具）· `ai-control/`（管控机制实现）·
+`data/`（判定器基准数据）· `assets/`（图形资产）—— 逐项说明见 `README.md` 与 `indexes/rules_index.md`。

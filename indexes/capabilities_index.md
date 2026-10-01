@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：254**（技能 178 · 其他执行层 76）
+**执行层条目总数：262**（技能 178 · 其他执行层 84）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -529,6 +529,7 @@
 | 脚本 (CLI) | `cli.rules.batch_fix_sidebar_titles` | `scripts/batch_fix_sidebar_titles.mjs` | ✅ `scripts/interfaces/batch_fix_sidebar_titles.interface.json` | `node scripts/batch_fix_sidebar_titles.mjs` | 全量穿透修复前端侧边栏及权威存储中的全部存量会话标题 |
 | 脚本 (CLI) | `cli.rules.batch_rename_sessions` | `scripts/batch_rename_sessions.mjs` | ✅ `scripts/interfaces/batch_rename_sessions.interface.json` | `node scripts/batch_rename_sessions.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.build_capabilities_index` | `scripts/build_capabilities_index.mjs` | ✅ `scripts/interfaces/build_capabilities_index.interface.json` | `node scripts/build_capabilities_index.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.butler_scheduler` | `scripts/butler_scheduler.mjs` | ✅ `scripts/interfaces/butler_scheduler.interface.json` | `node scripts/butler_scheduler.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.channel_audit` | `scripts/channel_audit.mjs` | ✅ `scripts/interfaces/channel_audit.interface.json` | `node scripts/channel_audit.mjs` | 快速通道注册审计器 —— 校验"通道表"是否真的可用（对应 REQ-045） |
 | 脚本 (CLI) | `cli.rules.check_freshness` | `scripts/check_freshness.mjs` | ✅ `scripts/interfaces/check_freshness.interface.json` | `node scripts/check_freshness.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.check_layer_interfaces` | `scripts/check_layer_interfaces.mjs` | ✅ `scripts/interfaces/check_layer_interfaces.interface.json` | `node scripts/check_layer_interfaces.mjs` | ============================================================================== |
@@ -557,6 +558,9 @@
 | 脚本 (CLI) | `cli.rules.language_audit` | `scripts/language_audit.mjs` | ✅ `scripts/interfaces/language_audit.interface.json` | `node scripts/language_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.legacy_align_scan` | `scripts/legacy_align_scan.mjs` | ✅ `scripts/interfaces/legacy_align_scan.interface.json` | `node scripts/legacy_align_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.mechanism_audit` | `scripts/mechanism_audit.mjs` | ✅ `scripts/interfaces/mechanism_audit.interface.json` | `node scripts/mechanism_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.mobile_bridge` | `scripts/mobile_bridge.mjs` | ⛔ 未声明 | `node scripts/mobile_bridge.mjs` | 在 Mac 上开一个**只服务私网**的网桥，把只能回环访问的 DSH Web GUI |
+| 脚本 (CLI) | `cli.rules.mobile_bridge_audit` | `scripts/mobile_bridge_audit.mjs` | ⛔ 未声明 | `node scripts/mobile_bridge_audit.mjs` | — |
+| 脚本 (CLI) | `cli.rules.mobile_control` | `scripts/mobile_control.sh` | ⛔ 未声明 | `bash scripts/mobile_control.sh` | 薄壳。只做"找 node + 转发"，不复制任何判定/代理逻辑 |
 | 脚本 (CLI) | `cli.rules.name_me` | `scripts/name_me.sh` | ✅ `scripts/interfaces/name_me.interface.json` | `bash scripts/name_me.sh` | **立刻**给"当前会话"改名——开工第一动作，一条命令，任何目录可用 |
 | 脚本 (CLI) | `cli.rules.naming_watchdog` | `scripts/naming_watchdog.mjs` | ✅ `scripts/interfaces/naming_watchdog.interface.json` | `node scripts/naming_watchdog.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.normalize_all_projects` | `scripts/normalize_all_projects.mjs` | ✅ `scripts/interfaces/normalize_all_projects.interface.json` | `node scripts/normalize_all_projects.mjs` | 全域存量 DSH 工程文件夹批量合规与规范化治理脚本 |
@@ -564,6 +568,7 @@
 | 脚本 (CLI) | `cli.rules.patch_dsh_todo_progress` | `scripts/patch_dsh_todo_progress.cjs` | ✅ `scripts/interfaces/patch_dsh_todo_progress.interface.json` | `node scripts/patch_dsh_todo_progress.cjs` | ⛔⛔⛔ [DEPRECATED 已废弃 · 2026-10-01 · REQ-089 D4] ⛔⛔⛔ |
 | 脚本 (CLI) | `cli.rules.period_parity` | `scripts/period_parity.mjs` | ✅ `scripts/interfaces/period_parity.interface.json` | `node scripts/period_parity.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.physical_lock` | `scripts/physical_lock.sh` | ✅ `scripts/interfaces/physical_lock.interface.json` | `bash scripts/physical_lock.sh` | — |
+| 脚本 (CLI) | `cli.rules.plugin_install_queue` | `scripts/plugin_install_queue.mjs` | ✅ `scripts/interfaces/plugin_install_queue.interface.json` | `node scripts/plugin_install_queue.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.plugin_sync` | `scripts/plugin_sync.sh` | ✅ `scripts/interfaces/plugin_sync.interface.json` | `bash scripts/plugin_sync.sh` | — |
 | 脚本 (CLI) | `cli.rules.probe_long_output` | `scripts/probe_long_output.mjs` | ✅ `scripts/interfaces/probe_long_output.interface.json` | `node scripts/probe_long_output.mjs` | 长输出实测探针：验证 max_tokens 提高后单次回复能否突破旧上限（32768）。 |
 | 脚本 (CLI) | `cli.rules.probe_long_output_stream` | `scripts/probe_long_output_stream.mjs` | ✅ `scripts/interfaces/probe_long_output_stream.interface.json` | `node scripts/probe_long_output_stream.mjs` | 长输出触顶实测（流式版）：验证单次回复到底能有多长。 |
@@ -581,13 +586,16 @@
 | 脚本 (CLI) | `cli.rules.route_plan` | `scripts/route_plan.mjs` | ✅ `scripts/interfaces/route_plan.interface.json` | `node scripts/route_plan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.scope_audit` | `scripts/scope_audit.mjs` | ✅ `scripts/interfaces/scope_audit.interface.json` | `node scripts/scope_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.session_naming_audit` | `scripts/session_naming_audit.mjs` | ✅ `scripts/interfaces/session_naming_audit.interface.json` | `node scripts/session_naming_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.skill_carrier_audit` | `scripts/skill_carrier_audit.mjs` | ✅ `scripts/interfaces/skill_carrier_audit.interface.json` | `node scripts/skill_carrier_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.svg2png` | `scripts/svg2png.sh` | ✅ `scripts/interfaces/svg2png.interface.json` | `bash scripts/svg2png.sh` | 把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节） |
 | 脚本 (CLI) | `cli.rules.sync_api_docs` | `scripts/sync_api_docs.mjs` | ✅ `scripts/interfaces/sync_api_docs.interface.json` | `node scripts/sync_api_docs.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.sync_control_requirements` | `scripts/sync_control_requirements.mjs` | ✅ `scripts/interfaces/sync_control_requirements.interface.json` | `node scripts/sync_control_requirements.mjs` | 管控机制专属需求同步校验脚本 (Control Requirements Sync Verifier) |
+| 脚本 (CLI) | `cli.rules.task_layer_tree` | `scripts/task_layer_tree.mjs` | ✅ `scripts/interfaces/task_layer_tree.interface.json` | `node scripts/task_layer_tree.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.test_auto_naming` | `scripts/test_auto_naming.mjs` | ✅ `scripts/interfaces/test_auto_naming.interface.json` | `node scripts/test_auto_naming.mjs` | 自动命名逻辑测试（在**不重启宿主**的前提下验证）。 |
 | 脚本 (CLI) | `cli.rules.test_physical_lock` | `scripts/test_physical_lock.mjs` | ✅ `scripts/interfaces/test_physical_lock.interface.json` | `node scripts/test_physical_lock.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.test_v180_spec` | `scripts/test_v180_spec.sh` | ✅ `scripts/interfaces/test_v180_spec.interface.json` | `bash scripts/test_v180_spec.sh` | — |
 | 脚本 (CLI) | `cli.rules.todo_gate` | `scripts/todo_gate.sh` | ✅ `scripts/interfaces/todo_gate.interface.json` | `bash scripts/todo_gate.sh` | — |
+| 脚本 (CLI) | `cli.rules.token_budget_audit` | `scripts/token_budget_audit.mjs` | ✅ `scripts/interfaces/token_budget_audit.interface.json` | `node scripts/token_budget_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.verify_auto_naming_e2e` | `scripts/verify_auto_naming_e2e.mjs` | ✅ `scripts/interfaces/verify_auto_naming_e2e.interface.json` | `node scripts/verify_auto_naming_e2e.mjs` | 自动命名端到端验收（重启后运行，一次给出结论）。 |
 | 脚本 (CLI) | `cli.rules.verify_escape_hatch` | `scripts/verify_escape_hatch.sh` | ✅ `scripts/interfaces/verify_escape_hatch.interface.json` | `bash scripts/verify_escape_hatch.sh` | — |
 | 脚本 (CLI) | `cli.rules.verify_guard_live` | `scripts/verify_guard_live.sh` | ✅ `scripts/interfaces/verify_guard_live.interface.json` | `bash scripts/verify_guard_live.sh` | — |

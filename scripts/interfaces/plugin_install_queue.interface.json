@@ -1,0 +1,76 @@
+{
+  "id": "cli.rules.plugin_install_queue",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/plugin_install_queue.mjs",
+  "invoke": "node scripts/plugin_install_queue.mjs",
+  "summary": "插件安装并发受理 + 冲突域排队 + 进度可见；把「等任务空闲」式无界等待改成有界重试。REQ-093/R2。",
+  "inputs": [
+    {
+      "name": "enqueue --spec <spec> [--profile <名>]",
+      "type": "arg",
+      "required": false,
+      "desc": "受理并入队；受理口不设「全体会话空闲」前置"
+    },
+    {
+      "name": "list",
+      "type": "arg",
+      "required": false,
+      "desc": "列出队列与每项进度"
+    },
+    {
+      "name": "drain [--cmd-template <模板>] [--max-attempts <n>]",
+      "type": "arg",
+      "required": false,
+      "desc": "按冲突域顺序提交，重试次数有上界"
+    },
+    {
+      "name": "probe",
+      "type": "arg",
+      "required": false,
+      "desc": "读市场日志，量化「因有会话在跑而拒绝安装」的次数"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "判定：无无界等待 / 无缺冲突域 / 无同域双提交"
+    },
+    {
+      "name": "--self-test",
+      "type": "flag",
+      "required": false,
+      "desc": "反向用例：四类违规必须全部判红"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "队列状态 / 提交结果 / 守卫取证"
+    },
+    {
+      "name": "ai-control/reports/state/plugin_install_queue.json",
+      "type": "file",
+      "desc": "队列台账（状态 / 尝试次数 / 下次尝试 / 失败原因）"
+    }
+  ],
+  "exitCodes": {
+    "0": "受理成功 / 队列契约成立 / 无被守卫拒绝",
+    "1": "有请求被守卫拒绝 / 队列契约违规",
+    "2": "取不到证据（市场日志不在位或用法错）"
+  },
+  "sideEffects": [
+    "写 ai-control/reports/state/plugin_install_queue.json",
+    "drain 时执行安装命令模板"
+  ],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/plugin_install_queue.mjs enqueue --spec dsh-plugin-xxx@1.0.0",
+    "node scripts/plugin_install_queue.mjs drain --max-attempts 3",
+    "node scripts/plugin_install_queue.mjs probe",
+    "node scripts/plugin_install_queue.mjs --check"
+  ],
+  "source": "handwritten",
+  "verified": true
+}
