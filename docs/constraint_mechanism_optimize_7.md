@@ -6,8 +6,8 @@
 > - **本文档内容版本**：`v1.0.0`
 > - **提出时间**：2026-10-01
 > - **任务代号**：`GCM-OUT`（Output Contract：结构 · 反馈 · 档位）· 宿主侧子集 `UX-RESTART`
-> - **需求状态**：`[EVOLVING]` **已实施第一批**（R1~R5 已落地并自检通过；R6 插件已建成并通过打桩自检，
->   **尚未装配进宿主、尚未真机重启验证**——详见 §八 实施进度）
+> - **需求状态**：`[EVOLVING]` **已实施第一批**（R1~R5 已落地并自检通过；R6 插件已建成、已装配进
+>   `~/.dsh/profiles/desktop`，**尚未重启激活、尚未真机 PID 验证**——详见 §八 实施进度）
 > - **依据**：用户 6 条口语需求 + 本轮实测（`output_audit.mjs` / `output_compactness.mjs` / `progress_ledger.mjs` /
 >   `audit_execution.sh` 源码审读 · 技能池相关技能契约逐条核查 · `app.asar` 只读解析取证 ·
 >   全库关键词检索「一句话总结 / 浅白 / 双档 / 生僻 / 重启按钮」）
@@ -294,8 +294,9 @@ spawn(detached, unref) → osascript 退出 App → 轮询旧 PID 退出 → ope
 | R4-d 审计接线 | ✅ 已落地 | `scripts/audit_execution.sh` 第 9 维 | 八维 → 九维；权重重算 `20+16+12+12+12+8+12+4+4=100`（第 8 维 8→4 分，显式留痕） |
 | R5 双档输出 | ✅ 契约已落地 | `rules/system/output_standard.md` §三 | 档位标记唯一性为硬判据；**术语密度仍是报告项**——按 D6 口径，没有外部权威边界的不升硬门 |
 | R6 插件本体 | ✅ 已建成 | `skill-pool/plugins/dsh-plugin-restart/`（双半 + 内核 + 构建器 + 自检 + 接口契约 + README） | `build_client.py --check` 未陈旧；`verify_restart_button.cjs` **84/84 通过**，含**反向变异**（故意改坏确认口令，行为断言确实失败） |
-| R6 装配进宿主 | ⏳ **未做** | — | 需要写 `~/.dsh/profiles/desktop`（当前沙箱为 workspace-write，越界会被拒） |
+| R6 装配进宿主 | ✅ 已装配 | `~/.dsh/profiles/desktop/node_modules/dsh-plugin-restart` + `dependencies` 登记 + `bundles` 追加（8 项） | 装配器回执 `status: installed` · `restart_required: true` · 备份 `package.json.bak-20261001-124813` 与 `cordis.patch.yml.bak-20261001-124813` 均在位；回滚命令已输出 |
 | R6 真机重启验证 | ⏳ **未做** | — | **只能由人点一次**：点击会中断当前会话，执行者不能自己把自己关掉；合格证据 = 重启前后宿主 PID 不同 |
+| 通道登记 | ✅ 已落地 | `indexes/shortcuts_index.md` 新增「专业档输出」「一键重启」两条通道 | `channel_audit.mjs --root .` → 通道 **36** 条 · 问题 **0** 项 |
 | mechanism_audit 登记 | ✅ 已落地 | `scripts/mechanism_audit.mjs` 新增 4 条 | 登记 19 条 → **22 条**；R1/R2/R4 三条**已触达**，R6 按 `strict:false` 登记（宿主激活凭据需重启一次才有，不应恒红） |
 
 ### 8.1 本轮采纳的默认裁决（用户未逐条裁决，按各条默认建议执行）
@@ -311,8 +312,9 @@ spawn(detached, unref) → osascript 退出 App → 轮询旧 PID 退出 → ope
 
 ### 8.2 尚未触达的部分（如实列出，不得当成已完成）
 
-- **R6 装配与真机验证未做**：插件已通过全部可在无宿主环境下做的检查，但
-  "装进 profile → 重启一次 → 按钮出现 → 点击后 PID 变化"这四步**一步都还没走**；
+- **R6 真机验证未做**：插件已建成、自检 84/84、**并已装配进 `~/.dsh/profiles/desktop`**（回执 `status: installed`），
+  但"重启一次 → 按钮出现 → 点击后 PID 变化"这三步**一步都还没走**。
+  **执行者不会自行重启**——重启会终止当前会话，等于自己把自己关掉；这一步只能由人做一次；
 - **R6 的 6 项待实测前置条件**（退出确认弹窗是否拦截 · 分离进程能否存活 · 第三方插件能否调 `remote.commands` ·
   两种 origin 下的可达性 · 装完是否仍需重启 · 宿主半能否 require `child_process`）全部**未验证**；
 - **R5 术语密度仍是报告项**，未升级为硬判据（缺外部权威边界，按 D6 不升）；

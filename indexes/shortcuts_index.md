@@ -84,6 +84,8 @@
 | **“可读性规范”**<br>*(或“排版设计标准/字体字号规范”)* | **G1 干线** | 查阅全端(Web/DMG/App/小程序)可读性与字号排版标准 | 读取 [`knowledge/common/readability_specification.md`](../knowledge/common/readability_specification.md) | 输出全端跨端字号阶梯、最小文字绝对底线与无障碍对比度基线卡片 |
 | **“地图导航 <能力/目标>”**<br>*(或“能力导航/路线规划”)* | **G1 干线** | 索引命中后生成起点至终点的地图式导航路线 | 执行 [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) `<目标>` | 输出起点、途径门禁/配置、终点执行落地点与避坑路况提示卡 |
 | **“项目初始化”**<br>*(或“初始化项目/立项初始化”)* | **G0 高速** | 快速生成项目结构、骨架防丢文件与基础版本 | 执行 [`scripts/init_project.sh`](../scripts/init_project.sh) `[项目路径]` | 秒级生成目录四件套与需求台账，固化 v1.0.0 基础版本基线并输出状态回执 |
+| **“专业档输出”**<br>*(或“详细技术版/面向专业人士”）* | **G1 干线** | 把答复从默认浅白档切到专业档（术语与实现细节可展开） | 读取 [`rules/system/output_standard.md`](../rules/system/output_standard.md) `§三 双档输出` | 首屏出现唯一档位标记 `⚙️ 专业档`；档位标记缺失或重复即判红，判定入口 `node scripts/output_audit.mjs --check` |
+| **“一键重启”**<br>*(或“重启DSH/重启宿主”）* | **G1 干线** | 查“重启按钮”是否可用，并给出真机验收步骤 | 执行 [`skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs`](../skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs) | 输出 84 项打桩自检回执 + 真机验收口径（重启前后宿主 PID 必须不同）；**执行者不得自行重启**，只能由人点一次 |
 
 ---
 
