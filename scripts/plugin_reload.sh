@@ -63,7 +63,11 @@ for e in g['entries']:
 
 case "$MODE" in
   list)
-    curl -sN --max-time 3 "$EVENTS_URL" 2>/dev/null | python3 -c "
+    # 先取回整段输出再交给 python：**不要**让 curl 的退出码污染判定。
+    # 实测坑：脚本设了 pipefail，而 SSE 靠 --max-time 收尾必然退 28（超时），
+    # 于是 `curl | python3` 的管道退出码变成 28 → 判定命令被记成失败，而图其实已经拿到了。
+    raw="$(curl -sN --max-time 3 "$EVENTS_URL" 2>/dev/null || true)"
+    printf '%s' "$raw" | python3 -c "
 import sys, re, json
 data = sys.stdin.read()
 m = re.search(r'data: (\{\"type\":\"graph\".*\})', data)
@@ -79,9 +83,8 @@ for e in g['entries']:
   watch)
     SECS="${2:-5}"
     echo "👀 盯 ${SECS} 秒事件流（不做任何改动）：$EVENTS_URL"
-    timeout_bin=""
-    # macOS 无 timeout：用 curl 自身的 --max-time
-    curl -sN --max-time "$SECS" "$EVENTS_URL" 2>/dev/null | grep --line-buffered -o '"type":"[a-z]*"' | sort | uniq -c
+    raw="$(curl -sN --max-time "$SECS" "$EVENTS_URL" 2>/dev/null || true)"
+    printf '%s' "$raw" | grep -o '"type":"[a-z]*"' | sort | uniq -c
     ;;
   reload)
     PKG="${2:-}"

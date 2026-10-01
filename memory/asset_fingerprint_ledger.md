@@ -3,7 +3,7 @@
 > ### 🏷️ **版本信息与实施追踪**
 > - **当前台账版本**：`v4.29.0`
 > - **基线对齐版本**：`v4.29.0`
-> - **最后全盘扫描时间**：2026-10-02 06:20
+> - **最后全盘扫描时间**：2026-10-02 06:21
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)
 
 本文档记录工程全域受管资产（规则、知识库、架构索引、工程模板、自动化脚本与需求台账）的**数字指纹（SHA-256 8位短哈希）**、**最后修改时间**与**新鲜度等级**，为全域资产对齐与防止暗中代码漂移提供唯一客观事实依据。
@@ -75,9 +75,9 @@ v4.30.0` | 🟡 TIER-1 | 待升级对齐 |
 | `indexes/capabilities_index.md` | `e633386e` | 2026-10-02 06:20 | `v4.29.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/dsh_capabilities.md` | `62b5f7ef` | 2026-10-02 00:45 | `v4.29.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/extension_ecosystem.md` | `2efadb4b` | 2026-10-02 00:45 | `v4.29.0` | 🟢 TIER-0 | 最新基线 |
-| `indexes/navigation_router.md` | `7fb8a929` | 2026-10-02 00:45 | `v4.29.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/navigation_router.md` | `7147935f` | 2026-10-02 06:21 | `v4.29.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/rules_index.md` | `756513ec` | 2026-10-02 06:20 | `v4.29.0` | 🟢 TIER-0 | 最新基线 |
-| `indexes/shortcuts_index.md` | `12bc143c` | 2026-10-02 01:06 | `v4.29.0` | 🟢 TIER-0 | 最新基线 |
+| `indexes/shortcuts_index.md` | `46178131` | 2026-10-02 06:21 | `v4.29.0` | 🟢 TIER-0 | 最新基线 |
 | `indexes/tool_interfaces.md` | `cff0029d` | 2026-10-02 00:45 | `v4.29.0` | 🟢 TIER-0 | 最新基线 |
 | `knowledge/.gitkeep` | `e3b0c442` | 2026-09-16 16:35 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `knowledge/README.md` | `9ac619dd` | 2026-10-02 00:45 | `v4.29.0` | 🟢 TIER-0 | 最新基线 |
@@ -287,7 +287,7 @@ v4.25.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/period_parity.mjs` | `97904a9b` | 2026-10-01 23:23 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/physical_lock.sh` | `51cb94a3` | 2026-10-02 00:24 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/plugin_install_queue.mjs` | `2d54c89c` | 2026-10-02 06:19 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/plugin_reload.sh` | `20d01a83` | 2026-10-02 06:20 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/plugin_reload.sh` | `51d9ba3e` | 2026-10-02 06:21 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/plugin_sync.sh` | `c8d051f2` | 2026-10-02 01:01 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/probe_long_output.mjs` | `52c32d04` | 2026-09-23 15:13 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/probe_long_output_stream.mjs` | `34445721` | 2026-09-23 15:13 | `-` | ⚪ TIER-2 | 指纹监控中 |

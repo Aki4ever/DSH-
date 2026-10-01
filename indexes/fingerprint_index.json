@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T22:20:56.580Z",
+  "generatedAt": "2026-10-01T22:21:29.244Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -330,10 +330,10 @@
     },
     {
       "path": "indexes/navigation_router.md",
-      "short": "7fb8a929",
-      "sha256": "7fb8a929f80cd5e94be53f6f8a26b08792b4be73568a750790de776a2c3ac40f",
-      "bytes": 5405,
-      "mtime": "2026-10-01T16:45:15.777Z"
+      "short": "7147935f",
+      "sha256": "7147935f0770fcac5ea8338534c9467d1d8c67e43c10809a6d668d79ec5fc093",
+      "bytes": 4703,
+      "mtime": "2026-10-01T22:21:20.433Z"
     },
     {
       "path": "indexes/rules_index.md",
@@ -344,10 +344,10 @@
     },
     {
       "path": "indexes/shortcuts_index.md",
-      "short": "12bc143c",
-      "sha256": "12bc143ceda507203eafc75c6b0391a58c43d3204c2274b64b24228e45e2b6c3",
-      "bytes": 25721,
-      "mtime": "2026-10-01T17:06:12.847Z"
+      "short": "46178131",
+      "sha256": "461781318e2a218645a34a6b529b58cccd2fe9620478d7adf6b696bb7ed52153",
+      "bytes": 21262,
+      "mtime": "2026-10-01T22:21:02.196Z"
     },
     {
       "path": "indexes/tool_interfaces.md",
@@ -687,10 +687,10 @@
     },
     {
       "path": "rules/system/output_standard.md",
-      "short": "1001b3a3",
-      "sha256": "1001b3a3ed79fb3a5c0454b31dd2c367cb42268dc43f427ed434131b499fecab",
-      "bytes": 11539,
-      "mtime": "2026-10-01T16:45:15.764Z"
+      "short": "64ca0d98",
+      "sha256": "64ca0d98d4129f425a3b773d93208ea35a104ebd21b16d62379e42f28887e033",
+      "bytes": 11078,
+      "mtime": "2026-10-01T22:20:57.808Z"
     },
     {
       "path": "rules/system/thinking_framework.md",
@@ -1807,10 +1807,10 @@
     },
     {
       "path": "scripts/plugin_reload.sh",
-      "short": "20d01a83",
-      "sha256": "20d01a83738056b2df3e98a74ec9bcce60ebb1b888a32f72378f5a62d034ed60",
-      "bytes": 5852,
-      "mtime": "2026-10-01T22:20:21.762Z"
+      "short": "51d9ba3e",
+      "sha256": "51d9ba3eaf7e993ae4bdafb675084af5e08bca2fa6d5348b5dc98541712fec88",
+      "bytes": 6156,
+      "mtime": "2026-10-01T22:21:16.446Z"
     },
     {
       "path": "scripts/plugin_sync.sh",
