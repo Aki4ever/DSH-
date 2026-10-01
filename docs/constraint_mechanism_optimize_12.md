@@ -7,7 +7,7 @@
 > - **需求版本号**：`v1.0.0`（初版文案即实施批留痕）
 > - **提出时间**：2026-10-02
 > - **任务代号**：`SESSION-SOURCE-1`
-> - **需求状态**：`[ACTIVE]` 已实施（生产者修复 + 两条判据落地 + 运行载体对齐；宿主重载后生效）
+> - **需求状态**：`[ACTIVE]` 已实施并**运行时生效**（宿主自证 `pluginPath` 指向仓库文件；无需重启应用）
 > - **依据**：用户口语需求 + 本轮取证（宿主 `app.asar` 内真实校验器实跑 · 本机真实落盘会话 ·
 >   `session_source_audit.mjs` · `plugin_sync.sh`）
 
@@ -90,14 +90,18 @@
 - [x] 仓库与运行载体两侧 `md5` 一致（`plugin_sync.sh check` 判"逐字节一致"）；
 - [x] `node scripts/control_gates.sh check` G5 含本判据且不因本判据判红；
 - [x] `node --check` 三个改动文件语法通过；
-- [ ] **宿主进程内生效**：需重载 profile / 重启桌面端后由插件自报 `pluginPath` 与卡片自检留痕证明 —— 未做，**不宣称已生效**。
+- [x] **宿主进程内生效**（2026-10-02 07:46 取证）：`plugin-status.txt` 自报 `pluginPath=…/ai-control/plugin/index.mjs` ·
+  `pluginSize=48888B`（= 仓库文件字符数）· `isHost=true` · `pid=77744`；宿主内留痕 `card-status.txt` 记
+  「通过：宿主 v4 行级接纳判定合格」；**无需重启应用**（patch 层可热重载）。
 
 ---
 
 ## 六、诚实缺口
 
-1. **宿主重载未做**：宿主侧插件模块由进程持有，改磁盘不会自动生效；
-   `plugin-status.txt` 已补 `pluginPath=` / `pluginSize=` 自证字段，重载后可一眼看出宿主读的是哪一份物理文件。
+1. **宿主热重载已实测，且推翻了一个旧结论**：改插件**不必重启桌面端**——`install_host_gate.sh install`
+  写入 profile 的层栈插入行后，同一宿主进程在 1 秒内重新 `apply` 成功。另由此拿到此前只能推断的事实：
+  宿主加载的是**仓库**那份 `index.mjs`（`pluginPath` 自证），`profile/node_modules` 下的同名副本是遗留副本、不参与加载
+  （本轮已顺带做成可加载，消除"改 A 跑 B"的静默风险）。
 2. **判据二依赖本机 App 路径**：用 `DSH_APP_ASAR` 可覆盖；取不到即退出码 2，不冒充通过。
 3. **第三方插件口径**：运行中 profile 里的 `dsh-better-sidebar` 注释中描述了该退休语法（已按注释行排除，非生产点）；
    其是否存在真实生产点未逐行人工复核，判定以判据一为准。

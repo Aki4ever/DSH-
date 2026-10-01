@@ -2976,7 +2976,7 @@
 > - **生成会话**: `[优规003][65分] 会话源类型v4合规`
 > - **到期/清理条件**: `[随版本演进]`
 
-- **当前状态**：`[ACTIVE]` 生产者已修 + 两条判据落地 + 运行载体已对齐（宿主重载后生效）
+- **当前状态**：`[ACTIVE]` 生产者已修 + 两条判据落地 + **运行时已生效**（宿主自证 `pluginPath` 指向仓库文件）
 - **实施版本**：`v4.29.2`（PATCH 递增：缺陷修复 + 只读判定器接入，向下兼容；`v4.30.0` 仍为 REQ-093 预留）
 - **需求版本**：`v1.0.0`
 - **提出时间**：2026-10-02
@@ -3022,7 +3022,9 @@
 - [x] 仓库与运行载体 `md5` 一致（`plugin_sync.sh check` 判"逐字节一致"）；
 - [x] `node --check` 通过：`ai-control/plugin/index.mjs` · `scripts/lib/session_source.mjs` · `scripts/session_source_audit.mjs`；
 - [x] `node scripts/control_gates.sh check` 未因本判据判红；
-- [ ] **宿主进程内生效**：需重载 profile / 重启桌面端，由 `plugin-status.txt` 的 `pluginPath=` 自证 —— 未做，**不宣称已生效**。
+- [x] **宿主进程内生效**（2026-10-02 07:46 已取证）：`plugin-status.txt` 自报
+  `pluginPath=/Users/linqiyu/Documents/DSH/全局规则/ai-control/plugin/index.mjs` · `pluginSize=48888B`（= 仓库文件字符数）·
+  `isHost=true` · `pid=77744`；`host-activation.log` 新增 `23:46:21.605Z HOST pid=77744`；**无需重启应用**（见实施记录）。
 
 #### 5. 实施记录
 
@@ -3031,10 +3033,21 @@
   → 接入 G5 门禁 → 逃生舱白名单 → 载体对齐。
   **实测复跑**：`session_source_audit --check` exit 0 · `--selftest` exit 0 ·
   `plugin_sync.sh check` exit 0（逐字节一致）· 两侧 `md5` 相同（`91ef2639…`）。
-- **诚实缺口**：① 宿主重载需重启桌面端（本轮不代用户重启，避免中断会话）；
-  ② 判据二依赖本机 App 路径，取不到即退出码 2（不折算通过）；
-  ③ `plugin_sync.sh` 的"宿主只读 profile"前提对**宿主侧 bundle 插件**是否成立，
-  本轮以"两侧都已对齐"回避该分歧：无论宿主读哪一份，读到的都是修好的那一份。
+- **2026-10-02 [运行时生效 + 两处修正]**：先探"是否需要重启应用"，结论是**不需要**：
+  ① 宿主**热重载 profile 的 patch 层**（实测：07:45 `install_host_gate.sh install` 写入层栈插入行后，
+  同一宿主 `pid=77744` 在 07:46:21 重新 `apply`，无重启）；
+  ② 由此拿到**此前无法推断的答案**：`plugin-status.txt` 自报
+  `pluginPath=…/全局规则/ai-control/plugin/index.mjs`（**宿主加载的是仓库那一份**，`profile/node_modules`
+  下的同名副本是**遗留副本、不参与加载**）——此结论来自插件自证，不是推测；
+  ③ 端到端物理凭据：宿主内自检留痕 `card-status.txt` 记「**通过：宿主 v4 行级接纳判定合格**」，
+  来源 `{"kind":"plugin:ai-execution-control","form":"notice",…}`，看板卡片在**本会话内正常注入**。
+  顺带做了载具加固（仓库外、2 条软链）：`profiles/desktop/scripts → 仓库 scripts`、
+  `profiles/desktop/node_modules/lib → 仓库 ai-control/lib`，使遗留副本**也能真加载**
+  （`node --check` 之外的实加载验证：`import('./loader.mjs')` / `import('./index.mjs')` 均 OK），
+  从此"改的是 A、跑的是 B"这一整类静默故障对该插件不再可能。
+- **诚实缺口**：① 判据二依赖本机 App 路径，取不到即退出码 2（不折算通过）；
+  ② 上一轮报告曾写"需重启桌面端才能生效"，**已被本轮实测推翻**（patch 层可热重载），在此显式更正；
+  ③ 遗留副本（profile/node_modules 下）按现状保留（宿主不读它），仅在审计中被纳管为"载体一致"。
 
 ---
 
