@@ -1,0 +1,58 @@
+{
+  "id": "cli.rules.gen_common_chars",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/gen_common_chars.mjs",
+  "invoke": "node scripts/gen_common_chars.mjs",
+  "summary": "常用字表生成器（REQ-090 / R4 的数据来源）：从 GB2312-1980 基本集编码空间推导 6763 个通用汉字（一级 3755 + 二级 3008），产出 data/common_chars.txt；并做漂移检测，防止判定基准被静默改窄。",
+  "inputs": [
+    {
+      "name": "--apply",
+      "type": "arg",
+      "required": false,
+      "desc": "生成 / 覆盖 data/common_chars.txt"
+    },
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "默认模式：校验磁盘字表与国标推导是否逐字一致（漂移检测）"
+    },
+    {
+      "name": "--self-test",
+      "type": "arg",
+      "required": false,
+      "desc": "反向用例自检：13 项，含「库里没有的字必须判不在表内」"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "data/common_chars.txt",
+      "type": "file",
+      "desc": "字表文件（含出处抬头；每行 100 字，便于 diff 与人工抽查）"
+    },
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "字表条目数 / 漂移差异（缺失与多余示例）"
+    }
+  ],
+  "exitCodes": {
+    "0": "字表与推导一致 / 生成成功 / 自检通过",
+    "1": "字表与推导不一致（基准已漂移）或自检未过",
+    "2": "运行环境不支持 GB2312 解码（拒绝用近似字表冒充权威字表）"
+  },
+  "sideEffects": [
+    "仅在 --apply 时写 data/common_chars.txt；默认 --check 不写盘"
+  ],
+  "dependencies": [
+    "Node.js TextDecoder('gb2312')（ICU 完整版）"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/gen_common_chars.mjs --check",
+    "node scripts/gen_common_chars.mjs --apply",
+    "node scripts/gen_common_chars.mjs --self-test"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

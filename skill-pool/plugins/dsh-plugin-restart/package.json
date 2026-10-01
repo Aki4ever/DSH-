@@ -1,0 +1,22 @@
+{
+  "name": "dsh-plugin-restart",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DSH 客户端插件：在会话头部动作条注入「⏻ 重启」按钮，点击（二次确认后）经官方斜杠命令通道重启 DeepSeek Harness。宿主半注册 /restart-dsh 命令，分离进程执行「退出应用 → 等旧进程消失 → 重新打开」。判定只认重启前后宿主 PID 变化。",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "inject": ["@deepseek-ai/dsh-client-ui-conversation"]
+    }
+  },
+  "files": ["lib", "src", "cordis.patch.yml", "package.json", "README.md"]
+}

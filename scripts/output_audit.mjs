@@ -34,6 +34,7 @@
 
 import { readFileSync, existsSync } from 'node:fs'
 import { readTranscriptEvents } from './lib/session_transcript.mjs'
+import { readGatesConf, cfg, cfgNum } from './lib/gates_config.mjs'
 import {
   buildCompactReport,
   writeCompactReport,
@@ -48,6 +49,13 @@ const REFRESH = args.has('--refresh')
 
 /** 阈值：与拦截层插件的 `compactThresholds` 保持同一口径，避免两套标准。 */
 const THRESHOLDS = { maxChars: 1800, maxLines: 60 }
+
+/** 汉字计数（判定"一句话总结"字数用；数字、字母、标点不计入）。 */
+const HANZI_RE = /[\u4e00-\u9fa5]/g
+export function countHanzi(s) {
+  return (String(s || '').match(HANZI_RE) || []).length
+}
+
 
 /**
  * 取最近一轮**已完结**的助手正文。
@@ -148,6 +156,154 @@ export function cognitiveChecks(text) {
   }
 }
 
+/* ── REQ-090 R1/R2/R3/R5：输出结构契约判据 ────────────────────────────────────
+ * 契约唯一权威源：`rules/system/output_standard.md`；阈值唯一调参入口：`gates.conf` 的 `OUT_*` 段。
+ *
+ * 与 `cognitiveChecks()` 的分工（**不重复，各管一段**）：
+ *   · `cognitiveChecks` 管"知识库排版法典"侧：嵌套层级、扫视锚点率、加粗占比、长行、段落墙；
+ *   · `structureChecks` 管"输出结构契约"侧：首行徽标、一句话总结、标题不跳级、列表缩进、进度回执、档位标记。
+ * 两者共用一个 `--check` 入口，避免"两套标准说同一件事"。
+ *
+ * 哪些升为硬判据、哪些只报数（遵循本工程既有铁律"只有规范写明数字边界的才可升硬门"）：
+ *   · 首行徽标      → 硬（取值是**枚举且有限**，四态明确）
+ *   · 一句话总结    → 硬（位置与字数边界都在契约里写死）
+ *   · 标题不跳级    → 硬（层级关系是确定性的，不存在"建议区间"）
+ *   · 列表缩进 ≤3   → 硬（同上）
+ *   · 进度回执四字段 → 硬（标头文字逐字枚举）
+ *   · 档位标记唯一  → 硬（0 或 1 次，枚举）
+ *   · 术语密度/空行 → **报告项**（无外部权威边界，当硬门等于自行发明阈值）
+ */
+export function structureChecks(text, conf) {
+  const c = conf || readGatesConf()
+  const T = {
+    bannerIcons: cfg('OUT_BANNER_ICONS', '🟡 🟢 🔵 🔴', c).split(/\s+/).filter(Boolean),
+    summaryLabel: cfg('OUT_SUMMARY_LABEL', '一句话总结', c),
+    summaryScanLines: cfgNum('OUT_SUMMARY_SCAN_LINES', 6, c),
+    summaryMin: cfgNum('OUT_SUMMARY_MIN_CHARS', 4, c),
+    summaryMax: cfgNum('OUT_SUMMARY_MAX_CHARS', 30, c),
+    summaryExemptBody: cfgNum('OUT_SUMMARY_EXEMPT_BODY_CHARS', 40, c),
+    maxHeadingDepth: cfgNum('OUT_MAX_HEADING_DEPTH', 3, c),
+    maxListDepth: cfgNum('OUT_MAX_LIST_DEPTH', 3, c),
+    proIcon: cfg('OUT_PRO_ICON', '⚙️ 专业档', c),
+    receiptFields: cfg('OUT_RECEIPT_FIELDS', '🔧 本轮做了什么|🧪 判定证据|📊 完成度|🚧 还差什么', c)
+      .split('|')
+      .map((s) => s.trim())
+      .filter(Boolean),
+  }
+
+  const raw = String(text || '')
+  // 代码块是交付物，其内部的 # 与缩进不参与排版判定（与认知判据同一口径）
+  const body = raw.replace(/```[\s\S]*?```/g, '')
+  const lines = body.split('\n')
+  const nonEmpty = lines.filter((l) => l.trim())
+
+  // ① 首行状态徽标
+  const firstLine = nonEmpty[0] || ''
+  const bannerIcon = T.bannerIcons.find((ic) => firstLine.includes(ic)) || null
+  const bannerOk = bannerIcon !== null
+
+  // ② 一句话总结（位置 + 字数）
+  const headWindow = nonEmpty.slice(0, T.summaryScanLines)
+  let summaryLineIndex = -1
+  let summaryText = ''
+  for (let i = 0; i < headWindow.length; i++) {
+    const idx = headWindow[i].indexOf(T.summaryLabel)
+    if (idx < 0) continue
+    summaryLineIndex = i
+    let rest = headWindow[i].slice(idx + T.summaryLabel.length)
+    rest = rest.replace(/^[\s*#:：—-]+/, '').trim()
+    if (!rest) {
+      // 标签独占一行：取紧随其后的第一个非空行
+      const abs = nonEmpty.indexOf(headWindow[i])
+      for (let j = abs + 1; j < nonEmpty.length; j++) {
+        const cand = nonEmpty[j].replace(/^[\s*#:：—-]+/, '').trim()
+        if (cand) { rest = cand; break }
+      }
+    }
+    summaryText = rest
+    break
+  }
+  const bodyHanzi = countHanzi(body)
+  const summaryExempt = bodyHanzi < T.summaryExemptBody
+  const summaryHanzi = countHanzi(summaryText)
+  const summaryOk = summaryExempt
+    ? true
+    : summaryLineIndex >= 0 && summaryHanzi >= T.summaryMin && summaryHanzi <= T.summaryMax
+
+  // ③-1 标题层级与跳级
+  let maxDepth = 0
+  let prevLevel = null
+  let jump = null
+  for (const l of nonEmpty) {
+    const m = l.match(/^(#{1,6})\s+\S/)
+    if (!m) continue
+    const level = m[1].length
+    maxDepth = Math.max(maxDepth, level)
+    if (prevLevel !== null && level > prevLevel + 1 && !jump) {
+      jump = { from: prevLevel, to: level, sample: l.slice(0, 40) }
+    }
+    prevLevel = level
+  }
+  const headingDepthOk = maxDepth <= T.maxHeadingDepth
+  const headingJumpOk = jump === null
+
+  // ③-2 列表缩进层数
+  let maxListDepth = 0
+  for (const l of nonEmpty) {
+    const m = l.match(/^([ \t]*)(?:[-*+]|\d+\.)\s+/)
+    if (!m) continue
+    const width = m[1].replace(/\t/g, '  ').length
+    maxListDepth = Math.max(maxListDepth, Math.floor(width / 2) + 1)
+  }
+  const listDepthOk = maxListDepth <= T.maxListDepth
+
+  // ④ 进度回执四字段
+  const missingReceipt = T.receiptFields.filter((f) => !raw.includes(f))
+  const receiptOk = missingReceipt.length === 0
+
+  // ⑤ 档位标记（唯一性）
+  const proCount = T.proIcon ? raw.split(T.proIcon).length - 1 : 0
+  const laneMode = proCount > 0 ? 'pro' : 'plain'
+  const laneOk = proCount <= 1
+
+  // 报告项：连续空行、扫视锚点
+  const blankRuns = (raw.match(/\n{4,}/g) || []).length
+  const anchorLines = nonEmpty.filter((l) => /^\s*(#{1,6}\s|\||[-*+]\s|\d+\.\s|>\s)|^\s*\*\*[^*]+\*\*/.test(l)).length
+  const anchorRate = nonEmpty.length ? anchorLines / nonEmpty.length : 0
+
+  const gates = {
+    bannerOk,
+    summaryOk,
+    headingDepthOk,
+    headingJumpOk,
+    listDepthOk,
+    receiptOk,
+    laneOk,
+  }
+
+  return {
+    ...gates,
+    gatePass: Object.values(gates).every(Boolean),
+    thresholds: T,
+    // 明细（打印与 JSON 复用）
+    bannerIcon,
+    firstLine: firstLine.slice(0, 60),
+    summaryLineIndex,
+    summaryHanzi,
+    summaryText: summaryText.slice(0, 60),
+    summaryExempt,
+    bodyHanzi,
+    maxHeadingDepth: maxDepth,
+    headingJump: jump,
+    maxListDepth,
+    missingReceipt,
+    laneMode,
+    proCount,
+    blankRuns,                                  // 报告项
+    anchorRate: Number(anchorRate.toFixed(3)),  // 报告项
+  }
+}
+
 /* ── 反向用例（REQ-089：判定器必须能判红，否则等于没有判定器）──────────────
  * 本判定器在引入 `--refresh` 之前，曾因"报告只由未通电插件写"而**永远取不到证据**，
  * 换成读转录后又出现过"报告只算一次、陈旧快照永久钉住"的假红。
@@ -167,6 +323,19 @@ export function selfTest() {
   add('嵌套 4 级 → 认知判据判红', cognitiveChecks('## 一级\n### 二级\n#### 三级\n##### 四级').gatePass, false)
   add('无标题纯段落 → 锚点率为 0', cognitiveChecks('一段话。\n又一段话。').anchorRate, 0)
   add('全篇加粗 → 加粗占比接近 1', cognitiveChecks('**全部加粗**').boldRate > 0.9, true)
+
+  // REQ-090：输出结构契约判据的双向断言（先证明"该红的能判红"）
+  const receipt = '🔧 本轮做了什么：写入 a.md\n🧪 判定证据：node x --check 退出码 0\n📊 完成度：R1 2/4\n🚧 还差什么：R2 未开始'
+  const good = `🟢 【实施完成态】\n\n**一句话总结**：这是一句简短的结论式摘要。\n\n## 一、正文\n\n### 细节\n\n${receipt}\n\n${tail}`
+  add('结构契约齐备 → 通过', structureChecks(good).gatePass, true)
+  add('缺首行徽标 → 判红', structureChecks(good.replace('🟢 【实施完成态】\n\n', '')).bannerOk, false)
+  add('一句话总结缺失 → 判红', structureChecks(good.replace('**一句话总结**：这是一句简短的结论式摘要。\n\n', '')).summaryOk, false)
+  add('一句话总结超 30 汉字 → 判红', structureChecks(good.replace('这是一句简短的结论式摘要。', '这是一句非常长的结论式摘要'.repeat(4))).summaryOk, false)
+  add('标题跳级 ## → #### → 判红', structureChecks(good.replace('### 细节', '#### 细节')).headingJumpOk, false)
+  add('标题 ## → ### 不跳级 → 通过', structureChecks(good).headingJumpOk, true)
+  add('列表缩进 4 层 → 判红', structureChecks(`🟢 【实施完成态】\n\n**一句话总结**：这是一句简短的结论式摘要。\n\n## 标题\n\n- 一\n  - 二\n    - 三\n      - 四\n\n${receipt}\n\n${tail}`).listDepthOk, false)
+  add('进度回执缺字段 → 判红', structureChecks(good.replace('🚧 还差什么：R2 未开始', '')).receiptOk, false)
+  add('专业档标记重复出现 → 判红', structureChecks(good.replace('## 一、正文', '## 一、正文 ⚙️ 专业档 ⚙️ 专业档')).laneOk, false)
 
   const failed = cases.filter((c) => !c.ok)
   for (const c of cases) console.log(`${c.ok ? '✅' : '❌'} ${c.name}（实际 ${JSON.stringify(c.got)} / 期望 ${JSON.stringify(c.expect)}）`)
@@ -195,7 +364,10 @@ function main() {
   // REQ-089 R1-d：并入认知合规判据（唯一硬判据 = 标题嵌套 ≤ 3 级，其余为报告项）
   const cog = cognitiveChecks(text)
   report.cognitive = cog
-  report.pass = report.pass && cog.gatePass
+  // REQ-090 R1/R2/R3/R5：并入输出结构契约判据（首行徽标 / 一句话总结 / 不跳级 / 缩进 / 回执 / 档位）
+  const contract = structureChecks(text)
+  report.contract = contract
+  report.pass = report.pass && cog.gatePass && contract.gatePass
   if (REFRESH) {
     const wrote = writeCompactReport(sessionId, report)
     if (!JSON_MODE) {
@@ -227,8 +399,29 @@ function main() {
     console.log(`      📊 [报告项] 加粗占比 ${(cog.boldRate * 100).toFixed(1)}%（粗体应仅用于关键词，严禁全篇加粗）`)
     console.log(`      📊 [报告项] 超长行 ${cog.longLines} 行（>120 字，规范建议单行 45~75 汉字）`)
     console.log(`      📊 [报告项] 段落墙 ${cog.paragraphWalls} 处（连续 ≥6 行无结构锚点）`)
+    console.log('  · 输出结构契约（唯一权威源：rules/system/output_standard.md）')
+    console.log(`      ${contract.bannerOk ? '✅' : '⛔'} [判据] 首行状态徽标 ${contract.bannerOk ? `命中 ${contract.bannerIcon}` : `缺失（首行：${contract.firstLine || '空'}）`}`)
+    console.log(
+      contract.summaryExempt
+        ? `      ➖ [判据] 一句话总结 豁免（正文仅 ${contract.bodyHanzi} 汉字 < ${contract.thresholds.summaryExemptBody}）`
+        : `      ${contract.summaryOk ? '✅' : '⛔'} [判据] 一句话总结 ${contract.summaryHanzi} 汉字（限 ${contract.thresholds.summaryMin}~${contract.thresholds.summaryMax}）· 位置第 ${contract.summaryLineIndex + 1} 个非空行（限前 ${contract.thresholds.summaryScanLines} 行）`,
+    )
+    console.log(`      ${contract.headingDepthOk ? '✅' : '⛔'} [判据] 标题最深 ${contract.maxHeadingDepth} 级（限 ≤ ${contract.thresholds.maxHeadingDepth}）`)
+    console.log(
+      contract.headingJumpOk
+        ? '      ✅ [判据] 标题层级无跳级'
+        : `      ⛔ [判据] 标题跳级：${contract.headingJump.from} 级 → ${contract.headingJump.to} 级（${contract.headingJump.sample}）`,
+    )
+    console.log(`      ${contract.listDepthOk ? '✅' : '⛔'} [判据] 列表最深 ${contract.maxListDepth} 层（限 ≤ ${contract.thresholds.maxListDepth}）`)
+    console.log(
+      contract.receiptOk
+        ? '      ✅ [判据] 进度回执四字段齐备'
+        : `      ⛔ [判据] 进度回执缺失：${contract.missingReceipt.join(' / ')}`,
+    )
+    console.log(`      ${contract.laneOk ? '✅' : '⛔'} [判据] 输出档位 ${contract.laneMode === 'pro' ? '专业档（已标记）' : '浅白档（默认）'} · 档位标记 ${contract.proCount} 次（限 ≤ 1）`)
+    console.log(`      📊 [报告项] 扫视锚点率 ${(contract.anchorRate * 100).toFixed(1)}% · 连续空行段 ${contract.blankRuns} 处`)
     console.log('-----------------------------------------')
-    console.log(report.pass ? '✅ 通过：体量、结构与认知判据全部达标' : '⛔ 不通过：存在超标项、缺失标头或认知判据未过')
+    console.log(report.pass ? '✅ 通过：体量、认知与输出结构契约全部达标' : '⛔ 不通过：存在超标项、缺失标头或判据未过')
   }
   process.exit(report.pass ? 0 : 1)
 }

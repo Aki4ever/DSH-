@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-30T22:42:35.252Z",
+  "generatedAt": "2026-10-01T04:46:19.476Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 237,
+  "total": 240,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
-    "插件 (Plugin)": 3,
-    "脚本 (CLI)": 55
+    "插件 (Plugin)": 4,
+    "脚本 (CLI)": 57
   },
-  "withInterface": 237,
+  "withInterface": 240,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1643,6 +1643,15 @@
     },
     {
       "layer": "插件 (Plugin)",
+      "id": "plugin.skillpool.dsh-plugin-restart",
+      "path": "skill-pool/plugins/dsh-plugin-restart",
+      "desc": "---",
+      "invoke": "dsh plugin add skill-pool/plugins/dsh-plugin-restart",
+      "invokeKind": "plugin-install",
+      "interface": "skill-pool/plugins/dsh-plugin-restart/interface.json"
+    },
+    {
+      "layer": "插件 (Plugin)",
       "id": "plugin.skillpool.dsh-plugin-usage-bar",
       "path": "skill-pool/plugins/dsh-plugin-usage-bar",
       "desc": "",
@@ -1823,6 +1832,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.gen_common_chars",
+      "path": "scripts/gen_common_chars.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/gen_common_chars.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/gen_common_chars.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.gen_skill_interfaces",
       "path": "scripts/gen_skill_interfaces.mjs",
       "desc": "==============================================================================",
@@ -1892,6 +1910,15 @@
       "invoke": "bash scripts/install_host_gate.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/install_host_gate.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.language_audit",
+      "path": "scripts/language_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/language_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/language_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

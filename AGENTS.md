@@ -26,7 +26,8 @@ node scripts/build_capabilities_index.mjs --check  # 执行层是否 100% 入索
 node scripts/progress_ledger.mjs record --files a.md,b.mjs --judge "cmd" --expect "关键字"  # 改动登记（含写后必读回）
 node scripts/progress_ledger.mjs check  # 迭代检测：哈希漂移=0 且 未记录改动=0
 node scripts/flow_control.mjs --check   # 流程管控层：顺序一致 + 五条不变式成立
-node scripts/output_audit.mjs --check    # 输出体量/五联装判定（读宿主转录，不依赖拦截层插件）
+node scripts/output_audit.mjs --check    # 输出结构契约判定（首行徽标/一句话总结/不跳级/缩进/回执/档位）
+node scripts/language_audit.mjs --check  # 文字可读性判定（无生僻字，基准为国标 GB2312 字表）
 node scripts/check_layer_interfaces.mjs --check  # 执行层接口契约：接口覆盖率与名字覆盖率分开判
 node scripts/gen_skill_interfaces.mjs --check   # 技能层接口契约抽取：各字段抽取成功数/待补数（抽不到一律标 (待补)，不编造）
 node scripts/route_plan.mjs --check      # 路由层自检：文档-实现一致 + 死通道 + 可达性 + 反向用例
@@ -110,15 +111,19 @@ node scripts/legacy_align_scan.mjs --root .    # 存量：遇碰即对齐清单�
 
 ## 五、交付收尾与文末固定结构要求
 
+> **输出格式的唯一权威源**：[`rules/system/output_standard.md`](rules/system/output_standard.md)。
+> 本节只写"必须做"，**不复述格式细则**（首行徽标取值、一句话总结字数、标题层级、缩进层数、
+> 进度回执字段、双档切换口径一律以该文件为准），避免同一事实两处各说一套。
+> 判定入口：`node scripts/output_audit.mjs --check`（结构）· `node scripts/language_audit.mjs --check`（用字）。
+
 任务完成或输出汇报时必须满足：
-1. **文末固定五联装视觉强化总结（强制收尾结构）**：无论汇报长短，在输出的最末尾处必须且只能以固定五项总结收尾，严格使用加粗与状态图标强化视觉展示：
-   - **🏷️ 【当前状态】**：明确标注【规划阶段】还是【实施阶段】；
-   - **🎯 【核心结论/输出物】**：有输出物就给具体输出物说明，没有输出物就给核心结论；
-   - **📍 【输出物地址】**：如果有输出物就要给物理文件路径（行内代码格式），没有输出物填「无」；
-   - **💡 【重要说明】**：对执行过程中遇到的问题、踩坑、潜伏风险或连带产生的非预期/连带改动进行透明显式说明；
-   - **🌟 【执行效果】**：必须给出 0~100 分量化审计打分及扣分项（运行 `./scripts/audit_execution.sh` 签发），供回溯审计；
-2. **极简高信噪比输出铁律**：与任务不相关的少说，没有问到的不要说，只有很相关并且比较重要的才说，坚决剔除无关冗余客套；
-3. **全域所有 DSH 工程常态化永久生效**：本管控机制对所有 DSH 工程文件夹永久生效，存量与新增工程一律受其约束，杜绝任何项目特权或裸跑脱管。
+1. **按输出结构契约成形**：一次合格回复 = 首行状态徽标 → 一句话总结 → 分层正文 → 进度回执 → 文末五联装，五项顺序固定、缺一不合格；
+2. **文末五联装视觉强化总结（强制收尾结构）**：定义见 [`rules/system/meta_rules.md`](rules/system/meta_rules.md) 第三十四条，
+   必须是整条回复的**最后 5 项**，严格使用加粗与状态图标；判定入口 `./scripts/audit_execution.sh`（第 8 维）；
+3. **进度回执必须是实数**：完成度与判定证据从 `node scripts/progress_ledger.mjs report --json` 取，
+   **手写对不上的数字即判红**；
+4. **极简高信噪比输出铁律**：与任务不相关的少说，没有问到的不要说，只有很相关并且比较重要的才说，坚决剔除无关冗余客套；
+5. **全域所有 DSH 工程常态化永久生效**：本管控机制对所有 DSH 工程文件夹永久生效，存量与新增工程一律受其约束，杜绝任何项目特权或裸跑脱管。
 
 ---
 
@@ -133,6 +138,7 @@ memory/      长短期记忆中枢
 templates/   标准模板资产
 scripts/     自动化工具（含管控门禁脚本）
 ai-control/  管控机制实现目录（判定层 + 拦截层）
+data/        判定器基准数据（通用汉字表等，有出处、可复现）
 assets/      图形资产
 ```
 

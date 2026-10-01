@@ -331,6 +331,73 @@ function buildRegistry() {
         }
       },
     },
+    {
+      // REQ-090 R6：一键重启按钮。判据**不看"装了没"**，而看"自检能不能跑通"——
+      // 因为宿主激活凭据要重启一次才有，把它当硬门会让本条长期恒红。
+      // 真正的合格证据是重启前后宿主 PID 变化，那只能由人点一次（README §三），机器不能替。
+      name: '一键重启按钮（双半插件 · 自检为凭）',
+      claim: 'skill-pool/plugins/dsh-plugin-restart · REQ-090 R6',
+      strict: false,
+      check: () => {
+        const dir = join(ROOT, 'skill-pool', 'plugins', 'dsh-plugin-restart')
+        const src = join(dir, 'src', 'restart-core.cjs')
+        if (!existsSync(src)) return { ok: false, detail: '插件源码缺失', carrier: 'skill-pool/plugins/dsh-plugin-restart' }
+        const built = run('python3', ['skill-pool/plugins/dsh-plugin-restart/build_client.py', '--check'], { timeout: 60000 })
+        if (!built.ok) return { ok: false, detail: `bundle 陈旧（源码改了没重建）· exit=${built.exitCode}`, carrier: 'skill-pool/plugins/dsh-plugin-restart' }
+        const st = run(process.execPath, ['skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs'], { timeout: 90000 })
+        const last = (st.out.split('\n').filter(Boolean).pop() || '').slice(0, 110)
+        return { ok: st.ok, detail: `bundle 未陈旧 · 打桩自检 ${st.ok ? 'exit 0' : 'exit=' + st.exitCode} · ${last}`, carrier: 'skill-pool/plugins/dsh-plugin-restart' }
+      },
+    },
+    {
+      // REQ-090 R1/R2/R3/R5：输出结构契约（首行徽标 / 一句话总结 / 层级不跳级 / 缩进 / 进度回执 / 档位）
+      // 判据不只看"脚本在不在"，而是**真的跑一次反向自检**：判定器必须先能判红，否则等于没有判定器。
+      name: '输出结构契约判定（R1/R2/R3/R5）',
+      claim: 'rules/system/output_standard.md · REQ-090',
+      check: () => {
+        const spec = join(ROOT, 'rules', 'system', 'output_standard.md')
+        if (!existsSync(spec)) return { ok: false, detail: '契约权威源缺失 rules/system/output_standard.md', carrier: spec }
+        const r = run(process.execPath, ['scripts/output_audit.mjs', '--self-test'], { timeout: 90000 })
+        const last = (r.out.split('\n').filter(Boolean).pop() || '').slice(0, 110)
+        return { ok: r.ok, detail: `${r.ok ? 'exit 0' : 'exit=' + r.exitCode} · ${last}`, carrier: 'scripts/output_audit.mjs' }
+      },
+    },
+    {
+      // REQ-090 R4：文字可读性 = 无生僻字。基准是国标 GB2312 字表，不是模型语感。
+      name: '文字可读性判定（无生僻字）',
+      claim: 'rules/system/language_standard.md §四 · REQ-090',
+      check: () => {
+        const tbl = join(ROOT, 'data', 'common_chars.txt')
+        const drift = run(process.execPath, ['scripts/gen_common_chars.mjs', '--check'], { timeout: 90000 })
+        if (!existsSync(tbl)) return { ok: false, detail: '基准字表缺失 data/common_chars.txt', carrier: tbl }
+        if (!drift.ok) return { ok: false, detail: `字表与国标推导不一致（基准已漂移）· exit=${drift.exitCode}`, carrier: 'scripts/gen_common_chars.mjs' }
+        const st = run(process.execPath, ['scripts/language_audit.mjs', '--self-test'], { timeout: 90000 })
+        const last = (st.out.split('\n').filter(Boolean).pop() || '').slice(0, 110)
+        return { ok: st.ok, detail: `字表未漂移 · 判定器自检 ${st.ok ? 'exit 0' : 'exit=' + st.exitCode} · ${last}`, carrier: 'scripts/language_audit.mjs' }
+      },
+    },
+    {
+      // REQ-090 R2 的数据来源：进度回执的数字必须能由台账复算，不许手写。
+      // 判据为什么不用 `report --json` 实跑：它是**全量 git 状态扫描**，实测在本机
+      // 超过 90 秒（spawnSync ETIMEDOUT），把它塞进巡更会让审计本身不可用。
+      // 改为两条轻量但真实的证据：① 台账自检跑通（逻辑有效）② `report` 子命令在源码中确有实现。
+      name: '进度回执数据源（可复算，禁手写）',
+      claim: 'AGENTS.md §五.3 · REQ-090',
+      check: () => {
+        const p = join(ROOT, 'scripts', 'progress_ledger.mjs')
+        if (!existsSync(p)) return { ok: false, detail: '载体缺失 scripts/progress_ledger.mjs', carrier: 'scripts/progress_ledger.mjs' }
+        const src = readFileSync(p, 'utf8')
+        const hasReport = /case\s+'report'|'report':/.test(src) || src.includes("--report") || src.includes("'report'")
+        const st = run(process.execPath, ['scripts/progress_ledger.mjs', 'selftest'], { timeout: 60000 })
+        const last = (st.out.split('\n').filter(Boolean).pop() || '').slice(0, 110)
+        const ok = hasReport && st.ok
+        return {
+          ok,
+          detail: `report 子命令${hasReport ? '✅在源码中' : '⛔缺失'} · 台账自检 ${st.ok ? 'exit 0' : 'exit=' + st.exitCode} · ${last}`,
+          carrier: 'scripts/progress_ledger.mjs',
+        }
+      },
+    },
   ]
 }
 

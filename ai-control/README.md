@@ -64,6 +64,9 @@ ai-control/
 | `scripts/output_audit.mjs` | **输出体量与结构判定**（REQ-089 R1-c）：从**宿主会话转录**取最近一轮已完结的助手正文，度量字数/行数与文末五联装齐备性 | 退出码 0 通过 / 1 不达标 / 2 取不到证据（**2 绝不算通过**）；报告落 `~/.dsh/.dsh-control/compact/<sid>.json`，审计第 8 维据此判分 |
 | `scripts/check_layer_interfaces.mjs` | **执行层接口契约判定**（REQ-089 R4）：按 `<unit>/interface.json` 与 `scripts/interfaces/*.interface.json` 逐条对拍机读索引，**把接口覆盖率与名字覆盖率分开报** | CLI 层声明覆盖率须 100%；契约违规 = 0；`已声明 ≠ 已人工核对` 必须分列 |
 | `scripts/route_plan.mjs` | **路由层判定器 + 路线规划器**（REQ-089 R5）：意图匹配（复用 `channel_audit` 的匹配库）→ 调配决策（依赖/并行/全局调度锁/物理锁阶位）→ **文档-实现一致性审计** | `--check` exit 0 须同时满足：文档声明数据源真实被读 · 死通道 0 · 可达性覆盖率分开报 · **反向用例**（无意义关键词必须报未命中，禁止回显关键词伪造路线） |
+| `scripts/language_audit.mjs` | **文字可读性判定**（REQ-090 R4）：判正文是否含 GB2312 基本集之外的汉字（即"生僻字"）；黑话命中与超长句只报数不判红 | 退出码 0 无生僻字 / 1 命中 / 2 取不到证据（**2 绝不算通过**）；基准表 `data/common_chars.txt`，审计第 9 维据此判分 |
+| `scripts/gen_common_chars.mjs` | **常用字表生成器**（REQ-090 R4 的数据来源）：从 GB2312-1980 基本集编码空间**推导** 6763 字，不靠人工罗列 | `--check` 须与推导结果逐字一致（退出码 0/1）；`--self-test` 13 项含反向用例；`--apply` 才写盘 |
+| `scripts/lib/gates_config.mjs` | **门禁阈值配置读取器**（REQ-090）：把 `ai-control/config/gates.conf` 读成对象，供 JS 判定器复用同一套阈值 | 配置缺失时回落到调用方显式给定的默认值，**不建议隐式魔法默认**；`--self-test` 6 项 |
 
 **硬要求**：检测器不可用时一律判"未通过"，**不允许以"检测失效"充当通过**。
 
@@ -93,7 +96,12 @@ node scripts/channel_audit.mjs --self-test       # 通道审计自检（23 项�
 node ai-control/plugin/selftest.mjs              # 拦截层插件自检（33 项）
 ./scripts/physical_lock.sh status                # 查看底层物理锁状态与凭据
 ./scripts/physical_lock.sh sync                  # 自适应同步推进物理锁
-node scripts/output_audit.mjs --check            # 输出体量/结构判定（读宿主转录，不依赖插件）
+node scripts/output_audit.mjs --check            # 输出结构契约判定（读宿主转录，不依赖插件）
+node scripts/output_audit.mjs --self-test        # 输出判定器自检（16 项，含反向用例）
+node scripts/language_audit.mjs --check          # 文字可读性判定（无生僻字，基准为国标字表）
+node scripts/language_audit.mjs --root .         # 全库生僻字扫描（存量对齐用）
+node scripts/language_audit.mjs --self-test      # 文字判定器自检（11 项，含反向用例）
+node scripts/gen_common_chars.mjs --check        # 常用字表漂移校验（磁盘 vs 国标推导）
 node scripts/test_physical_lock.mjs             # 底层物理锁全量自检（19 项）
 ```
 

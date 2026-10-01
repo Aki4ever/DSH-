@@ -1,7 +1,7 @@
 # 通用能力层命名规范 (Capability Naming Specification)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.24.0`
+> - **当前文档版本**：`v4.26.0`
 > - **命名规范版本**：`1.0.0`
 > - **文档类型 (Doc Type)**：`[CORE-KNOWLEDGE 核心知识库]`
 > - **清理定位 (Retention)**：`[PERMANENT 永久核心白名单 · 严禁删除]`

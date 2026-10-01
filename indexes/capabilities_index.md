@@ -1,8 +1,8 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.24.0`
-> - **对应实施版本**：`v4.24.0`
+> - **当前文档版本**：`v4.26.0`
+> - **对应实施版本**：`v4.26.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
 > - **生效状态**：`[Release 稳定生效]`
@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：237**（技能 178 · 其他执行层 59）
+**执行层条目总数：240**（技能 178 · 其他执行层 62）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -518,6 +518,7 @@
 | 智能体 (Agent) | `agent.skillpool.process-supervisor-agent` | `skill-pool/agents/process-supervisor-agent` | ✅ `skill-pool/agents/process-supervisor-agent/interface.json` | `subagent（宿主工具，按需分派）` | --- |
 | 插件 (Plugin) | `plugin.skillpool.dsh-plugin-control-jump` | `skill-pool/plugins/dsh-plugin-control-jump` | ✅ `skill-pool/plugins/dsh-plugin-control-jump/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-control-jump` | — |
 | 插件 (Plugin) | `plugin.skillpool.dsh-plugin-image-zoom` | `skill-pool/plugins/dsh-plugin-image-zoom` | ✅ `skill-pool/plugins/dsh-plugin-image-zoom/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-image-zoom` | — |
+| 插件 (Plugin) | `plugin.skillpool.dsh-plugin-restart` | `skill-pool/plugins/dsh-plugin-restart` | ✅ `skill-pool/plugins/dsh-plugin-restart/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-restart` | --- |
 | 插件 (Plugin) | `plugin.skillpool.dsh-plugin-usage-bar` | `skill-pool/plugins/dsh-plugin-usage-bar` | ✅ `skill-pool/plugins/dsh-plugin-usage-bar/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-usage-bar` | — |
 | 脚本 (CLI) | `cli.rules.agent_life` | `scripts/agent_life.mjs` | ✅ `scripts/interfaces/agent_life.interface.json` | `node scripts/agent_life.mjs` | agent_life.mjs |
 | 脚本 (CLI) | `cli.rules.align_version` | `scripts/align_version.mjs` | ✅ `scripts/interfaces/align_version.interface.json` | `node scripts/align_version.mjs` | 全库受管文档版本归位（把受管文档头部版本统一改到当前总版本） |
@@ -538,6 +539,7 @@
 | 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | ✅ `scripts/interfaces/fingerprint_audit.interface.json` | `bash scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
 | 脚本 (CLI) | `cli.rules.flow_control` | `scripts/flow_control.mjs` | ✅ `scripts/interfaces/flow_control.interface.json` | `node scripts/flow_control.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.gate_selftest` | `scripts/gate_selftest.sh` | ✅ `scripts/interfaces/gate_selftest.interface.json` | `bash scripts/gate_selftest.sh` | — |
+| 脚本 (CLI) | `cli.rules.gen_common_chars` | `scripts/gen_common_chars.mjs` | ✅ `scripts/interfaces/gen_common_chars.interface.json` | `node scripts/gen_common_chars.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.gen_skill_interfaces` | `scripts/gen_skill_interfaces.mjs` | ✅ `scripts/interfaces/gen_skill_interfaces.interface.json` | `node scripts/gen_skill_interfaces.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.generate_image` | `scripts/generate_image.py` | ✅ `scripts/interfaces/generate_image.interface.json` | `python3 scripts/generate_image.py` | — |
 | 脚本 (CLI) | `cli.rules.generate_naming_plan` | `scripts/generate_naming_plan.mjs` | ✅ `scripts/interfaces/generate_naming_plan.interface.json` | `node scripts/generate_naming_plan.mjs` | ============================================================================== |
@@ -546,6 +548,7 @@
 | 脚本 (CLI) | `cli.rules.init_dir` | `scripts/init_dir.sh` | ✅ `scripts/interfaces/init_dir.interface.json` | `bash scripts/init_dir.sh` | — |
 | 脚本 (CLI) | `cli.rules.init_project` | `scripts/init_project.sh` | ✅ `scripts/interfaces/init_project.interface.json` | `bash scripts/init_project.sh` | — |
 | 脚本 (CLI) | `cli.rules.install_host_gate` | `scripts/install_host_gate.sh` | ✅ `scripts/interfaces/install_host_gate.interface.json` | `bash scripts/install_host_gate.sh` | — |
+| 脚本 (CLI) | `cli.rules.language_audit` | `scripts/language_audit.mjs` | ✅ `scripts/interfaces/language_audit.interface.json` | `node scripts/language_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.legacy_align_scan` | `scripts/legacy_align_scan.mjs` | ✅ `scripts/interfaces/legacy_align_scan.interface.json` | `node scripts/legacy_align_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.mechanism_audit` | `scripts/mechanism_audit.mjs` | ✅ `scripts/interfaces/mechanism_audit.interface.json` | `node scripts/mechanism_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.name_me` | `scripts/name_me.sh` | ✅ `scripts/interfaces/name_me.interface.json` | `bash scripts/name_me.sh` | **立刻**给"当前会话"改名——开工第一动作，一条命令，任何目录可用 |

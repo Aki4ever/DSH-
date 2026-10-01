@@ -1,7 +1,7 @@
 # 全局规则工程 (Global Rules Project)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.24.0`
+> - **当前系统实施总版本**：`v4.26.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -134,7 +134,10 @@ node scripts/legacy_align_scan.mjs --root .            # 判定层：存量校�
 node scripts/channel_audit.mjs --root .                # 判定层：通道审计（死通道/说法命中/触发词冲突）
 node scripts/check_freshness.mjs                      # 判定层：新鲜度与可用性审计（能力与规则健康探活）
 node scripts/sync_control_requirements.mjs            # 判定层：管控专属需求双向同步校验（CR与REQ对齐）
-node scripts/output_audit.mjs --check                  # 判定层：输出体量/五联装判定（读宿主转录，不依赖拦截层插件）
+node scripts/output_audit.mjs --check                  # 判定层：输出结构契约判定（首行徽标/一句话总结/不跳级/缩进/回执/档位）
+node scripts/language_audit.mjs --check                # 判定层：文字可读性判定（无生僻字，基准为国标 GB2312 字表）
+node scripts/language_audit.mjs --root .               # 判定层：全库生僻字扫描（存量对齐，实测 0 命中）
+node scripts/gen_common_chars.mjs --check              # 数据层：常用字表漂移校验（磁盘 vs 国标推导）
 node scripts/check_layer_interfaces.mjs --check         # 判定层：执行层接口契约校验（接口覆盖率与名字覆盖率分开报）
 node scripts/route_plan.mjs --check                     # 路由层：文档-实现一致 + 死通道 + 可达性 + 反向用例
 ./scripts/check_task_naming.sh                         # 判定层：当前任务命名是否合规（看板已自动常显此行）

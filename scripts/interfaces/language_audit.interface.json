@@ -1,0 +1,72 @@
+{
+  "id": "cli.rules.language_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/language_audit.mjs",
+  "invoke": "node scripts/language_audit.mjs",
+  "summary": "文字可读性判定器（REQ-090 / R4）：判正文是否含 GB2312 基本集之外的汉字（即生僻字），基准来自 data/common_chars.txt 与 data/common_chars_allowlist.txt。黑话命中与超长句只报数不判红（缺外部权威边界，不升硬门）。",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "arg",
+      "required": false,
+      "desc": "默认模式：判最近一轮已完结的助手回复（读宿主会话转录）"
+    },
+    {
+      "name": "--text",
+      "type": "arg",
+      "required": false,
+      "desc": "直接判给定文本；与 --file / --root 三选一"
+    },
+    {
+      "name": "--file",
+      "type": "arg",
+      "required": false,
+      "desc": "判单个文件"
+    },
+    {
+      "name": "--root",
+      "type": "arg",
+      "required": false,
+      "desc": "全库扫描（存量对齐用）；传 . 表示仓库根"
+    },
+    {
+      "name": "--json",
+      "type": "arg",
+      "required": false,
+      "desc": "输出机器可读 JSON"
+    },
+    {
+      "name": "--self-test",
+      "type": "arg",
+      "required": false,
+      "desc": "反向用例自检：11 项，注入库外字必须判红"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "生僻字清单 / 黑话命中 / 超长句统计；--json 时为结构化对象"
+    }
+  ],
+  "exitCodes": {
+    "0": "无生僻字，达标",
+    "1": "命中生僻字，不达标",
+    "2": "取不到证据（转录缺失或字表不可用），**绝不算通过**"
+  },
+  "sideEffects": [],
+  "dependencies": [
+    "data/common_chars.txt",
+    "data/common_chars_allowlist.txt",
+    "scripts/lib/gates_config.mjs"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/language_audit.mjs --check",
+    "node scripts/language_audit.mjs --root .",
+    "node scripts/language_audit.mjs --self-test",
+    "node scripts/language_audit.mjs --text \"待判文本\" --json"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

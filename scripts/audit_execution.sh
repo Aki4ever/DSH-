@@ -144,13 +144,15 @@ if [ "$TODO_PASS" -eq 0 ]; then
   CHECKS+=("❌ 待办常显未通过：${TODO_LINE} (-12)")
 fi
 
-# ── 维度 8：输出精简与文末五联装结构 (8分) ─────────────────────────────────
+# ── 维度 8：输出结构契约 (4分) ──────────────────────────────────────────────
 # 度量来源：拦截层订阅 `session/event` 得到的回复体量报告
 # （scripts/lib/output_compactness.mjs → $DSH_HOME/.dsh-control/compact/<会话ID>.json）。
 # 客观量只有两个：正文字符数与文末五联装标头是否齐备。
 # 为什么"未采集"也要扣分：把缺失统一记为通过，等于给机制开了一个永久免检口。
-# 代价是**本回合首次答复之前**这一维必扣 8 分——这是刻意的取舍：
+# 代价是**本回合首次答复之前**这一维必扣分——这是刻意的取舍：
 # 宁可让分数诚实偏低，也不让"度量没跑起来"看起来像"输出很规范"。
+# REQ-090 权重调整（8→4分）：新增第 9 维「文字可读性」需要 4 分，
+# 总分保持 100（20+16+12+12+12+8+12+4+4）。权重变化在此显式留痕，不做静默调整。
 COMPACT_PASS=0
 COMPACT_LINE="未采集到回复度量报告"
 COMPACT_JSON="null"
@@ -201,9 +203,41 @@ try {
 fi
 
 if [ "$COMPACT_PASS" -eq 0 ]; then
-  SCORE=$((SCORE - 8))
-  DEDUCTIONS+=("❌ 输出精简未达标或未采集度量 (-8)")
-  CHECKS+=("❌ 输出精简未通过：${COMPACT_LINE} (-8)")
+  SCORE=$((SCORE - 4))
+  DEDUCTIONS+=("❌ 输出结构契约未达标或未采集度量 (-4)")
+  CHECKS+=("❌ 输出结构契约未通过：${COMPACT_LINE} (-4)")
+fi
+
+# ── 维度 9：文字可读性「无生僻字」(4分) ──────────────────────────────────────
+# 为什么新增这一维（REQ-090 / R4，2026-10-01 实测）：
+#   「杜绝生僻字、通俗直白」在元规则第三条与 rules/system/language_standard.md §四
+#   写了至少 7 处，但此前**全库零判定器** —— 一条没有判定手段的"必须"，
+#   正违反元规则第三十六条（硬约束必须可判定）。
+#   本维的基准是**国标 GB2312 基本集 6763 字**（data/common_chars.txt，
+#   由 scripts/gen_common_chars.mjs 从编码空间推导，非人工罗列），
+#   加一份逐条写明理由的书面豁免清单（data/common_chars_allowlist.txt）。
+#   fail-closed：判定器退 2（取不到回复正文）时本维照旧扣分，绝不用"检测失效"充当通过。
+LANGUAGE_PASS=0
+LANGUAGE_LINE="未采集到文字可读性判定"
+LANGUAGE_JSON="null"
+if [ -n "$NODE_BIN" ]; then
+  LANGUAGE_OUT="$("$NODE_BIN" "$SCRIPT_DIR/language_audit.mjs" --json 2>/dev/null || true)"
+  if [ -n "$LANGUAGE_OUT" ]; then
+    LANGUAGE_JSON="$LANGUAGE_OUT"
+    if printf '%s' "$LANGUAGE_OUT" | grep -q '"ok": true'; then
+      LANGUAGE_PASS=1
+      LANGUAGE_LINE="$(printf '%s' "$LANGUAGE_OUT" | "$NODE_BIN" -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);process.stdout.write(`全篇无生僻字：正文 ${r.bodyHanzi} 汉字 / 基准 ${r.benchSize} 字`)}catch{process.stdout.write("全篇无生僻字")}})')"
+      CHECKS+=("✅ 文字可读性合规：无生僻字 (+4)")
+    else
+      LANGUAGE_LINE="$(printf '%s' "$LANGUAGE_OUT" | "$NODE_BIN" -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);if(r.rareChars&&r.rareChars.length){process.stdout.write("命中生僻字 "+r.rareChars.length+" 种："+r.rareChars.slice(0,8).map(x=>x.char).join(""))}else{process.stdout.write("未采集到可判定的回复正文（本会话首次答复前必然如此）")}}catch{process.stdout.write("判定输出不可解析")}})')"
+    fi
+  fi
+fi
+
+if [ "$LANGUAGE_PASS" -eq 0 ]; then
+  SCORE=$((SCORE - 4))
+  DEDUCTIONS+=("❌ 文字可读性未达标或未采集判定 (-4)")
+  CHECKS+=("❌ 文字可读性未通过：${LANGUAGE_LINE} (-4)")
 fi
 
 # 边界守卫：分数不低于 0
@@ -240,7 +274,9 @@ if [ "$JSON_MODE" -eq 1 ]; then
   printf '  "syncPass": %s,\n' "$([ "$SYNC_PASS" -eq 1 ] && echo true || echo false)"
   printf '  "todoPass": %s,\n' "$([ "$TODO_PASS" -eq 1 ] && echo true || echo false)"
   printf '  "compactPass": %s,\n' "$([ "$COMPACT_PASS" -eq 1 ] && echo true || echo false)"
-  printf '  "compact": %s\n' "$COMPACT_JSON"
+  printf '  "languagePass": %s,\n' "$([ "$LANGUAGE_PASS" -eq 1 ] && echo true || echo false)"
+  printf '  "compact": %s,\n' "$COMPACT_JSON"
+  printf '  "language": %s\n' "$LANGUAGE_JSON"
   printf '}\n'
   exit 0
 fi
@@ -261,7 +297,8 @@ echo "| **4. 冲突排查** | 12分 | $([ $CONFLICT_PASS -eq 1 ] && echo "无事
 echo "| **5. 存量校准** | 12分 | $([ $LEGACY_PASS -eq 1 ] && echo "遇碰即对齐清单清零" || echo "存在遗留存量待对齐项") | $([ $LEGACY_PASS -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
 echo "| **6. 台账同步** | 8分 | $([ $SYNC_PASS -eq 1 ] && echo "主台账与管控台账原子同步 ${CURRENT_VERSION}" || echo "台账或版本号撕裂") | $([ $SYNC_PASS -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
 echo "| **7. 待办常显** | 12分 | ${TODO_LINE} | $([ "$TODO_PASS" -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
-echo "| **8. 输出精简** | 8分 | ${COMPACT_LINE} | $([ "$COMPACT_PASS" -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
+echo "| **8. 输出结构契约** | 4分 | ${COMPACT_LINE} | $([ "$COMPACT_PASS" -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
+echo "| **9. 文字可读性** | 4分 | ${LANGUAGE_LINE} | $([ "$LANGUAGE_PASS" -eq 1 ] && echo "✅ 满分" || echo "❌ 扣分") |"
 
 if [ ${#DEDUCTIONS[@]} -gt 0 ]; then
   echo ""

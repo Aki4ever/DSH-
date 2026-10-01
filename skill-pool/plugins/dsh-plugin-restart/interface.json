@@ -1,0 +1,53 @@
+{
+  "id": "plugin.skillpool.dsh-plugin-restart",
+  "layer": "插件 (Plugin)",
+  "path": "skill-pool/plugins/dsh-plugin-restart",
+  "invoke": "python3 skill-pool/plugins/dsh-plugin-restart/build_client.py && node skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs",
+  "summary": "DSH 双半客户端插件：宿主半在会话头部动作条侧注册 /restart-dsh 斜杠命令（须显式 confirm 才动作），客户端半注入「⏻ 重启」按钮；点击经二次确认后由分离进程执行「退出 DeepSeek Harness → 等旧进程消失 → open -a 重开」。判定只认重启前后宿主 PID 变化。",
+  "inputs": [
+    {
+      "name": "rawInput",
+      "type": "string",
+      "required": true,
+      "desc": "斜杠命令入参，必须恰为 confirm；空值或其它任何字符串一律拒绝且不派出任何进程"
+    },
+    {
+      "name": "sessionId",
+      "type": "string",
+      "required": true,
+      "desc": "客户端侧由 conversation.session.header.actions 插槽注入，用于 remote.commands.execute"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "commandResult",
+      "type": "json",
+      "desc": "{ kind: 'success' | 'error', text: string } —— 不可逆动作一律显式回报成败，绝不静默"
+    },
+    {
+      "name": "verifyStdout",
+      "type": "text",
+      "desc": "自检输出：84 项断言（静态契约 / 纯逻辑内核 / 宿主半打桩 / 客户端半打桩 / 反向变异）"
+    }
+  ],
+  "exitCodes": {
+    "0": "自检全部通过 / 命令执行成功",
+    "1": "自检存在未过项 / 命令被拒绝或派出失败",
+    "2": "输入缺失（bundle 或源码不在位，需先跑 build_client.py）"
+  },
+  "sideEffects": [
+    "点击按钮并经二次确认后：退出 DeepSeek Harness 应用与宿主进程，随后重新打开该应用（当前会话会中断）"
+  ],
+  "dependencies": [
+    "node:child_process",
+    "macOS osascript（quit app）与 open -a（重开应用）"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "python3 skill-pool/plugins/dsh-plugin-restart/build_client.py --check",
+    "node skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs",
+    "人工验收：ps -o pid,command -p $(lsof -nP -iTCP:19387 -sTCP:LISTEN -t) 记录旧 PID → 点按钮 → 重启后重跑同一命令，PID 必须不同"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

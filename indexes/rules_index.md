@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引 (Global Rules Index)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.24.0`
-> - **对应实施版本**：`v4.24.0`
+> - **当前文档版本**：`v4.26.0`
+> - **对应实施版本**：`v4.26.0`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -23,7 +23,7 @@
 | :--- | :--- | :--- |
 | **注入层** | 只放红线与路由指针，按需加载细则 | [`AGENTS.md`](../AGENTS.md)（项目级）、`$DSH_HOME/AGENTS.md`（宿主级）、[`indexes/shortcuts_index.md`](shortcuts_index.md) |
 | **状态层** | 由磁盘实况推导真值，产出 `status.json` | [`scripts/control_gates.sh`](../scripts/control_gates.sh)、[`ai-control/config/gates.conf`](../ai-control/config/gates.conf) |
-| **判定层** | 门禁判定 + 冗余与冲突双检 + 存量校准 + 通道审计 + **迭代检测 + 物理触达审计 + 输出体量判定 + 接口契约判定** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs)、[`scripts/progress_ledger.mjs`](../scripts/progress_ledger.mjs)、[`scripts/mechanism_audit.mjs`](../scripts/mechanism_audit.mjs)、[`scripts/output_audit.mjs`](../scripts/output_audit.mjs)、[`scripts/check_layer_interfaces.mjs`](../scripts/check_layer_interfaces.mjs) |
+| **判定层** | 门禁判定 + 冗余与冲突双检 + 存量校准 + 通道审计 + **迭代检测 + 物理触达审计 + 输出结构契约判定 + 文字可读性判定 + 接口契约判定** | [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs)、[`scripts/progress_ledger.mjs`](../scripts/progress_ledger.mjs)、[`scripts/mechanism_audit.mjs`](../scripts/mechanism_audit.mjs)、[`scripts/output_audit.mjs`](../scripts/output_audit.mjs)、[`scripts/language_audit.mjs`](../scripts/language_audit.mjs)、[`scripts/gen_common_chars.mjs`](../scripts/gen_common_chars.mjs)、[`scripts/check_layer_interfaces.mjs`](../scripts/check_layer_interfaces.mjs) |
 | **流程管控层** | 流程依赖唯一权威源 + 效率最优排列 + 更新后一致性判定（REQ-087 R3） | [`ai-control/config/flow_graph.json`](../ai-control/config/flow_graph.json)（权威源）、[`scripts/flow_control.mjs`](../scripts/flow_control.mjs)（判定器）、[`rules/workflow/task_execution_flow.md`](../rules/workflow/task_execution_flow.md) §二之五（规则层）、[`scripts/process_supervisor.mjs`](../scripts/process_supervisor.mjs)（独立复核） |
 | **路由层** | 意图 → 条目匹配 + 调配决策（依赖/并行/锁冲突）+ 文档-实现一致性审计（REQ-089 R5） | [`scripts/route_plan.mjs`](../scripts/route_plan.mjs)（判定器 + 路线规划器）、[`indexes/navigation_router.md`](navigation_router.md)（模型说明）、[`indexes/capabilities_index.json`](capabilities_index.json)（条目真相源）、[`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs)（触发词匹配库） |
 | **拦截层** | 门禁未过时拒绝改动型工具调用 | [`ai-control/plugin/index.mjs`](../ai-control/plugin/index.mjs) |

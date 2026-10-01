@@ -1,0 +1,5 @@
+# dsh bundle patch: 把本插件插入 profile 的 layer 栈。
+# 与 community 插件同一机制（对照 dsh-plugin-image-zoom / dsh-plugin-control-jump 的同名文件）。
+- insert:
+    - id: dsh-plugin-restart
+      name: dsh-plugin-restart
