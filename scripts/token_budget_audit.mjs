@@ -240,7 +240,11 @@ function main() {
     reports.push(`总降幅：${baseline.total_tokens} → ${current.total_tokens} tokens（${saved >= 0 ? '减' : '增'} ${Math.abs(saved * 100).toFixed(1)}%）`)
     if (saved + 1e-9 < target) {
       const gap = ((target - saved) * 100).toFixed(1)
-      const line = `目标降幅 ${(target * 100).toFixed(0)}% 未达成：当前 ${(saved * 100).toFixed(1)}%，还差 ${gap} 个百分点`
+      const floor = Number(conf.TOKEN_LOSSLESS_FLOOR_RATIO ?? 0)
+      const floorNote = floor > 0
+        ? `｜实测无损下限约 ${(floor * 100).toFixed(0)}%（约 ${Math.round(baseline.total_tokens * floor)} tokens）—— 越过下限必须删受保护内容，须书面裁决`
+        : ''
+      const line = `目标降幅 ${(target * 100).toFixed(0)}% 未达成：当前 ${(saved * 100).toFixed(1)}%，还差 ${gap} 个百分点${floorNote}`
       if (argv.includes('--enforce-target')) issues.push(line)
       else reports.push(`🎯 ${line}（未启用 --enforce-target，本项只报不判）`)
     } else {

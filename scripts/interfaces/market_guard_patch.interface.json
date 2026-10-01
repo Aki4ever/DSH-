@@ -1,0 +1,66 @@
+{
+  "id": "cli.rules.market_guard_patch",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/market_guard_patch.mjs",
+  "invoke": "node scripts/market_guard_patch.mjs",
+  "summary": "把市场插件 dshmarket「有任意 agent 在跑就拒绝安装」放宽为并发受理+留痕；可回滚、幂等、带写后回读与反向用例。REQ-093/R2。",
+  "inputs": [
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "判定：补丁标记 4/4、agentsBusy 残留 0、文件语法可解析"
+    },
+    {
+      "name": "--apply",
+      "type": "flag",
+      "required": false,
+      "desc": "打补丁（自动时间戳备份 + 写后必读回，校验不过即回滚）"
+    },
+    {
+      "name": "--revert",
+      "type": "flag",
+      "required": false,
+      "desc": "还原到最近一次备份"
+    },
+    {
+      "name": "--self-test",
+      "type": "flag",
+      "required": false,
+      "desc": "反向用例：在临时副本上验证能打上、判定认得出、回滚逐字节还原"
+    },
+    {
+      "name": "--target <路径>",
+      "type": "arg",
+      "required": false,
+      "desc": "显式指定目标文件（默认自动解析 profile 下的 dshmarket/lib/routes.js）"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "守卫块数 / 补丁标记数 / agentsBusy 残留数 / 语法校验 / 备份文件名"
+    }
+  ],
+  "exitCodes": {
+    "0": "已生效（或 apply/self-test 成功）",
+    "1": "未生效（安装仍会被 409 拒绝）或写后回读校验未过已回滚",
+    "2": "取不到证据（未找到目标文件 / 无备份可还原）"
+  },
+  "sideEffects": [
+    "改写 profile 内第三方产物 dshmarket/lib/routes.js，并在同目录留 .bak-*-market-guard 备份"
+  ],
+  "dependencies": [
+    "cli.rules.plugin_install_queue"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/market_guard_patch.mjs --check",
+    "node scripts/market_guard_patch.mjs --apply",
+    "node scripts/market_guard_patch.mjs --revert",
+    "node scripts/market_guard_patch.mjs --self-test"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

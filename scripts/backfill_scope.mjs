@@ -46,7 +46,7 @@ export function renderScopeSection(projectName, globalRoot = ROOT) {
 | 动作 | 本工程入口命令 | 全局规则权威载体（绝对路径，真实存在） |
 | :--- | :--- | :--- |
 | 首动改名（S05） | \`./scripts/control.sh naming\` | \`${g}/scripts/name_me.sh\` |
-| 累积门禁 G0~G4 | \`./scripts/control.sh check\` | \`${g}/scripts/control_gates.sh\` |
+| 累积门禁 G0~G6 | \`./scripts/control.sh check\` | \`${g}/scripts/control_gates.sh\` |
 | 底层物理锁阶梯 | \`./scripts/control.sh lock\` | \`${g}/scripts/physical_lock.sh\` |
 | S07 待办常显 | \`./scripts/control.sh todo\` | \`${g}/scripts/todo_gate.sh\` |
 | 需求版本贯通 | \`./scripts/control.sh version\` | \`${g}/scripts/req_version_audit.mjs\` |

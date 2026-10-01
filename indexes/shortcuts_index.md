@@ -7,41 +7,19 @@
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
 
-本文档是系统连接意图与规则落地的**高权重地图式导航枢纽**。参考工业级地图导航（如高德/Google Maps）的“高速干道优先、快速收敛、避免小道”算法，将全局规则体系抽象为**四级路网权重拓扑**。用户输入口令或日常指令时，智能体优先走高速干道，实现秒级直接收敛，彻底杜绝无序漫游。
+全局规则体系抽象为**四级路网权重拓扑**：命中口令走干道。
 
 ---
 
 ## 🗺️ 一、四级干道路网权重拓扑架构 (Road Network Hierarchy)
 
 ```text
-┌────────────────────────────────────────────────────────────────────────┐
-│                   🗺️ 地图式指令干道路由导航拓扑                        │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │ 用户意图输入
-                                    ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│ 🔴 [G0 级 · 特快高速公路 · 权重 100]                                   │
-│    - 系统全局元规则：rules/system/meta_rules.md                         │
-│    - 免审批安全红线法典：rules/security/security_baseline.md            │
-│    ★ 特性：0 延迟前置门禁，最高仲裁效力，高危指令绝对阻断                 │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │ 安全放行
-                                    ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│ 🔵 [G1 级 · 国道业务主干 · 权重 80]                                    │
-│    - 快速通道口令秒级直达（如下表字典，探➔攻➔归 极简闭环）               │
-│    - 六大核心业务管道分流：[R规 / F功 / D文 / S系 / O运 / Q测]          │
-│    - 需求台账双向对齐：docs/requirements.md                            │
-│    ★ 特性：高频业务优先走干线，零长流程空转，直接输出交付物              │
-└───────────────────┬────────────────────────────────┬───────────────────┘
-                    │ 遇到深度专业研发               │ 需翻阅冷门资产/模版
-                    ▼                                ▼
-┌──────────────────────────────────────┐  ┌──────────────────────────────┐
-│ 🟡 [G2 级 · 省道专业支线 · 权重 50]   │  │ 🟢 [G3 级 · 县道便道 · 权重 20]│
-│    - Unity 规范 / 原子性事务规约     │  │    - 标准模版 (templates/*)  │
-│    - 知识库三法典 (世界观/美术/工程) │  │    - 历史避坑 (lessons/*)    │
-│    ★ 特性：垂直领域精准召回          │  │    ★ 特性：按需只读一次，防漫游│
-└──────────────────────────────────────┘  └──────────────────────────────┘
+用户意图输入 → G0（安全放行）→ G1 → 遇深度专业研发走 G2；需翻冷门资产或模版走 G3
+
+🔴 G0 特快高速公路 · 权重 100：rules/system/meta_rules.md · rules/security/security_baseline.md —— 0 延迟门禁，最高仲裁，高危指令阻断
+🔵 G1 国道业务主干 · 权重 80：口令秒级直达（探➔攻➔归）；六大管道 [R规/F功/D文/S系/O运/Q测]；台账 docs/requirements.md 双向对齐 —— 高频走干线，零空转，直出交付
+🟡 G2 省道专业支线 · 权重 50：Unity 规范/原子性事务规约；知识库三法典 (世界观/美术/工程) —— 垂直召回
+🟢 G3 县道便道 · 权重 20：模版 (templates/*)；避坑 (lessons/*) —— 只读一次，防漫游
 ```
 
 ---
@@ -50,110 +28,100 @@
 
 | 快速口令 (示例) | 路由路网 | 命中意图 | 标准动作与数据源 | 结构化交互交付入口 (必给) |
 | :--- | :---: | :--- | :--- | :--- |
-| **“看看当前dsh体系能力”**<br>*(或“系统能力全景”)* | **G1 干线** | 召回 DSH 宿主基座全景架构 | 读取 [`indexes/dsh_capabilities.md`](dsh_capabilities.md) | 输出三层架构全景图，提供 Web 控制台入口：[http://127.0.0.1:50447](http://127.0.0.1:50447) |
-| **“查看规则全景”**<br>*(或“规则索引”)* | **G1 干线** | 召回所有规则与规范总图 | 读取 [`indexes/rules_index.md`](rules_index.md) | 输出分层规则表，提供源码入口：[`indexes/rules_index.md`](rules_index.md) |
-| **“安全红线”**<br>*(或“安全基线”)* | **G0 高速** | 查阅免审批环境八大红线 | 读取 [`rules/security/security_baseline.md`](../rules/security/security_baseline.md) | 输出八大阻断清单，提供入口：[`rules/security/security_baseline.md`](../rules/security/security_baseline.md) |
-| **“查看知识库”**<br>*(或“知识库总览”)* | **G2 支线** | 检阅世界观、美术与工程标准 | 读取 [`knowledge/README.md`](../knowledge/README.md) | 输出知识库总览，提供入口：[`knowledge/README.md`](../knowledge/README.md) |
-| **“unity规范”** | **G2 支线** | 查阅 Unity 目录与代码规范 | 读取 [`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) | 输出 Unity 目录与 .meta 铁律，提供入口：[`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md) |
-| **“原子性规范”** | **G2 支线** | 查阅操作与设计原子性清单 | 读取 [`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) | 输出操作级与设计级事务清单，提供入口：[`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md) |
-| **“避坑经验”** | **G3 辅道** | 查阅排查沉淀的避坑认知 | 读取 [`memory/lessons_learned.md`](../memory/lessons_learned.md) | 输出避坑指引，提供入口：[`memory/lessons_learned.md`](../memory/lessons_learned.md) |
-| **“全域有没有脱管”**<br>*(或“其他工程服从管控了吗”)* | **G1 干线** | 判定全域 DSH 工程是否 100% 纳入管控机制 | 实跑 `node scripts/scope_audit.mjs --check` | 输出各工程四类事实（入口/引用/留痕/版本）覆盖 x/y，提供入口：[`scripts/scope_audit.mjs`](../scripts/scope_audit.mjs) |
-| **“需求版本对得上吗”**<br>*(或“版本贯通判定”)* | **G1 干线** | 需求文案 ↔ 台账 ↔ 载体 ↔ 回复四处对拍 | 实跑 `node scripts/req_version_audit.mjs --check` | 输出四处版本号与差异，提供入口：[`scripts/req_version_audit.mjs`](../scripts/req_version_audit.mjs) |
-| **“外部工程推送闭环没”**<br>*(或“还有没推送的工程吗”)* | **G1 干线** | 逐工程核验远程/待推送/推没推成 | 实跑 `bash scripts/push_external_projects.sh` | 输出每个工程的闭环状态与补配置命令，提供入口：[`scripts/push_external_projects.sh`](../scripts/push_external_projects.sh) |
-| **“有没有空架子/幻觉”**<br>*(或“悬空引用清理”)* | **G1 干线** | 治理文档引用真实性 + 机制通电凭据 | 实跑 `node scripts/anti_hallucination_audit.mjs --check` | 输出悬空引用清单与通电凭据，提供入口：[`scripts/anti_hallucination_audit.mjs`](../scripts/anti_hallucination_audit.mjs) |
-| **“检查输出精简”**<br>*(或“回复啰不啰嗦”)* | **G2 支线** | 判定最近一轮回复的体量与文末结构 | 实跑 `node scripts/output_audit.mjs --check`（证据源为宿主会话转录） | 输出体量/行数/五联装齐备性与退出码，提供入口：[`scripts/output_audit.mjs`](../scripts/output_audit.mjs) |
-| **“检查接口覆盖”**<br>*(或“执行层有接口吗”)* | **G2 支线** | 核查执行层是否都有 OOP 式接口契约 | 实跑 `node scripts/check_layer_interfaces.mjs --coverage` | 输出分层接口覆盖率（与名字覆盖率分开报），入口：[`knowledge/common/execution_layer_interface_spec.md`](../knowledge/common/execution_layer_interface_spec.md) |
-| **“规划执行路线”**<br>*(或“这个能力怎么调更高效”)* | **G1 干线** | 命中执行层后给出调配方案（依赖/并行/锁冲突/失败回退） | 实跑 `node scripts/route_plan.mjs "<意图>"` | 输出命中条目 + 调用命令 + 建议批次 + 回退命令；未命中必须显式报未命中，入口：[`scripts/route_plan.mjs`](../scripts/route_plan.mjs) |
-| **“这个任务要哪些执行层”**<br>*(或“任务执行层树/执行层树状图”)* | **G1 干线** | 把完成某任务所需的执行层装配成**可视图树** | 实跑 `node scripts/task_layer_tree.mjs "<任务意图>"`（出图追加 `--png <基名>`） | 输出文本树 + Mermaid + SVG/PNG，逐节点标注实体是否在位；悬空节点即判红，入口：[`scripts/task_layer_tree.mjs`](../scripts/task_layer_tree.mjs) |
-| **“并发调度”**<br>*(或“并行派单/防死锁/有界并发”)* | **G1 干线** | 管家**有界并发**派单：先证可并行，冲突/死锁环/活锁一律拒单 | 实跑 `node scripts/butler_scheduler.mjs --plan <tasks.jsonl>`（真派单用 `--run`） | 输出波次计划，或拒单原因与证据；并发上界 4，超界即拒，入口：[`scripts/butler_scheduler.mjs`](../scripts/butler_scheduler.mjs) |
-| **“插件安装排队没”**<br>*(或“安装市场插件/插件并发”)* | **G1 干线** | 插件安装**并发受理 + 冲突域排队 + 进度可见**，杜绝"等任务空闲"式无界等待 | 实跑 `node scripts/plugin_install_queue.mjs list` 或 `probe` | 输出队列状态与被市场守卫（`agentsBusy`）拒绝的实证留痕，入口：[`scripts/plugin_install_queue.mjs`](../scripts/plugin_install_queue.mjs) |
-| **“技能有没有载体”**<br>*(或“空架子技能/技能物理触达”)* | **G1 干线** | 技能层 178 条逐条判**有无可执行载体** | 实跑 `node scripts/skill_carrier_audit.mjs --check` | 输出载体分布（自带/组合/引用/父门禁接管）与未豁免硬缺口清单，入口：[`scripts/skill_carrier_audit.mjs`](../scripts/skill_carrier_audit.mjs) |
-| **“管控机制瘦身”**<br>*(或“压缩管控篇幅/token 用量”)* | **G2 支线** | 管控机制**篇幅与 token 预算**：能力等价 + 只许减不许涨 | 实跑 `node scripts/token_budget_audit.mjs --check` | 输出逐文件 token 与总降幅、目标缺口；目标未达标如实显示不折算，入口：[`scripts/token_budget_audit.mjs`](../scripts/token_budget_audit.mjs) |
-| **“任务列表面板在跑吗”**<br>*(或“逐条进度/完成打钩面板”)* | **G1 干线** | 判定任务列表面板（逐条进度 + 完成打钩）是否真的触达物理层 | 实跑 `node scripts/todo_panel_audit.mjs --check` | 输出载体三项核验与**真实渲染的逐条打钩面板**（行为断言，不查字符串），入口：[`scripts/todo_panel_audit.mjs`](../scripts/todo_panel_audit.mjs) |
-| **“生态扩展”** | **G1 干线** | 查阅外部智能体扩展生态 | 读取 [`indexes/extension_ecosystem.md`](extension_ecosystem.md) | 输出 MCP / Skills / CLI / API 矩阵，提供入口：[`indexes/extension_ecosystem.md`](extension_ecosystem.md) |
-| **“生成图表”** | **G1 干线** | 查阅图表标准与决策树 | 读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) | 输出五大图表模版，提供入口：[`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) |
-| **“生成图片 <描述>”** | **G1 干线** | 用图像模型按描述创作图片（非手绘信息图） | 执行 [`scripts/generate_image.py`](../scripts/generate_image.py) | 自动生图，输出 `![描述](路径)` 并附带可点击打开链接 |
-| **“快速体检”** | **G1 干线** | 执行工程健康度巡检 | 执行 [`scripts/rename_session.sh`](../scripts/rename_session.sh) 并巡检 Git | 输出工作区与版本对齐报告，提供 Git 状态回执 |
-| **“磁盘体检”**<br>*(或“清理垃圾/释放空间”)* | **G1 干线** | 检查磁盘水位与清理 DSH 临时垃圾 | 执行 [`scripts/disk_check_and_cleanup.sh`](../scripts/disk_check_and_cleanup.sh) `--clean` | 输出释放容量、当前水位报告与白名单保护状态 |
-| **“资产指纹”**<br>*(或“新鲜度雷达/指纹审计”)* | **G1 干线** | 扫描全域资产新鲜度与数字指纹 | 执行 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh) `--freshness` | 输出资产新鲜度三级雷达看盘与落后清单 |
-| **“远程同步”**<br>*(或“提交并推送/git同步”)* | **G1 干线** | 触发任务收尾远程 Git 强同步 | 执行 [`scripts/git_sync_remote.sh`](../scripts/git_sync_remote.sh) `<ID> <Title> <Summary>` | 自动探针、未配置自动开页引导、输出远程 Commit-Hash |
-| **“调度锁”**<br>*(或“资源锁/防冲突/排队看盘”)* | **G1 干线** | 查看当前全局资源锁占用大盘与自愈清理 | 执行 [`scripts/global_scheduler_lock.sh`](../scripts/global_scheduler_lock.sh) `--status` | 输出活跃排他锁清单、持有任务、超时判定与防打架调度策略 |
-| **“门禁看板”**<br>*(或“闸门状态/门禁状态”)* | **G1 干线** | **只看门禁**：四道门禁当前是否全过 | 执行 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `check` | 输出量化看板（G1~G4 状态 + 指标 + 卡点） |
-| **“看看管控机制”**<br>*(或“管控机制全貌/管控机制/机制全貌”)* | **G1 干线** | **看机制全貌**：门禁 + 双检 + 存量校准 + 通道清单 | 依次执行 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `check`、[`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs) | 输出机制全貌卡：四道门各查什么与当前状态、双检与存量校准实测数字、十六步强制/建议统计、当前通道清单、四层分工与载体路径。**数字必须来自本次实跑** |
-| **“看图学管控”**<br>*(或“管控出图/一图看懂管控/出管控图”)* | **G1 干线** | **用一张图**看懂四道门禁现在什么状态、每道门在查什么 | 执行 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `graph`（默认输出 `ai-control/reports/gate_graph.svg`） | 输出状态驱动 SVG：四道门一行一道（状态色 + 指标 + 大白话说明 + 卡点），数据来自本次实跑；自 2026-09-23 起可用。**图不落版本库**（该目录已被忽略），需长期保存时用 `DSH_CONTROL_GRAPH_OUT=<路径>` 指定 |
-| **“流程管控”**<br>*(或“流程一致性/流程顺序/迭代台账/物理进度/独立复核”)* | **G1 干线** | **看真实物理进度**：顺序是否最优且一致、改动是否都有记录、复核是否独立通过 | 依次执行 [`scripts/flow_control.mjs`](../scripts/flow_control.mjs) `--check`、[`scripts/progress_ledger.mjs`](../scripts/progress_ledger.mjs) `check`、[`scripts/process_supervisor.mjs`](../scripts/process_supervisor.mjs) `--fast` | 输出三张回执：① 流程管控层一致性（批次数 / 五条不变式 / 顺序是否需重批）；② 迭代台账（哈希漂移 / 未记录改动 / 判定失败，**只认磁盘哈希与退出码**）；③ 流程监督员独立复核表（硬项全绿才允许结项） |
-| **“查啰嗦”**<br>*(或“冗余检测/重复内容”)* | **G1 干线** | 检出同一内容被写两遍 | 执行 [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs) `--root .` | 输出高相似块对清单；有重复则合并为迭代版本 |
-| **“查打架”**<br>*(或“冲突检测/自相矛盾”)* | **G1 干线** | 检出同一事实两种说法（版本/计数/指标/标识/死链） | 执行 [`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs) `--root .` | 输出冲突清单与裁决建议；**先裁决再改，禁止自行取舍** |
-| **“存量校准”**<br>*(或“遇碰即对齐/对齐清单”)* | **G1 干线** | 检查存量资产是否跟上新规范 | 执行 [`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs) `--root .` | 输出待对齐清单；须清零或书面说明原因 |
-| **“通道审计”**<br>*(或“通道体检/快速通道检查”)* | **G1 干线** | 检查快速通道表是否有死通道、说法是否还能命中 | 执行 [`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs) `--root .` | 输出通道数、死链清单、命中自检结果与触发词冲突清单 |
-| **“手写图上屏”**<br>*(或“SVG 出图/精确栅格化”)* | **G1 干线** | 把手写 SVG 精确渲染为 PNG | 执行 [`scripts/generate_image.py`](../scripts/generate_image.py)（`--svg <文件.svg>`，内部走 [`scripts/svg2png.sh`](../scripts/svg2png.sh)） | 输出与设计尺寸一致的 PNG，保留原始排版与配色 |
-| **“生成信息图 <主题>”**<br>*(或“出信息图/画信息图/画机制图”)* | **G1 干线** | **任何主题**的信息图或教学图：按教学图生成机制产出图片 | 读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) 选型 → 取料 → 绘 SVG → 执行 [`scripts/generate_image.py`](../scripts/generate_image.py) `--svg` 栅格化 → 登记指针 | 输出 SVG + PNG 两个文件路径与可点击入口；机制类信息图复用 [`assets/generated_images/gcm_gate_control_infographic.svg`](../assets/generated_images/gcm_gate_control_infographic.svg) 版式并更新为实测数据 |
-| **“给我入口”**<br>*(或“入口/交付入口/产出入口”)* | **G0 高速** | 秒级输出当前任务交付入口或全域核心入口 | 执行 [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) `--entry` | 提取当前改动资产与系统核心中枢，输出 Markdown 结构化直达链接卡 |
-| **“版本号”**<br>*(或“查看版本号/当前版本/查版本”)* | **G0 高速** | 秒级获取系统与管控机制当前实施总版本 | 读取 [`docs/requirements.md`](../docs/requirements.md) 与 [`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md) | 单行秒回当前系统实施总版本号、Git HEAD 与最新需求生效编号 |
-| **“给出文案”**<br>*(或“生成文案/提炼文案/整理需求/需求文案”)* | **G0 高速** | 将口语想法极速提炼为标准化、便于执行的PRD需求文案 | 读取 [`templates/requirement_template.md`](../templates/requirement_template.md) 并执行意图解构 | 输出标准PRD结构卡片，首屏置顶方案规划态声明，末尾附带实施确认指令 |
-| **“可读性规范”**<br>*(或“排版设计标准/字体字号规范”)* | **G1 干线** | 查阅全端(Web/DMG/App/小程序)可读性与字号排版标准 | 读取 [`knowledge/common/readability_specification.md`](../knowledge/common/readability_specification.md) | 输出全端跨端字号阶梯、最小文字绝对底线与无障碍对比度基线卡片 |
-| **“地图导航 <能力/目标>”**<br>*(或“能力导航/路线规划”)* | **G1 干线** | 索引命中后生成起点至终点的地图式导航路线 | 执行 [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) `<目标>` | 输出起点、途径门禁/配置、终点执行落地点与避坑路况提示卡 |
-| **“项目初始化”**<br>*(或“初始化项目/立项初始化”)* | **G0 高速** | 快速生成项目结构、骨架防丢文件与基础版本 | 执行 [`scripts/init_project.sh`](../scripts/init_project.sh) `[项目路径]` | 秒级生成目录四件套与需求台账，固化 v1.0.0 基础版本基线并输出状态回执 |
-| **“专业档输出”**<br>*(或“详细技术版/面向专业人士”）* | **G1 干线** | 把答复从默认浅白档切到专业档（术语与实现细节可展开） | 读取 [`rules/system/output_standard.md`](../rules/system/output_standard.md) `§三 双档输出` | 首屏出现唯一档位标记 `⚙️ 专业档`；档位标记缺失或重复即判红，判定入口 `node scripts/output_audit.mjs --check` |
-| **“一键重启”**<br>*(或“重启DSH/重启宿主”）* | **G1 干线** | 查“重启按钮”是否可用，并给出真机验收步骤 | 执行 [`skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs`](../skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs) | 输出 84 项打桩自检回执 + 真机验收口径（重启前后宿主 PID 必须不同）；**执行者不得自行重启**，只能由人点一次 |
-
+|**“看看当前dsh体系能力”**（“系统能力全景”）|G1干线|召回 DSH 宿主基座全景架构|读取 [`indexes/dsh_capabilities.md`](dsh_capabilities.md)|[http://127.0.0.1:50447](http://127.0.0.1:50447)|
+|**“查看规则全景”**（“规则索引”）|G1干线|召回所有规则与规范总图|读取 [`indexes/rules_index.md`](rules_index.md)|
+|**“安全红线”**（“安全基线”）|G0高速|查阅免审批环境八大红线|读取 [`rules/security/security_baseline.md`](../rules/security/security_baseline.md)|
+|**“查看知识库”**（“知识库总览”）|G2支线|检阅世界观、美术与工程标准|读取 [`knowledge/README.md`](../knowledge/README.md)|
+|**“unity规范”**|G2支线|查阅 Unity 目录与代码规范|读取 [`rules/coding/unity_project_standard.md`](../rules/coding/unity_project_standard.md)|
+|**“原子性规范”**|G2支线|查阅操作与设计原子性清单|读取 [`rules/coding/atomicity_specification.md`](../rules/coding/atomicity_specification.md)|
+|**“避坑经验”**|G3辅道|查阅避坑认知沉淀|读取 [`memory/lessons_learned.md`](../memory/lessons_learned.md)|
+|**“全域有没有脱管”**（“其他工程服从管控了吗”）|G1干线|判定全域 DSH 工程 100% 纳入管控|实跑 [`node scripts/scope_audit.mjs --check`](../scripts/scope_audit.mjs)|
+|**“需求版本对得上吗”**（“版本贯通判定”）|G1干线|需求文案 ↔ 台账 ↔ 载体 ↔ 回复四处对拍|实跑 [`node scripts/req_version_audit.mjs --check`](../scripts/req_version_audit.mjs)|
+|**“外部工程推送闭环没”**（“还有没推送的工程吗”）|G1干线|逐工程核验远程/待推送/推没推成|实跑 [`bash scripts/push_external_projects.sh`](../scripts/push_external_projects.sh)|
+|**“有没有空架子/幻觉”**（“悬空引用清理”）|G1干线|治理文档引用真实性+机制通电凭据|实跑 [`node scripts/anti_hallucination_audit.mjs --check`](../scripts/anti_hallucination_audit.mjs)|
+|**“检查输出精简”**（“回复啰不啰嗦”）|G2支线|判定最近一轮回复的体量与文末结构|实跑 [`node scripts/output_audit.mjs --check`](../scripts/output_audit.mjs)（证据源为宿主会话转录）|
+|**“检查接口覆盖”**（“执行层有接口吗”）|G2支线|核查执行层有无 OOP 式接口契约|实跑 [`node scripts/check_layer_interfaces.mjs --coverage`](../scripts/check_layer_interfaces.mjs)|[`knowledge/common/execution_layer_interface_spec.md`](../knowledge/common/execution_layer_interface_spec.md)|
+|**“规划执行路线”**（“这个能力怎么调更高效”）|G1干线|命中执行层后给出调配方案（依赖/并行/锁冲突/失败回退）|实跑 [`node scripts/route_plan.mjs "<意图>"`](../scripts/route_plan.mjs)|
+|**“这个任务要哪些执行层”**（“任务执行层树/执行层树状图”）|G1干线|把任务所需执行层装配成可视图树|实跑 [`node scripts/task_layer_tree.mjs "<任务意图>"`](../scripts/task_layer_tree.mjs)（出图追加 `--png <基名>`）|
+|**“并发调度”**（“并行派单/防死锁/有界并发”）|G1干线|有界并发派单：先证可并行，冲突/死锁/活锁一律拒单|实跑 [`node scripts/butler_scheduler.mjs --plan <tasks.jsonl>`](../scripts/butler_scheduler.mjs)（真派单用 `--run`）|
+|**“插件安装排队没”**（“安装市场插件/插件并发”）|G1干线|插件安装并发受理+冲突域排队+进度可见，杜绝无界等待|实跑 [`node scripts/plugin_install_queue.mjs list`](../scripts/plugin_install_queue.mjs) 或 `probe`|`agentsBusy`|
+|**“技能有没有载体”**（“空架子技能/技能物理触达”）|G1干线|技能层 178 条逐条判有无可执行载体|实跑 [`node scripts/skill_carrier_audit.mjs --check`](../scripts/skill_carrier_audit.mjs)|
+|**“管控机制瘦身”**（“压缩管控篇幅/token 用量”）|G2支线|能力等价+只许减不许涨（篇幅与 token 预算）|实跑 [`node scripts/token_budget_audit.mjs --check`](../scripts/token_budget_audit.mjs)|
+|**“任务列表面板在跑吗”**（“逐条进度/完成打钩面板”）|G1干线|判定任务列表面板（逐条进度+完成打钩）是否触达物理层|实跑 [`node scripts/todo_panel_audit.mjs --check`](../scripts/todo_panel_audit.mjs)|
+|**“生态扩展”**|G1干线|查阅外部智能体扩展生态|读取 [`indexes/extension_ecosystem.md`](extension_ecosystem.md)|
+|**“生成图表”**|G1干线|查阅图表标准与决策树|读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md)|
+|**“生成图片 <描述>”**|G1干线|用图像模型按描述创作图片（非手绘信息图）|执行 [`scripts/generate_image.py`](../scripts/generate_image.py)|`![描述](路径)`|
+|**“快速体检”**|G1干线|执行工程健康度巡检|执行 [`scripts/rename_session.sh`](../scripts/rename_session.sh) 并巡检 Git|
+|**“磁盘体检”**（“清理垃圾/释放空间”）|G1干线|检查磁盘水位与清理 DSH 临时垃圾|执行 [`scripts/disk_check_and_cleanup.sh`](../scripts/disk_check_and_cleanup.sh) `--clean`|
+|**“资产指纹”**（“新鲜度雷达/指纹审计”）|G1干线|扫描全域资产新鲜度与数字指纹|执行 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh) `--freshness`|
+|**“远程同步”**（“提交并推送/git同步”）|G1干线|触发任务收尾远程 Git 强同步|执行 [`scripts/git_sync_remote.sh`](../scripts/git_sync_remote.sh) `<ID> <Title> <Summary>`|
+|**“调度锁”**（“资源锁/防冲突/排队看盘”）|G1干线|查看全局资源锁占用大盘与自愈清理|执行 [`scripts/global_scheduler_lock.sh`](../scripts/global_scheduler_lock.sh) `--status`|
+|**“门禁看板”**（“闸门状态/门禁状态”）|G1干线|四道门禁是否全过|执行 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `check`|
+|**“看看管控机制”**（“管控机制全貌/管控机制/机制全貌”）|G1干线|门禁+双检+存量校准+通道清单|依次 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `check`、[`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs)、[`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs)、[`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs)|
+|**“看图学管控”**（“管控出图/一图看懂管控/出管控图”）|G1干线|看懂四道门禁状态与各门查什么|执行 [`scripts/control_gates.sh`](../scripts/control_gates.sh) `graph`（默认输出 `ai-control/reports/gate_graph.svg`）|`DSH_CONTROL_GRAPH_OUT=<路径>`|
+|**“流程管控”**（“流程一致性/流程顺序/迭代台账/物理进度/独立复核”）|G1干线|看真实物理进度：顺序是否最优一致、改动是否都有记录、复核是否独立通过|依次 [`scripts/flow_control.mjs`](../scripts/flow_control.mjs) `--check`、[`scripts/progress_ledger.mjs`](../scripts/progress_ledger.mjs) `check`、[`scripts/process_supervisor.mjs`](../scripts/process_supervisor.mjs) `--fast`|
+|**“查啰嗦”**（“冗余检测/重复内容”）|G1干线|检出同一内容被写两遍|执行 [`scripts/redundancy_scan.mjs`](../scripts/redundancy_scan.mjs) `--root .`|
+|**“查打架”**（“冲突检测/自相矛盾”）|G1干线|检出同一事实两种说法（版本/计数/指标/标识/死链）|执行 [`scripts/conflict_scan.mjs`](../scripts/conflict_scan.mjs) `--root .`|
+|**“存量校准”**（“遇碰即对齐/对齐清单”）|G1干线|检查存量资产是否跟上新规范|执行 [`scripts/legacy_align_scan.mjs`](../scripts/legacy_align_scan.mjs) `--root .`|
+|**“通道审计”**（“通道体检/快速通道检查”）|G1干线|检查通道表有无死通道、说法能否命中|执行 [`scripts/channel_audit.mjs`](../scripts/channel_audit.mjs) `--root .`|
+|**“手写图上屏”**（“SVG 出图/精确栅格化”）|G1干线|把手写 SVG 精确渲染为 PNG|执行 [`scripts/generate_image.py`](../scripts/generate_image.py)（`--svg <文件.svg>`，内部走 [`scripts/svg2png.sh`](../scripts/svg2png.sh)）|
+|**“生成信息图 <主题>”**（“出信息图/画信息图/画机制图”）|G1干线|任何主题的信息图或教学图：按教学图机制产出|读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md) 选型 → 取料 → 绘 SVG → 执行 [`scripts/generate_image.py`](../scripts/generate_image.py) `--svg` 栅格化 → 登记指针|[`assets/generated_images/gcm_gate_control_infographic.svg`](../assets/generated_images/gcm_gate_control_infographic.svg)|
+|**“给我入口”**（“入口/交付入口/产出入口”）|G0高速|秒级输出当前任务或全域核心入口|执行 [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) `--entry`|
+|**“版本号”**（“查看版本号/当前版本/查版本”）|G0高速|秒级获取系统与管控机制实施总版本|读取 [`docs/requirements.md`](../docs/requirements.md) 与 [`ai-control/requirements/control_requirements_ledger.md`](../ai-control/requirements/control_requirements_ledger.md)|
+|**“给出文案”**（“生成文案/提炼文案/整理需求/需求文案”）|G0高速|将口语想法提炼为可执行的 PRD 需求文案|读取 [`templates/requirement_template.md`](../templates/requirement_template.md) 并执行意图解构|
+|**“可读性规范”**（“排版设计标准/字体字号规范”）|G1干线|查阅全端 (Web/DMG/App/小程序) 可读性与字号排版标准|读取 [`knowledge/common/readability_specification.md`](../knowledge/common/readability_specification.md)|
+|**“地图导航 <能力/目标>”**（“能力导航/路线规划”）|G1干线|索引命中后生成起点至终点的地图式导航路线|执行 [`scripts/route_navigate.mjs`](../scripts/route_navigate.mjs) `<目标>`|
+|**“项目初始化”**（“初始化项目/立项初始化”）|G0高速|快速生成项目结构、骨架防丢文件与基础版本|执行 [`scripts/init_project.sh`](../scripts/init_project.sh) `[项目路径]`|
+|**“专业档输出”**（“详细技术版/面向专业人士”）|G1干线|把答复从浅白档切到专业档（术语与实现细节可展开）|读取 [`rules/system/output_standard.md`](../rules/system/output_standard.md) `§三 双档输出`|`⚙️ 专业档` `node scripts/output_audit.mjs --check`|
+|**“一键重启”**（“重启DSH/重启宿主”）|G1干线|查“重启按钮”是否可用，并给出真机验收步骤|执行 [`skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs`](../skill-pool/plugins/dsh-plugin-restart/verify_restart_button.cjs)|
 ---
 
 ## 🧩 二之一、快速通道注册规范 (Channel Registration Standard)
 
-本节回答一个过去没人管的问题：**新增一条通道，怎样才算登记合格？** 通道表是快速通道的唯一权威源，
-其余文件只允许写指针（例如 [`rules/workflow/component_naming.md`](../rules/workflow/component_naming.md) 只写"详见快速通道总表"），禁止复制通道内容。
+本节定规：**新增通道怎样才算登记合格？** 通道表是唯一权威源，其余文件只写指针（如 [`rules/workflow/component_naming.md`](../rules/workflow/component_naming.md) 只写"详见快速通道总表"）。
 
 ### 1. 触发词规则
 
 | 规则 | 要求 |
 | :--- | :--- |
-| 长度 | **≤ 12 个汉字**，一眼记住、张口能说（由通道审计器检查） |
-| 唯一性 | 不得与既有通道重名，也不得一个名字包含另一个（如"门禁看板"与"看板"），否则说法会歧义 |
-| 别名 | 允许挂 1~2 个同义说法，写法为"主触发词 + *(或"别名")*" |
-| 命名偏好 | 动宾结构短语（"看看管控机制""生成信息图"），避免单字或纯名词 |
-| 宽触发原则 | **高度相关的说法都应能命中**（如"帮我看一下管控机制"）；命中判定为主名称优先于别名，详见 §2 |
+|长度|**≤ 12 汉字**，好记好说（审计器查）|
+|唯一性|不得重名或一名含另一名（如"门禁看板"与"看板"）|
+|别名|允许 1~2 个同义说法，写作"主触发词"（"别名"）|
+|命名偏好|动宾结构，忌单字/纯名词|
+|宽触发|相关说法均应命中（如"帮我看一下管控机制"）；主名称优先，详见 §2|
 
 ### 2. 执行契约（每条通道必须写清四件事，缺一不可）
 
-1. **路由层级**：G0 高速 / G1 干线 / G2 支线 / G3 辅道；
-2. **命中后做什么**：要跑的脚本或要读的文件——**必须写成 Markdown 链接**，不能只写一行反引号命令，
-   否则通道无法被自动校验（这是"可点击、可校验"的硬要求）；
-3. **输出什么**：交付物形态（看板 / 清单 / 图片 / 报告）；
-4. **落地条件**：目标文件真实存在，由通道审计器自动核对。
+路由层级（G0 高速/G1 干线/G2 支线/G3 辅道）· 命中后做什么（脚本或文件**必须写成 Markdown 链接**，不能只写反引号命令，否则无法自动校验）· 输出什么（交付物形态：看板/清单/图片/报告）· 落地条件（目标文件真实存在，由通道审计器核对）。
 
 ### 3. 语义重叠的分工口径（用户已裁决：方案甲）
 
-"门禁看板"与"看看管控机制"有重叠，**两条并存**，分工如下：
+"门禁看板"与"看看管控机制"**两条并存**：
 
 | 通道 | 定位 | 差别 |
 | :--- | :--- | :--- |
-| **门禁看板** | **只看门禁** | 只跑四道门禁判定，回答"现在能不能动手"，最轻最快 |
-| **看看管控机制** | **看机制全貌** | 门禁 + 双检 + 存量校准 + 通道清单，回答"这套机制现在什么状态" |
+|**门禁看板**|只看门禁|只跑四道门禁，答"能否动手"|
+|**看看管控机制**|看机制全貌|门禁+双检+存量校准+通道清单，答"机制现状"|
 
-> 因此"管控机制"这个说法归属"看看管控机制"（主名称优先），它不再作为"门禁看板"的别名。
+> "管控机制"归"看看管控机制"（主名称优先），不再作"门禁看板"别名。
 
 ### 4. 注册与退役流程
 
-- **注册**：走 `rules/workflow/change_flow.md` 的"流程入驻四道审计" → 在本表新增一行（动作目标必须带链接）→ 登记 `docs/requirements.md`；
-- **退役**：目标文件已不存在、或功能已被合并时，**必须删除该行**，禁止留死通道；
-- **自检**：每次改动通道表后执行
+- **注册**：走 `rules/workflow/change_flow.md` "流程入驻四道审计" → 本表加一行（动作目标带链接）→ 登记 `docs/requirements.md`；
+- **退役**：目标不存在或功能已合并**必须删除该行**，禁止留死通道；
+- **自检**：
 
 ```bash
-node scripts/channel_audit.mjs --root .      # 通道审计：死链 / 说法能否命中 / 触发词冲突
-node scripts/channel_audit.mjs --self-test   # 正反例自检，确认判定能力没被改坏
+node scripts/channel_audit.mjs --root .
+node scripts/channel_audit.mjs --self-test
 ```
-
 ---
 
 ## 🧭 三、干道路由命中与收敛算法 (Arterial Convergence Algorithm)
 
-1. **高权重干道直达 (Shortest Arterial Route)**：
-   - 当用户指令明确命中 G0/G1 范畴时，智能体**仅走主干道**，严禁在 G2/G3 层级反复遍历盲读无关文件；
-2. **渐进式支路下探 (Progressive Off-ramp)**：
-   - 只有当任务涉及深度专业领域（如 Unity 开发、架构事务拆解）时，才从 G1 出口下探至 G2 专业支线；
-3. **交付物必带交互入口 (Delivery-as-an-Entrypoint)**：
-   - 无论走哪级路由，任务最终交付必须包含标准可点击直达入口，杜绝“交付无入口、查找靠翻找”。
+1. **高权重干道直达**：命中 G0/G1 时仅走主干道，禁在 G2/G3 盲读；
+2. **渐进式支路下探**：仅当任务涉深度专业领域（如 Unity 开发、事务拆解）才下探 G2；
+3. **交付物必带交互入口**：无论走哪级路由，交付必须含可点击直达入口，杜绝"交付无入口"。
 
 ---
 
@@ -161,8 +129,7 @@ node scripts/channel_audit.mjs --self-test   # 正反例自检，确认判定能
 
 | 意图与任务特征 | 难度分 | 路由通道 | 必走/豁免关键点 |
 | :--- | :---: | :---: | :--- |
-| **纯查询/参数读取/口令检索** | $\le 20$ 分 | **⚡ Fast Track** | 免改名、免 todo_write、免四维大表，直出结论 |
-| **单文件文字微调/拼写修补** | $20\sim35$ 分 | **⚡ Fast Track** | 免重命名与独立测试脚本，`read` 读回自验即交付 |
-| **规则新增/核心逻辑重大修改** | $40\sim70$ 分 | **🚨 Hard Line** | 首动改名、前置审查、风险评估卡、todo_write、测试门禁、升版 |
-| **跨系统重构/代码研发/版本发布** | $> 70$ 分 | **🚨 Hard Line** | 严格十六步全工序闭环、自动化测试 100% 绿灯、三位一体强同步 |
-
+|**纯查询/参数读取/口令检索**|$\le 20$ 分|**⚡ Fast Track**|免改名、免 todo_write、免四维大表，直出结论|
+|**单文件文字微调/拼写修补**|$20\sim35$ 分|**⚡ Fast Track**|免重命名与测试脚本，`read` 读回自验即交付|
+|**规则新增/核心逻辑重大修改**|$40\sim70$ 分|**🚨 Hard Line**|首动改名、前置审查、风险评估卡、todo_write、测试门禁、升版|
+|**跨系统重构/代码研发/版本发布**|$> 70$ 分|**🚨 Hard Line**|十六步全工序闭环、自动化测试 100% 绿灯、三位一体强同步|

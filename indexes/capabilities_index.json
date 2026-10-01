@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T22:20:40.727Z",
+  "generatedAt": "2026-10-01T22:38:35.124Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
   "total": 266,
@@ -10,7 +10,7 @@
     "插件 (Plugin)": 4,
     "脚本 (CLI)": 83
   },
-  "withInterface": 262,
+  "withInterface": 263,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -2125,7 +2125,7 @@
       "desc": "",
       "invoke": "bash scripts/plugin_reload.sh",
       "invokeKind": "cli",
-      "interface": null
+      "interface": "scripts/interfaces/plugin_reload.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

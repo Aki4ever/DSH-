@@ -241,8 +241,18 @@ function cmdProbe() {
   console.log(`日志：${p.logPath}（${p.total} 行）`)
   console.log(`安装/更新事件 ${p.installs} 条 · 被守卫拒绝 ${p.blocked.length} 条`)
   for (const b of p.blocked) console.log(`   · ${b.at} ${b.event}：${String(b.detail).slice(0, 140)}`)
+  // 守卫补丁现状：**委托** scripts/market_guard_patch.mjs 判定，本脚本不复制第二套判据
+  let guard = 'unknown'
+  try {
+    const r = execFileSync(process.execPath, [path.join(ROOT, 'scripts/market_guard_patch.mjs'), '--check'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
+    guard = /已生效/.test(r) ? 'patched' : 'not-patched'
+  } catch (error) {
+    guard = (error && error.status === 2) ? 'not-installed' : 'not-patched'
+  }
   console.log('-----------------------------------------')
-  console.log(p.blocked.length ? '⚠️ 存在"因有会话在跑而拒绝安装"的实证留痕' : '✅ 未发现被守卫拒绝的留痕')
+  console.log(`守卫补丁现状：${{ patched: '✅ 已生效（忙不再拒绝，只留痕放行）', 'not-patched': '⛔ 未生效（安装仍会被 409 拒绝）', 'not-installed': '— 未安装该市场插件', unknown: '— 未知' }[guard]}`)
+  console.log(`  补课/还原：node scripts/market_guard_patch.mjs --apply | --check | --revert`)
+  console.log(p.blocked.length ? '⚠️ 上面是**历史**被拒留痕（补丁生效前的记录，保留作为根因证据）' : '✅ 未发现被守卫拒绝的留痕')
   return 0
 }
 
