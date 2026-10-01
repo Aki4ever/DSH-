@@ -37,6 +37,8 @@ import { evaluatePhysicalLock, getLockState, advanceLockTo, STAGES } from '../..
 import { checkTodoGate, recordTodoWriteSync, resolveTodoEvidenceSync, summarize } from '../../scripts/lib/todo_tracker.mjs'
 import { buildCompactReport, writeCompactReport } from '../../scripts/lib/output_compactness.mjs'
 import { isHostProcess as isHostProcessImpl } from '../lib/host_identity.mjs'
+// REQ-095：会话消息来源（source）合规 —— 唯一权威源，禁止手写字面量
+import { producerOwnedSource, auditSource, V4_SOURCE_ERROR_TEXT } from '../../scripts/lib/session_source.mjs'
 // REQ-092 / R1-d：全域覆盖快照读取（唯一真相源仍是全局规则的 scope_audit.mjs）
 import { readScopeSnapshot } from '../../scripts/scope_audit.mjs'
 
@@ -128,6 +130,9 @@ export const Config = {
     'scripts/progress_ledger.mjs',
     'scripts/output_audit.mjs',
     'scripts/todo_gate.sh',
+    // 2026-10-02 补（REQ-095，同类自锁第四次）：会话来源合规审计器是**只读判定器**，
+    // 而它要拦的正是"插件产出把整轮判失败"这一类故障；门禁红时最需要它上场定位。
+    'scripts/session_source_audit.mjs',
   ],
   escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
   /** 是否在拒绝理由中附带看板摘要。 */
@@ -208,6 +213,78 @@ async function resolveHostModule(name) {
     }
   } catch { /* 推导失败，交由调用方降级 */ }
   return null
+}
+
+/**
+ * ── REQ-095：看板卡片注入前的"来源合规"实跑自检 ─────────────────────────────
+ *
+ * 为什么必须跑**宿主自己的**校验器，而不是本仓复述一遍规则：
+ *   本次事故的判据物理上在宿主里（v4 行级接纳 `assertV4SourceRowAdmission`）；
+ *   本仓复述得再准也只是"我们以为合规"。只有真的调用宿主模块，才算实跑证据。
+ *
+ * 两段判定（先纯函数、后宿主）：
+ *   ① auditSource()：本仓口径的纯函数判定，不依赖宿主，确定性最高；
+ *   ② 宿主 `assertV4RowAdmission({type:'agent/inbox/spliced', data:{inserted:[card]}})`
+ *      —— 这正是注入消息落盘时要过的那一行接纳（槽位口径取自宿主源码实现）。
+ *
+ * 三态（诚实口径，绝不把"没验"说成"验过了"）：
+ *   · ok=true                  → 放行注入；
+ *   · ok=false, blocking=true  → **不发卡片**（旁路增强绝不阻断整轮）+ 落盘留痕；
+ *   · ok=false,blocking=false  → 校验器解析不到（宿主升级/路径变化）→ 放行 + 一次性告警。
+ * 关键：只有"确属来源字段"的失败才 blocking；其它异常（合成行形状不合、模块缺失）
+ * 一律不阻断 —— 否则守卫自身会变成"看板永久熄火"的新故障源。
+ *
+ * @param {object} card createUserMessage 产出的消息
+ * @param {string} stateDir 状态目录（留痕）
+ * @returns {Promise<{ok: boolean, blocking: boolean, reason: string}>}
+ */
+let cardAdmitWarned = false
+async function assertHostAdmitsCard(card, stateDir) {
+  const note = (text) => {
+    try {
+      writeFileSync(
+        join(stateDir, 'card-status.txt'),
+        `看板卡片来源合规自检：${text}\n时间: ${new Date().toISOString()}\n来源: ${JSON.stringify(card?.source ?? null)}\n`,
+        'utf8',
+      )
+    } catch { /* 留痕失败不影响主流程 */ }
+  }
+
+  // ① 纯函数口径（本仓唯一权威源，不依赖宿主）
+  const local = auditSource(card?.source)
+  if (!local.ok) {
+    note(`本仓口径判不合格：${local.reason}`)
+    if (!cardAdmitWarned) {
+      cardAdmitWarned = true
+      console.warn('[ai-execution-control] 看板卡片来源不合规，已放弃注入（不影响本轮回合）：', local.reason)
+    }
+    return { ok: false, blocking: true, reason: local.reason }
+  }
+
+  // ② 宿主真校验器口径
+  try {
+    const mod = await resolveHostModule('@deepseek-ai/dsh-session-format-v3-to-v4')
+    if (!mod?.assertV4RowAdmission) {
+      note('未验证：宿主 v4 行级校验器不在解析链上（按放行处理）')
+      if (!cardAdmitWarned) {
+        cardAdmitWarned = true
+        console.warn('[ai-execution-control] 未取到宿主 v4 校验器：卡片来源未做宿主级验证（已放行）')
+      }
+      return { ok: false, blocking: false, reason: 'validator-unresolvable' }
+    }
+    mod.assertV4RowAdmission({ type: 'agent/inbox/spliced', seq: 0, data: { inserted: [card] } })
+    note('通过：宿主 v4 行级接纳判定合格')
+    return { ok: true, blocking: false, reason: '' }
+  } catch (err) {
+    const msg = err?.message || String(err)
+    const isSourceFault = msg.includes(V4_SOURCE_ERROR_TEXT)
+    note(`${isSourceFault ? '宿主判不合格' : '宿主判异常（非来源字段，按放行处理）'}：${msg}`)
+    if (isSourceFault && !cardAdmitWarned) {
+      cardAdmitWarned = true
+      console.warn('[ai-execution-control] 宿主 v4 判看板卡片来源不合规，已放弃注入（不影响本轮回合）：', msg)
+    }
+    return { ok: false, blocking: isSourceFault, reason: msg }
+  }
 }
 
 function resolveStateDir(config) {
