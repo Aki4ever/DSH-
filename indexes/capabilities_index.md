@@ -1,8 +1,8 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.3`
-> - **对应实施版本**：`v4.29.3`
+> - **当前文档版本**：`v4.29.4`
+> - **对应实施版本**：`v4.29.4`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
 > - **生效状态**：`[Release 稳定生效]`
@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：269**（技能 178 · 其他执行层 91）
+**执行层条目总数：272**（技能 178 · 其他执行层 94）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -536,6 +536,7 @@
 | 脚本 (CLI) | `cli.rules.check_layer_interfaces` | `scripts/check_layer_interfaces.mjs` | ✅ `scripts/interfaces/check_layer_interfaces.interface.json` | `node scripts/check_layer_interfaces.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.check_task_naming` | `scripts/check_task_naming.sh` | ✅ `scripts/interfaces/check_task_naming.interface.json` | `bash scripts/check_task_naming.sh` | 检查「当前会话」的任务命名是否符合规范，供看板常显与流程判定使用 |
 | 脚本 (CLI) | `cli.rules.check_unique_identifiers` | `scripts/check_unique_identifiers.mjs` | ✅ `scripts/interfaces/check_unique_identifiers.interface.json` | `node scripts/check_unique_identifiers.mjs` | check_unique_identifiers.mjs |
+| 脚本 (CLI) | `cli.rules.cli_plan_audit` | `scripts/cli_plan_audit.mjs` | ✅ `scripts/interfaces/cli_plan_audit.interface.json` | `node scripts/cli_plan_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.conflict_scan` | `scripts/conflict_scan.mjs` | ✅ `scripts/interfaces/conflict_scan.interface.json` | `node scripts/conflict_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.control` | `scripts/control.sh` | ✅ `scripts/interfaces/control.interface.json` | `bash scripts/control.sh` | — |
 | 脚本 (CLI) | `cli.rules.control_gates` | `scripts/control_gates.sh` | ✅ `scripts/interfaces/control_gates.interface.json` | `bash scripts/control_gates.sh` | — |
@@ -557,6 +558,7 @@
 | 脚本 (CLI) | `cli.rules.init_dir` | `scripts/init_dir.sh` | ✅ `scripts/interfaces/init_dir.interface.json` | `bash scripts/init_dir.sh` | — |
 | 脚本 (CLI) | `cli.rules.init_project` | `scripts/init_project.sh` | ✅ `scripts/interfaces/init_project.interface.json` | `bash scripts/init_project.sh` | — |
 | 脚本 (CLI) | `cli.rules.install_host_gate` | `scripts/install_host_gate.sh` | ✅ `scripts/interfaces/install_host_gate.interface.json` | `bash scripts/install_host_gate.sh` | — |
+| 脚本 (CLI) | `cli.rules.knowledge_audit` | `scripts/knowledge_audit.mjs` | ✅ `scripts/interfaces/knowledge_audit.interface.json` | `node scripts/knowledge_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.language_audit` | `scripts/language_audit.mjs` | ✅ `scripts/interfaces/language_audit.interface.json` | `node scripts/language_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.legacy_align_scan` | `scripts/legacy_align_scan.mjs` | ✅ `scripts/interfaces/legacy_align_scan.interface.json` | `node scripts/legacy_align_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.market_guard_patch` | `scripts/market_guard_patch.mjs` | ✅ `scripts/interfaces/market_guard_patch.interface.json` | `node scripts/market_guard_patch.mjs` | ============================================================================== |
@@ -593,6 +595,7 @@
 | 脚本 (CLI) | `cli.rules.session_naming_audit` | `scripts/session_naming_audit.mjs` | ✅ `scripts/interfaces/session_naming_audit.interface.json` | `node scripts/session_naming_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.session_source_audit` | `scripts/session_source_audit.mjs` | ✅ `scripts/interfaces/session_source_audit.interface.json` | `node scripts/session_source_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.skill_carrier_audit` | `scripts/skill_carrier_audit.mjs` | ✅ `scripts/interfaces/skill_carrier_audit.interface.json` | `node scripts/skill_carrier_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.strategy_layer_audit` | `scripts/strategy_layer_audit.mjs` | ✅ `scripts/interfaces/strategy_layer_audit.interface.json` | `node scripts/strategy_layer_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.svg2png` | `scripts/svg2png.sh` | ✅ `scripts/interfaces/svg2png.interface.json` | `bash scripts/svg2png.sh` | 把手写 SVG 按设计尺寸精确栅格化为 PNG（出图管道的本地渲染环节） |
 | 脚本 (CLI) | `cli.rules.sync_api_docs` | `scripts/sync_api_docs.mjs` | ✅ `scripts/interfaces/sync_api_docs.interface.json` | `node scripts/sync_api_docs.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.sync_control_requirements` | `scripts/sync_control_requirements.mjs` | ✅ `scripts/interfaces/sync_control_requirements.interface.json` | `node scripts/sync_control_requirements.mjs` | 管控机制专属需求同步校验脚本 (Control Requirements Sync Verifier) |

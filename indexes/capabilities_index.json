@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-02T00:00:41.183Z",
+  "generatedAt": "2026-10-02T00:20:13.527Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 269,
+  "total": 272,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 86
+    "脚本 (CLI)": 89
   },
-  "withInterface": 269,
+  "withInterface": 272,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1805,6 +1805,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.cli_plan_audit",
+      "path": "scripts/cli_plan_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/cli_plan_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/cli_plan_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.conflict_scan",
       "path": "scripts/conflict_scan.mjs",
       "desc": "==============================================================================",
@@ -1991,6 +2000,15 @@
       "invoke": "bash scripts/install_host_gate.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/install_host_gate.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.knowledge_audit",
+      "path": "scripts/knowledge_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/knowledge_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/knowledge_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2315,6 +2333,15 @@
       "invoke": "node scripts/skill_carrier_audit.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/skill_carrier_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.strategy_layer_audit",
+      "path": "scripts/strategy_layer_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/strategy_layer_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/strategy_layer_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

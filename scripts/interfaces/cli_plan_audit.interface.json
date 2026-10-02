@@ -1,0 +1,31 @@
+{
+  "id": "cli.rules.cli_plan_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/cli_plan_audit.mjs",
+  "invoke": "node scripts/cli_plan_audit.mjs --check",
+  "summary": "立项 CLI 规划判定：清单在位且有可跑命令、命令指向的脚本真实存在、清单里的接口契约可达（REQ-097 / R4）",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": false, "desc": "默认动作：判本工程" },
+    { "name": "--project", "type": "arg", "required": false, "desc": "判指定工程路径（默认本工程根）" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检（5 条：缺清单、命令悬空、契约悬空、空表头、正例）" },
+    { "name": "--json", "type": "arg", "required": false, "desc": "机读输出（逐条判据 + 命令数与契约数）" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "三条判据逐条状态（清单文件位置、命令数、契约数、悬空清单）" }
+  ],
+  "exitCodes": {
+    "0": "三条判据全过",
+    "1": "缺清单 / 命令指向不存在的脚本 / 契约悬空 / 只有空表头",
+    "2": "取不到证据（项目路径不存在）或用法错误"
+  },
+  "sideEffects": [],
+  "dependencies": ["templates/cli_plan_template.md"],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/cli_plan_audit.mjs --check",
+    "node scripts/cli_plan_audit.mjs --project /path/to/project",
+    "node scripts/cli_plan_audit.mjs --selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

@@ -1,0 +1,29 @@
+{
+  "id": "cli.rules.knowledge_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/knowledge_audit.mjs",
+  "invoke": "node scripts/knowledge_audit.mjs --check",
+  "summary": "知识库条目与索引双向对拍：规范卡/来源卡必须被索引引用；索引里的知识库链接必须真实可达（REQ-097 / R3）",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": false, "desc": "默认动作：判本工程知识库" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检（4 条：缺索引、悬空引用、修复转绿、再破坏再判红）" },
+    { "name": "--json", "type": "arg", "required": false, "desc": "机读输出（条目数 + 逐条判据 + 命中清单）" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "两条判据逐条状态（规范卡/来源卡数量、未索引清单、悬空引用清单）" }
+  ],
+  "exitCodes": {
+    "0": "两条判据全过（条目都有入口、索引都指向真实文件）",
+    "1": "存在未被索引的条目，或索引里的知识库引用悬空",
+    "2": "取不到证据（本工程没有 knowledge/ 目录）或用法错误"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/knowledge_audit.mjs --check",
+    "node scripts/knowledge_audit.mjs --selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

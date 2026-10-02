@@ -111,4 +111,37 @@ EOF
   echo "✅ 已生成项目说明文档: README.md"
 fi
 
+# 7. 生成 CLI 规划清单（REQ-097 / R4：立项就要把 CLI 规划进去，方便 AI 调用）
+# 为什么放在初始化里：事后补 CLI 一定返工；立项时先把"怎么被调用"写下来，
+# 后面每加一个能力就往表里补一行，判定器 scripts/cli_plan_audit.mjs 会核对表里路径是否真实存在。
+CLI_PLAN_FILE="$TARGET_DIR/CLI_PLAN.md"
+if [ ! -f "$CLI_PLAN_FILE" ]; then
+  TEMPLATE_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/templates/cli_plan_template.md"
+  if [ -f "$TEMPLATE_FILE" ]; then
+    sed "s/<项目名>/${PROJECT_NAME}/g" "$TEMPLATE_FILE" > "$CLI_PLAN_FILE"
+    echo "✅ 已从模板生成 CLI 规划清单: CLI_PLAN.md"
+  else
+    cat <<EOF > "$CLI_PLAN_FILE"
+# CLI 规划清单 (CLI Plan) —— ${PROJECT_NAME}
+
+**需求依据**：\`REQ-097\` / R4（项目开启时把 CLI 规划进去，方便 AI 调用）
+
+## 📋 能力清单（立项先写第一行，后面每加一个能力补一行）
+
+| 能力名 | 一条可跑命令 | 接口契约位置 | 并行口径 | 反例（不许做什么） |
+| :--- | :--- | :--- | :--- | :--- |
+| 待补 | 待补（必须是一条真能跑的命令） | 待补（目录型 \`<单元>/interface.json\` 或文件型 \`scripts/interfaces/<脚本名>.interface.json\`） | readonly / shared / exclusive | 待补 |
+
+## 🔍 判定入口
+
+\`\`\`bash
+node scripts/cli_plan_audit.mjs --project .
+\`\`\`
+
+退出码：0 三条全过（清单在位 · 命令真实存在 · 契约在位）· 1 不达标 · 2 取不到证据。
+EOF
+    echo "✅ 已生成 CLI 规划清单: CLI_PLAN.md"
+  fi
+fi
+
 echo "🎉 [快速通道] 项目初始化完成！基线版本 v1.0.0 已就绪，已具备快速调用与优化迭代条件。"

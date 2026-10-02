@@ -2,12 +2,12 @@
 
 > ### 🏷️ **版本信息与实施追踪**
 > - **文档类型**：需求文案（登记为 `REQ-097`，状态 `[ACTIVE]`）
-> - **当前系统实施总版本**：`v4.29.3`（PATCH 递增：规则细化 + 只读判定器与知识库条目接入，向下兼容）
-> - **本文档内容版本**：`v1.0.0`
-> - **需求版本号**：`v1.0.0`（初版文案即实施批留痕）
+> - **当前系统实施总版本**：`v4.29.4`（PATCH 递增：R2/R4 判定器与门禁接线，向下兼容）
+> - **本文档内容版本**：`v1.1.0`（第二批落地：R2/R3 判定器 + R4 立项 CLI 规划）
+> - **需求版本号**：`v1.1.0`（初版 v1.0.0 留痕；第二批落地递增）
 > - **提出时间**：2026-10-02
 > - **任务代号**：`PLAIN-STRATEGY-1`
-> - **需求状态**：`[EVOLVING]` 演进中（R1、R3 已落地并实跑；R2、R4 未落地，判定器待下一批）
+> - **需求状态**：`[ACTIVE]` 四条子项全部落地并实跑（R1 登记入口 · R2 策略层判定 · R3 知识库索引判定 · R4 立项 CLI 规划）
 > - **依据**：用户口语需求（本轮四条）+ 本轮的只读取证（逐条证据见 §五）
 
 ---
@@ -42,7 +42,7 @@
 | 子项 | 用户原话（要点） | **简化后的可执行文案** | 改什么 | 判定入口 |
 | :--- | :--- | :--- | :--- | :--- |
 | **R1** 需求有出处 | 所有需求必须从需求文档发起；新需求先整理再同步；每次更新必升版本号 | **任何改动先立需求条目；新需求先写成可执行文案再登记进台账；台账改一次、总版本号就往上走一格，且这件事必须能被机器查出来（不许靠嘴说）。** | ① 新增登记入口 `scripts/req_new.mjs`（分配编号 → 查重 → 写卡片 → 升版本 → 读回）；② 台账头部必须写“这次为什么升版”；③ 判定器查“台账相对上次提交有改动时版本号必须变大” | `node scripts/req_new.mjs --check`<br>`node scripts/req_version_audit.mjs --check` |
-| **R2** 结论讲人话 | 聚焦算法层面的策略层；以人为本、大白话、无生僻字；拒绝机器语言 | **给用户的答复要停在策略层：先说结论、再说该怎么办；日志、堆栈、代码、报错原文不得直接甩给用户；用大白话，不用让人看不懂的词。** | ① `output_standard.md` 增“策略层结论”条款；② 新增判定器 `scripts/strategy_layer_audit.mjs`（结论段在位 + 机器语言密度不超线）；③ 黑话表扩容口径 | `node scripts/strategy_layer_audit.mjs --check`（**待落地**）<br>现状：`output_audit.mjs` 只判形状、`language_audit.mjs` 唯一硬门是生僻字 |
+| **R2** 结论讲人话 | 聚焦算法层面的策略层；以人为本、大白话、无生僻字；拒绝机器语言 | **给用户的答复要停在策略层：先说结论、再说该怎么办；日志、堆栈、代码、报错原文不得直接甩给用户；用大白话，不用让人看不懂的词。** | ① `output_standard.md` 增“策略层结论”条款；② 新增判定器 `scripts/strategy_layer_audit.mjs`（结论段在位 + 机器语言密度不超线）；③ 黑话表扩容口径 | `node scripts/strategy_layer_audit.mjs --check`（8 条反向用例；已并入 `audit_execution.sh` 输出契约维度） |
 | **R3** 原理进知识库 | 推理必须遵循第一性原理；第一性原理纳入知识库 | **把“凡事从最底层事实推起、不轻信二手转述”这条原理，从 `rules/` 提炼一张要点卡进知识库，让全域工程都查得到；细则仍只写在 `rules/`，知识库只放要点与指针，不复述。** | ① 新增 `knowledge/common/first_principles_specification.md`；② 索引登记（`knowledge/common/README.md` 矩阵表 + `indexes/rules_index.md` 知识库表）；③ 判定：条目在位且双向可寻址 | `grep -rn "第一性原理" knowledge/`（粗判，本轮判据）<br>`node scripts/req_version_audit.mjs --check`（版本贯通） |
 | **R4** CLI 先规划 | 项目开启的时候要把 CLI 规划进去，方便 AI 调用 | **新项目一开工就先写清“这台机器怎么被 AI 调用”，至少要有一条能跑的命令行入口与接口契约，别等做完了才发现 AI 用不上。** | ① `rules/system/initialization_protocol.md` 增“立项必出 CLI 规划”条款；② 初始化入口生成 CLI 规划清单；③ 判定：新工程至少一条可跑命令且接口契约在位 | `node scripts/check_layer_interfaces.mjs --check`（**已有**，覆盖 CLI 接口契约）<br>`node scripts/scope_audit.mjs --check`（全域工程入口在位） |
 
@@ -77,20 +77,21 @@
 | R1 | R1-b 接口契约 | 接口契约 | `scripts/interfaces/req_new.interface.json` | `node scripts/check_layer_interfaces.mjs --check` | ✅ 已落 |
 | R1 | R1-c 版本必增判定 | **判定器**（同脚本 `--check` 模式） | `scripts/req_new.mjs --check` | 退出码 0/1 | ✅ 已落 |
 | R1 | R1-d 台账登记 | 台账 | `docs/requirements.md` 之 `REQ-097` | `node scripts/req_version_audit.mjs --check` | ✅ 已落 |
-| R2 | R2-a 条款 | 规则条款 | `rules/system/output_standard.md` | — | ⏳ 待落地 |
-| R2 | R2-b 判定器 | **判定器（CLI）** | `scripts/strategy_layer_audit.mjs` | `--check` / `--selftest` | ⏳ 待落地 |
+| R2 | R2-a 条款 | 规则条款 | `rules/system/output_standard.md` §三.5 | — | ✅ 已落 |
+| R2 | R2-b 判定器 | **判定器（CLI）** | `scripts/strategy_layer_audit.mjs` | `--check` / `--selftest`（8 条反向用例） | ✅ 已落 |
 | R2 | R2-c 落地讲人话的写法 | **技能（skill）** | 复用 `skills/plain-analogy-explanation/`、`skills/concise-focused-output/`（技能层，非脚本） | `skill audit-all-skills-compliance` | ⏳ 待接线 |
 | R3 | R3-a 知识库条目 | **知识库条款** | `knowledge/common/first_principles_specification.md` | `grep -rn "第一性原理" knowledge/` | ✅ 已落 |
 | R3 | R3-b 索引登记 | 索引 | `knowledge/common/README.md` · `indexes/rules_index.md` | `node scripts/anti_hallucination_audit.mjs --check` | ✅ 已落 |
-| R3 | R3-c 知识库索引判定 | **判定器** | `scripts/knowledge_audit.mjs`（条目 ↔ 索引双向对拍） | `--check` / `--selftest` | ⏳ 待落地 |
-| R4 | R4-a 条款 | 规则条款 | `rules/system/initialization_protocol.md` | — | ⏳ 待落地 |
+| R3 | R3-c 知识库索引判定 | **判定器** | `scripts/knowledge_audit.mjs`（条目 ↔ 索引双向对拍） | `--check` / `--selftest`（4 条反向用例） | ✅ 已落 |
+| R4 | R4-a 条款 | 规则条款 | `rules/system/initialization_protocol.md` §五 | — | ✅ 已落 |
+| R4 | R4-e 立项脚手架 | **脚本（CLI）** | `scripts/init_project.sh`（立项即生成 `CLI_PLAN.md`） | `bash scripts/init_project.sh <路径>` | ✅ 已落 |
+| R4 | R4-f 规划判定器 | **判定器（CLI）** | `scripts/cli_plan_audit.mjs` | `--check` / `--project` / `--selftest`（5 条反向用例） | ✅ 已落 |
 | R4 | R4-b 立项卡勾选项 | 模板 | `templates/project_dsh_bootstrap_template.md`（**已含 CLI 维度**） | — | ✅ 已有 |
 | R4 | R4-c CLI 接口契约判定 | **判定器（已有）** | `scripts/check_layer_interfaces.mjs` | `--check` | ✅ 已有 |
 | R4 | R4-d 全域工程入口不在位判定 | **判定器（已有）** | `scripts/scope_audit.mjs` | `--check` | ✅ 已有 |
 
-**为什么 R2、R4 本轮不硬落**：这两条的判定器一旦上线就会参与门禁放行，
-若判据自己不可靠（例如“机器语言”阈值拍脑袋、或对历史工程误伤），会把全绿看板换成假红。
-本轮先把口径与落点写清、把可自证的判据设计成带反向用例，再单独一批上线；**不硬凑、不虚报**。
+**第二批已全部落地（2026-10-02）**：R2、R4 的条款与判定器上线，知识库索引判定器补上，
+三条判定器各自带反向用例（该判红的必须判红），并接入门禁 **G5** 与 `audit_execution.sh`；门禁跑绿才放行。
 
 ---
 
@@ -102,8 +103,11 @@
 - [x] `grep -rn "第一性原理" knowledge/` 至少 1 处命中（知识库条目在位）；
 - [x] `node scripts/check_layer_interfaces.mjs --check` 覆盖 `cli.rules.req_new`（接口契约齐备）；
 - [x] `node scripts/legacy_align_scan.mjs --root .` 待对齐 0 项（总版本升到 `v4.29.3` 后全库归位）；
-- [ ] R2 判定器 `strategy_layer_audit.mjs --check/--selftest` 退出码 0（**待下一批**）；
-- [ ] R4 立项条款与判定接线（**待下一批**）。
+- [x] `node scripts/strategy_layer_audit.mjs --check` 0 · `--selftest` 8/8（R2）；
+- [x] `node scripts/knowledge_audit.mjs --check` 0（抓出并补登 1 张未索引规范卡）· `--selftest` 4/4（R3）；
+- [x] `node scripts/cli_plan_audit.mjs --check` 0 · `--selftest` 5/5 · `init_project.sh` 端到端实测（新工程生成 `CLI_PLAN.md`，填好即判绿）（R4）；
+- [x] `bash scripts/control_gates.sh check` G0~G6 全过（G5 已含知识库与 CLI 规划两条新判据）；
+- [x] `node scripts/token_budget_audit.mjs --check` 篇幅未膨胀（新增段落压缩后回落容差内）。
 
 ---
 
@@ -122,9 +126,9 @@
 
 ## 七、诚实缺口
 
-1. **R2、R4 仍是“纸面 + 分裂表”**：本轮只落了 R1、R3 的物理载体；R2、R4 的条款与判定器列为下一批，
-   未完成项不冒充完成（避免把“写了规则”说成“机制在跑”）。
-2. **R3 的判据本轮偏粗**：用 `grep` 证明“条目在位”只能证明文件写了字，不能证明“索引双向可达”；
-   真正可证伪的 `knowledge_audit.mjs` 与 R2 同批上线。
-3. **`req_new.mjs` 的边界**：它只机械完成“分编号 / 查重 / 写卡片 / 升版本 / 读回”，
+1. **机器只能守形状，判不了语义**：R2 的两条硬判据是“结论先行 + 零机器原文”；
+   至于“讲得够不够策略、够不够人话”，只列报告项——那属于人的判断，硬门即自造阈值。
+2. **技能层接线未做**：R2-c 复用 `skills/plain-analogy-explanation/` 等既有技能，本轮只登记关系、未改技能契约。
+3. **存量工程未铺 `CLI_PLAN.md`**：R4 的判定目前只跑本工程（G5 口径），其它 DSH 工程由下一轮存量补课统一铺设。
+4. **`req_new.mjs` 的边界**：它只机械完成“分编号 / 查重 / 写卡片 / 升版本 / 读回”，
    需求文案的**内容质量**（是不是大白话、是不是真需求）不由它判断——那属于人的判断，机器只能守形状。

@@ -1,0 +1,32 @@
+{
+  "id": "cli.rules.strategy_layer_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/strategy_layer_audit.mjs",
+  "invoke": "node scripts/strategy_layer_audit.mjs --check",
+  "summary": "策略层表达判定：① 首屏必须有结论行；② 正文（代码块外）零裸机器原文（堆栈/JSON/退出码/日志时间戳/键值对密集行）；语义质量只列报告项（REQ-097 / R2）",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": false, "desc": "默认动作：判最近一轮已完成回复" },
+    { "name": "--file", "type": "arg", "required": false, "desc": "判指定文件（如某份回复草稿）" },
+    { "name": "--text", "type": "arg", "required": false, "desc": "判命令行传入的任意文本" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检（8 条，含 6 条反例）" },
+    { "name": "--json", "type": "arg", "required": false, "desc": "机读输出（逐条判据 + 命中行号 + 报告项）" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "两条硬判据逐条状态 + 命中行号 + 报告项（动作层锚点、超长英文行）" }
+  ],
+  "exitCodes": {
+    "0": "两条硬判据全过",
+    "1": "首屏无结论行，或正文存在裸机器原文",
+    "2": "取不到证据（无待判文本 / 转录里没有已完成回合）或用法错误"
+  },
+  "sideEffects": [],
+  "dependencies": ["scripts/output_audit.mjs", "scripts/lib/gates_config.mjs", "ai-control/config/gates.conf"],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/strategy_layer_audit.mjs --check",
+    "node scripts/strategy_layer_audit.mjs --file /tmp/reply.md",
+    "node scripts/strategy_layer_audit.mjs --selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

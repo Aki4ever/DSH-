@@ -202,12 +202,27 @@ try {
   fi
 fi
 
-if [ "$COMPACT_PASS" -eq 0 ]; then
-  SCORE=$((SCORE - 4))
-  DEDUCTIONS+=("❌ 输出结构契约未达标或未采集度量 (-4)")
-  CHECKS+=("❌ 输出结构契约未通过：${COMPACT_LINE} (-4)")
+# ── 维度 8 追加判据：策略层表达（REQ-097 / R2，与本维共用 4 分）───────────────
+# 为什么并入本维而不新开一维：总分 100 的权重已经排满（20+16+12+12+12+8+12+4+4），
+# 新开一维就得从别处挪分，那等于**悄悄改掉既有评分口径**；而"结构"与"策略层"本就是
+# 同一件事的两面——一次回复要么是给人看的，要么是给机器看的。故并入，权重显式留痕。
+STRAT_PASS=0
+STRAT_LINE="未采集到策略层判定"
+if [ -n "$NODE_BIN" ]; then
+  STRAT_OUT="$("$NODE_BIN" "$SCRIPT_DIR/strategy_layer_audit.mjs" --json 2>/dev/null || true)"
+  if echo "$STRAT_OUT" | grep -qE '"ok": *true'; then
+    STRAT_PASS=1
+    STRAT_LINE="结论先行且正文无裸机器原文"
+  elif [ -n "$STRAT_OUT" ]; then
+    STRAT_LINE="$(echo "$STRAT_OUT" | "$NODE_BIN" -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);const bad=(r.checks||[]).filter(c=>!c.ok).map(c=>c.name+"："+c.detail);process.stdout.write(bad.join("；")||"判定未通过")}catch{process.stdout.write("策略层判定不可解析")}})')"
+  fi
 fi
 
+if [ "$COMPACT_PASS" -eq 0 ] || [ "$STRAT_PASS" -eq 0 ]; then
+  SCORE=$((SCORE - 4))
+  DEDUCTIONS+=("❌ 输出契约未达标（结构或策略层）或未采集 (-4)")
+  CHECKS+=("❌ 输出契约未通过：结构=${COMPACT_LINE}；策略层=${STRAT_LINE} (-4)")
+fi
 # ── 维度 9：文字可读性「无生僻字」(4分) ──────────────────────────────────────
 # 为什么新增这一维（REQ-090 / R4，2026-10-01 实测）：
 #   「杜绝生僻字、通俗直白」在元规则第三条与 rules/system/language_standard.md §四

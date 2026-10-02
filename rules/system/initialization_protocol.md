@@ -60,3 +60,30 @@
 
 - **目录说明模板**：[`templates/directory_readme_template.md`](../../templates/directory_readme_template.md)
 - **自动化初始化脚本**：[`scripts/init_dir.sh`](../../scripts/init_dir.sh)
+
+---
+
+## 💻 五、项目立项必出 CLI 规划（REQ-097 / R4）
+
+**为什么单列一条**：AI 能不能用上这个项目，不取决于它写了多少文档，而取决于**有没有一条能跑的命令**。
+实测（2026-10-02）：本协议全文 0 处提到 CLI，初始化脚本只建目录与台账——"项目开启时把 CLI 规划进去"
+一直是句**没有载体的口号**。
+
+### 1. 立项必做（做完才算初始化完成）
+
+1. **产出清单**：项目根生成 `CLI_PLAN.md`（模板见 [`templates/cli_plan_template.md`](../../templates/cli_plan_template.md)，也接受 `docs/cli_plan.md`）；
+2. **至少一条真命令**：清单里写出至少一条**真能跑**的命令（写示例占位等于没写，会被判红）；
+3. **接口契约在位**：每个能力配一份接口契约（目录型 `<单元>/interface.json`，文件型 `scripts/interfaces/<脚本名>.interface.json`），字段口径见 [`knowledge/common/execution_layer_interface_spec.md`](../../knowledge/common/execution_layer_interface_spec.md)；
+4. **登记进索引**：能力登记进本项目的索引文件，方便 AI 检索。
+
+### 2. 自动化入口与判定
+
+| 动作 | 命令 |
+| :--- | :--- |
+| 新工程脚手架（自动生成 `CLI_PLAN.md`） | `bash scripts/init_project.sh <项目路径> [项目名] [描述]` |
+| 判定（本工程 / 指定工程） | `node scripts/cli_plan_audit.mjs --check` · `node scripts/cli_plan_audit.mjs --project <路径>` |
+| 反向自证（缺清单 / 命令悬空 / 契约悬空必须判红） | `node scripts/cli_plan_audit.mjs --selftest` |
+
+退出码：`0` 三条全过 · `1` 存在不达标 · `2` 取不到证据（**2 绝不算通过**，遵循元规则第三十六条）。
+
+> **清单不是文档摆设**：判定器逐条核对清单里的命令与契约路径是否真实存在——写了跑不起来的、留下死行的，一律判红。

@@ -592,6 +592,8 @@ check_integrity() {
     "anti_hallucination_audit.mjs|无悬空引用与空架子" \
     "mobile_bridge_audit.mjs|手机远端操控可达（REQ-094）" \
     "session_source_audit.mjs|会话消息来源合规（REQ-096）" \
+    "knowledge_audit.mjs|知识库条目与索引双向可达（REQ-097 R3）" \
+    "cli_plan_audit.mjs|立项 CLI 规划在位且真实（REQ-097 R4）" \
     "domain_scope_selftest.mjs|全域写拦截判定有牙"; do
     name="${entry%%|*}"; label="${entry##*|}"
     if [ ! -f "$script_dir/$name" ]; then
