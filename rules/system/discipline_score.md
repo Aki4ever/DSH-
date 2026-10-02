@@ -30,7 +30,7 @@
 | **R4** 自评要复核 | 先自评并列出自报扣分项，再由独立复核重算；两者差额**大于**阈值即判"评分失误"，自动按 L4 入账，并以复核结果为准。 | `node scripts/discipline_score.mjs verify --json` |
 | **R5** 用户一票终局 | 用户可随时直接扣分，用户扣分**终局生效**：不可申诉、不可回滚，只能追加说明；且用户的话即凭据，豁免证据。 | `node scripts/discipline_score.mjs deduct --by user --reason "..."` |
 | **R6** 低于 60 分停用 | 任一条目分跌破停用阈值，即触发**物理停用**；停用不随新任务自动复活，仅用户可恢复。细则见 §五。 | `bash scripts/control_gates.sh check`（G7） |
-| **R7** 专职纪律委员 | 委员独立算账：逐条复核证据是否成立，并对既有审计器的失分维度判"漏报"；**不采信自评**，其判定优先于 AI 自评。 | `node scripts/discipline_score.mjs verify --json` |
+| **R7** 专职纪律委员 | 委员独立算账：逐条复核证据是否成立，并对既有审计器的失分维度判"漏报"；**不采信自评**，其判定优先于 AI 自评。角色契约与接口契约见 [`skill-pool/agents/discipline-officer-agent/`](../../skill-pool/agents/discipline-officer-agent/PROMPT.md)（宿主无 agent 注册面，故运行载体是该行的 verify 子命令）。 | `node scripts/discipline_score.mjs verify --json` |
 | **R8** 输出两条固定字段 | 每次回复固定多披露两个数：进度回执里的 `🎯 当前纪律分`（动手前的账面分，已登记进 `OUT_RECEIPT_FIELDS`）、【执行效果】里的 `🏁 完成时纪律分`（本轮结算后的分）；两个数都必须从账本取，手写对不上即判红。字段格式只在 [`rules/system/output_standard.md`](./output_standard.md) 定义一次，本文不复述。 | `node scripts/output_audit.mjs --check` |
 
 ## 三、扣分档位表（L1~L5）
