@@ -36,11 +36,11 @@
     ".dsh-control/run-audit.jsonl",
     "scripts/check_task_naming.sh"
   ],
-  "parallel": "readonly-except-output",
+  "parallel": "shared",
   "examples": [
     "node scripts/gen_control_map.mjs",
     "node scripts/gen_control_map.mjs /tmp/map.svg"
   ],
-  "source": "manual",
+  "source": "handwritten",
   "verified": true
 }
