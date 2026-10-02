@@ -296,12 +296,33 @@ if [ "$JSON_MODE" -eq 1 ]; then
   exit 0
 fi
 
+# ── 纪律分结算（REQ-098 / R8）───────────────────────────────────────────────
+# 为什么由本卡片披露"完成时纪律分"：用户第 6 条要求"输出结构化新增一条：当前纪律分；
+# 反馈做完任务时的纪律分"。两处合起来才完整——【进度回执】写的是**动手前**的账面分，
+# 【执行效果】写的是**做完后**的结算分。两处都必须从账本取数，禁止手写。
+DISC_NUM=""
+DISC_SUSP=""
+if [ -n "$NODE_BIN" ] && [ -f "$SCRIPT_DIR/discipline_score.mjs" ]; then
+  DISC_OUT="$("$NODE_BIN" "$SCRIPT_DIR/discipline_score.mjs" status --json 2>/dev/null || true)"
+  if [ -n "$DISC_OUT" ]; then
+    DISC_PARSED="$(printf '%s' "$DISC_OUT" | "$NODE_BIN" -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);process.stdout.write(String(r.current)+" "+String(!!r.suspended))}catch{}})')"
+    DISC_NUM="${DISC_PARSED%% *}"
+    DISC_SUSP="${DISC_PARSED##* }"
+  fi
+fi
+if [ -n "$DISC_NUM" ]; then
+  DISC_LINE="**\`${DISC_NUM} / 100\`** · $([ "$DISC_SUSP" = "true" ] && echo "🔴 **已触发停用**（低于阈值 60，须用户 resume --by user 恢复）" || echo "🟢 未触发停用（阈值 60）")（纪律账本结算：\`scripts/discipline_score.mjs status\`）"
+else
+  DISC_LINE="未采集到纪律分（判定器或账本不可读——按未达标处理，绝不算通过）"
+fi
+
 # 输出标准【执行效果】卡片
 echo "### 🌟 【执行效果】（管控审计智能体 Control Auditor 签发）"
 echo ""
 echo "- **审计智能体**：\`管控审计智能体 (Control Auditor)\`"
 echo "- **综合执行评分**：**\`${SCORE} / 100 分\`** · **${RATING}** [${GRADE}]"
 echo "- **执行合规度判定**：$([ "$SCORE" -ge 85 ] && echo "🟢 **准予归卷结项**" || echo "🔴 **整改阻断，禁止结项**")"
+echo "- **🏁 完成时纪律分**：${DISC_LINE}"
 echo ""
 echo "| 审计项 | 权重 | 实测事实与裁决 | 状态 |"
 echo "| :--- | :---: | :--- | :---: |"

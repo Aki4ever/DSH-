@@ -69,6 +69,9 @@ G2_UNTITLED_MAX=2
 G1_SKIP_DIRS=".git .dsh_locks ai-control"
 DSH_CONTROL_TTL=30
 G0_NAMING_ENFORCE=true
+# 纪律分停用阈值（REQ-098 / R6）：seed 必须给值，否则沙箱（无 gates.conf）里
+# `set -u` 一炸就是"stdout 空 + 退出码 0"的静默失守。
+DISC_SUSPEND_THRESHOLD=60
 if [ -f "$CONFIG_FILE" ]; then
   # shellcheck disable=SC1090
   source "$CONFIG_FILE"
@@ -106,8 +109,8 @@ json_int_strict() { # $1=JSON 文本 $2=键名
 }
 
 # ── 门禁定义（顺序即依赖链）──────────────────────────────────────────────────
-GATE_IDS=(init structure sync redundancy integrity concurrency)
-GATE_NAMES=("项目初始化" "工程结构化" "需求文档同步" "冗余检测" "落地与版本一致性" "执行层并发与载体一致性")
+GATE_IDS=(init structure sync redundancy integrity concurrency score)
+GATE_NAMES=("项目初始化" "工程结构化" "需求文档同步" "冗余检测" "落地与版本一致性" "执行层并发与载体一致性" "纪律分")
 GATE_DESC=(
   "仓库、目录骨架、防丢文件齐备"
   "目录有主、无孤儿目录与散落垃圾"
@@ -115,6 +118,7 @@ GATE_DESC=(
   "实质重复率与重复标题在健康区"
   "全域覆盖/需求版本贯通/无悬空引用（REQ-092）"
   "任务层树可溯源/并发调度有牙/安装队列有界/技能载体齐备/管控篇幅受管（REQ-093）"
+  "纪律账本哈希链自洽、当前分在阈值之上（REQ-098）"
 )
 
 # ── 颜色（仅 TTY 且未禁用时启用）─────────────────────────────────────────────
@@ -698,6 +702,71 @@ check_concurrency() {
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
+# G7 · 纪律分（REQ-098 / R2+R3+R4+R6）
+# ══════════════════════════════════════════════════════════════════════════════
+# 为什么必须是门禁而不是"参考信息"：用户第 3 条要求"扣到 60 分以下就停用"。
+# 若纪律分只写在账本里，跌破 60 分与满分 100 分的**实际处境完全相同** —— 阈值就是一句空话。
+# 进门禁后才有牙：任一门禁非 pass 都会把 `EXEC_ALLOWED` 置 false（见 compute_all），
+# 而宿主拦截层消费的正是这个字段 —— 停用因此是**物理后果**，不是措辞。
+# 三态：0 = 账本自洽且未停用；1 = 已停用或账本异常；2 = 取不到证据（绝不折算为通过）
+check_score() {
+  local script_dir; script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local node_bin="${DSH_NODE_BIN:-}"
+  if [ -z "$node_bin" ] && [ -f "$script_dir/lib/find_node.sh" ]; then
+    # shellcheck disable=SC1091
+    . "$script_dir/lib/find_node.sh"
+    node_bin="$(find_node || true)"
+  fi
+  [ -n "$node_bin" ] || node_bin="node"
+
+  METRIC_A="0"; METRIC_A_LABEL="账本记录数"
+  METRIC_B="0"; METRIC_B_LABEL="当前纪律分"
+
+  if [ ! -f "$script_dir/discipline_score.mjs" ]; then
+    DETAIL="纪律分判定器缺失"
+    HINT="缺少 scripts/discipline_score.mjs —— 纪律分系统未接线，绝不折算为通过"
+    return 2
+  fi
+
+  local out rc entries current human
+  out="$( cd "$PROJECT_ROOT" && "$node_bin" "$script_dir/discipline_score.mjs" --check --json 2>/dev/null )"
+  rc=$?
+  # 铁律一：空输出既不是证据也不是通过 —— 报"不可判定"，严禁回退 0
+  if [ -z "$out" ]; then
+    DETAIL="纪律分判定无输出"
+    HINT="判定器未产出可解析证据（空输出不是通过证据）"
+    return 2
+  fi
+  entries="$(json_int_strict "$out" "entries")" || {
+    DETAIL="账本记录数解析失败"
+    HINT="判定输出缺 entries 数值 —— 证据不可得，判不可判定"
+    return 2
+  }
+  current="$(json_int_strict "$out" "current")" || {
+    DETAIL="当前纪律分解析失败"
+    HINT="判定输出缺 current 数值 —— 证据不可得，判不可判定"
+    return 2
+  }
+  METRIC_A="$entries"; METRIC_B="$current"
+
+  human="$( cd "$PROJECT_ROOT" && "$node_bin" "$script_dir/discipline_score.mjs" --check 2>/dev/null | tr '\n' ' ' )"
+  case "$rc" in
+    0)
+      DETAIL="当前纪律分 ${current}（停用阈值 ${DISC_SUSPEND_THRESHOLD}）· 账本 ${entries} 条 · ${human}"
+      HINT="纪律分正常：账本哈希链自洽且未触发停用"
+      return 0 ;;
+    2)
+      DETAIL="纪律分判定不可用：${human}"
+      HINT="判定器退 2（取不到证据），不得折算为通过"
+      return 2 ;;
+    *)
+      DETAIL="纪律分异常：${human}"
+      HINT="已停用或账本异常：查看 node scripts/discipline_score.mjs status；恢复须用户执行 resume --by user"
+      return 1 ;;
+  esac
+}
+
+# ══════════════════════════════════════════════════════════════════════════════
 # 全域覆盖快照（REQ-092 / R1-d）—— 供宿主硬门禁同步消费
 # ══════════════════════════════════════════════════════════════════════════════
 # 为什么必须由本脚本产出：守卫是**同步契约**，不能在调用点跑子进程做全域扫描；
@@ -732,6 +801,7 @@ compute_all() {
       redundancy) check_redundancy; rc=$? ;;
       integrity)  check_integrity;  rc=$? ;;
       concurrency) check_concurrency; rc=$? ;;
+      score)      check_score;      rc=$? ;;
       *) rc=1 ;;
     esac
     case "$rc" in
@@ -1218,7 +1288,8 @@ finish() {
 
 # ── 关键阈值自检：任一缺失即显式失败，杜绝"静默失守 + 退出码 0" ──────────────
 for _k in G4_DUP_PAIRS G4_TOP_DUP_LIMIT G4_HEADING_LIMIT G4_MIN_LINE_LEN \
-          G3_DIRTY_LIMIT G2_ORPHAN_MAX G2_UNTITLED_MAX DSH_CONTROL_TTL; do
+          G3_DIRTY_LIMIT G2_ORPHAN_MAX G2_UNTITLED_MAX DSH_CONTROL_TTL \
+          DISC_SUSPEND_THRESHOLD; do
   [ -n "${!_k:-}" ] || fatal "阈值 $_k 未定义（seed 或 gates.conf 缺失该键）"
 done
 unset _k

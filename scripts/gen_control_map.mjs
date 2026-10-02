@@ -186,7 +186,7 @@ const bw = (W - PAD * 2 - 3 * 40) / 4
 const bh = 116
 const blocks = [
   { t: '入口', s: 'control.sh', d: ['naming · check · lock', 'todo · version · scope', 'selfcheck'], c: C.blue },
-  { t: '门禁 G0~G6', s: `${passN}/${totalN}${HARD_BLOCK ? ' · 有卡点' : ' 全绿'}`, d: [clip(`卡点：${blockName}`, 22), '全过才放行', '状态由磁盘推导'], c: HARD_BLOCK ? C.bad : C.ok },
+  { t: '门禁 G0~G7', s: `${passN}/${totalN}${HARD_BLOCK ? ' · 有卡点' : ' 全绿'}`, d: [clip(`卡点：${blockName}`, 22), '全过才放行', '状态由磁盘推导'], c: HARD_BLOCK ? C.bad : C.ok },
   { t: '物理锁 LOCK-0~4', s: `当前 LOCK-${lockStage}`, d: ['单向工序链', '缺凭据拒绝跳阶', '底层拦截'], c: C.violet },
   { t: '证据留痕', s: '不认自述', d: ['run-audit.jsonl', 'progress_ledger.jsonl', 'status.json'], c: C.warn },
 ]

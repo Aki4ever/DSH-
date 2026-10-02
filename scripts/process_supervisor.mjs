@@ -38,7 +38,7 @@ const fast = args.includes('--fast')
  */
 const CHECKS = [
   { id: 'G0', name: '会话命名合规', cmd: 'bash scripts/check_task_naming.sh --exit', hard: true },
-  { id: 'G1-4', name: '累积门禁 G0~G4', cmd: 'bash scripts/control_gates.sh check', hard: true, grep: '门禁通过' },
+  { id: 'G1-4', name: '累积门禁 G0~G7', cmd: 'bash scripts/control_gates.sh check', hard: true, grep: '门禁通过' },
   { id: 'S07', name: '待办常显（宿主转录证据）', cmd: 'bash scripts/todo_gate.sh check', hard: true },
   { id: 'S11', name: '写后必读回 + 迭代台账', cmd: 'node scripts/progress_ledger.mjs check', hard: true },
   { id: 'R3', name: '流程管控层一致性', cmd: 'node scripts/flow_control.mjs --check', hard: true },

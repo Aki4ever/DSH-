@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.4`
-> - **对应实施版本**：`v4.29.4`
+> - **当前文档版本**：`v4.29.5`
+> - **对应实施版本**：`v4.29.5`
 > - **版本治理规范**：[`versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -26,8 +26,8 @@
 | **路由层** | 意图匹配与调配决策 | [`route_plan.mjs`](../scripts/route_plan.mjs)、[`indexes/navigation_router.md`](navigation_router.md)、[`indexes/capabilities_index.json`](capabilities_index.json)、[`channel_audit.mjs`](../scripts/channel_audit.mjs) |
 | **拦截层** | 未过门禁拒改动 | [`ai-control/plugin/index.mjs`](../ai-control/plugin/index.mjs) |
 
-累积门禁（G0→G6按序全通过）：G0会话命名·G1项目初始化·G2工程结构化·G3需求文档同步·G4冗余检测·G5落地与版本一致性·G6执行层并发与载体一致性。
-唯一权威源：[`AGENTS.md`](../AGENTS.md) §一——门禁定义与量化指标（G0~G6，含REQ-092 / REQ-093）、双检、校准与各判定器逐条命令。
+累积门禁（G0→G7按序全通过）：G0会话命名·G1项目初始化·G2工程结构化·G3需求文档同步·G4冗余检测·G5落地与版本一致性·G6执行层并发与载体一致性·G7纪律分。
+唯一权威源：[`AGENTS.md`](../AGENTS.md) §一——门禁定义与量化指标（G0~G7，含REQ-092 / REQ-093 / REQ-098）、双检、校准与各判定器逐条命令。
 分流：冗余→并迭代版本、留单一权威源；冲突→先出裁决、**禁自行取舍**。
 
 机制图文见[`constraint_mechanism_spec.md`](../docs/constraint_mechanism_spec.md)（REQ-047）。
@@ -55,6 +55,7 @@
 | [`language_standard.md`](../rules/system/language_standard.md) | **全文档中文化与通俗表达标准** | 全中文通俗表达 |
 | [`initialization_protocol.md`](../rules/system/initialization_protocol.md) | **开箱自检与目录一键初始化协议** | 自检六步与四件套 |
 | [`security_baseline.md`](../rules/security/security_baseline.md) | **免审批安全基线与防破坏红线规约** | 八大红线与写后读回 |
+| [`discipline_score.md`](../rules/system/discipline_score.md) | **纪律分系统规约** | 全域一本账、扣分带证据、低于60分停用（REQ-098） |
 
 ---
 

@@ -18,7 +18,7 @@
 | 动作 | 本工程入口命令 | 全局规则权威载体（绝对路径，真实存在） |
 | :--- | :--- | :--- |
 | 首动改名（S05） | `./scripts/control.sh naming` | `/Users/linqiyu/Documents/DSH/全局规则/scripts/name_me.sh` |
-| 累积门禁 G0~G6 | `./scripts/control.sh check` | `/Users/linqiyu/Documents/DSH/全局规则/scripts/control_gates.sh` |
+| 累积门禁 G0~G7 | `./scripts/control.sh check` | `/Users/linqiyu/Documents/DSH/全局规则/scripts/control_gates.sh` |
 | 底层物理锁阶梯 | `./scripts/control.sh lock` | `/Users/linqiyu/Documents/DSH/全局规则/scripts/physical_lock.sh` |
 | S07 待办常显 | `./scripts/control.sh todo` | `/Users/linqiyu/Documents/DSH/全局规则/scripts/todo_gate.sh` |
 | 需求版本贯通 | `./scripts/control.sh version` | `/Users/linqiyu/Documents/DSH/全局规则/scripts/req_version_audit.mjs` |
@@ -82,8 +82,9 @@ node scripts/backfill_scope.mjs --apply  # 存量补课：铺入口、正引用�
 | **G4 冗余检测** | 实质重复率健康 | 高相似块对 / 重复标题 |
 | **G5 落地与版本一致性** | 全域覆盖 + 版本贯通 + 无悬空引用（REQ-092） | 落地判定通过数 / 悬空引用 |
 | **G6 执行层并发与载体一致性** | 树可溯源 + 调度有牙 + 队列有界 + 载体齐备 + 篇幅受管（REQ-093） | 并发与载体判定通过数 / 未达标项 |
+| **G7 纪律分** | 纪律账本哈希链自洽 + 当前分在停用阈值之上（REQ-098） | 账本记录数 / 当前纪律分 |
 
-门禁**累积**：G0→G1→G2→G3→G4→G5→G6 全过才算可执行；状态由磁盘实况推导，**不接受自我宣称**，进度每轮常显。调参入口 `ai-control/config/gates.conf`（改完即时生效）；确有必要时才用 `DSH_CONTROL_GUARD=off` 绕过。
+门禁**累积**：G0→G1→G2→G3→G4→G5→G6→G7 全过才算可执行；状态由磁盘实况推导，**不接受自我宣称**，进度每轮常显。调参入口 `ai-control/config/gates.conf`（改完即时生效）；确有必要时才用 `DSH_CONTROL_GUARD=off` 绕过。
 
 ---
 

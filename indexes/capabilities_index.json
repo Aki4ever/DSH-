@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-02T00:20:13.527Z",
+  "generatedAt": "2026-10-02T01:15:24.763Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 272,
+  "total": 274,
   "byLayer": {
     "技能 (Skill)": 178,
-    "智能体 (Agent)": 1,
+    "智能体 (Agent)": 2,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 89
+    "脚本 (CLI)": 90
   },
-  "withInterface": 272,
+  "withInterface": 274,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1616,6 +1616,15 @@
     },
     {
       "layer": "智能体 (Agent)",
+      "id": "agent.skillpool.discipline-officer-agent",
+      "path": "skill-pool/agents/discipline-officer-agent",
+      "desc": "纪律分的独立裁判，只回答一件事：AI 给自己打的分算不算数。它的判定高于 AI 自评、低于用户裁定；",
+      "invoke": "subagent（宿主工具，按需分派）",
+      "invokeKind": "host-tool",
+      "interface": "skill-pool/agents/discipline-officer-agent/interface.json"
+    },
+    {
+      "layer": "智能体 (Agent)",
       "id": "agent.skillpool.process-supervisor-agent",
       "path": "skill-pool/agents/process-supervisor-agent",
       "desc": "---",
@@ -1856,6 +1865,15 @@
       "invoke": "node scripts/deepseek_usage_probe.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/deepseek_usage_probe.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.discipline_score",
+      "path": "scripts/discipline_score.mjs",
+      "desc": "",
+      "invoke": "node scripts/discipline_score.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/discipline_score.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

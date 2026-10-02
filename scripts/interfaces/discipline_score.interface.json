@@ -1,0 +1,50 @@
+{
+  "id": "cli.rules.discipline_score",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/discipline_score.mjs",
+  "invoke": "node scripts/discipline_score.mjs --check",
+  "summary": "纪律分内核：全域一本账（追加式 + 哈希链）记 AI 的规则遵守情况，一条起分 100，扣分必须绑定可复跑证据；自评与纪律委员独立复核差额超阈值即判评分失误；条目分低于 60 触发物理停用（G7 门禁 → EXEC_ALLOWED=false），仅用户可恢复（REQ-098 / R1~R6）",
+  "inputs": [
+    { "name": "open", "type": "arg", "required": false, "desc": "开一条纪律条目（一个任务条 = 一个记账单位，起分 100）" },
+    { "name": "deduct", "type": "arg", "required": false, "desc": "入账一条扣分：需 --level 档位、--reason 理由，且除用户裁定外必须有 --evidence" },
+    { "name": "--level", "type": "arg", "required": false, "desc": "deduct 用：扣分档位 L1~L5，分值由 gates.conf 的 DISC_LEVELS 决定" },
+    { "name": "--evidence", "type": "arg", "required": false, "desc": "deduct 用：可复跑证据（判定命令 + exit=N 或 sha256）；--by user 时可省（用户裁定即终局凭据）" },
+    { "name": "--by", "type": "arg", "required": false, "desc": "扣分来源：self（自评）/ officer（纪律委员）/ user（用户，权限最高且不可回滚）" },
+    { "name": "selfscore", "type": "arg", "required": false, "desc": "登记 AI 对自己的评分与自报扣分项" },
+    { "name": "verify", "type": "arg", "required": false, "desc": "纪律委员独立复核：重算账本 + 跑外部见证审计器，差额超 DISC_SELF_VERIFY_GAP 即按 L4 入账" },
+    { "name": "status", "type": "arg", "required": false, "desc": "读取当前纪律分、停用状态、档位分布与哈希链状态（--json 机读）" },
+    { "name": "resume", "type": "arg", "required": false, "desc": "解除停用；仅 --by user 可执行（智能体不得自行解除）" },
+    { "name": "verify-chain", "type": "arg", "required": false, "desc": "逐行重算账本哈希链，任一历史行被改动即判红" },
+    { "name": "--check", "type": "arg", "required": false, "desc": "G7 门禁判定入口：账本自洽且未停用才退 0" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "13 条反向用例（缺证据拒收 / 评分失误 / 跌破 60 停用 / 停用不自动复活 / 篡改判红）" },
+    { "name": "--json", "type": "arg", "required": false, "desc": "机读输出（供 G7 门禁解析 entries 与 current 两个数值）" },
+    { "name": "DSH_SESSION_ID", "type": "env", "required": false, "desc": "open 时记录会话归属；取不到写 unknown" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "当前纪律分、条目、档位分布、停用状态与哈希链结论；--json 时为机读对象" },
+    { "name": "ai-control/reports/discipline/ledger.jsonl", "type": "file", "desc": "只追加的纪律账本，每行带 prev 指针与自哈希，构成哈希链（运行时产物，不随仓库提交）" },
+    { "name": "ai-control/reports/discipline/state.json", "type": "file", "desc": "由账本推导的状态快照（当前分 / 是否停用 / 记录数），供看板与人工查看" }
+  ],
+  "exitCodes": {
+    "0": "账本自洽且未触发停用（--check）/ 动作成功（open、deduct、selfscore、resume、status）",
+    "1": "已停用、账本哈希链断裂、或判定为评分失误",
+    "2": "取不到证据或用法错误（缺 --reason、未知档位、缺证据、resume 未由用户发起）"
+  },
+  "sideEffects": [
+    "open / deduct / selfscore / verify / resume 会向 ai-control/reports/discipline/ledger.jsonl 追加一行（只追加，不覆盖、不删除）",
+    "status / --check 会刷新 ai-control/reports/discipline/state.json 快照",
+    "verify-chain / --selftest 不写生产账本（--selftest 在临时目录内落盘）"
+  ],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/discipline_score.mjs --check",
+    "node scripts/discipline_score.mjs status --json",
+    "node scripts/discipline_score.mjs --selftest",
+    "node scripts/discipline_score.mjs verify-chain",
+    "node scripts/discipline_score.mjs deduct --level L3 --by officer --reason \"越权改动\" --evidence \"git status --porcelain|exit=0\"",
+    "node scripts/discipline_score.mjs resume --by user --reason \"用户复核后恢复\""
+  ],
+  "source": "handwritten",
+  "verified": true
+}

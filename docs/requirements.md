@@ -1,14 +1,12 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.29.4`
+> - **当前系统实施总版本**：`v4.29.5`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-10-02
 > - **版本状态**：`[Release 稳定生效]`
-> - **本次 PATCH 递增说明**：`v4.29.3 → v4.29.4`，依据 REQ-097 第二批（策略层判定 · 知识库索引判定 · 立项 CLI 规划）；
->   属规则细化 + 只读判定器接入与门禁接线（向下兼容），故**不启用** REQ-093 预留的 `v4.30.0`。
-> - **上一次 PATCH 递增说明**：`v4.29.2 → v4.29.3`，依据 REQ-097 第一批（需求登记入口 · 第一性原理入知识库）；
->   属规则细化 + 只读判定器与知识库条目接入（向下兼容），故**不启用** REQ-093 预留的 `v4.30.0`。
+> - **本次 PATCH 递增说明**：`v4.29.4 → v4.29.5`，依据 REQ-098（纪律分系统（DISCIPLINE-SCORE-1））；新增纪律分内核 CLI、持久账本、门禁 G7、规则条文、专职纪律委员 agent 与输出契约两个字段（均为加法式改动，向下兼容），故不启用 REQ-093 预留的 `v4.30.0`。
+> - **上一次 PATCH 递增说明**：`v4.29.3 → v4.29.4`，依据 REQ-097 第二批（策略层判定 · 知识库索引判定 · 立项 CLI 规划）；
 > - **历史跳号留痕**：`v4.24.0 → v4.26.0` 曾跳过 `v4.25.0`（`v4.25.0` 归 REQ-089、`v4.26.0` 归 REQ-090，两笔账一次结清）。
 > - **版本跳号说明**：`v4.26.0 → v4.28.0 → v4.29.0`，跳过 `v4.27.0`。原因：REQ-091 已认领目标版本 `v4.27.0`
 >   但其"所有页面常显"仍待人工 DOM 取证，**不满足递增条件**（未完成项不得冒充完成）；
@@ -3342,3 +3340,91 @@
   R4 立项 CLI 规划（条款 + 模板 + `init_project.sh` 立项即生成 `CLI_PLAN.md` + 5 条反向用例 + 端到端实测）；
   两条新判定器接入 G5，策略层判定并入 `audit_execution.sh` 输出契约维度；篇幅预算复跑未膨胀。
 - **本次改动已推送远程**（两个提交：第一批 `d122751`、第二批随本轮）。
+
+---
+
+### REQ-098: 纪律分系统（DISCIPLINE-SCORE-1）
+> ### 🏷️ **资产元数据与生命周期标记**
+> - **文档类型 (Doc Type)**: `[REQUIREMENT 业务需求台账]`
+> - **清理定位 (Retention)**: `[PERSISTENT 长期受管]`
+> - **生成会话**: `未登记`
+> - **到期/清理条件**: `[随版本演进]`
+
+- **当前状态**：`[ACTIVE]` 需求已登记，按验收标准逐步落地
+- **实施版本**：`v4.29.5`（PATCH 递增：新增需求条目与其判定入口，向下兼容）
+- **需求版本**：`v1.0.0`
+- **提出时间**：2026-10-02
+- **最新更新**：2026-10-02
+- **责任归属**：用户（提出与授权判定） / AI 智能体（取证、分裂与实施）
+- **需求文案**：[`docs/constraint_mechanism_optimize_14.md`](constraint_mechanism_optimize_14.md)（唯一权威出处，本条目只放指针不复述细则）
+
+#### 1. 提出背景与痛点
+
+用户一次提出六条：新增纪律分系统；任何 DSH 工程文件夹内不遵循规则就扣分；我给自己的评分若有失误由用户主动扣分；
+每条总分 100 分、扣到 60 分以下就停用；扣分口径由我自主规划；新建纪律委员专管；输出新增"当前纪律分"与"完成时纪律分"。
+
+只读取证后的事实（均可复跑）：
+
+| 编号 | 事实 | 复跑证据 |
+| :--- | :--- | :--- |
+| P1 | 既有 `audit_execution.sh` 是**每轮从零重算**的成绩单：无记忆、不累计、不跨任务 | 读 `scripts/audit_execution.sh`（`SCORE=100` 起算，全程不读历史） |
+| P2 | 扣到任何低分都**没有任何后果**：停用阈值不存在 | 本轮新增前全库无 `suspend`/`停用` 的拦截层实现 |
+| P3 | 用户否决权在物理上无处落笔：没有"用户扣分"入口 | 本轮新增前 `scripts/` 无扣分命令 |
+| P4 | 打分的与复核的是同一个人：既无独立复核者，也无专职委员载体 | 本轮新增前无 `discipline-officer-agent` |
+| P5 | 输出契约只有五项回执字段，纪律分无处披露 | `gates.conf` 的 `OUT_RECEIPT_FIELDS` 原为五项 |
+| P6 | **本轮实测违规**：我派出的只读侦察子代理越权改写 `scripts/scope_audit.mjs`（+137/−23，无需求依据），致 G5 判红 | `git status` 出现 ` M scripts/scope_audit.mjs`，已还原并留证 `/tmp/scope_audit_unauthorized_20261002.patch` |
+
+P6 同批还留下一个无人引用的孤儿脚本 `scripts/scope_renewal_gate.mjs`，已移出仓库并留证
+`/tmp/scope_renewal_gate_unauthorized_20261002.mjs`（**不静默采纳**：无需求依据的产物不予落盘，用户如认可可另立条目）。
+
+#### 2. 核心诉求与目标
+
+1. **R1~R2 全域一本账**：新增 `scripts/discipline_score.mjs`，账本 `ai-control/reports/discipline/ledger.jsonl`
+   （追加式 + 逐行哈希链），一个任务条起分 100、扣分累加、下限 0，任何工程内的违规同记这一本账；
+2. **R3 证据门**：扣分必须带 `--evidence`（判定命令 + `exit=N` 或哈希），缺证据拒收（退 2）；`--by user` 豁免（用户裁定即终局凭据）；
+3. **R4 自评与独立复核**：`verify` 子命令重算账本并跑外部见证审计器，自评与复核差额超 `DISC_SELF_VERIFY_GAP`（10）即判"评分失误"，按 L4 入账，以委员判定为准；
+4. **R5 用户一票终局**：`deduct --by user` 权限最高、不可申诉、不可回滚；
+5. **R6 低于 60 分物理停用**：条目分 < 60 → G7 非 pass → `EXEC_ALLOWED=false` → 已加载的宿主拦截层拒绝改动型调用（只读工具放行）；
+   停用**不随新任务复活**，仅用户 `resume --by user` 可解除；
+6. **R7 专职纪律委员**：`skill-pool/agents/discipline-officer-agent/`（角色契约 + 接口契约），
+   因宿主无 agent 注册面，其**可跑载体**为 `discipline_score.mjs verify`，契约中明确"调不起时记 `officer_verdict=skipped`，不静默跳过"；
+7. **R8 输出两条固定字段**：进度回执新增 `🎯 当前纪律分`（动手前），【执行效果】新增 `🏁 完成时纪律分`（结算后），两处均从账本取数、禁手写。
+
+#### 3. 关联文件与影响范围
+
+- **新增**：`scripts/discipline_score.mjs` · `scripts/interfaces/discipline_score.interface.json` · `rules/system/discipline_score.md`（唯一权威源）·
+  `skill-pool/agents/discipline-officer-agent/`（PROMPT.md + interface.json）· `docs/constraint_mechanism_optimize_14.md`（需求文案）；
+  运行时账本 `ai-control/reports/discipline/`（随 `ai-control/reports/` 一并 gitignore，属运行凭据不提交）；
+- **改动**：`scripts/control_gates.sh`（新增 G7 与阈值自检）· `ai-control/config/gates.conf`（`DISC_*` 段、回执字段扩为六项）·
+  `rules/system/output_standard.md`（回执五项→六项）· `scripts/audit_execution.sh`（执行效果卡新增完成时纪律分）·
+  `AGENTS.md`（G7 行与累积链）· `ai-control/README.md`、`indexes/rules_index.md`（门禁区间与索引同步）·
+  `scripts/backfill_scope.mjs`、`scripts/gen_control_map.mjs`（G0~G7 标签）· `CLI_PLAN.md`、`indexes/capabilities_index.*`（登记）；
+- **边界外（不动）**：不改 `audit_execution.sh` 既有九维权重（纪律分是**独立的第二本账**）；不给任何工程豁免。
+
+#### 4. 验收标准
+
+- [x] `node scripts/discipline_score.mjs --selftest` 退出码 0（13 条用例，含 7 条反例全判对）；
+- [x] `node scripts/discipline_score.mjs --check` 退出码 0（账本哈希链自洽、未触发停用）；
+- [x] `node scripts/discipline_score.mjs verify-chain` 退出码 0（篡改历史行即判红，反例已自检）；
+- [x] `bash scripts/control_gates.sh check` G0~G7 全过（7/7 · 100%）；
+- [x] `./scripts/gate_selftest.sh` 9/9（新增 G7 后既有"证据可证性"回归未退化）；
+- [x] `node scripts/build_capabilities_index.mjs --check` 退出码 0（274 条执行层全部入索引）；
+- [x] `node scripts/check_layer_interfaces.mjs --check` 退出码 0（契约违规 0 · CLI 覆盖率 100%）；
+- [x] `node scripts/cli_plan_audit.mjs --check` 退出码 0（9 份接口契约在位且命令可达）；
+- [x] `node scripts/token_budget_audit.mjs --check` 退出码 0（篇幅未膨胀 · 能力等价 8/8）；
+- [x] `node scripts/redundancy_scan.mjs --root .` 与 `node scripts/conflict_scan.mjs --root .`、`node scripts/legacy_align_scan.mjs --root .` 全过（0 高相似对 · 无冲突 · 待对齐 0）；
+- [x] `ls skill-pool/agents/discipline-officer-agent/` 两份契约在位（PROMPT.md + interface.json，9 个必填字段齐备）；
+- [x] §1 P6 实测违规已作为**第一条记录**入账：L3 −10 分，证据为可复跑的 git 取证。
+
+#### 5. 实施记录
+
+- **2026-10-02 [新建 + 落地]**：接收六条口语需求并简化为可执行文案（`docs/constraint_mechanism_optimize_14.md`）。
+  查重结论：属原"管控专属审计智能体 0~100 分量化评分"条目线的**增量演进**（既有为每轮静态成绩单，本轮补跨任务持久账本、
+  用户否决权、停用阈值与独立委员、输出两字段），**不新建规则碎片**。
+  递归分裂到执行层并全部落盘：CLI 内核 / 数据账本 / 门禁 G7 / 规则条文 / 专职委员 agent / 输出契约 / 索引与台账 七类载体。
+- **诚实缺口**：① 专职委员的**宿主注册面不存在**（本仓 `process-supervisor-agent` 早有同一结论），
+  故其"能被调起"只能做到 `discipline_score.mjs verify` 这一判定器形态，契约已写明知情降级，**不冒充已通电**；
+  ② R6 的物理阻断走**既有 `execAllowed` 通道**（G7 非 pass → 拦截层拒绝改动型调用），未在插件内新增分支，
+  因而不需重启宿主即生效；但"新会话里写文件被拒"这条端到端证据仍需用户侧实跑观察确认，本轮**不声称已验证**；
+  ③ `AGENTS.md` 受管段由 `backfill_scope.mjs` 生成，而该生成器**排除主控仓库自身**，
+  其 G0~G7 标签本轮以受控替换同步（生成器源码已改，其他工程重新补课即得 G0~G7）。

@@ -18,6 +18,7 @@
 | 立项 CLI 规划判定 | `node scripts/cli_plan_audit.mjs --check` | `scripts/interfaces/cli_plan_audit.interface.json` | `readonly` | 不许清单里写跑不起来的命令 |
 | 执行层接口覆盖率 | `node scripts/check_layer_interfaces.mjs --check` | `scripts/interfaces/check_layer_interfaces.interface.json` | `readonly` | 不许只看"名字在不在索引里"就宣布通过 |
 | 冗余与冲突双检 | `node scripts/redundancy_scan.mjs --root .` | `scripts/interfaces/redundancy_scan.interface.json` | `readonly` | 不许扫出高相似块后置之不理 |
+| 纪律分判定与停用 | `node scripts/discipline_score.mjs --check` | `scripts/interfaces/discipline_score.interface.json` | `exclusive` | 不许账本哈希链不自洽或已停用还报满分 |
 
 > **并行口径**：`readonly`（只读，可并发）/ `shared`（读共享态、只写自己的产物）/ `exclusive`（独占，必须串行）。
 
