@@ -36,8 +36,13 @@ import { execFileSync } from 'node:child_process'
 import { cfg, cfgNum, readGatesConf } from './lib/gates_config.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const LEDGER_DIR = join(ROOT, 'ai-control', 'reports', 'discipline')
-const LEDGER = join(LEDGER_DIR, 'ledger.jsonl')
+// 账本落点：默认是**全域唯一一本账**。`DSH_DISCIPLINE_LEDGER` 仅供测试/演练指向临时账本——
+// 生产账本只追加、不可回滚，若"停用会不会真的拦人"这类反例必须写进生产账本才能验证，
+// 那等于用污染证据的方式换取验证，得不偿失。故开一个显式的隔离入口。
+const LEDGER_DIR = process.env.DSH_DISCIPLINE_LEDGER
+  ? dirname(process.env.DSH_DISCIPLINE_LEDGER)
+  : join(ROOT, 'ai-control', 'reports', 'discipline')
+const LEDGER = process.env.DSH_DISCIPLINE_LEDGER || join(LEDGER_DIR, 'ledger.jsonl')
 const STATE = join(LEDGER_DIR, 'state.json')
 
 /* ── 稳定序列化与哈希链 ─────────────────────────────────────────────────────

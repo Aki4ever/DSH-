@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-02T01:15:24.763Z",
+  "generatedAt": "2026-10-02T22:55:26.357Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 274,
+  "total": 275,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 2,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 90
+    "脚本 (CLI)": 91
   },
-  "withInterface": 274,
+  "withInterface": 275,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1865,6 +1865,15 @@
       "invoke": "node scripts/deepseek_usage_probe.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/deepseek_usage_probe.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.discipline_guard_probe",
+      "path": "scripts/discipline_guard_probe.mjs",
+      "desc": "",
+      "invoke": "node scripts/discipline_guard_probe.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/discipline_guard_probe.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

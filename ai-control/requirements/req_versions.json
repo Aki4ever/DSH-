@@ -1473,9 +1473,9 @@
     },
     "REQ-098": {
       "title": "纪律分系统（DISCIPLINE-SCORE-1）",
-      "requirement_version": "v1.0.0",
+      "requirement_version": "v1.1.0",
       "requirement_version_derived": false,
-      "implementation_version": "v4.29.5",
+      "implementation_version": "v4.29.6",
       "files": [
         "scripts/control_gates.sh",
         "ai-control/config/gates.conf"

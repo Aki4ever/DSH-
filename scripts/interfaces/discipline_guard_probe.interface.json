@@ -1,0 +1,33 @@
+{
+  "id": "cli.rules.discipline_guard_probe",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/discipline_guard_probe.mjs",
+  "invoke": "node scripts/discipline_guard_probe.mjs",
+  "summary": "纪律停用物理阻断探针：把「低于 60 分就停用」这条规则整链实跑——临时账本扣到 50 分 → 门禁列为卡点 → execAllowed 变假 → 直接调用宿主拦截层的 evaluate() 断言改动型被拒、只读放行、逃生舱仍开；含满分对照组与生产账本零污染断言（REQ-098 / R6）",
+  "inputs": [
+    { "name": "--json", "type": "arg", "required": false, "desc": "机读输出：逐条环节的成立情况与结论" },
+    { "name": "DSH_DISCIPLINE_LEDGER", "type": "env", "required": false, "desc": "由探针自身设置为临时账本，用于隔离演练；生产账本不受影响" },
+    { "name": "DSH_CONTROL_HOME", "type": "env", "required": false, "desc": "由探针自身设置为临时状态目录，状态快照不写进线上目录" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "14 条环节的逐条结果（甲组停用链 10 条 · 乙组对照组 3 条 · 丙组零污染 1 条）与结论行" },
+    { "name": "exitCode", "type": "exitcode", "desc": "0 = 停用是可观测的物理后果；1 = 停用只是措辞" }
+  ],
+  "exitCodes": {
+    "0": "14 个环节全部成立：停用真的会拒绝改动型调用，且只读与逃生舱不受影响",
+    "1": "任一环节不成立（例如 execAllowed 未随停用变假，或 write 未被拒）",
+    "2": "取不到证据（门禁快照缺失或拦截层模块不可导入）"
+  },
+  "sideEffects": [
+    "在系统临时目录内建两套演练账本与状态目录，跑完即删（ISO 临时目录，不落仓库）",
+    "会调用一次真实门禁引擎，收尾立刻用健康状态覆盖快照，避免测试反噬线上看板"
+  ],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/discipline_guard_probe.mjs",
+    "node scripts/discipline_guard_probe.mjs --json"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

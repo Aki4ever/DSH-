@@ -9,7 +9,7 @@
 | :--- | :--- | :--- | ---: |
 | `skill` | 技能层 | 是 | 183 |
 | `cli` | 命令层 | 否 | 9 |
-| `agent` | 智能体层 | 否 | 4 |
+| `agent` | 智能体层 | 否 | 5 |
 | `api` | 接口层 | 否 | 0 |
 | `mcp` | 协议层 | 否 | 0 |
 | `plugin` | 插件层 | 否 | 2 |
@@ -19,18 +19,19 @@
 | 层级 | ID | 父级 | 路径 | 来源 | 说明 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `cli` | `skill-pool` | `dsh-butler` | `bin/skill-pool` | repo | 技能池管理与门禁 CLI 入口 |
-| `cli` | `skill-pool:list` | `skill-pool` | `bin/skill-pool` | repo | 列出技能与软链状态 |
-| `cli` | `skill-pool:validate` | `skill-pool` | `bin/skill-pool` | repo | 校验技能规范合规性 |
-| `cli` | `skill-pool:status` | `skill-pool` | `bin/skill-pool` | repo | 查看仓库状态统计概览 |
-| `cli` | `skill-pool:init` | `skill-pool` | `bin/skill-pool` | repo | 初始化新技能脚手架 |
-| `cli` | `skill-pool:link` | `skill-pool` | `bin/skill-pool` | repo | 软链技能到运行环境 |
-| `cli` | `skill-pool:unlink` | `skill-pool` | `bin/skill-pool` | repo | 安全解除技能软链 |
 | `cli` | `skill-pool:catalog` | `skill-pool` | `bin/skill-pool` | repo | 查询与同步全局技能编目 |
 | `cli` | `skill-pool:consistency` | `skill-pool` | `bin/skill-pool` | repo | 口径一致性门禁（受管区块刷新 + 三方对拍） |
+| `cli` | `skill-pool:init` | `skill-pool` | `bin/skill-pool` | repo | 初始化新技能脚手架 |
+| `cli` | `skill-pool:link` | `skill-pool` | `bin/skill-pool` | repo | 软链技能到运行环境 |
+| `cli` | `skill-pool:list` | `skill-pool` | `bin/skill-pool` | repo | 列出技能与软链状态 |
+| `cli` | `skill-pool:status` | `skill-pool` | `bin/skill-pool` | repo | 查看仓库状态统计概览 |
+| `cli` | `skill-pool:unlink` | `skill-pool` | `bin/skill-pool` | repo | 安全解除技能软链 |
+| `cli` | `skill-pool:validate` | `skill-pool` | `bin/skill-pool` | repo | 校验技能规范合规性 |
+| `agent` | `discipline-officer-agent` | `process-supervisor` | `agents/discipline-officer-agent/PROMPT.md` | repo | 纪律委员：独立复核 AI 自评、受理用户扣分、签发停用（REQ-098 / R7） |
+| `agent` | `process-supervisor-agent` | `process-supervisor` | `agents/process-supervisor-agent/PROMPT.md` | repo | 流程监督员的独立复核者：不共享主上下文，只依据磁盘证据包逐项判定，看不到的就是没做 |
+| `agent` | `ralph` | `dsh-butler` | `-` | host | 宿主提供的新鲜智能体迭代循环能力 |
 | `agent` | `subagent` | `dsh-butler` | `-` | host | 宿主提供的子智能体能力（深度推导与并行拆解） |
 | `agent` | `workflow` | `dsh-butler` | `-` | host | 宿主提供的多子智能体编排能力 |
-| `agent` | `ralph` | `dsh-butler` | `-` | host | 宿主提供的新鲜智能体迭代循环能力 |
-| `agent` | `process-supervisor-agent` | `process-supervisor` | `agents/process-supervisor-agent/PROMPT.md` | repo | 流程监督员的独立复核者：不共享主上下文，只依据磁盘证据包逐项判定，看不到的就是没做 |
 | `plugin` | `dsh-plugin-control-jump` | `dsh-butler` | `plugins/dsh-plugin-control-jump` | repo | DSH 客户端插件：在插件市场已安装列表与设置→插件清单的每个条目注入常显「调控」按钮，一键直达该插件的详情控制页 |
 | `plugin` | `dsh-plugin-usage-bar` | `dsh-butler` | `plugins/dsh-plugin-usage-bar` | repo | DSH 客户端插件：在输入坞常显 DeepSeek 时段状态（高峰/空闲）与下次价格切换倒计时；时段为本地纯计算，额度栏在宿主通道确认前如实显示「未接入」，不显示假数字 |
 

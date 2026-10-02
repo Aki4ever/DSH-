@@ -1,12 +1,12 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.29.5`
+> - **当前系统实施总版本**：`v4.29.6`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
-> - **最后同步时间**：2026-10-02
+> - **最后同步时间**：2026-10-03
 > - **版本状态**：`[Release 稳定生效]`
-> - **本次 PATCH 递增说明**：`v4.29.4 → v4.29.5`，依据 REQ-098（纪律分系统（DISCIPLINE-SCORE-1））；新增纪律分内核 CLI、持久账本、门禁 G7、规则条文、专职纪律委员 agent 与输出契约两个字段（均为加法式改动，向下兼容），故不启用 REQ-093 预留的 `v4.30.0`。
-> - **上一次 PATCH 递增说明**：`v4.29.3 → v4.29.4`，依据 REQ-097 第二批（策略层判定 · 知识库索引判定 · 立项 CLI 规划）；
+> - **本次 PATCH 递增说明**：`v4.29.5 → v4.29.6`，依据 REQ-098 第二轮（R6 停用闭环）；新增停用阻断实跑探针与账本隔离入口，纪律委员 agent 登记进执行层树（加法式改动，向下兼容）。
+> - **上一次 PATCH 递增说明**：`v4.29.4 → v4.29.5`，依据 REQ-098 第一轮（纪律分内核 · 持久账本 · 门禁 G7 · 规则条文 · 专职委员 · 输出两字段）；
 > - **历史跳号留痕**：`v4.24.0 → v4.26.0` 曾跳过 `v4.25.0`（`v4.25.0` 归 REQ-089、`v4.26.0` 归 REQ-090，两笔账一次结清）。
 > - **版本跳号说明**：`v4.26.0 → v4.28.0 → v4.29.0`，跳过 `v4.27.0`。原因：REQ-091 已认领目标版本 `v4.27.0`
 >   但其"所有页面常显"仍待人工 DOM 取证，**不满足递增条件**（未完成项不得冒充完成）；
@@ -3351,10 +3351,10 @@
 > - **到期/清理条件**: `[随版本演进]`
 
 - **当前状态**：`[ACTIVE]` 需求已登记，按验收标准逐步落地
-- **实施版本**：`v4.29.5`（PATCH 递增：新增需求条目与其判定入口，向下兼容）
-- **需求版本**：`v1.0.0`
+- **实施版本**：`v4.29.6`（PATCH 递增：R6 停用阻断实跑闭环 + 委员层执行层树登记，向下兼容）
+- **需求版本**：`v1.1.0`（第二轮：R6 停用闭环）
 - **提出时间**：2026-10-02
-- **最新更新**：2026-10-02
+- **最新更新**：2026-10-03
 - **责任归属**：用户（提出与授权判定） / AI 智能体（取证、分裂与实施）
 - **需求文案**：[`docs/constraint_mechanism_optimize_14.md`](constraint_mechanism_optimize_14.md)（唯一权威出处，本条目只放指针不复述细则）
 
@@ -3414,7 +3414,9 @@ P6 同批还留下一个无人引用的孤儿脚本 `scripts/scope_renewal_gate.
 - [x] `node scripts/token_budget_audit.mjs --check` 退出码 0（篇幅未膨胀 · 能力等价 8/8）；
 - [x] `node scripts/redundancy_scan.mjs --root .` 与 `node scripts/conflict_scan.mjs --root .`、`node scripts/legacy_align_scan.mjs --root .` 全过（0 高相似对 · 无冲突 · 待对齐 0）；
 - [x] `ls skill-pool/agents/discipline-officer-agent/` 两份契约在位（PROMPT.md + interface.json，9 个必填字段齐备）；
-- [x] §1 P6 实测违规已作为**第一条记录**入账：L3 −10 分，证据为可复跑的 git 取证。
+- [x] §1 P6 实测违规已作为**第一条记录**入账：L3 −10 分，证据为可复跑的 git 取证；
+- [x] `node scripts/discipline_guard_probe.mjs` 退出码 0（**14/14 环**：扣到 50 分 → G7 非 pass → `execAllowed=false` → 真 `evaluate()` 拒 write/edit/bash、放行只读与逃生舱；含满分对照组与生产账本零污染断言）；
+- [x] `python3 skills/register-execution-layer/scripts/register_layer.py --list` 含 `discipline-officer-agent`（layer=agent · source=repo · path 真实存在）· `verify_tree.py` issue_count 0。
 
 #### 5. 实施记录
 
@@ -3428,3 +3430,7 @@ P6 同批还留下一个无人引用的孤儿脚本 `scripts/scope_renewal_gate.
   因而不需重启宿主即生效；但"新会话里写文件被拒"这条端到端证据仍需用户侧实跑观察确认，本轮**不声称已验证**；
   ③ `AGENTS.md` 受管段由 `backfill_scope.mjs` 生成，而该生成器**排除主控仓库自身**，
   其 G0~G7 标签本轮以受控替换同步（生成器源码已改，其他工程重新补课即得 G0~G7）。
+- **2026-10-03 [第二轮落地 · R6 闭环]**：补 `scripts/discipline_guard_probe.mjs`，把"停用"从**载体在位**推进到**物理后果可观测**：
+  新增 `DSH_DISCIPLINE_LEDGER` 隔离入口（演练不污染只追加的生产账本），并**直接调用宿主拦截层的真函数 `evaluate()`** 断言
+  改动型被拒、只读放行、逃生舱仍开，另加满分对照组证明不是"一律拦"、零污染断言证明测试不反噬生产；
+  纪律委员 agent 正式登记进 `skill-pool/docs/operations/execution-layers.json` 并重建执行层树（`verify_tree.py` issue 0）。

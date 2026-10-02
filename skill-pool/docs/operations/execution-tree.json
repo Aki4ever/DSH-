@@ -49,7 +49,7 @@
   "zero-restart-guard": "② 契约与合规"
  },
  "counts": {
-  "agent": 4,
+  "agent": 5,
   "api": 0,
   "cli": 9,
   "mcp": 0,
@@ -2443,8 +2443,8 @@
      "status": "active"
     },
     {
-     "description": "列出技能与软链状态",
-     "id": "skill-pool:list",
+     "description": "查询与同步全局技能编目",
+     "id": "skill-pool:catalog",
      "layer": "cli",
      "parent": "skill-pool",
      "path": "bin/skill-pool",
@@ -2452,17 +2452,8 @@
      "status": "active"
     },
     {
-     "description": "校验技能规范合规性",
-     "id": "skill-pool:validate",
-     "layer": "cli",
-     "parent": "skill-pool",
-     "path": "bin/skill-pool",
-     "source": "repo",
-     "status": "active"
-    },
-    {
-     "description": "查看仓库状态统计概览",
-     "id": "skill-pool:status",
+     "description": "口径一致性门禁（受管区块刷新 + 三方对拍）",
+     "id": "skill-pool:consistency",
      "layer": "cli",
      "parent": "skill-pool",
      "path": "bin/skill-pool",
@@ -2488,6 +2479,24 @@
      "status": "active"
     },
     {
+     "description": "列出技能与软链状态",
+     "id": "skill-pool:list",
+     "layer": "cli",
+     "parent": "skill-pool",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "查看仓库状态统计概览",
+     "id": "skill-pool:status",
+     "layer": "cli",
+     "parent": "skill-pool",
+     "path": "bin/skill-pool",
+     "source": "repo",
+     "status": "active"
+    },
+    {
      "description": "安全解除技能软链",
      "id": "skill-pool:unlink",
      "layer": "cli",
@@ -2497,17 +2506,8 @@
      "status": "active"
     },
     {
-     "description": "查询与同步全局技能编目",
-     "id": "skill-pool:catalog",
-     "layer": "cli",
-     "parent": "skill-pool",
-     "path": "bin/skill-pool",
-     "source": "repo",
-     "status": "active"
-    },
-    {
-     "description": "口径一致性门禁（受管区块刷新 + 三方对拍）",
-     "id": "skill-pool:consistency",
+     "description": "校验技能规范合规性",
+     "id": "skill-pool:validate",
      "layer": "cli",
      "parent": "skill-pool",
      "path": "bin/skill-pool",
@@ -2520,8 +2520,35 @@
   },
   {
    "auto": false,
-   "count": 4,
+   "count": 5,
    "entries": [
+    {
+     "description": "纪律委员：独立复核 AI 自评、受理用户扣分、签发停用（REQ-098 / R7）",
+     "id": "discipline-officer-agent",
+     "layer": "agent",
+     "parent": "process-supervisor",
+     "path": "agents/discipline-officer-agent/PROMPT.md",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "流程监督员的独立复核者：不共享主上下文，只依据磁盘证据包逐项判定，看不到的就是没做",
+     "id": "process-supervisor-agent",
+     "layer": "agent",
+     "parent": "process-supervisor",
+     "path": "agents/process-supervisor-agent/PROMPT.md",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "宿主提供的新鲜智能体迭代循环能力",
+     "id": "ralph",
+     "layer": "agent",
+     "parent": "dsh-butler",
+     "path": null,
+     "source": "host",
+     "status": "active"
+    },
     {
      "description": "宿主提供的子智能体能力（深度推导与并行拆解）",
      "id": "subagent",
@@ -2538,24 +2565,6 @@
      "parent": "dsh-butler",
      "path": null,
      "source": "host",
-     "status": "active"
-    },
-    {
-     "description": "宿主提供的新鲜智能体迭代循环能力",
-     "id": "ralph",
-     "layer": "agent",
-     "parent": "dsh-butler",
-     "path": null,
-     "source": "host",
-     "status": "active"
-    },
-    {
-     "description": "流程监督员的独立复核者：不共享主上下文，只依据磁盘证据包逐项判定，看不到的就是没做",
-     "id": "process-supervisor-agent",
-     "layer": "agent",
-     "parent": "process-supervisor",
-     "path": "agents/process-supervisor-agent/PROMPT.md",
-     "source": "repo",
      "status": "active"
     }
    ],

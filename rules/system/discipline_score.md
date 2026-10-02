@@ -1,8 +1,8 @@
 # 纪律分系统规则 (Discipline Score System)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.5`
-> - **对应实施版本**：`v4.29.5`
+> - **当前文档版本**：`v4.29.6`
+> - **对应实施版本**：`v4.29.6`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **规范层级**：`【系统规则 · 纪律分系统唯一权威源】`
 > - **需求依据**：`REQ-098`（任务代号 `DISCIPLINE-SCORE-1`，子项 R1~R8）
@@ -29,7 +29,7 @@
 | **R3** 扣分带证据 | 每条扣分必须绑定可复跑证据（判定命令 + 退出码或哈希）；缺证据或证据里没有判定结果的，一律拒收（退出码 2）。 | `node scripts/discipline_score.mjs --selftest` |
 | **R4** 自评要复核 | 先自评并列出自报扣分项，再由独立复核重算；两者差额**大于**阈值即判"评分失误"，自动按 L4 入账，并以复核结果为准。 | `node scripts/discipline_score.mjs verify --json` |
 | **R5** 用户一票终局 | 用户可随时直接扣分，用户扣分**终局生效**：不可申诉、不可回滚，只能追加说明；且用户的话即凭据，豁免证据。 | `node scripts/discipline_score.mjs deduct --by user --reason "..."` |
-| **R6** 低于 60 分停用 | 任一条目分跌破停用阈值，即触发**物理停用**；停用不随新任务自动复活，仅用户可恢复。细则见 §五。 | `bash scripts/control_gates.sh check`（G7） |
+| **R6** 低于 60 分停用 | 任一条目分跌破停用阈值，即触发**物理停用**；停用不随新任务自动复活，仅用户可恢复。细则见 §五。 | `bash scripts/control_gates.sh check`（G7）· `node scripts/discipline_guard_probe.mjs`（整链阻断实跑） |
 | **R7** 专职纪律委员 | 委员独立算账：逐条复核证据是否成立，并对既有审计器的失分维度判"漏报"；**不采信自评**，其判定优先于 AI 自评。角色契约与接口契约见 [`skill-pool/agents/discipline-officer-agent/`](../../skill-pool/agents/discipline-officer-agent/PROMPT.md)（宿主无 agent 注册面，故运行载体是该行的 verify 子命令）。 | `node scripts/discipline_score.mjs verify --json` |
 | **R8** 输出两条固定字段 | 每次回复固定多披露两个数：进度回执里的 `🎯 当前纪律分`（动手前的账面分，已登记进 `OUT_RECEIPT_FIELDS`）、【执行效果】里的 `🏁 完成时纪律分`（本轮结算后的分）；两个数都必须从账本取，手写对不上即判红。字段格式只在 [`rules/system/output_standard.md`](./output_standard.md) 定义一次，本文不复述。 | `node scripts/output_audit.mjs --check` |
 
@@ -80,6 +80,7 @@
 | 账面快照 | `node scripts/discipline_score.mjs status --json` | 0，输出 `current` / `suspended` / `entries` |
 | 哈希链重算 | `node scripts/discipline_score.mjs verify-chain` | 0 自洽 · 1 有历史行被改动 |
 | 委员独立复核 | `node scripts/discipline_score.mjs verify --json` | 0 未判评分失误 · 1 判失误并自动 L4 |
+| 停用阻断实跑（R6 的"有牙"判据） | `node scripts/discipline_guard_probe.mjs` | 0 十四环全成立 · 1 停用只是措辞 |
 | 输出两字段与结构 | `node scripts/output_audit.mjs --check` | 0 达标 · 1 不达标 · 2 取不到证据 |
 | 用字合规 | `node scripts/language_audit.mjs --check` | 0 无生僻字 · 1 命中 · 2 取不到证据 |
 

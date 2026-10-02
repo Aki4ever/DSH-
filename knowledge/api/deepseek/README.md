@@ -1,8 +1,8 @@
 # DeepSeek 官方 API 文档 · 本地知识库 (KB-API)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.5`
-> - **对应实施版本**：`v4.29.5`
+> - **当前文档版本**：`v4.29.6`
+> - **对应实施版本**：`v4.29.6`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../../../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-10-01
 > - **版本状态**：`[Release 稳定生效]`

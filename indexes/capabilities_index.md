@@ -1,8 +1,8 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.5`
-> - **对应实施版本**：`v4.29.5`
+> - **当前文档版本**：`v4.29.6`
+> - **对应实施版本**：`v4.29.6`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
 > - **生效状态**：`[Release 稳定生效]`
@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：274**（技能 178 · 其他执行层 96）
+**执行层条目总数：275**（技能 178 · 其他执行层 97）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -543,6 +543,7 @@
 | 脚本 (CLI) | `cli.rules.control_gates` | `scripts/control_gates.sh` | ✅ `scripts/interfaces/control_gates.interface.json` | `bash scripts/control_gates.sh` | — |
 | 脚本 (CLI) | `cli.rules.deepseek_key_setup` | `scripts/deepseek_key_setup.sh` | ✅ `scripts/interfaces/deepseek_key_setup.interface.json` | `bash scripts/deepseek_key_setup.sh` | — |
 | 脚本 (CLI) | `cli.rules.deepseek_usage_probe` | `scripts/deepseek_usage_probe.mjs` | ✅ `scripts/interfaces/deepseek_usage_probe.interface.json` | `node scripts/deepseek_usage_probe.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.discipline_guard_probe` | `scripts/discipline_guard_probe.mjs` | ✅ `scripts/interfaces/discipline_guard_probe.interface.json` | `node scripts/discipline_guard_probe.mjs` | — |
 | 脚本 (CLI) | `cli.rules.discipline_score` | `scripts/discipline_score.mjs` | ✅ `scripts/interfaces/discipline_score.interface.json` | `node scripts/discipline_score.mjs` | — |
 | 脚本 (CLI) | `cli.rules.disk_check_and_cleanup` | `scripts/disk_check_and_cleanup.sh` | ✅ `scripts/interfaces/disk_check_and_cleanup.interface.json` | `bash scripts/disk_check_and_cleanup.sh` | DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位) |
 | 脚本 (CLI) | `cli.rules.domain_scope_selftest` | `scripts/domain_scope_selftest.mjs` | ✅ `scripts/interfaces/domain_scope_selftest.interface.json` | `node scripts/domain_scope_selftest.mjs` | — |
