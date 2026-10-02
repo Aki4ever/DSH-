@@ -59,7 +59,8 @@
 | :--- | :--- | :--- | :--- |
 | R1 | CLI 判定器（复用既有技能） | `scripts/chinese_output_audit.mjs` | `--selftest` 5 条用例 |
 | R1 | 评分维度接线 | `scripts/audit_execution.sh` 第 9 维（与生僻字同维，不新开） | `./scripts/audit_execution.sh --json` 的 `chinesePass` |
-| R2 | 保留策略（Shell + Node 双实现） | `scripts/lib/backup_retention.sh` · `scripts/lib/backup_retention.mjs` | 两处写入器实测 |
+| R2 | 保留策略（Shell 与 Node 双实现，口径唯一） | `scripts/lib/backup_retention.sh` · `scripts/lib/backup_retention.mjs` | 两处写入器实测 |
+| R2 | 留存口径：**同一文件的全部后缀共用 3 份预算**（不为每种后缀各留 3 份，避免"每加一种来源就多一摞备份"） | 口径写在巡检器头注与 `--help`；Python 写入器委托同一实现 | `node scripts/backup_gc.mjs --check` |
 | R2 | 清理与巡检 CLI | `scripts/backup_gc.mjs` | `--check` / `--apply` / `--selftest` |
 | R2 | 写入器接线（4 处） | `scripts/install_host_gate.sh` · `scripts/plugin_sync.sh` · `scripts/market_guard_patch.mjs` · `scripts/restore_skill_pool.mjs` | 各脚本实跑后目录份数不增 |
 | R3 | 委员落账 | `scripts/discipline_score.mjs` 的 `bookOfficerFindings` | `verify --json` 的 `bookedMissed` |

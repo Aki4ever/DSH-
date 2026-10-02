@@ -66,7 +66,7 @@ PATCH_FILE="$PROFILE_DIR/cordis.patch.yml"
 if [ -r "$SCRIPT_DIR/lib/backup_retention.sh" ]; then
   . "$SCRIPT_DIR/lib/backup_retention.sh"
 fi
-prune_backups() { prune_backups_impl "$@" || true; }
+prune_backups() { prune_backups_impl "$@" 2>/dev/null || true; }
 
 # Node 运行时解析（REQ-087 R1 修复）：统一走单一权威实现，不依赖外部 PATH。
 . "$SCRIPT_DIR/lib/find_node.sh"

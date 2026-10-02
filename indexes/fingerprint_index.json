@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-02T23:18:47.062Z",
+  "generatedAt": "2026-10-02T23:22:29.548Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -218,10 +218,10 @@
     },
     {
       "path": "docs/constraint_mechanism_optimize_15.md",
-      "short": "06dd4705",
-      "sha256": "06dd47053607b5781935ad647fa53ac1e1785181d1bfa5245ef361c72df313dc",
-      "bytes": 7931,
-      "mtime": "2026-10-02T23:18:13.454Z"
+      "short": "45e4c089",
+      "sha256": "45e4c089e4e36a0d717aca8b8590a362796946a8eef40456ff27d9040cd3fbb9",
+      "bytes": 8223,
+      "mtime": "2026-10-02T23:22:15.896Z"
     },
     {
       "path": "docs/constraint_mechanism_optimize_3.md",
@@ -1121,10 +1121,10 @@
     },
     {
       "path": "scripts/install_host_gate.sh",
-      "short": "508b3552",
-      "sha256": "508b355250d3a0373fc5c5ef430e613a751667825bd994751b84e1af5d9b8f3c",
-      "bytes": 19364,
-      "mtime": "2026-10-02T23:15:46.531Z"
+      "short": "f3c983cc",
+      "sha256": "f3c983ccdde41680239ca1ed02f117bf223e3baf5c451422635abba51476b7b3",
+      "bytes": 19376,
+      "mtime": "2026-10-02T23:21:50.113Z"
     },
     {
       "path": "scripts/interfaces/agent_life.interface.json",

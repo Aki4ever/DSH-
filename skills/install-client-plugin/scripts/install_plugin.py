@@ -199,6 +199,22 @@ def main(argv):
         patch_backup = "%s.bak-%s" % (patch_path, stamp)
         shutil.copy2(patch_path, patch_backup)
 
+    # 备份留存（REQ-099 / R2）：委托唯一权威实现收敛，不在此另写第三套口径。
+    # 缺 node 或巡检器时静默跳过——清理失败绝不能让装配失败。
+    _probe = os.path.dirname(os.path.abspath(__file__))
+    _gc = None
+    for _ in range(6):
+        if os.path.isfile(os.path.join(_probe, "scripts", "backup_gc.mjs")):
+            _gc = os.path.join(_probe, "scripts", "backup_gc.mjs")
+            break
+        _probe = os.path.abspath(os.path.join(_probe, ".."))
+    if _gc:
+        try:
+            subprocess.run(["node", _gc, "--apply", "--dir", profile_dir, "--keep", "3"],
+                           check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60)
+        except Exception:
+            pass
+
     if os.path.isdir(target_dir):
         shutil.rmtree(target_dir)
     os.makedirs(os.path.dirname(target_dir), exist_ok=True)
