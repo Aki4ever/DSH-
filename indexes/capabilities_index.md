@@ -1,8 +1,8 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.2`
-> - **对应实施版本**：`v4.29.1`
+> - **当前文档版本**：`v4.29.3`
+> - **对应实施版本**：`v4.29.3`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
 > - **生效状态**：`[Release 稳定生效]`
@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：268**（技能 178 · 其他执行层 90）
+**执行层条目总数：269**（技能 178 · 其他执行层 91）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -582,6 +582,7 @@
 | 脚本 (CLI) | `cli.rules.push_external_projects` | `scripts/push_external_projects.sh` | ✅ `scripts/interfaces/push_external_projects.interface.json` | `bash scripts/push_external_projects.sh` | — |
 | 脚本 (CLI) | `cli.rules.redundancy_scan` | `scripts/redundancy_scan.mjs` | ✅ `scripts/interfaces/redundancy_scan.interface.json` | `node scripts/redundancy_scan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.rename_session` | `scripts/rename_session.sh` | ✅ `scripts/interfaces/rename_session.interface.json` | `bash scripts/rename_session.sh` | 通过 DSH 后台 HTTP RPC 接口，为当前会话重命名并锁定侧边栏标题 |
+| 脚本 (CLI) | `cli.rules.req_new` | `scripts/req_new.mjs` | ✅ `scripts/interfaces/req_new.interface.json` | `node scripts/req_new.mjs` | — |
 | 脚本 (CLI) | `cli.rules.req_version_audit` | `scripts/req_version_audit.mjs` | ✅ `scripts/interfaces/req_version_audit.interface.json` | `node scripts/req_version_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.req_version_gen` | `scripts/req_version_gen.mjs` | ✅ `scripts/interfaces/req_version_gen.interface.json` | `node scripts/req_version_gen.mjs` | — |
 | 脚本 (CLI) | `cli.rules.restart_verify` | `scripts/restart_verify.mjs` | ✅ `scripts/interfaces/restart_verify.interface.json` | `node scripts/restart_verify.mjs` | ============================================================================== |

@@ -3,7 +3,7 @@
   "note": "机读需求版本台账：由 scripts/req_version_gen.mjs 从 docs/requirements.md 生成；人工只维护 requirement_version_override 与 change_log 两个字段。",
   "source": "docs/requirements.md",
   "generated_by": "scripts/req_version_gen.mjs",
-  "requirement_count": 96,
+  "requirement_count": 97,
   "override_count": 0,
   "entries": {
     "REQ-001": {
@@ -48,7 +48,8 @@
       "files": [
         "docs/requirements.md",
         "rules/system/meta_rules.md",
-        "rules/workflow/change_flow.md"
+        "rules/workflow/change_flow.md",
+        "scripts/req_new.mjs"
       ],
       "missing_files": [],
       "change_log": []
@@ -903,7 +904,8 @@
         "rules/system/meta_rules.md",
         "rules/coding/first_principles_verification.md",
         "indexes/rules_index.md",
-        "ai-control/requirements/control_requirements_ledger.md"
+        "ai-control/requirements/control_requirements_ledger.md",
+        "knowledge/common/first_principles_specification.md"
       ],
       "missing_files": [],
       "change_log": []
@@ -1448,6 +1450,19 @@
         "ai-control/plugin/index.mjs"
       ],
       "missing_files": [],
+      "change_log": []
+    },
+    "REQ-097": {
+      "title": "需求溯源与策略层输出落地（PLAIN-STRATEGY-1）",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": false,
+      "implementation_version": "v4.29.3",
+      "files": [
+        "indexes/capabilities_index.md"
+      ],
+      "missing_files": [
+        ".json"
+      ],
       "change_log": []
     }
   }

@@ -1,8 +1,8 @@
 # 全局规则与体系全景总索引
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.2`
-> - **对应实施版本**：`v4.29.1`
+> - **当前文档版本**：`v4.29.3`
+> - **对应实施版本**：`v4.29.3`
 > - **版本治理规范**：[`versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-24
 > - **版本状态**：`[Release 稳定生效]`
@@ -100,6 +100,7 @@
 | [`engineering_specification.md`](../knowledge/common/engineering_specification.md) | **通用技术架构与工程规范** | 四层解耦与零 GC |
 | [`art_specification.md`](../knowledge/common/art_specification.md) | **通用视觉与色彩设计规范** | 色彩平衡与对比度 |
 | [`dsh_native_ui_components.md`](../knowledge/common/dsh_native_ui_components.md) | **DSH 原生可视化组件体系法典** | 组件分层与插槽树 |
+| [`first_principles_specification.md`](../knowledge/common/first_principles_specification.md) | **第一性原理与实证方法论（知识库通用条款卡）** | 三不采信与证据三级定级（REQ-097 / R3） |
 | [`projects/README.md`](../knowledge/projects/README.md) | **项目专属知识库隔离总规** | 物理隔离与禁载铁律 |
 | [`aether_echo/README.md`](../knowledge/projects/aether_echo/README.md) | **源能回响项目专属法典** | 以太法则与纪元阵营 |
 

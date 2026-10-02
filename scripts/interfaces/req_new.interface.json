@@ -1,0 +1,41 @@
+{
+  "id": "cli.rules.req_new",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/req_new.mjs",
+  "invoke": "node scripts/req_new.mjs --check",
+  "summary": "需求登记入口与溯源判定器：一条命令完成「分配编号 → 查重 → 写台账卡片 → 总版本 PATCH +1 → 读回校验」；--check 判「台账改了必须升版本 / 条目字段齐备 / 编号唯一递增 / 需求文案指针可达」（REQ-097 / R1）",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": false, "desc": "默认动作：四条判据全跑（不传等同）" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检：8 条用例（含 6 条反例）必须全部判对" },
+    { "name": "--next", "type": "arg", "required": false, "desc": "只打印下一个可用需求编号（如 REQ-097）" },
+    { "name": "--add", "type": "arg", "required": false, "desc": "登记一条新需求：写入台账卡片并把总版本 PATCH +1" },
+    { "name": "--title", "type": "arg", "required": false, "desc": "--add 用：需求标题（与既有标题完全同名时直接拦截）" },
+    { "name": "--spec", "type": "arg", "required": false, "desc": "--add 用：需求文案相对路径，如 docs/constraint_mechanism_optimize_13.md" },
+    { "name": "--dry-run", "type": "arg", "required": false, "desc": "--add 用：只打印将要写入的卡片，不落盘（由调用方自行调 `node scripts/req_new.mjs --check`；本脚本不自动调用 align_version）" },
+    { "name": "--json", "type": "arg", "required": false, "desc": "机读输出（判据逐条状态 + 结论）" },
+    { "name": "DSH_SESSION_TITLE", "type": "env", "required": false, "desc": "写入卡片「生成会话」字段的会话标题；取不到写「未登记」" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "四条判据逐条状态（✅/❌ + 实数）与结论行；--add 时输出新编号与读回校验结果" },
+    { "name": "docs/requirements.md", "type": "file", "desc": "--add 时追加一条结构化需求卡片，并把头部总版本号 PATCH +1、更新「本次递增说明」" }
+  ],
+  "exitCodes": {
+    "0": "四条判据全过 / --add 写入并读回校验通过 / --selftest 全部判对",
+    "1": "存在不达标项（版本未递增、条目缺实施版本、编号重复或倒序、需求文案指针悬空），或 --add 查重拦截、读回校验失败",
+    "2": "取不到证据（非 Git 仓库、台账不存在）或用法错误"
+  },
+  "sideEffects": [
+    "--add 会写 docs/requirements.md（头部版本号 + 追加卡片），写后立即读回校验，读回不一致即退 1",
+    "--check 只读：不写任何文件"
+  ],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/req_new.mjs --check",
+    "node scripts/req_new.mjs --selftest",
+    "node scripts/req_new.mjs --next",
+    "node scripts/req_new.mjs --add --title \"示例需求\" --spec docs/constraint_mechanism_optimize_13.md --dry-run"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

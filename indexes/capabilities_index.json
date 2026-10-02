@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-01T23:37:44.549Z",
+  "generatedAt": "2026-10-02T00:00:41.183Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 268,
+  "total": 269,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 1,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 85
+    "脚本 (CLI)": 86
   },
-  "withInterface": 268,
+  "withInterface": 269,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -2216,6 +2216,15 @@
       "invoke": "bash scripts/rename_session.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/rename_session.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.req_new",
+      "path": "scripts/req_new.mjs",
+      "desc": "",
+      "invoke": "node scripts/req_new.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/req_new.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

@@ -96,6 +96,12 @@ export function splitBlocks(markdown, minChars) {
  * 实质文字极短，说明该行只承载元数据；若这样的行占到多数，整块即为元数据块。
  */
 export function isMetadataBlock(text) {
+  // 标准抬头块判定（REQ-097 实测缺陷修复）：版本抬头是 `versioning_standard.md` 第三节定义的
+  // **结构性元数据**，天然跨文档相似，绝不能当成"内容冗余"。
+  // 旧实现只看"元数据行占比 ≥ 0.6"，该启发式会被字段增删打破：实测字段从 3 个增加到 6 个
+  // （加了「规范层级」「需求依据」长句）后占比掉到 0.43，两份文档的抬头被误判为 0.909 冗余。
+  // 修法：抬头有唯一定义锚点，命中锚点即整块排除，不再依赖占比。
+  if (/版本信息与实施追踪|资产元数据与生命周期标记/.test(text)) return true
   const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
   if (lines.length === 0) return true
   let metaLines = 0
@@ -270,6 +276,17 @@ function selfTest() {
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：\`[Release 稳定生效]\``
   cases.push({ name: '版本抬头识别为元数据', value: isMetadataBlock(metaHeader) ? 1 : 0, expect: (v) => v === 1 })
+
+  // 4b) 字段更丰富的抬头（含「规范层级」「需求依据」长句）同样必须排除
+  //     —— REQ-097 实测就是这个形状被判成 0.909 冗余，故补反向用例锁死。
+  const richHeader = `> ### 🏷️ **版本信息与实施追踪**
+> - **当前文档版本**：\`v4.29.3\`
+> - **对应实施版本**：\`v4.29.3\`
+> - **版本治理规范**：遵循 [\`rules/workflow/versioning_standard.md\`](../../rules/workflow/versioning_standard.md)
+> - **规范层级**：\`【知识库总纲 · 通用公共规范】\`
+> - **需求依据**：\`REQ-097\`（承接 \`REQ-057\` / \`CR-012\`，归并演进不另立）
+> - **生效状态**：\`[Release 稳定生效]\``
+  cases.push({ name: '丰富抬头识别为元数据', value: isMetadataBlock(richHeader) ? 1 : 0, expect: (v) => v === 1 })
 
   // 5) 真正的规范正文不能被误判为元数据
   const prose = `本规范规定所有系统操作必须具备原子性。任何写操作要么完整生效，要么完全不生效，

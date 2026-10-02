@@ -1,8 +1,8 @@
 # 系统分层知识库总索引与前置核验协议 (Knowledge Base Hub)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.2`
-> - **对应实施版本**：`v4.29.1`
+> - **当前文档版本**：`v4.29.3`
+> - **对应实施版本**：`v4.29.3`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -35,6 +35,7 @@ knowledge/
 │   ├── art_specification.md           # 通用视觉与色彩规范 (60-30-10配比 / WCAG 4.5:1对比度 / 阴影阶梯)
 │   └── dsh_native_ui_components.md    # DSH 原生可视化组件体系法典 (九大层级 / Slot拓扑 / 原子工具卡)
 │   └── capability_naming_spec.md      # 通用能力层命名规范 (四要素 / 四形态 / 禁词与同义归一 / 改名六处同步)
+│   └── first_principles_specification.md # 第一性原理与实证方法论 (三不采信 / 五步法 / L1~L3 定级 · REQ-097 R3)
 ├── sources/                           # 【第三层：知识来源出处登记】(REQ-089 R1-a)
 │   ├── README.md                      # 来源层定位、登记规约与双向寻址
 │   ├── SOURCE-001-dont-make-me-think.md  # 《Don't Make Me Think, Revisited》3rd Ed. · Steve Krug
