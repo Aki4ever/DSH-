@@ -1,0 +1,37 @@
+{
+  "id": "cli.rules.chinese_output_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/chinese_output_audit.mjs",
+  "invoke": "node scripts/chinese_output_audit.mjs",
+  "summary": "中文输出判定器：判最近一轮已完结回复是否满足三项中文硬断言（待检正文中文占比达标、无非白名单拉丁词、独立缩写带中文释义）；判定权威源复用既有技能 verify-chinese-output，本脚本只做取证与转译，不重造判定（REQ-099 / R1）",
+  "inputs": [
+    { "name": "--file", "type": "arg", "required": false, "desc": "判指定文件" },
+    { "name": "--text", "type": "arg", "required": false, "desc": "判任意文本" },
+    { "name": "--json", "type": "arg", "required": false, "desc": "机读输出：结论、违规明细与来源" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检：5 条（含 3 条反例）必须全部判对" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "三项断言的通过与否与违规明细（违规类型、词、上下文片段）" }
+  ],
+  "exitCodes": {
+    "0": "三项中文硬断言全过",
+    "1": "存在违规（中文占比不达标 / 出现非白名单拉丁词 / 缩写缺中文释义）",
+    "2": "取不到证据或缺少剥离器与验证器（**2 绝不算通过**）"
+  },
+  "sideEffects": [
+    "在系统临时目录内落盘剥离后的待检正文，判定结束即删",
+    "只读会话转录，不写仓库任何文件"
+  ],
+  "dependencies": [
+    "skill.pool.strip-non-prose-scope",
+    "skill.pool.verify-chinese-output"
+  ],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/chinese_output_audit.mjs",
+    "node scripts/chinese_output_audit.mjs --selftest",
+    "node scripts/chinese_output_audit.mjs --file /tmp/reply.md"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

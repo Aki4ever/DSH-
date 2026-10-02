@@ -59,6 +59,15 @@ if [ -z "$PROFILE_DIR" ]; then
 fi
 PATCH_FILE="$PROFILE_DIR/cordis.patch.yml"
 
+# 备份留存策略（REQ-096 同批）：本脚本有 4 处"改前先备份"，旧版**只备份不清理**，
+# 实测把 profile 目录堆成了十几份同名备份，回滚目标只能靠翻文件名猜。
+# 降级：本脚本会被单独复制进沙箱（与 control_gates.sh 同样的用法），那时 lib/ 不在——
+# 源不到就定义一个空操作，**只少删东西，绝不报错、绝不中断原有流程**。
+if [ -r "$SCRIPT_DIR/lib/backup_retention.sh" ]; then
+  . "$SCRIPT_DIR/lib/backup_retention.sh"
+fi
+prune_backups() { prune_backups_impl "$@" || true; }
+
 # Node 运行时解析（REQ-087 R1 修复）：统一走单一权威实现，不依赖外部 PATH。
 . "$SCRIPT_DIR/lib/find_node.sh"
 NODE_BIN="$(find_node || true)"
@@ -246,6 +255,7 @@ case "$ACTION" in
       echo "   处置：给宿主 profile 目录写权限，或以更高权限重跑本命令；未备份前不改配置。"
       exit 1
     fi
+    prune_backups "$PATCH_FILE" 3   # 备份完就地收敛到最新 3 份，避免只增不减
     URL="$(url_encode_path "$LOADER_ABS")"
     # 落盘结果必须复核（REQ-087 R1 实测根因）：
     # 旧实现无条件 `cat >>` 后直接打印"✅ 已写入"，而沙箱/权限拒绝时
@@ -279,6 +289,7 @@ EOF
       echo "❌ profile 清单备份失败，拒绝改 package.json（未备份前不改配置）"
       exit 1
     fi
+    prune_backups "$PROFILE_DIR/package.json" 3   # 同口径收敛，避免备份只增不减
     if ! write_bundles_entry; then
       echo "❌ bundle 通道登记失败：宿主重写层栈补丁后拦截层仍会丢失"
       exit 1
@@ -290,6 +301,7 @@ EOF
   uninstall)
     if has_entry; then
       cp "$PATCH_FILE" "$PATCH_FILE.bak-$(date +%Y%m%d-%H%M%S)-uninstall-gate" 2>/dev/null || { echo "❌ 备份失败，拒绝改动配置"; exit 1; }
+      prune_backups "$PATCH_FILE" 3   # 回滚也会留备份，同样要收敛
       # 只删本条目的插入块：从注释行到 name 行，避免误伤其它插件配置
       "$NODE_BIN" -e '
 const fs=require("node:fs")
@@ -309,6 +321,7 @@ fs.writeFileSync(file,out.join("\n").replace(/\n{3,}/g,"\n\n"),"utf8")
       echo "ℹ️ 层栈补丁条目不存在，无需回滚"
     fi
     cp "$PROFILE_DIR/package.json" "$PROFILE_DIR/package.json.bak-$(date +%Y%m%d-%H%M%S)-uninstall-gate" 2>/dev/null || { echo "❌ profile 清单备份失败，拒绝改动"; exit 1; }
+    prune_backups "$PROFILE_DIR/package.json" 3   # 同口径收敛
     remove_bundles_entry || exit 1
     echo "▶ 回滚完成（注：本命令不动 pnpm 依赖树，包文件仍在 node_modules，重启后不再由 bundles 加载）"
     ;;

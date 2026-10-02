@@ -20,6 +20,8 @@
 | 冗余与冲突双检 | `node scripts/redundancy_scan.mjs --root .` | `scripts/interfaces/redundancy_scan.interface.json` | `readonly` | 不许扫出高相似块后置之不理 |
 | 纪律分判定与停用 | `node scripts/discipline_score.mjs --check` | `scripts/interfaces/discipline_score.interface.json` | `exclusive` | 不许账本哈希链不自洽或已停用还报满分 |
 | 停用阻断实跑 | `node scripts/discipline_guard_probe.mjs` | `scripts/interfaces/discipline_guard_probe.interface.json` | `exclusive` | 不许只用"账本算出 suspended=true"冒充停用生效 |
+| 中文输出判定 | `node scripts/chinese_output_audit.mjs` | `scripts/interfaces/chinese_output_audit.interface.json` | `readonly` | 不许中途叙述用英文还说自己是全流程中文 |
+| 备份留存巡检 | `node scripts/backup_gc.mjs --check` | `scripts/interfaces/backup_gc.interface.json` | `readonly` | 不许让时间戳备份无限堆积 |
 
 > **并行口径**：`readonly`（只读，可并发）/ `shared`（读共享态、只写自己的产物）/ `exclusive`（独占，必须串行）。
 

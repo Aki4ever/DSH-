@@ -31,6 +31,9 @@ import { existsSync, readdirSync, statSync, mkdirSync, readFileSync, writeFileSy
 import { execFileSync } from 'node:child_process'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+// 备份留存策略（REQ-096 同批）：本脚本覆盖技能目录前会先备份，旧版**只备份不清理**，
+// 反复归位就会在 skills/ 下堆出一串同名备份。备份完就地按统一口径收敛到最新 3 份。
+import { pruneBackups } from './lib/backup_retention.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -127,6 +130,8 @@ function apply(keepSource) {
       rmSync(bak, { recursive: true, force: true })
       cpSync(target, bak, { recursive: true })
       cpSync(skill.path, target, { recursive: true })
+      // 技能备份是**目录**（不是文件），留存口径同样适用：只留最新 3 份，更旧的整棵删掉
+      pruneBackups(target, 3)
       console.log(`♻️ ${skill.name}：目标已存在且内容不同 → 已备份为 ${bak.split('/').pop()} 后覆盖`)
       copied++
       continue

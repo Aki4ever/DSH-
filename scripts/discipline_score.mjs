@@ -236,6 +236,21 @@ export function writeState(state, file = STATE) {
   return file
 }
 
+/**
+ * 委员**不落账**的审计维度及理由。
+ * 为什么必须划这条线：审计器的九维里，有四维在"事情还没做完"时必然为红——
+ * 未提交文件（存量校准）、回合未完结时取不到输出证据（输出结构）、
+ * 以及已由硬门禁实时阻断的两项（开工门禁 / 待办常显）。
+ * 把它们也自动入账，等于用**只追加、不可回滚**的生产账本去惩罚"进度中"，
+ * 换来的是假扣分与脏历史——比漏扣更糟。真正的违规维度（命名/冗余/冲突/台账/用字/中文表达）照扣不误。
+ */
+export const OFFICER_SKIP_DIMS = {
+  '2. 开工门禁': '已由拦截层实时阻断，重复计罚',
+  '5. 存量校准': '未提交/未登记属进行中状态，提交动作尚未发生',
+  '7. 待办常显': '已由 S07 硬门禁实时阻断，重复计罚',
+  '8. 输出结构契约': '本回合未完结时必然取不到证据（失败关闭），属时序不属违规',
+}
+
 /* ── 独立复核（纪律委员入口）───────────────────────────────────────────────
  * 关键：**不采信自评**。委员从两个独立来源复算：
  *   ① 账本原始扣分记录逐条重算（防算术篡改）；
@@ -260,7 +275,10 @@ export function independentVerify(selfScore, opts = {}) {
 
   const witness = opts.witness || runWitness
   const w = witness()
-  const missed = (w.failedDims || []).filter((dim) => !deducts.some((d) => String(d.reason || '').includes(dim)))
+  const missedRaw = (w.failedDims || []).filter((dim) => !deducts.some((d) => String(d.reason || '').includes(dim)))
+  // 只有"真违规"维度才落账；进行中/已由硬门禁实时拦截的维度如实报出但不计罚。
+  const skippedMissed = missedRaw.filter((dim) => OFFICER_SKIP_DIMS[dim])
+  const missed = missedRaw.filter((dim) => !OFFICER_SKIP_DIMS[dim])
   const missedPoints = missed.length * (lv.L2 || 5)
 
   const confirmedPoints = confirmed.reduce((s, d) => s + (Number(d.points) || 0), 0)
@@ -274,6 +292,7 @@ export function independentVerify(selfScore, opts = {}) {
     confirmed: confirmed.length,
     refuted: refuted.length,
     missed,
+    skippedMissed,
     missedPoints,
     diff: verdict.diff,
     mistaken: verdict.mistaken,
@@ -303,6 +322,44 @@ function runWitness() {
   } catch (e) {
     return { ok: false, auditScore: null, failedDims: [], reason: e && e.message ? String(e.message).slice(0, 120) : '见证审计器不可用' }
   }
+}
+
+/* ── 委员发现落账（R4 的"有牙"环节）──────────────────────────────────────────
+ * 只把漏报维度算进 officerScore 而不落账，等于"委员判了但没人被扣"——
+ * 用户实测一句"纪律委员怎么不扣分"即可证伪。本函数负责把它变成真扣分：
+ *   · 漏报维度 → 每维按 L2 入账（reason 带维度名，便于幂等去重）；
+ *   · 评分失误 → 按 L4 入账；
+ *   · 同一条目同一维度**不重复扣**（可反复跑复核）。
+ * file 可注入，供反向用例在临时账本上验证，不污染生产账本。                    */
+export function bookOfficerFindings(iv, opts = {}) {
+  const conf = opts.conf || readGatesConf()
+  const file = opts.file || LEDGER
+  const now = opts.now || new Date().toISOString()
+  const lv = levelTable(conf)
+  const st0 = computeState(file)
+  const booked = []
+  if (Array.isArray(iv.missed) && iv.missed.length) {
+    const already = readLedger(file)
+      .filter((r) => r.kind === 'deduct' && r.taskId === st0.taskId)
+      .map((r) => String(r.reason || ''))
+    for (const dim of iv.missed) {
+      if (already.some((x) => x.includes(dim))) continue
+      appendRecord({
+        kind: 'deduct', at: now, taskId: st0.taskId, level: 'L2', points: lv.L2 || 5, by: 'officer',
+        reason: `漏报违规（委员独立复核）：${dim}`,
+        evidence: `bash scripts/audit_execution.sh --json|exit=0|witness_dim=${dim}`,
+      }, file)
+      booked.push(dim)
+    }
+  }
+  let auto = null
+  if (iv.mistaken) {
+    auto = appendRecord({
+      kind: 'deduct', at: now, taskId: st0.taskId, level: 'L4', points: lv.L4 || 20, by: 'officer',
+      reason: `评分失误：${iv.reason}`, evidence: `node scripts/discipline_score.mjs verify|diff=${iv.diff}`,
+    }, file)
+  }
+  return { booked, auto, taskId: st0.taskId }
 }
 
 /* ── 反向用例：该拒的必须拒、该红的必须红 ────────────────────────────────── */
@@ -359,9 +416,29 @@ export function selfTest() {
   const iv = independentVerify(100, {
     file,
     conf: {},
-    witness: () => ({ ok: true, auditScore: 78, failedDims: ['2. 开工门禁', '7. 待办常显'], reason: null }),
+    witness: () => ({ ok: true, auditScore: 78, failedDims: ['3. 冗余扫描', '9b. 中文表达'], reason: null }),
   })
   add('反例⑦：独立复核漏报 2 维 → 判定与自评不符', iv.officerScore < 100 && iv.missed.length === 2, `officer=${iv.officerScore} missed=${iv.missed.length}`)
+
+  // 用例 14：进行中维度（未提交/未完结）不得落账，只如实报出
+  const iv2 = independentVerify(100, {
+    file,
+    conf: {},
+    witness: () => ({ ok: true, auditScore: 70, failedDims: ['5. 存量校准', '8. 输出结构契约'], reason: null }),
+  })
+  add('反例⑨：进行中维度不计罚（否则用永久账本惩罚未完成）', iv2.missed.length === 0 && iv2.skippedMissed.length === 2,
+    `可落账 ${iv2.missed.length} · 报出但不计罚 ${iv2.skippedMissed.length}`)
+
+  // 用例 12/13：委员漏报必须**真的入账**且不重复扣
+  // （用户实测缺陷回归："纪律委员怎么不扣分" —— 判了却不落账，分数永远不掉）
+  writeFileSync(file, good, 'utf8')
+  const beforeBook = computeState(file).current
+  const bk1 = bookOfficerFindings({ missed: ['9b. 中文表达'], mistaken: false }, { file, conf: {}, now: new Date().toISOString() })
+  const afterBook = computeState(file).current
+  add('正例⑦：委员漏报维度真的入账且分数下降', bk1.booked.length === 1 && afterBook === beforeBook - 5,
+    `账面 ${beforeBook} → ${afterBook}（入账 ${bk1.booked.length} 条）`)
+  const bk2 = bookOfficerFindings({ missed: ['9b. 中文表达'], mistaken: false }, { file, conf: {}, now: new Date().toISOString() })
+  add('反例⑧：同维度反复复核不重复扣（幂等）', bk2.booked.length === 0, `第二次入账 ${bk2.booked.length} 条`)
 
   rmSync(dir, { recursive: true, force: true })
 
@@ -467,17 +544,25 @@ function main() {
         evidence: `node scripts/audit_execution.sh --json|exit=0|witness=${iv.witness.ok}`,
       })
       let auto = null
-      if (iv.mistaken) {
-        const lv = levelTable(conf)
-        auto = appendRecord({ kind: 'deduct', at: now, taskId: computeState().taskId, level: 'L4', points: lv.L4 || 20, by: 'officer', reason: `评分失误：${iv.reason}`, evidence: `node scripts/discipline_score.mjs verify|diff=${iv.diff}` })
-      }
+      const lv = levelTable(conf)
+      // 委员抓到的"自评漏报"必须**真的入账**，否则"委员判了"与"我被扣了"是两回事：
+      // 旧实现只把漏报维度算进 officerScore 用于比较，账本一分不记 → 用户看到的分数永远不掉。
+      // 这正是用户实测指出的"纪律委员怎么不扣分"。逻辑抽成可注入函数，便于反向用例直接验。
+      const booked = bookOfficerFindings(iv, { conf, now })
+      const bookedMissed = booked.booked
+      auto = booked.auto
       const st = computeState(); writeState(st)
-      if (json) console.log(JSON.stringify({ verdict: iv, autoDeduct: auto, state: st }, null, 2))
+      if (json) console.log(JSON.stringify({ verdict: iv, bookedMissed, autoDeduct: auto, state: st }, null, 2))
       else {
         console.log('⚖️ 纪律委员独立复核')
         console.log(`  自评：${iv.selfScore} 分 · 独立复核：${iv.officerScore} 分 · 差额 ${iv.diff} 分`)
         console.log(`  证据确认 ${iv.confirmed} 条 · 证据不足 ${iv.refuted} 条 · 漏报维度 ${iv.missed.length} 条`)
         console.log(`  见证审计器：${iv.witness.ok ? '可用（静态分 ' + iv.witness.auditScore + '）' : '⛔ 不可用：' + iv.witness.reason}`)
+        if (iv.skippedMissed && iv.skippedMissed.length) {
+          for (const dim of iv.skippedMissed) console.log(`  ⏸️ 报出但不计罚：${dim}（${OFFICER_SKIP_DIMS[dim]}）`)
+        }
+        if (bookedMissed.length) console.log(`  ➖ 漏报已入账 ${bookedMissed.length} 条（各按 L2 −${lv.L2 || 5}）：${bookedMissed.join('、')}`)
+        else if (iv.missed.length) console.log(`  ⏭️ 漏报维度已于本条目前入账，本次不重复扣`)
         console.log(iv.mistaken ? `  ❌ 判定评分失误 → 自动按 L4 扣分` : `  ✅ 未判评分失误（${iv.reason}）`)
         console.log(`  当前纪律分：${st.current} / ${st.baseline}`)
       }

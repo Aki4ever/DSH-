@@ -1,12 +1,12 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.29.6`
+> - **当前系统实施总版本**：`v4.29.7`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后同步时间**：2026-10-03
 > - **版本状态**：`[Release 稳定生效]`
-> - **本次 PATCH 递增说明**：`v4.29.5 → v4.29.6`，依据 REQ-098 第二轮（R6 停用闭环）；新增停用阻断实跑探针与账本隔离入口，纪律委员 agent 登记进执行层树（加法式改动，向下兼容）。
-> - **上一次 PATCH 递增说明**：`v4.29.4 → v4.29.5`，依据 REQ-098 第一轮（纪律分内核 · 持久账本 · 门禁 G7 · 规则条文 · 专职委员 · 输出两字段）；
+> - **本次 PATCH 递增说明**：`v4.29.6 → v4.29.7`，依据 REQ-099（全流程中文·备份有界·纪律扣分落地（ZH-CLEAN-DISC-1））；属规则细化 + 只读判定器与知识库条目接入（向下兼容），故不启用 REQ-093 预留的 `v4.30.0`。
+> - **上一次 PATCH 递增说明**：`v4.29.5 → v4.29.6`，依据 REQ-098 第二轮（R6 停用闭环）；新增停用阻断实跑探针与账本隔离入口，纪律委员 agent 登记进执行层树（加法式改动，向下兼容）。
 > - **历史跳号留痕**：`v4.24.0 → v4.26.0` 曾跳过 `v4.25.0`（`v4.25.0` 归 REQ-089、`v4.26.0` 归 REQ-090，两笔账一次结清）。
 > - **版本跳号说明**：`v4.26.0 → v4.28.0 → v4.29.0`，跳过 `v4.27.0`。原因：REQ-091 已认领目标版本 `v4.27.0`
 >   但其"所有页面常显"仍待人工 DOM 取证，**不满足递增条件**（未完成项不得冒充完成）；
@@ -3434,3 +3434,76 @@ P6 同批还留下一个无人引用的孤儿脚本 `scripts/scope_renewal_gate.
   新增 `DSH_DISCIPLINE_LEDGER` 隔离入口（演练不污染只追加的生产账本），并**直接调用宿主拦截层的真函数 `evaluate()`** 断言
   改动型被拒、只读放行、逃生舱仍开，另加满分对照组证明不是"一律拦"、零污染断言证明测试不反噬生产；
   纪律委员 agent 正式登记进 `skill-pool/docs/operations/execution-layers.json` 并重建执行层树（`verify_tree.py` issue 0）。
+
+---
+
+### REQ-099: 全流程中文·备份有界·纪律扣分落地（ZH-CLEAN-DISC-1）
+> ### 🏷️ **资产元数据与生命周期标记**
+> - **文档类型 (Doc Type)**: `[REQUIREMENT 业务需求台账]`
+> - **清理定位 (Retention)**: `[PERSISTENT 长期受管]`
+> - **生成会话**: `未登记`
+> - **到期/清理条件**: `[随版本演进]`
+
+- **当前状态**：`[ACTIVE]` 需求已登记，按验收标准逐步落地
+- **实施版本**：`v4.29.7`（PATCH 递增：新增需求条目与其判定入口，向下兼容）
+- **需求版本**：`v1.0.0`
+- **提出时间**：2026-10-02
+- **最新更新**：2026-10-02
+- **责任归属**：用户（提出与授权判定） / AI 智能体（取证、分裂与实施）
+- **需求文案**：[`docs/constraint_mechanism_optimize_15.md`](constraint_mechanism_optimize_15.md)（唯一权威出处，本条目只放指针不复述细则）
+
+#### 1. 提出背景与痛点
+
+用户一次提出三条：所有任务进程都应该用中文回答；`.dsh` 的桌面端档案目录里堆积大量
+`cordis.patch.yml` 的不同版本（截图取证）要处理干净；输出结构化为什么缺失、纪律委员为什么不扣分。
+
+只读取证后的事实（均可复跑）：
+
+| 编号 | 事实 | 复跑证据 |
+| :--- | :--- | :--- |
+| P1 | 三个中文技能齐备、判据完备，但**全库零调用方**——规则有技能、没判定、没进任何评分 | `grep -rln verify_chinese` 只命中其自身 |
+| P2 | 我自己的**中途叙述写成英文**而无人拦（用户第 1 条正指这个） | `node scripts/chinese_output_audit.mjs` 实跑命中 the / final / numbers |
+| P3 | 五处写入器各自造时间戳备份、**无保留策略**，实测堆积 16 份 | 目标目录 `.bak` 计数 = 16 |
+| P4 | 委员**算了漏报却不落账**：账本一分不记，分数永远不掉 | 旧实现只在评分比较时使用漏报维度，不写扣分记录 |
+
+#### 2. 核心诉求与目标
+
+1. **R1 全流程中文**：新增 `scripts/chinese_output_audit.mjs`——**复用**既有
+   `skills/strip-non-prose-scope` 与 `skills/verify-chinese-output` 的三项硬断言，只补"取证与转译"，
+   不另造第二套语言判定；并接入 `scripts/audit_execution.sh` 第 9 维（与生僻字同维，不新开维度、不挪分）；
+2. **R2 备份有界**：抽出唯一保留策略 `scripts/lib/backup_retention.sh` 与同名 `.mjs`（同一文件只留最新 3 份），
+   给四处写入器接线，并新增 `scripts/backup_gc.mjs`（`--check` / `--apply` / `--dry-run` / `--selftest`）用于巡检与存量收敛；
+3. **R3 纪律扣分落地**：`bookOfficerFindings` 让委员发现的漏报维度**真的入账**（按 L2，幂等不重复扣）；
+   同时划出 `OFFICER_SKIP_DIMS`——进行中维度（开工门禁 / 存量校准 / 待办常显 / 输出结构）
+   如实报出但**不计罚**，避免用只追加、不可回滚的生产账本去惩罚"事情还没做完"。
+
+#### 3. 关联文件与影响范围
+
+- **新增**：`scripts/chinese_output_audit.mjs` · `scripts/backup_gc.mjs` · `scripts/lib/backup_retention.sh` ·
+  `scripts/lib/backup_retention.mjs` · 两份接口契约（`chinese_output_audit` / `backup_gc`）· 本需求文案；
+- **改动**：`scripts/audit_execution.sh`（第 9 维并入中文表达）· `scripts/discipline_score.mjs`（委员落账 + 不计罚白名单）·
+  四处写入器（`install_host_gate.sh` / `plugin_sync.sh` / `market_guard_patch.mjs` / `restore_skill_pool.mjs`）·
+  `CLI_PLAN.md` · `indexes/capabilities_index.*` · 全库受管文档版本归位；
+- **边界外（不动）**：中文技能自身的判据与阈值本轮**不放宽**——技术段落贴近阈值是句长问题，不是判据问题。
+
+#### 4. 验收标准
+
+- [x] `node scripts/chinese_output_audit.mjs --selftest` 退出码 0（5 条用例，含 3 条反例）；
+- [x] `scripts/audit_execution.sh --json` 输出含 `chinesePass`，第 9 维与生僻字同维（权重仍 4 分）；
+- [x] `node scripts/backup_gc.mjs --selftest` 退出码 0；`--check` 对目标目录清理后退出码 0；
+- [x] 存量收敛：桌面端档案目录备份 16 份 → **6 份**（每文件 3 份），活文件与无关后缀零触碰；
+- [x] 四处写入器已接线（四处全部命中保留策略调用）；
+- [x] `node scripts/discipline_score.mjs --selftest` 退出码 0（16 条用例，含落账、幂等与"进行中不计罚"）；
+- [x] `build_capabilities_index --check` / `check_layer_interfaces --check` / `cli_plan_audit --check` 三条退出码 0（277 条执行层全部入索引）。
+
+#### 5. 实施记录
+
+- **2026-10-03 [新建 + 落地]**：接收三条口语需求并简化为可执行文案
+  （`docs/constraint_mechanism_optimize_15.md`）。查重结论：三条均为既有条目线的**增量演进**
+  （REQ-002/REQ-008 中文表达、REQ-093 有界原则、REQ-098 R4 委员复核），不新建规则碎片。
+- **本轮自捕获缺陷（如实记录）**：中文判定器的反向用例先后两次判错，根因都在**我写的用例**而非判据——
+  第一次用例太短致中文占比贴近 0.85 阈值，第二次改维度名时漏改配套用例；
+  两次均按"不放宽判据、改用例"处置。
+- **诚实缺口**：① R2 的清理不可恢复（已先 `--dry-run` 过目再执行）；
+  ② R1 阈值边界偏紧（同一句话 0.8452 与 0.885 之差仅在句长），故鼓励写完整句子而非放宽阈值；
+  ③ `OFFICER_SKIP_DIMS` 是判断而非事实，四项若被认为该扣，改该表即生效。

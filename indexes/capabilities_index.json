@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-02T22:55:26.357Z",
+  "generatedAt": "2026-10-02T23:17:55.259Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 275,
+  "total": 277,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 2,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 91
+    "脚本 (CLI)": 93
   },
-  "withInterface": 275,
+  "withInterface": 277,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1733,6 +1733,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.backup_gc",
+      "path": "scripts/backup_gc.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/backup_gc.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/backup_gc.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.batch_fix_sidebar_titles",
       "path": "scripts/batch_fix_sidebar_titles.mjs",
       "desc": "全量穿透修复前端侧边栏及权威存储中的全部存量会话标题",
@@ -1811,6 +1820,15 @@
       "invoke": "node scripts/check_unique_identifiers.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/check_unique_identifiers.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.chinese_output_audit",
+      "path": "scripts/chinese_output_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/chinese_output_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/chinese_output_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

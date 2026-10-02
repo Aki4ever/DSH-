@@ -3,7 +3,7 @@
   "note": "机读需求版本台账：由 scripts/req_version_gen.mjs 从 docs/requirements.md 生成；人工只维护 requirement_version_override 与 change_log 两个字段。",
   "source": "docs/requirements.md",
   "generated_by": "scripts/req_version_gen.mjs",
-  "requirement_count": 98,
+  "requirement_count": 99,
   "override_count": 0,
   "entries": {
     "REQ-001": {
@@ -1479,6 +1479,18 @@
       "files": [
         "scripts/control_gates.sh",
         "ai-control/config/gates.conf"
+      ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-099": {
+      "title": "全流程中文·备份有界·纪律扣分落地（ZH-CLEAN-DISC-1）",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": false,
+      "implementation_version": "v4.29.7",
+      "files": [
+        "scripts/audit_execution.sh",
+        "scripts/discipline_score.mjs"
       ],
       "missing_files": [],
       "change_log": []

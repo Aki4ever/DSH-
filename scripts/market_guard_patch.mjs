@@ -41,6 +41,10 @@ import path from 'node:path'
 import os from 'node:os'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+// 备份留存策略（REQ-096 同批）：本工具与另外几个写者共用同一个 profile 目录，
+// 各自"改前先备份"却没人负责清理，实测同名备份堆到 8 份，回滚只能靠猜。
+// 这里沿用本文件既有的做法（下面 newestBackup 的写法），备份完就按统一口径收敛到最新 3 份。
+import { pruneBackups } from './lib/backup_retention.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
@@ -198,7 +202,11 @@ function apply(target) {
     return 1
   }
   console.log(`✅ 已打补丁并回读校验通过：${target}`)
+  // 校验通过之后才收敛：校验失败时 bak 还要用于回滚，绝不能先删。
+  // 只留最新 3 份、且只删本工具自己那种后缀，回滚用的最新一份必然保留。
+  const gc = pruneBackups(target, 3)
   console.log(`   补丁标记 ${after.markers}/${EXPECTED_BLOCKS} · agentsBusy 残留 ${after.leftovers} · 备份 ${path.basename(bak)}`)
+  if (gc.deleted.length) console.log(`   已清理更旧的备份 ${gc.deleted.length} 份（留存口径：最新 3 份）`)
   console.log('   ⚠️ 运行时生效需重载 profile / 重启桌面端；插件升级会覆盖本补丁，升级后重跑 --apply。')
   return 0
 }

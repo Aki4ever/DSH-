@@ -249,11 +249,31 @@ if [ -n "$NODE_BIN" ]; then
   fi
 fi
 
-if [ "$LANGUAGE_PASS" -eq 0 ]; then
-  SCORE=$((SCORE - 4))
-  DEDUCTIONS+=("❌ 文字可读性未达标或未采集判定 (-4)")
-  CHECKS+=("❌ 文字可读性未通过：${LANGUAGE_LINE} (-4)")
+# ── 维度 9 · 追加判据：中文表达（REQ-099 / R1，与本维共用 4 分）──────────────
+# 为什么并入本维而不新开：本维本就是"用字"维度（生僻字），"用什么语言写"是同一件事的另一半；
+# 总分 100 的权重已排满，另开一维就得从别处挪分，等于悄悄改掉既有评分口径。
+# 为什么必须接线：三个中文技能齐备、`verify_chinese.py` 三项断言完备，
+# 但实测 `grep verify_chinese` 全库零调用方 —— 规则有技能、没判定、更没进任何评分。
+# 用户实测证伪：我的中途叙述写成英文（the / final / numbers）而无人拦。
+CHINESE_PASS=0
+CHINESE_LINE="未采集到中文表达判定"
+if [ -n "$NODE_BIN" ] && [ -f "$SCRIPT_DIR/chinese_output_audit.mjs" ]; then
+  CHINESE_OUT="$("$NODE_BIN" "$SCRIPT_DIR/chinese_output_audit.mjs" --json 2>/dev/null || true)"
+  if printf '%s' "$CHINESE_OUT" | grep -q '"ok": true'; then
+    CHINESE_PASS=1
+    CHINESE_LINE="三项中文硬断言全过（占比 / 拉丁词 / 缩写释义）"
+  else
+    CHINESE_LINE="$(printf '%s' "$CHINESE_OUT" | "$NODE_BIN" -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);const v=(r.violations||[]).slice(0,3).map(x=>`${x.kind||"违规"}:${x.token||""}`).join(" ");process.stdout.write(r.reason?`${r.reason}${v?"（"+v+"）":""}`:"未采集到可判定的回复正文（本会话首次答复前必然如此）")}catch{process.stdout.write("中文表达判定不可解析")}})')"
+  fi
 fi
+
+if [ "$LANGUAGE_PASS" -eq 0 ] || [ "$CHINESE_PASS" -eq 0 ]; then
+  SCORE=$((SCORE - 4))
+  DEDUCTIONS+=("❌ 文字可读性未达标或未采集判定（生僻字 / 中文表达）(-4)")
+  CHECKS+=("❌ 文字可读性未通过：生僻字=${LANGUAGE_LINE}；中文表达=${CHINESE_LINE} (-4)")
+fi
+# 卡片展示统一口径：两半都披露，过没过一眼可见（不与 CHECKS 的明细重复）
+LANGUAGE_LINE="生僻字：${LANGUAGE_LINE}；中文表达：${CHINESE_LINE}"
 
 # 边界守卫：分数不低于 0
 if (( SCORE < 0 )); then SCORE=0; fi
@@ -290,6 +310,7 @@ if [ "$JSON_MODE" -eq 1 ]; then
   printf '  "todoPass": %s,\n' "$([ "$TODO_PASS" -eq 1 ] && echo true || echo false)"
   printf '  "compactPass": %s,\n' "$([ "$COMPACT_PASS" -eq 1 ] && echo true || echo false)"
   printf '  "languagePass": %s,\n' "$([ "$LANGUAGE_PASS" -eq 1 ] && echo true || echo false)"
+  printf '  "chinesePass": %s,\n' "$([ "$CHINESE_PASS" -eq 1 ] && echo true || echo false)"
   printf '  "compact": %s,\n' "$COMPACT_JSON"
   printf '  "language": %s\n' "$LANGUAGE_JSON"
   printf '}\n'

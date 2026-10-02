@@ -33,6 +33,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/atomic_lock.sh
 . "$SCRIPT_DIR/lib/atomic_lock.sh"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+# 备份留存策略（REQ-096 同批）：装配时"改前先备份"的 package.json 旧版**只备份不清理**，
+# 实测把 profile 目录堆了 8 份同名备份。这里把留存口径（同一个文件只留最新 3 份）
+# 拼成**绝对路径**传给下面的 Node 片段：Node 的 require 以自身进程的工作目录为基准，
+# 用绝对路径才不会因调用方目录不同而解析失败。取不到对应的库时该片段会回退为不清理（只少删东西）。
+BACKUP_RETENTION="$SCRIPT_DIR/lib/backup_retention.mjs"
 MODE="${1:-check}"
 
 # 受管插件（仓库相对路径 → 包名）。新增插件必须登记在这里，否则同步不到。
@@ -140,9 +145,17 @@ if (changed.length) {
   const bak = file + ".bak-" + new Date().toISOString().replace(/[-:T]/g, "").slice(0, 15) + "-plugin-sync";
   fs.copyFileSync(file, bak);
   fs.writeFileSync(file, JSON.stringify(j, null, 1) + "\n", "utf8");
+  try {
+    // 备份完就地收敛到最新 3 份：库不在（沙箱单独复制本脚本）就跳过，只少删东西
+    const lib = process.argv[4];
+    if (lib && fs.existsSync(lib)) {
+      const r = require(lib).pruneBackups(file, 3);
+      if (r.deleted.length) process.stdout.write("（已清理旧备份 " + r.deleted.length + " 份）");
+    }
+  } catch {}
   process.stdout.write("（已更新：" + changed.join(" + ") + "，备份已留存）");
 }
-' "$pkgjson" "$pkg" "$src" 2>/dev/null)" || { echo "⛔ 写 profile package.json 失败：$pkgjson" >&2; return 1; }
+' "$pkgjson" "$pkg" "$src" "$BACKUP_RETENTION" 2>/dev/null)" || { echo "⛔ 写 profile package.json 失败：$pkgjson" >&2; return 1; }
 
   # ② 文件对齐（只复制内容不同的文件，避免 cp 噪声淹没真错误）
   mkdir -p "$dest"

@@ -1,0 +1,43 @@
+{
+  "id": "cli.rules.backup_gc",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/backup_gc.mjs",
+  "invoke": "node scripts/backup_gc.mjs --check",
+  "summary": "备份留存巡检器：按统一口径只保留每个文件最新的 N 份 .bak-* 备份（默认 3 份），超口径巡检出问题、--apply 就地收敛；只认 <文件>.bak-* 一种兄弟名，活文件与别家后缀一律不碰，取不到证据一律判 2 不判通过（REQ-096）",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": false, "desc": "只读巡检：超口径退出码 1，合规退出码 0，读不到目录退出码 2（默认动作）" },
+    { "name": "--apply", "type": "arg", "required": false, "desc": "按留存口径真删：只删最旧的若干份，保留最新 N 份，活文件与无关文件不动" },
+    { "name": "--dry-run", "type": "arg", "required": false, "desc": "只报会删哪些、会留哪些，一个字节都不删" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检：在临时目录内证明超口径判得出、最新 N 份留得住、活文件与无关文件都不动" },
+    { "name": "--dir", "type": "arg", "required": false, "desc": "巡检目录，默认取 DSH_HOME（未设则 ~/.dsh）下的 profiles/desktop" },
+    { "name": "--keep", "type": "arg", "required": false, "desc": "每个文件保留最新几份备份，默认 3；必须是 0 或正整数，否则判 2" },
+    { "name": "DSH_HOME", "type": "env", "required": false, "desc": "宿主数据根目录；未设置时用 ~/.dsh 兜底，用于推导默认巡检目录" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "逐组现状：活文件是否在位、备份几份、待清理哪几份（最旧）、保留哪几份（最新），末尾给出三态结论" },
+    { "name": "退出码", "type": "number", "desc": "0 合规或清理完成 · 1 超口径 · 2 取不到证据 · 3 清理不完整（部分删不掉）" }
+  ],
+  "exitCodes": {
+    "0": "目录在留存口径之内（--check/--dry-run），或已按口径清理完成（--apply）",
+    "1": "存在超出留存口径的备份（--check/--dry-run 未落地时的判定结果）",
+    "2": "取不到证据：目录不存在或不可读、--keep 非法、用法错误（**2 绝不算通过**）",
+    "3": "清理不完整：--apply 时部分备份删不掉（权限或占用），需人工复核"
+  },
+  "sideEffects": [
+    "--apply 会删除超出口径的最旧若干份 <文件>.bak-* 备份（活文件、别的后缀一律不删）",
+    "--check / --dry-run / --selftest 不删任何东西；--selftest 只在系统临时目录内造数据",
+    "被 --dir 指向的目录本身不会被创建：目录不存在时判 2，不做任何猜测"
+  ],
+  "dependencies": [
+    "scripts/lib/backup_retention.mjs"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/backup_gc.mjs --check",
+    "node scripts/backup_gc.mjs --dry-run --dir /Users/linqiyu/.dsh/profiles/desktop",
+    "node scripts/backup_gc.mjs --apply --keep 3",
+    "node scripts/backup_gc.mjs --selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}
