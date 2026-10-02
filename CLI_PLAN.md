@@ -22,6 +22,7 @@
 | 停用阻断实跑 | `node scripts/discipline_guard_probe.mjs` | `scripts/interfaces/discipline_guard_probe.interface.json` | `exclusive` | 不许只用"账本算出 suspended=true"冒充停用生效 |
 | 中文输出判定 | `node scripts/chinese_output_audit.mjs` | `scripts/interfaces/chinese_output_audit.interface.json` | `readonly` | 不许中途叙述用英文还说自己是全流程中文 |
 | 备份留存巡检 | `node scripts/backup_gc.mjs --check` | `scripts/interfaces/backup_gc.interface.json` | `readonly` | 不许让时间戳备份无限堆积 |
+| 写入器留存实跑 | `node scripts/backup_writer_probe.mjs` | `scripts/interfaces/backup_writer_probe.interface.json` | `exclusive` | 不许用"剪枝函数自检通过"冒充写入器已接线 |
 
 > **并行口径**：`readonly`（只读，可并发）/ `shared`（读共享态、只写自己的产物）/ `exclusive`（独占，必须串行）。
 

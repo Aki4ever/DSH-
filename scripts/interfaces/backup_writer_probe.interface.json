@@ -1,0 +1,30 @@
+{
+  "id": "cli.rules.backup_writer_probe",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/backup_writer_probe.mjs",
+  "invoke": "node scripts/backup_writer_probe.mjs",
+  "summary": "写入器留存接线端到端探针：在临时 HOME 沙箱给每个写入器预置超额备份（6 份），跑真实写入器并断言跑完收敛到上限、活文件未被破坏；证明的是「写者真的接了剪枝」，而非「剪枝函数本身对」（REQ-099 / R2）",
+  "inputs": [
+    { "name": "--json", "type": "arg", "required": false, "desc": "机读输出：各写入器的 PASS / WIRED / SKIP 与实测份数" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "逐写入器结果（实跑收敛份数 / 仅接线待真机 / 未触发）与结论行" }
+  ],
+  "exitCodes": {
+    "0": "无写入器跑完仍超口径（实跑收敛者已达上限，其余明确标注为已接线待真机）",
+    "1": "有写入器跑完仍超口径——「写者有牙」不成立",
+    "2": "没有任何写入器能在沙箱里跑起来"
+  },
+  "sideEffects": [
+    "创建临时 HOME 与 profile 沙箱，跑完即删；不触碰真实宿主 profile",
+    "会对沙箱内的沙箱副本执行真实写入器（正是要验证写路径）"
+  ],
+  "dependencies": [],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/backup_writer_probe.mjs",
+    "node scripts/backup_writer_probe.mjs --json"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

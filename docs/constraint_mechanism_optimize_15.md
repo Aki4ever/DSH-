@@ -2,7 +2,7 @@
 
 > ### 🏷️ **版本信息与实施追踪**
 > - **文档类型**：需求文案（登记为 `REQ-099`，状态 `[ACTIVE]`）
-> - **当前系统实施总版本**：`v4.29.7`（本条落地后由登记入口自动递增）
+> - **当前系统实施总版本**：`v4.29.8`（本条落地后由登记入口自动递增）
 > - **本文档内容版本**：`v1.0.0`
 > - **需求版本号**：`v1.0.0`
 > - **提出时间**：2026-10-03
@@ -61,6 +61,7 @@
 | R1 | 评分维度接线 | `scripts/audit_execution.sh` 第 9 维（与生僻字同维，不新开） | `./scripts/audit_execution.sh --json` 的 `chinesePass` |
 | R2 | 保留策略（Shell 与 Node 双实现，口径唯一） | `scripts/lib/backup_retention.sh` · `scripts/lib/backup_retention.mjs` | 两处写入器实测 |
 | R2 | 留存口径：**同一文件的全部后缀共用 3 份预算**（不为每种后缀各留 3 份，避免"每加一种来源就多一摞备份"） | 口径写在巡检器头注与 `--help`；Python 写入器委托同一实现 | `node scripts/backup_gc.mjs --check` |
+| R2 | 写入器实跑探针（沙箱断言五处写者真的接了剪枝） | `scripts/backup_writer_probe.mjs` | `--json` 逐写者结论 |
 | R2 | 清理与巡检 CLI | `scripts/backup_gc.mjs` | `--check` / `--apply` / `--selftest` |
 | R2 | 写入器接线（4 处） | `scripts/install_host_gate.sh` · `scripts/plugin_sync.sh` · `scripts/market_guard_patch.mjs` · `scripts/restore_skill_pool.mjs` | 各脚本实跑后目录份数不增 |
 | R3 | 委员落账 | `scripts/discipline_score.mjs` 的 `bookOfficerFindings` | `verify --json` 的 `bookedMissed` |

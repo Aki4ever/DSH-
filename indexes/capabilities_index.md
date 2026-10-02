@@ -1,8 +1,8 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.7`
-> - **对应实施版本**：`v4.29.7`
+> - **当前文档版本**：`v4.29.8`
+> - **对应实施版本**：`v4.29.8`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
 > - **生效状态**：`[Release 稳定生效]`
@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：277**（技能 178 · 其他执行层 99）
+**执行层条目总数：278**（技能 178 · 其他执行层 100）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -529,6 +529,7 @@
 | 脚本 (CLI) | `cli.rules.audit_execution` | `scripts/audit_execution.sh` | ✅ `scripts/interfaces/audit_execution.interface.json` | `bash scripts/audit_execution.sh` | 对当前任务的执行流程与合规性进行机器审计，输出 0~100 分量化打分与审计卡片 |
 | 脚本 (CLI) | `cli.rules.backfill_scope` | `scripts/backfill_scope.mjs` | ✅ `scripts/interfaces/backfill_scope.interface.json` | `node scripts/backfill_scope.mjs` | — |
 | 脚本 (CLI) | `cli.rules.backup_gc` | `scripts/backup_gc.mjs` | ✅ `scripts/interfaces/backup_gc.interface.json` | `node scripts/backup_gc.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.backup_writer_probe` | `scripts/backup_writer_probe.mjs` | ✅ `scripts/interfaces/backup_writer_probe.interface.json` | `node scripts/backup_writer_probe.mjs` | — |
 | 脚本 (CLI) | `cli.rules.batch_fix_sidebar_titles` | `scripts/batch_fix_sidebar_titles.mjs` | ✅ `scripts/interfaces/batch_fix_sidebar_titles.interface.json` | `node scripts/batch_fix_sidebar_titles.mjs` | 全量穿透修复前端侧边栏及权威存储中的全部存量会话标题 |
 | 脚本 (CLI) | `cli.rules.batch_rename_sessions` | `scripts/batch_rename_sessions.mjs` | ✅ `scripts/interfaces/batch_rename_sessions.interface.json` | `node scripts/batch_rename_sessions.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.build_capabilities_index` | `scripts/build_capabilities_index.mjs` | ✅ `scripts/interfaces/build_capabilities_index.interface.json` | `node scripts/build_capabilities_index.mjs` | ============================================================================== |

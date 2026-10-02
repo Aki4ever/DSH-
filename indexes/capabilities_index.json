@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-02T23:17:55.259Z",
+  "generatedAt": "2026-10-02T23:50:36.899Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 277,
+  "total": 278,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 2,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 93
+    "脚本 (CLI)": 94
   },
-  "withInterface": 277,
+  "withInterface": 278,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1739,6 +1739,15 @@
       "invoke": "node scripts/backup_gc.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/backup_gc.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.backup_writer_probe",
+      "path": "scripts/backup_writer_probe.mjs",
+      "desc": "",
+      "invoke": "node scripts/backup_writer_probe.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/backup_writer_probe.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
