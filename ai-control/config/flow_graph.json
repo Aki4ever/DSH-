@@ -13,7 +13,7 @@
     { "id": "S03", "name": "需求意图提炼与查重", "phase": "定标", "kind": "enforce", "estSec": 25, "carrier": "docs/requirements.md", "judge": "node scripts/redundancy_scan.mjs --root .", "dependsOn": ["S02"] },
     { "id": "S07", "name": "任务分解与待办常显", "phase": "筹策", "kind": "enforce", "estSec": 10, "carrier": "scripts/todo_gate.sh", "judge": "./scripts/todo_gate.sh check", "dependsOn": ["S03"] },
     { "id": "LOCK1", "name": "物理锁 LOCK-1 定标完成", "phase": "锁", "kind": "lock", "estSec": 3, "carrier": "scripts/physical_lock.sh", "judge": "./scripts/physical_lock.sh status", "dependsOn": ["S07"] },
-    { "id": "S08", "name": "风险揭示与全局调度锁申领", "phase": "筹策", "kind": "enforce", "estSec": 10, "carrier": "scripts/global_scheduler_lock.sh", "judge": "./scripts/global_scheduler_lock.sh status", "dependsOn": ["LOCK1"] },
+    { "id": "S08", "name": "风险揭示与全局调度锁申领", "phase": "筹策", "kind": "enforce", "estSec": 10, "carrier": "scripts/global_scheduler_lock.sh", "judge": "./scripts/global_scheduler_lock.sh --status", "dependsOn": ["LOCK1"] },
     { "id": "LOCK2", "name": "物理锁 LOCK-2 筹策完成", "phase": "锁", "kind": "lock", "estSec": 3, "carrier": "scripts/physical_lock.sh", "judge": "./scripts/physical_lock.sh status", "dependsOn": ["S08"] },
     { "id": "S09S10", "name": "攻坚落地与精准修改", "phase": "攻坚", "kind": "advise", "estSec": 600, "carrier": "scripts/legacy_align_scan.mjs", "judge": "node scripts/legacy_align_scan.mjs --root .", "dependsOn": ["LOCK2"] },
     { "id": "S11", "name": "写后必读回（每次写后立即执行）", "phase": "攻坚", "kind": "enforce", "estSec": 10, "repeat": "per-write", "carrier": "scripts/progress_ledger.mjs", "judge": "node scripts/progress_ledger.mjs check", "dependsOn": ["S09S10"] },

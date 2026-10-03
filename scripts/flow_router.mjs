@@ -127,7 +127,9 @@ export function conform(conf, graph, records, lane) {
   const required = requiredSteps(conf, graph, lane)
   if (!required) return { ok: false, reason: `未知任务分道：${lane}`, rate: 0, required: [], missing: [], failed: [] }
   const done = doneSteps(records)
-  const failed = records.filter((r) => r.type === 'step' && Number(r.rc) !== 0).map((r) => r.step)
+  // 失败的判据是「**最终仍未完成**且有非 0 退出码」：先失败、后补齐的步骤不再计入失败，
+  // 否则一次试错就会把整次运行永久钉死（这属于设计缺陷，不是纪律问题）。
+  const failed = [...new Set(records.filter((r) => r.type === 'step' && Number(r.rc) !== 0 && !done.has(r.step)).map((r) => r.step))]
   const missing = required.filter((s) => !done.has(s))
   const rate = required.length ? (required.length - missing.length) / required.length : 1
   const min = Number(conf.closure && conf.closure.minConformance != null ? conf.closure.minConformance : 1)
@@ -192,7 +194,7 @@ export function findViolations(conf, graph, records, graphHash) {
     out.push({ type, detail: p })
   }
   for (const r of records) {
-    if (r.type === 'step' && Number(r.rc) !== 0) out.push({ type: 'STEP_FAILED', step: r.step, detail: `步骤 ${r.step} 退出码 ${r.rc}，未通过` })
+    if (r.type === 'step' && Number(r.rc) !== 0 && !done.has(r.step)) out.push({ type: 'STEP_FAILED', step: r.step, detail: `步骤 ${r.step} 最终仍未通过（退出码 ${r.rc}）` })
   }
   const required = requiredSteps(conf, graph, lane) || []
   const missing = required.filter((s) => !done.has(s))
@@ -479,7 +481,7 @@ function runSelftest() {
     discipline: { scoreFloor: 60, blockedPhases: ['攻坚'] },
   }
   let pass = 0
-  const total = 6
+  const total = 7
   const add = (name, ok, detail) => {
     if (ok) pass++
     console.log(`${ok ? '✅' : '❌'} ${name}${detail ? '：' + detail : ''}`)
@@ -504,6 +506,10 @@ function runSelftest() {
   const failed = step(step(step(begin('std'), 'A', 0), 'B', 1), 'C', 0)
   const c2 = conform(conf, graph, failed, 'std')
   add('反例④：退出码非 0 不计完成且判不达标', !c2.ok && c2.missing.includes('B'))
+
+  const retried = step(step(step(step(begin('std'), 'A', 0), 'B', 1), 'B', 0), 'C', 0)
+  const c3 = conform(conf, graph, retried, 'std')
+  add('正例②：先失败后补齐的步骤不再计入失败', c3.ok && c3.failed.length === 0, `failed=[${c3.failed.join(',')}]`)
 
   const graphChanged = replayRun(conf, graph, good, 'G2')
   add('反例⑤：依赖图变更后旧日志不可复现', !graphChanged.ok && graphChanged.problems.some((p) => /依赖图已变更/.test(p)))

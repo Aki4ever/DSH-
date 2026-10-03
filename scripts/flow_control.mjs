@@ -168,6 +168,25 @@ export function journalState(dir = join(STATE_DIR, 'flow_runs')) {
   return { ok: broken.length === 0, files: files.length, broken, note: broken.length ? '' : `${files.length} 份日志哈希链自洽` }
 }
 
+/**
+ * 判定命令里的脚本是否真实存在（REQ-100）。
+ * 为什么要单列：`--check` 原本只验 `carrier` 字段在不在盘，而**真正被执行的是 `judge` 命令**——
+ * 实测 S08 的 judge 写成 `... global_scheduler_lock.sh status`（正确是 `--status`），
+ * 脚本存在、命令跑不通，看板却一路绿灯。这里只做"引用路径存在性"这层机械判定，
+ * 不猜参数是否正确（参数正确性由流转层真实执行时用退出码判定）。
+ */
+export function judgeCarrierProblems(graph, exists = (p) => existsSync(join(ROOT, p))) {
+  const problems = []
+  for (const s of graph.steps) {
+    const refs = String(s.judge || '').match(/[\w./-]+\.(?:mjs|cjs|js|sh|py)/g) || []
+    for (const r of refs) {
+      const rel = r.replace(/^\.\//, '')
+      if (!exists(rel)) problems.push(`步骤 ${s.id} 的判定命令引用了不存在的脚本：${rel}`)
+    }
+  }
+  return problems
+}
+
 /** 已批准顺序 vs 重算顺序：逐批比对成员集合。 */
 export function orderDiff(approved, computed) {
   const diffs = []
@@ -290,6 +309,7 @@ if (has('--check')) {
   // ① 载体在位（每条步骤的判定命令所依赖的载体必须真实存在）
   const missingCarriers = graph.steps.filter((s) => s.carrier && !existsSync(join(ROOT, s.carrier)))
   for (const s of missingCarriers) problems.push(`步骤 ${s.id} 的载体不存在：${s.carrier}`)
+  problems.push(...judgeCarrierProblems(graph))
 
   // ② 不变式（I6 需要流转层日志实况）
   if (!error) problems.push(...checkInvariants(graph, layers, { trace: journalState() }))

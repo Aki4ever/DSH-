@@ -317,8 +317,11 @@ export function collectFlowFindings(file = FLOW_FINDINGS) {
     if (!existsSync(file)) return null
     const pack = JSON.parse(readFileSync(file, 'utf8'))
     const n = Array.isArray(pack.violations) ? pack.violations.length : 0
-    if (n === 0 && Number(pack.conformRate) >= 1) return null
-    return FLOW_DIM
+    // 只有**违规事实**才计罚。合规率 < 100% 只说明"任务还在进行中"，
+    // 不是违规——REQ-099 已立口径「进行中不计罚」，本维度同样适用。
+    // （首版误把"未跑完"当违规，实测让委员对进行中的 run 扣了 5 分，已修正。）
+    if (n > 0) return FLOW_DIM
+    return null
   } catch {
     return null
   }
@@ -487,8 +490,8 @@ export function selfTest() {
   const pack = join(dir, 'flow_findings.json')
   writeFileSync(pack, JSON.stringify({ runId: 'r1', conformRate: 0.5, violations: [{ type: 'INVALID_TRANSITION', detail: '跳步' }] }), 'utf8')
   add('正例⑨：流转层有违规事实 → 委员维度成立', collectFlowFindings(pack) === FLOW_DIM, String(collectFlowFindings(pack)))
-  writeFileSync(pack, JSON.stringify({ runId: 'r1', conformRate: 1, violations: [] }), 'utf8')
-  add('反例⑩：流转无违规且全步完成 → 不扣分', collectFlowFindings(pack) === null, String(collectFlowFindings(pack)))
+  writeFileSync(pack, JSON.stringify({ runId: 'r1', conformRate: 0.5, violations: [] }), 'utf8')
+  add('反例⑩：进行中的流转 run（未跑完但无违规）不得计罚', collectFlowFindings(pack) === null, String(collectFlowFindings(pack)))
   add('反例⑪：证据包缺失 → 取不到证据不冒充通过也不计罚', collectFlowFindings(join(dir, 'not-exist.json')) === null)
 
   rmSync(dir, { recursive: true, force: true })
