@@ -3,7 +3,7 @@
   "note": "机读需求版本台账：由 scripts/req_version_gen.mjs 从 docs/requirements.md 生成；人工只维护 requirement_version_override 与 change_log 两个字段。",
   "source": "docs/requirements.md",
   "generated_by": "scripts/req_version_gen.mjs",
-  "requirement_count": 99,
+  "requirement_count": 100,
   "override_count": 0,
   "entries": {
     "REQ-001": {
@@ -1402,9 +1402,9 @@
     },
     "REQ-092": {
       "title": "全域覆盖与版本贯通（GCM-SCOPE）—— 管控脱管清零 / 需求版本号贯通 / 反空架子判定",
-      "requirement_version": "v1.1.0",
+      "requirement_version": "v1.2.0",
       "requirement_version_derived": false,
-      "implementation_version": "v4.29.0",
+      "implementation_version": "v4.29.11",
       "files": [
         "scripts/scope_audit.mjs",
         "scripts/req_version_audit.mjs",
@@ -1492,6 +1492,15 @@
         "scripts/audit_execution.sh",
         "scripts/discipline_score.mjs"
       ],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-100": {
+      "title": "管控执行保真与流程流转层",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": false,
+      "implementation_version": "v4.29.10",
+      "files": [],
       "missing_files": [],
       "change_log": []
     }

@@ -1,8 +1,8 @@
 # 纪律分系统规则 (Discipline Score System)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.10`
-> - **对应实施版本**：`v4.29.10`
+> - **当前文档版本**：`v4.29.11`
+> - **对应实施版本**：`v4.29.11`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **规范层级**：`【系统规则 · 纪律分系统唯一权威源】`
 > - **需求依据**：`REQ-098`（任务代号 `DISCIPLINE-SCORE-1`，子项 R1~R8）
