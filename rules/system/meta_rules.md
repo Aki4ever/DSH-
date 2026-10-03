@@ -1,8 +1,8 @@
 # 系统级全局元规则 (System Meta-Rules)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.11`
-> - **对应实施版本**：`v4.29.11`
+> - **当前文档版本**：`v4.29.12`
+> - **对应实施版本**：`v4.29.12`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **生效状态**：`[Release 稳定生效]`
 
