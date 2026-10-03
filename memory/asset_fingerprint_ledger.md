@@ -3,7 +3,7 @@
 > ### 🏷️ **版本信息与实施追踪**
 > - **当前台账版本**：`v4.29.10`
 > - **基线对齐版本**：`v4.29.10`
-> - **最后全盘扫描时间**：2026-10-03 08:24
+> - **最后全盘扫描时间**：2026-10-03 08:25
 > - **自动化引擎**：遵循 [`scripts/fingerprint_audit.sh`](../scripts/fingerprint_audit.sh)
 
 本文档记录工程全域受管资产（规则、知识库、架构索引、工程模板、自动化脚本与需求台账）的**数字指纹（SHA-256 8位短哈希）**、**最后修改时间**与**新鲜度等级**，为全域资产对齐与防止暗中代码漂移提供唯一客观事实依据。
@@ -54,7 +54,7 @@
 | `docs/constraint_mechanism_optimize_13.md` | `e6aab68f` | 2026-10-03 08:18 | `v4.29.10` | 🟢 TIER-0 | 最新基线 |
 | `docs/constraint_mechanism_optimize_14.md` | `0db4aa74` | 2026-10-03 08:18 | `v4.29.10` | 🟢 TIER-0 | 最新基线 |
 | `docs/constraint_mechanism_optimize_15.md` | `b71a741f` | 2026-10-03 08:18 | `v4.29.10` | 🟢 TIER-0 | 最新基线 |
-| `docs/constraint_mechanism_optimize_16.md` | `a1287799` | 2026-10-03 08:23 | `v4.29.10` | 🟢 TIER-0 | 最新基线 |
+| `docs/constraint_mechanism_optimize_16.md` | `5aac0185` | 2026-10-03 08:25 | `v4.29.10` | 🟢 TIER-0 | 最新基线 |
 | `docs/constraint_mechanism_optimize_3.md` | `a66e2202` | 2026-10-03 08:18 | `v4.29.10` | 🟢 TIER-0 | 最新基线 |
 | `docs/constraint_mechanism_optimize_4.md` | `f7ad5cac` | 2026-10-03 08:18 | `v4.29.10` | 🟢 TIER-0 | 最新基线 |
 | `docs/constraint_mechanism_optimize_5.md` | `21e42143` | 2026-10-03 08:18 | `v4.29.10` | 🟢 TIER-0 | 最新基线 |
@@ -182,7 +182,7 @@ v4.25.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/fingerprint_audit.sh` | `4b21a30d` | 2026-10-01 23:29 | `v4.24.0` | 🟡 TIER-1 | 待升级对齐 |
 | `scripts/fingerprint_index.mjs` | `a8153764` | 2026-10-01 23:23 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/flow_control.mjs` | `0f64b92c` | 2026-10-03 08:20 | `-` | ⚪ TIER-2 | 指纹监控中 |
-| `scripts/flow_router.mjs` | `948d66bd` | 2026-10-03 08:20 | `-` | ⚪ TIER-2 | 指纹监控中 |
+| `scripts/flow_router.mjs` | `82424a42` | 2026-10-03 08:25 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/gate_selftest.sh` | `3cd99125` | 2026-10-01 05:47 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/gen_common_chars.mjs` | `e9efe4da` | 2026-10-01 12:38 | `-` | ⚪ TIER-2 | 指纹监控中 |
 | `scripts/gen_control_map.mjs` | `be591fc2` | 2026-10-02 09:09 | `-` | ⚪ TIER-2 | 指纹监控中 |

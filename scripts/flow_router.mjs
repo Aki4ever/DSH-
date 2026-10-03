@@ -394,7 +394,11 @@ function cmdStatus(graph, conf) {
 }
 
 function cmdReplay(graph, conf, graphHash) {
-  const runId = valueOf('--replay') || args[args.indexOf('--replay') + 1] || currentRunId(conf, conf.defaultLane)
+  // `--replay` 后面可以不带 runId（此时取本次会话的 run），因此下一个 token 若仍是选项
+  // （以 `--` 开头）就必须当"没给 runId"处理——否则 `--replay --json` 会把 `--json`
+  // 当成 runId（实测踩到，报 `run --json 无日志`）。
+  const rawId = valueOf('--replay')
+  const runId = rawId && !rawId.startsWith('--') ? rawId : currentRunId(conf, conf.defaultLane)
   const records = readRecords(runFile(conf, runId))
   if (!records.length) { console.error(`❌ 取不到证据：run ${runId} 无日志`); return 2 }
   const rep = replayRun(conf, graph, records, graphHash)
