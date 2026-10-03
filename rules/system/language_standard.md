@@ -1,8 +1,8 @@
 # 全文档中文化与通俗易懂表达规范 (Language Standard)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.12`
-> - **对应实施版本**：`v4.29.12`
+> - **当前文档版本**：`v4.29.13`
+> - **对应实施版本**：`v4.29.13`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **生效状态**：`[Release 稳定生效]`
 

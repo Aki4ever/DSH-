@@ -1,8 +1,8 @@
 # 全局流程管控 Agent Life 规范 (Agent Life Orchestration Specification)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.12`
-> - **对应实施版本**：`v4.29.12`
+> - **当前文档版本**：`v4.29.13`
+> - **对应实施版本**：`v4.29.13`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](versioning_standard.md)
 > - **需求依据**：`REQ-055` / `CR-010`（全局流程调度 Agent Life 与阶段原子反馈）
 > - **生效状态**：`[Release 稳定生效]`
