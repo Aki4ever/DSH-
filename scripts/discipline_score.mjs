@@ -237,18 +237,18 @@ export function writeState(state, file = STATE) {
 }
 
 /**
- * 委员**不落账**的审计维度及理由。
- * 为什么必须划这条线：审计器的九维里，有四维在"事情还没做完"时必然为红——
- * 未提交文件（存量校准）、回合未完结时取不到输出证据（输出结构）、
- * 以及已由硬门禁实时阻断的两项（开工门禁 / 待办常显）。
- * 把它们也自动入账，等于用**只追加、不可回滚**的生产账本去惩罚"进度中"，
- * 换来的是假扣分与脏历史——比漏扣更糟。真正的违规维度（命名/冗余/冲突/台账/用字/中文表达）照扣不误。
+ * 委员**不落账**的审计维度及理由——只保留"**必然不该罚**"的两类：
+ *   · 已由硬门禁实时拦截的（开工门禁 / 待办常显）：再扣一次是双重计罚；
+ *   · 存量校准：未提交/未登记属"进行中"，提交动作尚未发生，不是违规。
+ * 关键修正（用户实测指出）：**"输出结构契约"不得整体豁免**。
+ *   它此前被我一刀切列为"回合未完结时必然取不到证据"，于是**结构性违规永远不扣分**——
+ *   用户一句"结构化输出在哪里"即可证伪。正确口径是按**证据是否可得**区分：
+ *   取不到证据才免罚；已取到证据但判不通过，就是真违规，必须落账。
  */
 export const OFFICER_SKIP_DIMS = {
   '2. 开工门禁': '已由拦截层实时阻断，重复计罚',
   '5. 存量校准': '未提交/未登记属进行中状态，提交动作尚未发生',
   '7. 待办常显': '已由 S07 硬门禁实时阻断，重复计罚',
-  '8. 输出结构契约': '本回合未完结时必然取不到证据（失败关闭），属时序不属违规',
 }
 
 /* ── 独立复核（纪律委员入口）───────────────────────────────────────────────
@@ -276,9 +276,10 @@ export function independentVerify(selfScore, opts = {}) {
   const witness = opts.witness || runWitness
   const w = witness()
   const missedRaw = (w.failedDims || []).filter((dim) => !deducts.some((d) => String(d.reason || '').includes(dim)))
-  // 只有"真违规"维度才落账；进行中/已由硬门禁实时拦截的维度如实报出但不计罚。
-  const skippedMissed = missedRaw.filter((dim) => OFFICER_SKIP_DIMS[dim])
-  const missed = missedRaw.filter((dim) => !OFFICER_SKIP_DIMS[dim])
+  // 只有"真违规"维度才落账；已由硬门禁实时拦截的、以及**取不到证据**的维度如实报出但不计罚。
+  const noEvidence = w.noEvidence || []
+  const skippedMissed = missedRaw.filter((dim) => OFFICER_SKIP_DIMS[dim] || noEvidence.includes(dim))
+  const missed = missedRaw.filter((dim) => !OFFICER_SKIP_DIMS[dim] && !noEvidence.includes(dim))
   const missedPoints = missed.length * (lv.L2 || 5)
 
   const confirmedPoints = confirmed.reduce((s, d) => s + (Number(d.points) || 0), 0)
@@ -318,7 +319,13 @@ function runWitness() {
       ['languagePass', '9. 文字可读性'],
     ]
     const failedDims = dims.filter(([k]) => j[k] === false).map(([, n]) => n)
-    return { ok: true, auditScore: j.score, failedDims, reason: null }
+    // 把"取不到证据"与"已判定不达标"分开：前者免罚（时序问题），后者是真违规、必须落账。
+    const noEvidence = []
+    const compactMissing = !j.compact || typeof j.compact.reason === 'string'
+    const langMissing = !j.language || (typeof j.language.bodyHanzi !== 'number' && typeof j.language.rareChars === 'undefined')
+    if (compactMissing) noEvidence.push('8. 输出结构契约', '9b. 中文表达')
+    if (langMissing) noEvidence.push('9. 文字可读性')
+    return { ok: true, auditScore: j.score, failedDims, noEvidence, reason: null }
   } catch (e) {
     return { ok: false, auditScore: null, failedDims: [], reason: e && e.message ? String(e.message).slice(0, 120) : '见证审计器不可用' }
   }
@@ -420,14 +427,23 @@ export function selfTest() {
   })
   add('反例⑦：独立复核漏报 2 维 → 判定与自评不符', iv.officerScore < 100 && iv.missed.length === 2, `officer=${iv.officerScore} missed=${iv.missed.length}`)
 
-  // 用例 14：进行中维度（未提交/未完结）不得落账，只如实报出
+  // 用例 14：进行中维度与"取不到证据"维度不得落账，只如实报出
   const iv2 = independentVerify(100, {
     file,
     conf: {},
-    witness: () => ({ ok: true, auditScore: 70, failedDims: ['5. 存量校准', '8. 输出结构契约'], reason: null }),
+    witness: () => ({ ok: true, auditScore: 70, failedDims: ['5. 存量校准', '8. 输出结构契约'], noEvidence: ['8. 输出结构契约'], reason: null }),
   })
-  add('反例⑨：进行中维度不计罚（否则用永久账本惩罚未完成）', iv2.missed.length === 0 && iv2.skippedMissed.length === 2,
+  add('反例⑨：进行中与取不到证据的维度不计罚', iv2.missed.length === 0 && iv2.skippedMissed.length === 2,
     `可落账 ${iv2.missed.length} · 报出但不计罚 ${iv2.skippedMissed.length}`)
+
+  // 用例 15：**已取到证据**的输出结构违规必须落账（用户实测缺陷：该维度曾被整体豁免，永远不扣分）
+  const iv3 = independentVerify(100, {
+    file,
+    conf: {},
+    witness: () => ({ ok: true, auditScore: 80, failedDims: ['8. 输出结构契约'], noEvidence: [], reason: null }),
+  })
+  add('正例⑧：已取到证据的输出结构违规必须可落账', iv3.missed.length === 1 && iv3.skippedMissed.length === 0,
+    `可落账 ${iv3.missed.join('/')} · 不计罚 ${iv3.skippedMissed.length}`)
 
   // 用例 12/13：委员漏报必须**真的入账**且不重复扣
   // （用户实测缺陷回归："纪律委员怎么不扣分" —— 判了却不落账，分数永远不掉）

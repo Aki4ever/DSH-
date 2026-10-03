@@ -1487,7 +1487,7 @@
       "title": "全流程中文·备份有界·纪律扣分落地（ZH-CLEAN-DISC-1）",
       "requirement_version": "v1.0.0",
       "requirement_version_derived": false,
-      "implementation_version": "v4.29.8",
+      "implementation_version": "v4.29.9",
       "files": [
         "scripts/audit_execution.sh",
         "scripts/discipline_score.mjs"
