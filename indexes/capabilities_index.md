@@ -1,8 +1,8 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.9`
-> - **对应实施版本**：`v4.29.9`
+> - **当前文档版本**：`v4.29.10`
+> - **对应实施版本**：`v4.29.10`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
 > - **生效状态**：`[Release 稳定生效]`
@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：278**（技能 178 · 其他执行层 100）
+**执行层条目总数：280**（技能 178 · 其他执行层 102）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -516,6 +516,7 @@
 | 技能 (Skill) | `skill.pool.zero-restart-guard` | `skills/zero-restart-guard` | ✅ `skills/zero-restart-guard/interface.json` | `skill zero-restart-guard` | 复合流程级技能(L3)：零重启写入门禁。把「路径 → 处置判定 → 重启证据断言」串成一道写入门禁，挂载于管家「② 契约与合规」集群，默认目标是零重启，重启必须由不可热更边界加重建命令双向举证。 |
 | 技能 (Skill) | `skill.pool.zoom-level-policy` | `skills/zoom-level-policy` | ✅ `skills/zoom-level-policy/interface.json` | `skill zoom-level-policy` | 微观原子规约：可视化产物交互判定基元。钉死三条硬口径——缩放必须走离散档位表（13 档，+/- 跳相邻档，滚轮连续微调后吸附，档位可枚举可复算）、下载必须三段降级（showSaveFilePicker / Blob 下载 / 就地提示，禁止 |
 | 智能体 (Agent) | `agent.skillpool.discipline-officer-agent` | `skill-pool/agents/discipline-officer-agent` | ✅ `skill-pool/agents/discipline-officer-agent/interface.json` | `subagent（宿主工具，按需分派）` | 纪律分的独立裁判，只回答一件事：AI 给自己打的分算不算数。它的判定高于 AI 自评、低于用户裁定； |
+| 智能体 (Agent) | `agent.skillpool.flow-router-agent` | `skill-pool/agents/flow-router-agent` | ✅ `skill-pool/agents/flow-router-agent/interface.json` | `subagent（宿主工具，按需分派）` | --- |
 | 智能体 (Agent) | `agent.skillpool.process-supervisor-agent` | `skill-pool/agents/process-supervisor-agent` | ✅ `skill-pool/agents/process-supervisor-agent/interface.json` | `subagent（宿主工具，按需分派）` | --- |
 | 插件 (Plugin) | `plugin.skillpool.dsh-plugin-control-jump` | `skill-pool/plugins/dsh-plugin-control-jump` | ✅ `skill-pool/plugins/dsh-plugin-control-jump/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-control-jump` | — |
 | 插件 (Plugin) | `plugin.skillpool.dsh-plugin-image-zoom` | `skill-pool/plugins/dsh-plugin-image-zoom` | ✅ `skill-pool/plugins/dsh-plugin-image-zoom/interface.json` | `dsh plugin add skill-pool/plugins/dsh-plugin-image-zoom` | — |
@@ -553,6 +554,7 @@
 | 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | ✅ `scripts/interfaces/fingerprint_audit.interface.json` | `bash scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
 | 脚本 (CLI) | `cli.rules.fingerprint_index` | `scripts/fingerprint_index.mjs` | ✅ `scripts/interfaces/fingerprint_index.interface.json` | `node scripts/fingerprint_index.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.flow_control` | `scripts/flow_control.mjs` | ✅ `scripts/interfaces/flow_control.interface.json` | `node scripts/flow_control.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.flow_router` | `scripts/flow_router.mjs` | ✅ `scripts/interfaces/flow_router.interface.json` | `node scripts/flow_router.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.gate_selftest` | `scripts/gate_selftest.sh` | ✅ `scripts/interfaces/gate_selftest.interface.json` | `bash scripts/gate_selftest.sh` | — |
 | 脚本 (CLI) | `cli.rules.gen_common_chars` | `scripts/gen_common_chars.mjs` | ✅ `scripts/interfaces/gen_common_chars.interface.json` | `node scripts/gen_common_chars.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.gen_control_map` | `scripts/gen_control_map.mjs` | ✅ `scripts/interfaces/gen_control_map.interface.json` | `node scripts/gen_control_map.mjs` | 把「管控机制当前实况」画成一张简单明了的单页图（SVG） |

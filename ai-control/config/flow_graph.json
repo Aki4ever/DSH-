@@ -31,7 +31,8 @@
     { "id": "I2", "text": "G0→G4 累积门禁必须先于任何改动型动作", "type": "before", "from": ["G0G4"], "to": ["S09S10", "S11"] },
     { "id": "I3", "text": "首动改名必须是第 0 步（零豁免）", "type": "first", "step": "S05" },
     { "id": "I4", "text": "写后必读回紧跟每一次写，不得攒到收尾一次性做", "type": "immediate", "step": "S11" },
-    { "id": "I5", "text": "双检与存量校准必须早于提交推送", "type": "before", "from": ["S13a", "S13b", "S13c"], "to": ["S15"] }
+    { "id": "I5", "text": "双检与存量校准必须早于提交推送", "type": "before", "from": ["S13a", "S13b", "S13c"], "to": ["S15"] },
+    { "id": "I6", "text": "每一次流转都必须留下可复现的哈希链轨迹，复现失败即判不达标", "type": "trace", "carrier": "scripts/flow_router.mjs" }
   ],
   "order": [
     ["S05"],

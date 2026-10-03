@@ -1,0 +1,46 @@
+{
+  "id": "cli.rules.flow_router",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/flow_router.mjs",
+  "invoke": "node scripts/flow_router.mjs",
+  "summary": "流程流转层引擎：把管控流程推进成有状态、可拒收、可复现的 run——跳步被底层拦截，每步落哈希链日志，并产出交给纪律委员的违规事实包。",
+  "inputs": [
+    { "name": "--begin", "type": "arg", "required": false, "desc": "开启（或复用）本次流转 run：node scripts/flow_router.mjs --begin --lane standard" },
+    { "name": "--advance", "type": "arg", "required": false, "desc": "推进一步：--advance S11 --cmd \"<判定命令>\" --rc 0 [--evidence <文件>]" },
+    { "name": "--next", "type": "arg", "required": false, "desc": "列出此刻允许推进的步骤（依赖已满足且未完成）" },
+    { "name": "--status", "type": "arg", "required": false, "desc": "本次 run 现状：合规率 / 哈希链 / 纪律分 / 可推进步（node scripts/flow_router.mjs --status --json）" },
+    { "name": "--report", "type": "arg", "required": false, "desc": "违规事实只读报表（不写盘）" },
+    { "name": "--findings", "type": "arg", "required": false, "desc": "违规事实写盘并输出：ai-control/reports/discipline/flow_findings.json" },
+    { "name": "--replay", "type": "arg", "required": false, "desc": "复现校验：同一份日志重新推导流转决策并逐条对拍（--replay [runId] --json）" },
+    { "name": "--close", "type": "arg", "required": false, "desc": "收口：合规率与哈希链同时达标才允许写入 close 记录" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "反向用例自检（6 条：跳步 / 篡改断链 / 缺步 / 失败步 / 依赖图变更 / 正例）" }
+  ],
+  "outputs": [
+    { "name": "conformRate", "type": "number", "desc": "合规率 = 分道要求的必需步骤中按退出码 0 完成的比例" },
+    { "name": "chainOk", "type": "boolean", "desc": "run 日志哈希链是否逐行重算一致" },
+    { "name": "reproducible", "type": "boolean", "desc": "复现校验是否通过（链自洽 + 依赖图未变 + 每步当时合法可推进）" },
+    { "name": "violations", "type": "array", "desc": "违规事实类型清单，供纪律委员落账" }
+  ],
+  "exitCodes": {
+    "0": "推进成功且合规 / 复现校验通过 / 无违规事实",
+    "1": "跳步被拒、重复推进、复现失败、合规率不足或被纪律拦下",
+    "2": "用法错误、依赖图或配置缺失、证据文件不存在（取不到证据，绝不算通过）"
+  },
+  "sideEffects": [
+    "追加 ai-control/reports/state/flow_runs/<runId>.jsonl",
+    "写入 ai-control/reports/discipline/flow_findings.json"
+  ],
+  "dependencies": [
+    "ai-control/config/flow_graph.json",
+    "ai-control/config/flow_router.conf.json"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/flow_router.mjs --status --json",
+    "node scripts/flow_router.mjs --replay --json",
+    "node scripts/flow_router.mjs --findings --json",
+    "node scripts/flow_router.mjs --selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

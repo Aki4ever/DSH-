@@ -44,6 +44,10 @@ const LEDGER_DIR = process.env.DSH_DISCIPLINE_LEDGER
   : join(ROOT, 'ai-control', 'reports', 'discipline')
 const LEDGER = process.env.DSH_DISCIPLINE_LEDGER || join(LEDGER_DIR, 'ledger.jsonl')
 const STATE = join(LEDGER_DIR, 'state.json')
+// 流程流转层的事实来源与维度名（REQ-100 / R4）。维度名与 OFFICER_SKIP_DIMS 不重叠，
+// 因此流转违规**真的会扣分**，不会被"进行中"话术豁免掉。
+const FLOW_FINDINGS = process.env.DSH_FLOW_FINDINGS || join(ROOT, 'ai-control', 'reports', 'discipline', 'flow_findings.json')
+export const FLOW_DIM = '10. 流程流转'
 
 /* ── 稳定序列化与哈希链 ─────────────────────────────────────────────────────
  * 为什么不用 JSON.stringify 直接算哈希：对象键顺序会随写法漂移，
@@ -302,6 +306,24 @@ export function independentVerify(selfScore, opts = {}) {
   }
 }
 
+/**
+ * 第 10 维证据来源：流程流转层的违规事实包（REQ-100 / R4）。
+ * 分工：流转层只负责**产事实**（跳步/乱序/缺步/退出码非 0/哈希链断），
+ * 委员负责**判与罚**——两件事分开，避免"自己判自己"。
+ * 返回维度名（有违规）或 null（无违规 / 取不到证据，都不罚）。
+ */
+export function collectFlowFindings(file = FLOW_FINDINGS) {
+  try {
+    if (!existsSync(file)) return null
+    const pack = JSON.parse(readFileSync(file, 'utf8'))
+    const n = Array.isArray(pack.violations) ? pack.violations.length : 0
+    if (n === 0 && Number(pack.conformRate) >= 1) return null
+    return FLOW_DIM
+  } catch {
+    return null
+  }
+}
+
 /** 外部见证：跑既有静态审计器，取它的失分维度名。取不到 → 明确报取不到（不算通过）。 */
 function runWitness() {
   try {
@@ -319,6 +341,11 @@ function runWitness() {
       ['languagePass', '9. 文字可读性'],
     ]
     const failedDims = dims.filter(([k]) => j[k] === false).map(([, n]) => n)
+    // 第 10 维（REQ-100 / R4）：**流程流转层 → 纪律委员**的反馈通道。
+    // 流转层把跳步/乱序/缺步/复现失败写成机器可读证据包，委员直接采信该事实（不是采信我的自述）。
+    // 取不到证据包时**不冒充通过**，也不扣分——只在有实据时判违规。
+    const flowDim = collectFlowFindings()
+    if (flowDim) failedDims.push(flowDim)
     // 把"取不到证据"与"已判定不达标"分开：前者免罚（时序问题），后者是真违规、必须落账。
     const noEvidence = []
     const compactMissing = !j.compact || typeof j.compact.reason === 'string'
@@ -455,6 +482,14 @@ export function selfTest() {
     `账面 ${beforeBook} → ${afterBook}（入账 ${bk1.booked.length} 条）`)
   const bk2 = bookOfficerFindings({ missed: ['9b. 中文表达'], mistaken: false }, { file, conf: {}, now: new Date().toISOString() })
   add('反例⑧：同维度反复复核不重复扣（幂等）', bk2.booked.length === 0, `第二次入账 ${bk2.booked.length} 条`)
+
+  // 用例 16/17：流程流转层 → 纪律委员的反馈通道（REQ-100 / R4）
+  const pack = join(dir, 'flow_findings.json')
+  writeFileSync(pack, JSON.stringify({ runId: 'r1', conformRate: 0.5, violations: [{ type: 'INVALID_TRANSITION', detail: '跳步' }] }), 'utf8')
+  add('正例⑨：流转层有违规事实 → 委员维度成立', collectFlowFindings(pack) === FLOW_DIM, String(collectFlowFindings(pack)))
+  writeFileSync(pack, JSON.stringify({ runId: 'r1', conformRate: 1, violations: [] }), 'utf8')
+  add('反例⑩：流转无违规且全步完成 → 不扣分', collectFlowFindings(pack) === null, String(collectFlowFindings(pack)))
+  add('反例⑪：证据包缺失 → 取不到证据不冒充通过也不计罚', collectFlowFindings(join(dir, 'not-exist.json')) === null)
 
   rmSync(dir, { recursive: true, force: true })
 

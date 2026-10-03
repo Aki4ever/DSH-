@@ -10,6 +10,15 @@
    "status": "active"
   },
   {
+   "description": "流程流转员：推进/拒收/留痕/复现管控流程，产违规事实给纪律委员（REQ-100 / R2·R3·R4）",
+   "id": "flow-router-agent",
+   "layer": "agent",
+   "parent": "process-conformance-policy",
+   "path": "agents/flow-router-agent/PROMPT.md",
+   "source": "repo",
+   "status": "active"
+  },
+  {
    "description": "流程监督员的独立复核者：不共享主上下文，只依据磁盘证据包逐项判定，看不到的就是没做",
    "id": "process-supervisor-agent",
    "layer": "agent",

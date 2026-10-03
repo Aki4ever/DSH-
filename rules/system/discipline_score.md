@@ -1,8 +1,8 @@
 # 纪律分系统规则 (Discipline Score System)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.9`
-> - **对应实施版本**：`v4.29.9`
+> - **当前文档版本**：`v4.29.10`
+> - **对应实施版本**：`v4.29.10`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../workflow/versioning_standard.md)
 > - **规范层级**：`【系统规则 · 纪律分系统唯一权威源】`
 > - **需求依据**：`REQ-098`（任务代号 `DISCIPLINE-SCORE-1`，子项 R1~R8）
@@ -32,6 +32,7 @@
 | **R6** 低于 60 分停用 | 任一条目分跌破停用阈值，即触发**物理停用**；停用不随新任务自动复活，仅用户可恢复。细则见 §五。 | `bash scripts/control_gates.sh check`（G7）· `node scripts/discipline_guard_probe.mjs`（整链阻断实跑） |
 | **R7** 专职纪律委员 | 委员独立算账：逐条复核证据是否成立，并对既有审计器的失分维度判"漏报"；**不采信自评**，其判定优先于 AI 自评。角色契约与接口契约见 [`skill-pool/agents/discipline-officer-agent/`](../../skill-pool/agents/discipline-officer-agent/PROMPT.md)（宿主无 agent 注册面，故运行载体是该行的 verify 子命令）。 | `node scripts/discipline_score.mjs verify --json` |
 | **R8** 输出两条固定字段 | 每次回复固定多披露两个数：进度回执里的 `🎯 当前纪律分`（动手前的账面分，已登记进 `OUT_RECEIPT_FIELDS`）、【执行效果】里的 `🏁 完成时纪律分`（本轮结算后的分）；两个数都必须从账本取，手写对不上即判红。字段格式只在 [`rules/system/output_standard.md`](./output_standard.md) 定义一次，本文不复述。 | `node scripts/output_audit.mjs --check` |
+| **R9** 流程流转维度 | 审计维度 `10. 流程流转` 由**流转层产事实、委员判与罚**：`scripts/flow_router.mjs --findings` 写出的跳步 / 乱序 / 缺步 / 退出码非 0 / 哈希链断，委员一律按 L2 入账（该维度不在 `OFFICER_SKIP_DIMS`，不接受"进行中"豁免）；证据包缺失时不罚也不冒充通过。反向由流转层执行：纪律停用或低于地板分时，受拦阶段的推进被硬拒。分工与阈值见 [`rules/workflow/task_execution_flow.md`](../workflow/task_execution_flow.md) §二之六。 | `node scripts/flow_router.mjs --findings --json` |
 
 ## 三、扣分档位表（L1~L5）
 

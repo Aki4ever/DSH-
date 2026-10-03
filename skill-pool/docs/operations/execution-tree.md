@@ -9,7 +9,7 @@
 | :--- | :--- | :--- | ---: |
 | `skill` | 技能层 | 是 | 183 |
 | `cli` | 命令层 | 否 | 9 |
-| `agent` | 智能体层 | 否 | 5 |
+| `agent` | 智能体层 | 否 | 6 |
 | `api` | 接口层 | 否 | 0 |
 | `mcp` | 协议层 | 否 | 0 |
 | `plugin` | 插件层 | 否 | 2 |
@@ -28,6 +28,7 @@
 | `cli` | `skill-pool:unlink` | `skill-pool` | `bin/skill-pool` | repo | 安全解除技能软链 |
 | `cli` | `skill-pool:validate` | `skill-pool` | `bin/skill-pool` | repo | 校验技能规范合规性 |
 | `agent` | `discipline-officer-agent` | `process-supervisor` | `agents/discipline-officer-agent/PROMPT.md` | repo | 纪律委员：独立复核 AI 自评、受理用户扣分、签发停用（REQ-098 / R7） |
+| `agent` | `flow-router-agent` | `process-conformance-policy` | `agents/flow-router-agent/PROMPT.md` | repo | 流程流转员：推进/拒收/留痕/复现管控流程，产违规事实给纪律委员（REQ-100 / R2·R3·R4） |
 | `agent` | `process-supervisor-agent` | `process-supervisor` | `agents/process-supervisor-agent/PROMPT.md` | repo | 流程监督员的独立复核者：不共享主上下文，只依据磁盘证据包逐项判定，看不到的就是没做 |
 | `agent` | `ralph` | `dsh-butler` | `-` | host | 宿主提供的新鲜智能体迭代循环能力 |
 | `agent` | `subagent` | `dsh-butler` | `-` | host | 宿主提供的子智能体能力（深度推导与并行拆解） |

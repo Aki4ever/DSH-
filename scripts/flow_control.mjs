@@ -18,7 +18,7 @@
  *   · --graph   输出 Mermaid 依赖图（供信息图资产复用）
  *
  * 铁律：**流程可以重排，不可跳步**。重排只改"非锁步"的先后/并行关系，
- * 五条不变式（I1~I5）任何情况下不得被破坏。
+ * 六条不变式（I1~I6，I6=流转轨迹可复现，REQ-100）任何情况下不得被破坏。
  *
  * 用法：
  *   node scripts/flow_control.mjs --plan [--json]
@@ -32,9 +32,11 @@
  * ==============================================================================
  */
 
-import { readFileSync, writeFileSync, existsSync, appendFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, appendFileSync, mkdirSync, readdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+// 流转层（REQ-100）的哈希链校验是纯函数，直接复用，避免第二套实现走样。
+import { verifyChain as verifyRunChain } from './flow_router.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -111,8 +113,8 @@ export function criticalPath(steps) {
   return top
 }
 
-/** 不变式校验。layers 为计算出的批次序列。 */
-export function checkInvariants(graph, layers) {
+/** 不变式校验。layers 为计算出的批次序列。ctx.trace 为流转层日志实况（I6 用）。 */
+export function checkInvariants(graph, layers, ctx = {}) {
   const idx = new Map()
   layers.forEach((batch, i) => batch.forEach((id) => idx.set(id, i)))
   const problems = []
@@ -142,9 +144,28 @@ export function checkInvariants(graph, layers) {
       if (!isPerWrite) problems.push(`${inv.id} ${inv.text}：${inv.step} 未声明 repeat=per-write，会被攒到收尾`)
       if (i === 0 || i === layers.length - 1) problems.push(`${inv.id} 步骤 ${inv.step} 位置异常（第 ${i} 批 / 共 ${layers.length} 批）`)
       void prev
+    } else if (inv.type === 'trace') {
+      // I6（REQ-100）：流转层日志的哈希链必须自洽；有断链即判不达标。
+      // 尚无日志时不冒充通过，也不凭空扣分——如实记为"本轮无流转日志"。
+      const t = ctx.trace || null
+      if (t && !t.ok) problems.push(`${inv.id} ${inv.text}：${(t.broken || []).join(' · ')}`)
     }
   }
   return problems
+}
+
+/** 流转层 run 日志实况：有日志就必须逐行哈希链自洽（REQ-100 / I6）。 */
+export function journalState(dir = join(STATE_DIR, 'flow_runs')) {
+  if (!existsSync(dir)) return { ok: true, files: 0, broken: [], note: '本轮无流转日志' }
+  const files = readdirSync(dir).filter((f) => f.endsWith('.jsonl'))
+  const broken = []
+  for (const f of files) {
+    const recs = readFileSync(join(dir, f), 'utf8').split('\n').filter((l) => l.trim())
+      .map((l) => { try { return JSON.parse(l) } catch { return null } }).filter(Boolean)
+    const c = verifyRunChain(recs)
+    if (!c.ok) broken.push(`${f}：${c.reason}`)
+  }
+  return { ok: broken.length === 0, files: files.length, broken, note: broken.length ? '' : `${files.length} 份日志哈希链自洽` }
 }
 
 /** 已批准顺序 vs 重算顺序：逐批比对成员集合。 */
@@ -270,8 +291,8 @@ if (has('--check')) {
   const missingCarriers = graph.steps.filter((s) => s.carrier && !existsSync(join(ROOT, s.carrier)))
   for (const s of missingCarriers) problems.push(`步骤 ${s.id} 的载体不存在：${s.carrier}`)
 
-  // ② 不变式
-  if (!error) problems.push(...checkInvariants(graph, layers))
+  // ② 不变式（I6 需要流转层日志实况）
+  if (!error) problems.push(...checkInvariants(graph, layers, { trace: journalState() }))
 
   // ③ 与规则层同步（受管区间逐 id 一致）
   if (existsSync(RULE_FILE)) {
@@ -317,7 +338,7 @@ if (has('--check')) {
   console.log('-----------------------------------------')
   console.log(`步骤 ${graph.steps.length} · 批次 ${layers.length} · 不变式 ${(graph.invariants || []).length}`)
   if (problems.length === 0) {
-    console.log('✅ 图合法 · 载体在位 · 五条不变式成立 · 规则层同步 · 顺序一致 · 轨迹合法')
+    console.log('✅ 图合法 · 载体在位 · 六条不变式成立 · 规则层同步 · 顺序一致 · 轨迹合法')
     process.exit(0)
   }
   for (const p of problems) console.log(`   ⛔ ${p}`)
@@ -328,7 +349,7 @@ if (has('--check')) {
 
 if (has('--selftest')) {
   let passed = 0
-  const total = 3
+  const total = 4
   const g = {
     steps: [
       { id: 'A', estSec: 1, dependsOn: [] },
@@ -351,6 +372,10 @@ if (has('--selftest')) {
   const probs = checkInvariants(bad, p1.layers)
   if (probs.length >= 1) { console.log('✅ 态3 不变式违背被检出'); passed++ }
   else console.error('❌ 态3 期望检出不变式违背')
+
+  const traceBad = checkInvariants({ ...g, invariants: [{ id: 'I6', text: '流转轨迹必须可复现', type: 'trace' }] }, p1.layers, { trace: { ok: false, broken: ['run-x.jsonl：第 2 条正文与哈希不符（被改动）'] } })
+  if (traceBad.length >= 1) { console.log('✅ 态4 流转轨迹断链被检出（I6）'); passed++ }
+  else console.error('❌ 态4 期望检出流转轨迹断链')
 
   console.log(`—— 自检结果：${passed}/${total} 通过`)
   process.exit(passed === total ? 0 : 1)

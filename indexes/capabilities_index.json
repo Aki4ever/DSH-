@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-02T23:50:36.899Z",
+  "generatedAt": "2026-10-03T00:17:39.598Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 278,
+  "total": 280,
   "byLayer": {
     "技能 (Skill)": 178,
-    "智能体 (Agent)": 2,
+    "智能体 (Agent)": 3,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 94
+    "脚本 (CLI)": 95
   },
-  "withInterface": 278,
+  "withInterface": 280,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1625,6 +1625,15 @@
     },
     {
       "layer": "智能体 (Agent)",
+      "id": "agent.skillpool.flow-router-agent",
+      "path": "skill-pool/agents/flow-router-agent",
+      "desc": "---",
+      "invoke": "subagent（宿主工具，按需分派）",
+      "invokeKind": "host-tool",
+      "interface": "skill-pool/agents/flow-router-agent/interface.json"
+    },
+    {
+      "layer": "智能体 (Agent)",
       "id": "agent.skillpool.process-supervisor-agent",
       "path": "skill-pool/agents/process-supervisor-agent",
       "desc": "---",
@@ -1955,6 +1964,15 @@
       "invoke": "node scripts/flow_control.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/flow_control.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.flow_router",
+      "path": "scripts/flow_router.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/flow_router.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/flow_router.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

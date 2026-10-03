@@ -1,0 +1,97 @@
+{
+  "id": "agent.skillpool.flow-router-agent",
+  "layer": "智能体 (Agent)",
+  "path": "skill-pool/agents/flow-router-agent",
+  "invoke": "subagent（宿主工具，按需分派；可跑载体为 node scripts/flow_router.mjs --status/--advance/--replay/--findings）",
+  "summary": "流程流转员：把 19 步管控流程变成可推进、可拒收、可复算的状态机；上一步没完成就不能进下一步，每一步落哈希链日志，并产违规事实包交纪律委员。",
+  "inputs": [
+    {
+      "name": "lane",
+      "type": "string",
+      "required": false,
+      "desc": "任务分道：light（快速轻量流）/ standard（标准完备流，走全图）。缺省取 ai-control/config/flow_router.conf.json 的 defaultLane"
+    },
+    {
+      "name": "step",
+      "type": "string",
+      "required": true,
+      "desc": "要推进的步骤 id（如 S11），必须属于 ai-control/config/flow_graph.json 且前序已完成"
+    },
+    {
+      "name": "cmd",
+      "type": "string",
+      "required": false,
+      "desc": "该步真实跑过的判定命令；缺省取依赖图里该步的 judge"
+    },
+    {
+      "name": "rc",
+      "type": "number",
+      "required": false,
+      "desc": "判定命令的真实退出码；非 0 的步骤不计入「已完成」，且会作为 STEP_FAILED 事实上报"
+    },
+    {
+      "name": "evidence",
+      "type": "string",
+      "required": false,
+      "desc": "证据文件路径（相对仓库根）；给出时对文件内容取 sha256 入账，未给出时对 cmd|rc 取 sha256"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "runId",
+      "type": "string",
+      "desc": "本次运行标识，由 sha256(会话id|分道) 前 12 位推导——不用随机数与时钟，同会话同分道必然同名"
+    },
+    {
+      "name": "conform",
+      "type": "object",
+      "desc": "合规度量：required / done / missing / failed / rate / ok；分母是任务分道要求的步骤，不是做过的步骤"
+    },
+    {
+      "name": "chain",
+      "type": "object",
+      "desc": "哈希链自检结果（ok / brokenAt / reason）；历史行被改动即为 false"
+    },
+    {
+      "name": "replay",
+      "type": "object",
+      "desc": "复现校验结论（ok / problems / steps）：同一份日志重推出的流转决策与实际留痕是否逐条一致"
+    },
+    {
+      "name": "findings",
+      "type": "array",
+      "desc": "违规事实：INVALID_TRANSITION / OUT_OF_ORDER / MISSING_REQUIRED / CHAIN_BROKEN / STEP_FAILED / DISCIPLINE_BLOCKED"
+    },
+    {
+      "name": "disciplineRefused",
+      "type": "boolean",
+      "desc": "是否被纪律分拦下（已停用或低于 scoreFloor 时，攻坚/质检/归卷 的推进被拒）"
+    }
+  ],
+  "exitCodes": {
+    "0": "流转成功且合规（或复现校验通过、无违规事实）",
+    "1": "跳步被拒 / 重复推进 / 复现失败 / 合规率不足 / 被纪律拦下",
+    "2": "用法错误、依赖图或配置缺失、证据文件不存在（取不到证据，绝不算通过）"
+  },
+  "sideEffects": [
+    "追加 ai-control/reports/state/flow_runs/<runId>.jsonl（哈希链日志，只追加不改写）",
+    "写入 ai-control/reports/discipline/flow_findings.json（给纪律委员的违规事实证据包）"
+  ],
+  "dependencies": [
+    "ai-control/config/flow_graph.json",
+    "ai-control/config/flow_router.conf.json",
+    "scripts/discipline_score.mjs"
+  ],
+  "parallel": "exclusive",
+  "examples": [
+    "node scripts/flow_router.mjs --begin --lane standard",
+    "node scripts/flow_router.mjs --next",
+    "node scripts/flow_router.mjs --advance S11 --cmd \"node scripts/progress_ledger.mjs check\" --rc 0",
+    "node scripts/flow_router.mjs --status --json",
+    "node scripts/flow_router.mjs --replay --json",
+    "node scripts/flow_router.mjs --findings --json",
+    "node scripts/flow_router.mjs --selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

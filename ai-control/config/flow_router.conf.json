@@ -1,0 +1,42 @@
+{
+  "version": "1.0.0",
+  "taskCode": "FLOW-ROUTER",
+  "req": "REQ-100",
+  "updatedAt": "2026-10-03",
+  "authority": "rules/workflow/task_execution_flow.md §二之六（流程流转层）· 本文件是流转层阈值的机器可读唯一权威源；规则层只放分工与不变式文字",
+  "note": "本文件只声明『任务分道 → 必需步骤集 → 阈值』。步骤依赖与批准顺序仍在 ai-control/config/flow_graph.json，两处分工不同：本文件管『这次任务该跑哪些步』，依赖图管『这些步按什么顺序跑』。",
+  "lanes": {
+    "light": {
+      "name": "快速轻量流",
+      "when": "单点文字微调、查阅问答、只读判定",
+      "required": ["S05", "S02", "S03", "S09S10", "S11", "S16"]
+    },
+    "standard": {
+      "name": "标准完备流",
+      "when": "复杂重构、规则研发、跨文件落地",
+      "requiredAll": true
+    }
+  },
+  "defaultLane": "standard",
+  "closure": {
+    "minConformance": 1,
+    "requireChainOk": true,
+    "allowFailedSteps": false
+  },
+  "discipline": {
+    "scoreFloor": 60,
+    "blockedPhases": ["攻坚", "质检", "归卷"],
+    "findingTypes": [
+      "INVALID_TRANSITION",
+      "OUT_OF_ORDER",
+      "MISSING_REQUIRED",
+      "CHAIN_BROKEN",
+      "STEP_FAILED",
+      "DISCIPLINE_BLOCKED"
+    ]
+  },
+  "journal": {
+    "dir": "ai-control/reports/state/flow_runs",
+    "findingsFile": "ai-control/reports/discipline/flow_findings.json"
+  }
+}

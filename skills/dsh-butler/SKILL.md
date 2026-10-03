@@ -123,7 +123,7 @@ flowchart TD
 
 ## 下属编制 (L1~L3 Subordinate Clusters)
 
-管家当前纳管 6 个执行层，其中技能层 183 条（cli 9 / agent 5 / api 0 / mcp 0 / plugin 2）。
+管家当前纳管 6 个执行层，其中技能层 183 条（cli 9 / agent 6 / api 0 / mcp 0 / plugin 2）。
 
 完整树见 `docs/operations/execution-tree.md`（唯一真相源，禁止手写副本）。
 

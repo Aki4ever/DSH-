@@ -49,7 +49,7 @@
   "zero-restart-guard": "② 契约与合规"
  },
  "counts": {
-  "agent": 5,
+  "agent": 6,
   "api": 0,
   "cli": 9,
   "mcp": 0,
@@ -2520,7 +2520,7 @@
   },
   {
    "auto": false,
-   "count": 5,
+   "count": 6,
    "entries": [
     {
      "description": "纪律委员：独立复核 AI 自评、受理用户扣分、签发停用（REQ-098 / R7）",
@@ -2528,6 +2528,15 @@
      "layer": "agent",
      "parent": "process-supervisor",
      "path": "agents/discipline-officer-agent/PROMPT.md",
+     "source": "repo",
+     "status": "active"
+    },
+    {
+     "description": "流程流转员：推进/拒收/留痕/复现管控流程，产违规事实给纪律委员（REQ-100 / R2·R3·R4）",
+     "id": "flow-router-agent",
+     "layer": "agent",
+     "parent": "process-conformance-policy",
+     "path": "agents/flow-router-agent/PROMPT.md",
      "source": "repo",
      "status": "active"
     },
