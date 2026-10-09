@@ -119,6 +119,51 @@ export function probeMarketLog() {
   return { ok: true, total: lines.length, installs, blocked, logPath: MARKET_LOG }
 }
 
+/**
+ * 自愈接线探测（REQ-093 / R2 增量）：重装路径上到底有没有 `--heal` 钩子。
+ *
+ * 为什么必须报这一行：守卫补丁是改 profile 里的**第三方产物**，插件一升级就被覆盖。
+ * 只报"补丁现在生效"会给人一种"这事已经结束了"的错觉 —— 上一轮实测正是
+ * `--check` 从绿变红（守卫 4 处、agentsBusy 残留 4）而**没有任何东西提示它会复发**。
+ * 判"接线在不在"才算穿透到载体，与本次任务的自愈能力同批。
+ *
+ * 探测口径刻意是**静态读文件**而不是"跑一遍钩子"：probe 是只读取证命令，
+ * 不能因为"看一眼"就真去改用户的第三方插件文件。判定函数复用
+ * `market_guard_patch.mjs` 导出的 `healWiredIn`（唯一权威源，不复制第二套判据）；
+ * 模块解析不到时降级为本地等价读法，绝不因探测失败而让 probe 报错。
+ *
+ * 边界（诚实标注）：只证明"调用点存在"，不证明"钩子在任一分支都真的会跑到"
+ * （那由 plugin_sync.sh / plugin_reload.sh 的 EXIT trap 保证，见两脚本注释）。
+ */
+export async function probeHealWiring() {
+  const targets = ['plugin_sync.sh', 'plugin_reload.sh']
+  let check = null
+  try {
+    const mod = await import('./market_guard_patch.mjs')
+    if (typeof mod.healWiredIn === 'function') check = mod.healWiredIn
+  } catch { /* 解析不到就用下面的本地等价读法 */ }
+  const rows = []
+  for (const name of targets) {
+    const p = path.join(ROOT, 'scripts', name)
+    let hits = 0
+    let readable = true
+    if (check) {
+      const r = check(p)
+      readable = r.ok
+      hits = r.hits || 0
+    } else {
+      try {
+        // 与 market_guard_patch.healWiredIn 同口径（含"路径被引号包住"的真实写法）
+        hits = (fs.readFileSync(p, 'utf8').match(/market_guard_patch\.mjs["']?\s+--heal/g) || []).length
+      } catch {
+        readable = false
+      }
+    }
+    rows.push({ script: `scripts/${name}`, wired: readable && hits > 0, hits, readable })
+  }
+  return { wired: rows.every((r) => r.wired), rows }
+}
+
 // ── 命令实现 ────────────────────────────────────────────────────────────────
 function cmdEnqueue(argv) {
   const spec = argv[argv.indexOf('--spec') + 1]
@@ -230,7 +275,7 @@ function cmdDrain(argv) {
   return blockedCount ? 1 : 0
 }
 
-function cmdProbe() {
+async function cmdProbe() {
   const p = probeMarketLog()
   if (!p.ok) {
     console.log(`⛔ 取不到证据：${p.reason}`)
@@ -251,7 +296,16 @@ function cmdProbe() {
   }
   console.log('-----------------------------------------')
   console.log(`守卫补丁现状：${{ patched: '✅ 已生效（忙不再拒绝，只留痕放行）', 'not-patched': '⛔ 未生效（安装仍会被 409 拒绝）', 'not-installed': '— 未安装该市场插件', unknown: '— 未知' }[guard]}`)
-  console.log(`  补课/还原：node scripts/market_guard_patch.mjs --apply | --check | --revert`)
+  // 自愈接线：补丁会被插件升级覆盖，故"现在生效"不等于"以后还在"——必须另报接线。
+  let wiring = { wired: false, rows: [] }
+  try {
+    wiring = await probeHealWiring()
+  } catch { /* 探测异常只降级为"未接线"提示，不影响 probe 其余输出 */ }
+  const wireDetail = wiring.rows.map((r) => `${r.script}${r.readable ? (r.wired ? ` ✅(${r.hits})` : ' ⛔未接线') : ' ⛔读不到'}`).join(' · ')
+  console.log(`自愈接线：${wiring.wired ? '✅ 已接线（重装路径会自动补回补丁）' : '⛔ 未接线（插件重装会静默覆盖补丁，需人工重跑 --apply）'}`)
+  if (wireDetail) console.log(`  ${wireDetail}`)
+  if (!wiring.wired) console.log('  处置：在 plugin_sync.sh / plugin_reload.sh 主流程后调用 node scripts/market_guard_patch.mjs --heal')
+  console.log(`  补课/还原：node scripts/market_guard_patch.mjs --apply | --check | --revert | --heal`)
   console.log(p.blocked.length ? '⚠️ 上面是**历史**被拒留痕（补丁生效前的记录，保留作为根因证据）' : '✅ 未发现被守卫拒绝的留痕')
   return 0
 }
@@ -296,7 +350,7 @@ function selfTest() {
   return caught ? 0 : 1
 }
 
-function main() {
+async function main() {
   const argv = process.argv.slice(2)
   if (argv.includes('--self-test')) process.exit(selfTest())
   if (argv.includes('--check')) process.exit(cmdCheck({ json: argv.includes('--json') }))
@@ -304,7 +358,7 @@ function main() {
   if (cmd === 'enqueue') process.exit(cmdEnqueue(argv))
   if (cmd === 'list') process.exit(cmdList())
   if (cmd === 'drain') process.exit(cmdDrain(argv))
-  if (cmd === 'probe') process.exit(cmdProbe())
+  if (cmd === 'probe') process.exit(await cmdProbe())
   console.log('用法：node scripts/plugin_install_queue.mjs <enqueue|list|drain|probe> [选项] | --check | --self-test')
   process.exit(2)
 }

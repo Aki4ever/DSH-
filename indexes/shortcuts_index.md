@@ -45,6 +45,7 @@
 |**“这个任务要哪些执行层”**（“任务执行层树/执行层树状图”）|G1干线|把任务所需执行层装配成可视图树|实跑 [`node scripts/task_layer_tree.mjs "<任务意图>"`](../scripts/task_layer_tree.mjs)（出图追加 `--png <基名>`）|
 |**“并发调度”**（“并行派单/防死锁/有界并发”）|G1干线|有界并发派单：先证可并行，冲突/死锁/活锁一律拒单|实跑 [`node scripts/butler_scheduler.mjs --plan <tasks.jsonl>`](../scripts/butler_scheduler.mjs)（真派单用 `--run`）|
 |**“插件安装排队没”**（“安装市场插件/插件并发”）|G1干线|插件安装并发受理+冲突域排队+进度可见，杜绝无界等待|实跑 [`node scripts/plugin_install_queue.mjs list`](../scripts/plugin_install_queue.mjs) 或 `probe`|`agentsBusy`|
+|**“区间并发可证吗”**（“跨项目并发/不同工程能不能同时跑”）|G1干线|按写域区间裁决并发：跨区间并发、同区间串行，锁重叠由独立采样取证|实跑 [`node scripts/zone_concurrency.mjs --check`](../scripts/zone_concurrency.mjs)（出方案用 `--plan`，真派单用 `--run`）|[`ai-control/config/concurrency_zones.json`](../ai-control/config/concurrency_zones.json)|
 |**“技能有没有载体”**（“空架子技能/技能物理触达”）|G1干线|技能层 178 条逐条判有无可执行载体|实跑 [`node scripts/skill_carrier_audit.mjs --check`](../scripts/skill_carrier_audit.mjs)|
 |**“管控机制瘦身”**（“压缩管控篇幅/token 用量”）|G2支线|能力等价+只许减不许涨（篇幅与 token 预算）|实跑 [`node scripts/token_budget_audit.mjs --check`](../scripts/token_budget_audit.mjs)|
 |**“任务列表面板在跑吗”**（“逐条进度/完成打钩面板”）|G1干线|判定任务列表面板（逐条进度+完成打钩）是否触达物理层|实跑 [`node scripts/todo_panel_audit.mjs --check`](../scripts/todo_panel_audit.mjs)|

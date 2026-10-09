@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-03T00:17:39.598Z",
+  "generatedAt": "2026-10-09T11:11:41.521Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 280,
+  "total": 281,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 3,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 95
+    "脚本 (CLI)": 96
   },
-  "withInterface": 280,
+  "withInterface": 281,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -2531,6 +2531,15 @@
       "invoke": "bash scripts/verify_guard_live.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/verify_guard_live.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.zone_concurrency",
+      "path": "scripts/zone_concurrency.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/zone_concurrency.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/zone_concurrency.interface.json"
     }
   ]
 }

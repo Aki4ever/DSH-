@@ -20,8 +20,13 @@
  *   ③ **可自证**：`--check` 用"标记数 == 4 且 agentsBusy 残留 == 0 且 `node --check` 可解析"三条判定；
  *      `--self-test` 在**临时副本**上实跑 打补丁→判定→回滚→逐字节比对，证明工具有牙且能还原。
  *
+ *   + `--heal`（自愈）：把"插件重装静默覆盖补丁"这条**反复复发的外部成因**从
+ *     "靠人记得重跑 --apply"改成"重装路径自动补回"。判定 → 按需重打 → 回读校验 → 落一行留痕，
+ *     并挂在 `plugin_sync.sh` / `plugin_reload.sh` 的主流程之后（那正是重装改文件的路径）。
+ *
  * 边界（必须显式说清）：
- *   · 改的是 **profile 里的第三方产物**，插件升级会覆盖 → 升级后需重跑 `--apply`；
+ *   · 改的是 **profile 里的第三方产物**，插件升级会覆盖 → 升级后需重跑 `--apply`，
+ *     或让重装路径上的 `--heal` 钩子自动补回（钩子只提示，不改调用方退出码）；
  *   · 放宽的是"忙"这一条前置，**写互斥并未取消**：外层 `withMutationLock` 与宿主
  *     `@deepseek-ai/dsh-plugin-manager` 的 profile 写锁仍然生效（同一 profile 的两次安装天然串行）；
  *   · 运行时生效需**重载 profile / 重启桌面端**（宿主已加载旧模块时不会热更）。
@@ -30,9 +35,13 @@
  *   node scripts/market_guard_patch.mjs --check          # 判定：补丁是否已生效且无残留
  *   node scripts/market_guard_patch.mjs --apply          # 打补丁（自动备份 + 写后回读校验）
  *   node scripts/market_guard_patch.mjs --revert         # 还原到最近一次备份
- *   node scripts/market_guard_patch.mjs --self-test      # 反向用例：临时副本上验证"能打上、能还原"
+ *   node scripts/market_guard_patch.mjs --heal           # 自愈：被重装覆盖就自动补回（幂等，可挂重装路径）
+ *   node scripts/market_guard_patch.mjs --self-test      # 反向用例：临时副本上验证"能打上、能还原、能自愈"
  *
  * 退出码：0 通过 · 1 判红/未打过 · 2 取不到证据（找不到目标文件）
+ *   `--heal` 另加一档：3 = 不适用（本机未安装该市场插件）。
+ *   刻意与 2 分开：2 是"本该有证据却取不到"（异常），3 是"这东西本来就没有"（正常），
+ *   否则重装钩子会把"没装插件"记成失败，噪声会淹没真故障。
  * ==============================================================================
  */
 
@@ -52,6 +61,11 @@ const REL = 'node_modules/dshmarket/lib/routes.js'
 const MARKER = 'PATCHED(REQ-093/R2)'
 const GUARD_RE = /const busyAgents = runningAgentsForGuard\(\);/
 const EXPECTED_BLOCKS = 4
+// 自愈留痕（为什么必须落盘）：`--heal` 的调用方是**重装路径上的钩子**，
+// 而钩子的结果刻意不污染调用方退出码（详见 plugin_sync.sh / plugin_reload.sh 的钩子注释）。
+// 于是"自愈到底跑没跑、补回没补回"在调用方那里看不见 —— 只能靠这份逐行留痕取证。
+// 不落留痕的自愈等于"说自愈已成功"，本工程不认自述。
+const HEAL_LOG = path.join(ROOT, 'ai-control/reports/state/market_guard_heal.jsonl')
 
 // ── 目标定位 ────────────────────────────────────────────────────────────────
 function resolveTarget(explicit) {
@@ -178,13 +192,16 @@ export function inspect(target) {
 }
 
 // ── 打补丁 ──────────────────────────────────────────────────────────────────
-function apply(target) {
+/**
+ * 打补丁的**静默内核**：只做"读 → 改 → 备份 → 写 → 回读校验 → 失败回滚"，
+ * 不打印任何东西、不调 pruneBackups。抽出来的唯一理由是**复用**：
+ * `apply`（CLI 契约）与 `--heal` 必须打的是**同一份**补丁，
+ * 若自愈另写一套替换逻辑，就会出现"两个写者两套口径"——正是本工程反复踩过的坑。
+ */
+function applyCore(target) {
   const src = fs.readFileSync(target, 'utf8')
   const blocks = findGuardBlocks(src)
-  if (blocks.length !== EXPECTED_BLOCKS) {
-    console.log(`⛔ 找到 ${blocks.length} 个忙守卫块，期望 ${EXPECTED_BLOCKS} 个 —— 市场插件版本可能已变，拒绝盲改。`)
-    return 2
-  }
+  if (blocks.length !== EXPECTED_BLOCKS) return { rc: 2, blocks: blocks.length }
   let out = src
   for (const b of blocks.reverse()) {
     const indent = indentOf(src, b.start)
@@ -198,14 +215,26 @@ function apply(target) {
   const after = inspect(target)
   if (!after.ok || !after.syntaxOk || !after.patched) {
     fs.copyFileSync(bak, target)
-    console.log(`⛔ 写后回读校验未过，已回滚。校验结果：${JSON.stringify(after)}`)
-    return 1
+    return { rc: 1, bak, after, reason: `写后回读校验未过，已回滚。校验结果：${JSON.stringify(after)}` }
+  }
+  return { rc: 0, bak, after }
+}
+
+function apply(target) {
+  const r = applyCore(target)
+  if (r.rc === 2) {
+    console.log(`⛔ 找到 ${r.blocks} 个忙守卫块，期望 ${EXPECTED_BLOCKS} 个 —— 市场插件版本可能已变，拒绝盲改。`)
+    return 2
+  }
+  if (r.rc !== 0) {
+    console.log(`⛔ ${r.reason}`)
+    return r.rc
   }
   console.log(`✅ 已打补丁并回读校验通过：${target}`)
   // 校验通过之后才收敛：校验失败时 bak 还要用于回滚，绝不能先删。
   // 只留最新 3 份、且只删本工具自己那种后缀，回滚用的最新一份必然保留。
   const gc = pruneBackups(target, 3)
-  console.log(`   补丁标记 ${after.markers}/${EXPECTED_BLOCKS} · agentsBusy 残留 ${after.leftovers} · 备份 ${path.basename(bak)}`)
+  console.log(`   补丁标记 ${r.after.markers}/${EXPECTED_BLOCKS} · agentsBusy 残留 ${r.after.leftovers} · 备份 ${path.basename(r.bak)}`)
   if (gc.deleted.length) console.log(`   已清理更旧的备份 ${gc.deleted.length} 份（留存口径：最新 3 份）`)
   console.log('   ⚠️ 运行时生效需重载 profile / 重启桌面端；插件升级会覆盖本补丁，升级后重跑 --apply。')
   return 0
@@ -237,6 +266,97 @@ function revert(target) {
   return 0
 }
 
+// ── 自愈：把"被重装覆盖"这条外部成因就地补回（幂等） ─────────────────────────
+/** 留痕字段口径见任务书：{at,target,action,before:{markers,leftovers},after:{markers,leftovers},exit} */
+function healSnapshot(s) {
+  return { markers: s ? s.markers : null, leftovers: s ? s.leftovers : null }
+}
+
+/**
+ * 落一行自愈留痕。
+ * 刻意"绝不因留痕失败而改变自愈结论"：留痕是取证手段，不是自愈的前提；
+ * 但它必须**显式**说出来（返回 false 由调用方打印告警），不能静默吞掉 ——
+ * 静默写失败的留痕会让人以为"自愈没跑过"。
+ */
+function recordHeal(entry) {
+  try {
+    fs.mkdirSync(path.dirname(HEAL_LOG), { recursive: true })
+    fs.appendFileSync(HEAL_LOG, `${JSON.stringify(entry)}\n`)
+    return true
+  } catch (e) {
+    console.log(`⚠️ 自愈留痕写入失败（不影响自愈结论）：${String((e && e.message) || e)}`)
+    return false
+  }
+}
+
+/**
+ * 自愈主逻辑。`label` 只用于留痕里的 target 字段：
+ * 自检时目标是临时副本，把真实目标路径一并记下才追得回"这次自愈是为谁跑的"。
+ * `opts.scope`：'live' 真实目标 / 'self-test' 临时副本 —— 必须显式标注，
+ * 否则自检的往返会把 "reapplied" 行混进真实留痕里，取证时无法区分，
+ * 等于用一个"测试噪声"冒充"生产自愈真的跑过"。
+ */
+function heal(target, label, opts = {}) {
+  const scope = opts.scope || 'live'
+  const now = () => new Date().toISOString()
+  // ① 未装该插件 = **不适用**，不是失败。刻意放在最前：此时连"要不要自愈"都无从谈起。
+  //    退出码 3 与 1（判红）/2（取不到证据）分开，重装钩子才能把 3 当正常放过。
+  if (!target || !fs.existsSync(target)) {
+    recordHeal({ at: now(), scope, target: label || target || '(未解析到 dshmarket)', action: 'skipped', reason: 'target-missing', before: healSnapshot(null), after: healSnapshot(null), exit: 3 })
+    console.log('— 自愈不适用：本机 profile 下没有 dshmarket/lib/routes.js（未安装该市场插件）')
+    return 3
+  }
+
+  const before = inspect(target)
+  // ② 已生效 → 幂等 noop。连跑两次第二次必须走这里（任务书的硬判据）。
+  if (before.ok && before.patched && before.syntaxOk) {
+    recordHeal({ at: now(), scope, target: label || target, action: 'noop', before: healSnapshot(before), after: healSnapshot(before), exit: 0 })
+    console.log(`✅ 已生效，无需自愈：补丁标记 ${before.markers}/${EXPECTED_BLOCKS} · agentsBusy 残留 ${before.leftovers} · 语法 ✅`)
+    return 0
+  }
+
+  // ③ 被覆盖/被打断 → 复用既有 applyCore 重打，并**回读校验**（不信"我写成功了"）
+  console.log(`🩹 守卫补丁已被覆盖（标记 ${before.markers}/${EXPECTED_BLOCKS} · agentsBusy 残留 ${before.leftovers}）→ 自动重打`)
+  const r = applyCore(target)
+  const after = inspect(target)
+  const healed = r.rc === 0 && after.ok && after.patched && after.syntaxOk
+  const entry = {
+    at: now(),
+    scope,
+    target: label || target,
+    action: 'reapplied',
+    before: healSnapshot(before),
+    after: healSnapshot(after),
+    exit: healed ? 0 : (r.rc === 2 ? 2 : 1),
+  }
+  if (!healed) entry.reason = r.rc === 2 ? `忙守卫块 ${r.blocks} 个，期望 ${EXPECTED_BLOCKS} 个：插件版本可能已变，拒绝盲改` : '重打后回读校验未过（已回滚到重打前状态）'
+  recordHeal(entry)
+
+  if (!healed) {
+    console.log(`⛔ 自愈失败：${entry.reason}`)
+    return entry.exit
+  }
+  const gc = pruneBackups(target, 3)
+  console.log(`✅ 自愈完成并回读校验通过：补丁标记 ${after.markers}/${EXPECTED_BLOCKS} · agentsBusy 残留 ${after.leftovers} · 语法 ✅ · 备份 ${path.basename(r.bak)}${gc.deleted.length ? ` · 已清理旧备份 ${gc.deleted.length} 份` : ''}`)
+  console.log('   ⚠️ 运行时生效仍需重载 profile / 重启桌面端（宿主已加载旧模块不会热更）。')
+  return 0
+}
+
+/** 自愈接线探测：某脚本主流程后是否真的调了 `--heal`（供 probe 报"接线可证"，不改任何判定）。 */
+export function healWiredIn(scriptPath) {
+  try {
+    const src = fs.readFileSync(scriptPath, 'utf8')
+    // 必须容忍路径被引号包住：本仓两条钩子的真实写法是
+    // `node "$SCRIPT_DIR/market_guard_patch.mjs" --heal` —— 引号在 .mjs 之后、
+    // `--heal` 之前。第一版正则漏了这段引号，实测 probe 把已接的线报成"未接线"
+    // （假阴性：探测口径比真实写法窄，就会把装好的机制判成不存在）。
+    const hits = (src.match(/market_guard_patch\.mjs["']?\s+--heal/g) || []).length
+    return { ok: true, wired: hits > 0, hits }
+  } catch (e) {
+    return { ok: false, wired: false, hits: 0, reason: String((e && e.message) || e) }
+  }
+}
+
 // ── 反向用例：临时副本上验证"能打上、能还原" ────────────────────────────────
 function selfTest(target) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'market-guard-selftest-'))
@@ -260,25 +380,55 @@ function selfTest(target) {
   console.log('-----------------------------------------')
   const rc = apply(copy)
   const mid = inspect(copy)
+  // 基准：首次 apply 的产物字节。它就是"patched 状态"的**独立定义**——
+  // 后面的自愈若与之逐字节相同，才叫"真的把文件重置回 patched"。
+  // 若只比 "4 个标记 + 0 残留"，一个放宽得不对的自愈（例如整段删掉守卫）也可能凑出同样的数字。
+  const patchedBytes = fs.readFileSync(copy)
   const reverted = revert(copy)
   const after = fs.readFileSync(copy)
   const identical = before.equals(after)
   const caught = rc === 0 && mid.patched && reverted === 0 && identical
   console.log(`   临时副本：打补丁退出码 ${rc} · 判定 patched=${mid.patched} · 回滚退出码 ${reverted} · 还原后逐字节一致=${identical}`)
+
+  // ── 新增：自愈反向用例（破坏 → 自愈，必须真的复位）─────────────────────────
+  // 此刻副本已被 revert 成"未打补丁"（上面那一步），正是重装覆盖后的真实形态。
+  const brokenState = inspect(copy)
+  const rcHeal1 = heal(copy, target, { scope: 'self-test' })
+  const healedBytes = fs.readFileSync(copy)
+  const healedState = inspect(copy)
+  const rcHeal2 = heal(copy, target, { scope: 'self-test' })
+  const afterSecond = fs.readFileSync(copy)
+  const byteEqualPatched = healedBytes.equals(patchedBytes)   // 逐字节等价于 apply 产物
+  const differsFromOrig = !healedBytes.equals(before)          // 且确实不是原始件（防"什么都没做"）
+  const idempotentStable = afterSecond.equals(healedBytes)     // 再跑一次字节不变
+  const healCaught =
+    brokenState.patched === false &&   // 起点确实是"被破坏"
+    rcHeal1 === 0 &&
+    healedState.patched && healedState.syntaxOk &&
+    byteEqualPatched && differsFromOrig &&
+    rcHeal2 === 0 && idempotentStable
+  console.log(`   自愈用例：起点 patched=${brokenState.patched}（故意破坏）· 首次自愈退出码 ${rcHeal1} · 自愈后 patched=${healedState.patched}`)
+  console.log(`   自愈产物逐字节等价于打补丁产物=${byteEqualPatched} · 与原始未打补丁件不同=${differsFromOrig} · 再跑自愈（幂等）退出码 ${rcHeal2} · 二次后字节稳定=${idempotentStable}`)
   console.log('-----------------------------------------')
   console.log(caught ? '✅ 反向用例通过：能打上、判定认得出、能逐字节还原' : '⛔ 反向用例失败：补丁或回滚不可靠')
+  console.log(healCaught ? '✅ 自愈反向用例通过：破坏后自愈真的把文件重置回 patched 且逐字节等价' : '⛔ 自愈反向用例失败：自愈没有真的把文件重置回 patched')
   try {
     fs.rmSync(dir, { recursive: true, force: true })
   } catch {
     console.log('⚠️ 临时目录清理失败：' + dir)
   }
-  return caught ? 0 : 1
+  return caught && healCaught ? 0 : 1
 }
 
 function main() {
   const argv = process.argv.slice(2)
   const ti = argv.indexOf('--target')
-  const target = resolveTarget(ti >= 0 ? argv[ti + 1] : null)
+  const explicit = ti >= 0 ? argv[ti + 1] : null
+  const target = resolveTarget(explicit)
+  // `--heal` 的"未装插件"是**正常**情形（退出码 3），不能沿用下面那句
+  // "取不到证据 → exit 2"：那会把"本来就没有这东西"记成故障，
+  // 挂在重装路径上的钩子就会被自己的噪声淹没。故单独前置。
+  if (argv.includes('--heal')) process.exit(heal(target, explicit || (target ?? undefined)))
   if (!target) {
     console.log('⛔ 取不到证据：未在该机 profile 下找到 dshmarket/lib/routes.js')
     process.exit(2)

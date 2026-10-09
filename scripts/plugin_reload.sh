@@ -43,6 +43,32 @@ EVENTS_URL="${DSH_PLUGIN_EVENTS_URL:-http://127.0.0.1:${PORT}/plugins/events}"
 need() { command -v "$1" >/dev/null 2>&1 || { echo "⛔ 缺少命令：$1" >&2; exit 2; }; }
 need curl
 
+# ── 自愈钩子：插件重装/重载路径上的守卫补丁自动补回（REQ-093 / R2）─────────────
+# 为什么挂这里：`market_guard_patch.mjs` 改的是 profile 里的第三方产物，
+# **任何一次插件重装都会静默覆盖它**（原工具的输出自己承认这一点）。
+# 重载路径是"插件文件刚被动过"的时刻，在此补回最对症。
+#
+# 三条硬约束（与 plugin_sync.sh 同口径，刻意保持两处写法一致）：
+#   ① 不改变本脚本退出码契约：钩子 return 0，trap 里先存 `rc=$?` 再透传；
+#   ② 只提示不刷屏：0=已生效留一行，3=未装该插件静默，其余才打详情 + 指路留痕；
+#   ③ 钩子异常不得中断：真出错只降级为一行告警。
+market_guard_heal_hook() {
+  local mg_rc=0
+  node "$SCRIPT_DIR/market_guard_patch.mjs" --heal || mg_rc=$?
+  case "$mg_rc" in
+    0) echo "🛡️ 自愈：市场守卫并发补丁已确认在位" ;;
+    3) : ;;   # 未安装该市场插件 = 正常不适用，静默
+    *) echo "⚠️ 自愈未完成（退出码 $mg_rc）—— 插件安装仍可能被要求等任务空闲。" >&2
+       echo "   详情：node scripts/market_guard_patch.mjs --check ｜ 留痕：ai-control/reports/state/market_guard_heal.jsonl" >&2 ;;
+  esac
+  return 0
+}
+
+# 挂在 EXIT trap 而非某个分支末尾：本脚本有 5 处 `exit`（含用法错误与"找不到产物"），
+# 写死在分支里必然漏掉若干路径。trap 里必须先存 `$?`，否则退出码会被钩子顶掉。
+# shellcheck disable=SC2154  # rc 在 trap 触发时由 $? 赋值
+trap 'rc=$?; market_guard_heal_hook; exit $rc' EXIT
+
 # 抓一帧图（graph）并打印指定插件的 revision；找不到插件返回空
 graph_rev_of() {
   local pkg="$1"

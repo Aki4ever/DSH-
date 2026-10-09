@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：280**（技能 178 · 其他执行层 102）
+**执行层条目总数：281**（技能 178 · 其他执行层 103）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -617,6 +617,7 @@
 | 脚本 (CLI) | `cli.rules.verify_auto_naming_e2e` | `scripts/verify_auto_naming_e2e.mjs` | ✅ `scripts/interfaces/verify_auto_naming_e2e.interface.json` | `node scripts/verify_auto_naming_e2e.mjs` | 自动命名端到端验收（重启后运行，一次给出结论）。 |
 | 脚本 (CLI) | `cli.rules.verify_escape_hatch` | `scripts/verify_escape_hatch.sh` | ✅ `scripts/interfaces/verify_escape_hatch.interface.json` | `bash scripts/verify_escape_hatch.sh` | — |
 | 脚本 (CLI) | `cli.rules.verify_guard_live` | `scripts/verify_guard_live.sh` | ✅ `scripts/interfaces/verify_guard_live.interface.json` | `bash scripts/verify_guard_live.sh` | — |
+| 脚本 (CLI) | `cli.rules.zone_concurrency` | `scripts/zone_concurrency.mjs` | ✅ `scripts/interfaces/zone_concurrency.interface.json` | `node scripts/zone_concurrency.mjs` | ============================================================================== |
 
 ### 3.2 ⚠️ catalog 与磁盘漂移（必须处理，禁止当成可用能力）
 

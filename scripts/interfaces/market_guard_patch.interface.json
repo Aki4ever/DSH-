@@ -24,10 +24,16 @@
       "desc": "还原到最近一次备份"
     },
     {
+      "name": "--heal",
+      "type": "flag",
+      "required": false,
+      "desc": "自愈：已打补丁→noop；被覆盖→复用打补丁逻辑重打并回读校验；目标不存在→退出码 3（不适用）；每次落痕 ai-control/reports/state/market_guard_heal.jsonl"
+    },
+    {
       "name": "--self-test",
       "type": "flag",
       "required": false,
-      "desc": "反向用例：在临时副本上验证能打上、判定认得出、回滚逐字节还原"
+      "desc": "反向用例：在临时副本上验证能打上、判定认得出、回滚逐字节还原、破坏后自愈逐字节等价"
     },
     {
       "name": "--target <路径>",
@@ -46,10 +52,12 @@
   "exitCodes": {
     "0": "已生效（或 apply/self-test 成功）",
     "1": "未生效（安装仍会被 409 拒绝）或写后回读校验未过已回滚",
-    "2": "取不到证据（未找到目标文件 / 无备份可还原）"
+    "2": "取不到证据（未找到目标文件 / 无备份可还原）",
+    "3": "自愈不适用（--heal 场景下目标插件不存在，与判红 1 分开）"
   },
   "sideEffects": [
-    "改写 profile 内第三方产物 dshmarket/lib/routes.js，并在同目录留 .bak-*-market-guard 备份"
+    "改写 profile 内第三方产物 dshmarket/lib/routes.js，并在同目录留 .bak-*-market-guard 备份",
+    "--heal 追加一行自愈留痕到 ai-control/reports/state/market_guard_heal.jsonl"
   ],
   "dependencies": [
     "cli.rules.plugin_install_queue"
@@ -59,6 +67,7 @@
     "node scripts/market_guard_patch.mjs --check",
     "node scripts/market_guard_patch.mjs --apply",
     "node scripts/market_guard_patch.mjs --revert",
+    "node scripts/market_guard_patch.mjs --heal",
     "node scripts/market_guard_patch.mjs --self-test"
   ],
   "source": "handwritten",

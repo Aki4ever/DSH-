@@ -3,7 +3,7 @@
   "note": "机读需求版本台账：由 scripts/req_version_gen.mjs 从 docs/requirements.md 生成；人工只维护 requirement_version_override 与 change_log 两个字段。",
   "source": "docs/requirements.md",
   "generated_by": "scripts/req_version_gen.mjs",
-  "requirement_count": 100,
+  "requirement_count": 101,
   "override_count": 0,
   "entries": {
     "REQ-001": {
@@ -1500,6 +1500,15 @@
       "requirement_version": "v1.0.0",
       "requirement_version_derived": false,
       "implementation_version": "v4.29.10",
+      "files": [],
+      "missing_files": [],
+      "change_log": []
+    },
+    "REQ-101": {
+      "title": "跨项目区间并发与递归触达（PROJ-CONC）",
+      "requirement_version": "v1.0.0",
+      "requirement_version_derived": false,
+      "implementation_version": "v4.29.14",
       "files": [],
       "missing_files": [],
       "change_log": []

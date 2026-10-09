@@ -115,6 +115,27 @@ run() {
   done
 }
 
+# ── 自愈钩子：重装/同步路径正是"市场守卫补丁被覆盖"的发生地（REQ-093 / R2）─────
+# 为什么必须挂在这里：`market_guard_patch.mjs --apply` 的输出自己承认
+# 「插件升级会覆盖本补丁，升级后重跑 --apply」—— 即这条并发能力原本**没有持久载体**，
+# 全靠人记得。而"装配/同步插件"恰恰就是覆盖它的那条路径，挂在这里才是对症。
+#
+# 三条硬约束（比"能自愈"更重要）：
+#   ① **不改变本脚本的退出码契约**：钩子自身始终 `return 0`，调用方 rc 由 `rc=$?` 先存后透传；
+#   ② 只提示、不刷屏：正常（0 已生效 / 3 未装该插件）只留一行，异常才打详情并指路留痕；
+#   ③ 钩子绝不 throw/中断：未捕获的异常会让 `set -u` 下的 EXIT trap 退出码变成非本脚本语义的值。
+market_guard_heal_hook() {
+  local mg_rc=0
+  node "$SCRIPT_DIR/market_guard_patch.mjs" --heal || mg_rc=$?
+  case "$mg_rc" in
+    0) echo "🛡️ 自愈：市场守卫并发补丁已确认在位" ;;
+    3) : ;;   # 未安装该市场插件 = 正常不适用，静默（刻意不留噪声）
+    *) echo "⚠️ 自愈未完成（退出码 $mg_rc）—— 插件安装仍可能被要求等任务空闲。" >&2
+       echo "   详情：node scripts/market_guard_patch.mjs --check ｜ 留痕：ai-control/reports/state/market_guard_heal.jsonl" >&2 ;;
+  esac
+  return 0   # 关键：自愈结果**绝不**污染本脚本退出码
+}
+
 # ── 装配：把"依赖 + bundles + 文件"三件事一次做齐（幂等） ─────────────────────
 # 为什么需要它：实测 profile 里只装了 restart 与 image-zoom，**usage-bar 从未装配**，
 # 于是 R4 要求的"峰谷时段全域常显"在物理上根本没有载体 —— 而没有任何东西会提示这一点。
@@ -170,6 +191,13 @@ if (changed.length) {
   done
   echo "✅ 已装配 ${pkg}（文件更新 $n 个）${changed} → $dest"
 }
+
+# 自愈钩子挂在 EXIT trap 上，而不是写在某个 case 分支末尾：
+# case 各分支各自 `exit`（install 带 rc、check 带 1、sync 带 0、用法带 2），
+# 写死在分支里必然出现"有的路径跑了、有的没跑"，正是"靠人记得"的翻版。
+# trap 里 `rc=$?` 必须**先存**，否则被钩子自己的退出码顶掉本脚本的契约。
+# shellcheck disable=SC2154  # rc 在 trap 触发时由 $? 赋值
+trap 'rc=$?; market_guard_heal_hook; exit $rc' EXIT
 
 case "$MODE" in
   install)

@@ -1,0 +1,92 @@
+{
+  "id": "cli.rules.zone_concurrency",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/zone_concurrency.mjs",
+  "invoke": "node scripts/zone_concurrency.mjs",
+  "summary": "跨项目区间并发仲裁器与判定器：按写域（区间）交集裁决可否并行，同区间串行、跨区间并发、有界并发 1~4；两向取证（跨区间运行重叠>0 且锁观测重叠=0，同区间运行重叠=0）。REQ-101/PROJ-CONC。",
+  "inputs": [
+    {
+      "name": "--plan <tasks.jsonl>",
+      "type": "arg",
+      "required": false,
+      "desc": "只出波次方案：同区间任务不得落在同一波，跨区间可同波"
+    },
+    {
+      "name": "--run <tasks.jsonl>",
+      "type": "arg",
+      "required": false,
+      "desc": "真派单：跨区间并发跑、同区间严格排队，锁走 scripts/lib/atomic_lock.sh"
+    },
+    {
+      "name": "--concurrency <n>",
+      "type": "arg",
+      "required": false,
+      "desc": "并发上界，必须在 1~4 之间（与 butler_scheduler.mjs 同口径，超出即拒单）"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "两向取证判定（判据 11）：正向跨区间真并发 + 反例同区间真串行，锁重叠由独立采样观测"
+    },
+    {
+      "name": "--self-test",
+      "type": "flag",
+      "required": false,
+      "desc": "反向用例：无界并发/空区间表/区间 id 重复/未声明区间/依赖成环必须判红"
+    },
+    {
+      "name": "--list-zones",
+      "type": "flag",
+      "required": false,
+      "desc": "列区间登记表并校验其声明路径真实存在"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "机器可读输出"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "波次方案 / 派单结果 / 两向取证结论与拒绝原因"
+    },
+    {
+      "name": "ai-control/reports/state/zone_concurrency_evidence.json",
+      "type": "file",
+      "desc": "判据 11 的物理凭据：正向与反例的运行重叠(ms)、独立采样得到的锁观测重叠、采样数与退出码"
+    },
+    {
+      "name": "ai-control/reports/state/zone_concurrency.jsonl",
+      "type": "file",
+      "desc": "逐任务派单台账：任务、锁集合、起止时间戳、退出码"
+    },
+    {
+      "name": "ai-control/reports/state/zone_concurrency.json",
+      "type": "file",
+      "desc": "最近一次派单的汇总结果"
+    }
+  ],
+  "exitCodes": {
+    "0": "通过：方案成立 / 两向取证同时成立（跨区间并发且同区间串行、锁真互斥）",
+    "1": "不通过：存在冲突、同区间同波、锁观测重叠非 0、非法并发度或区间未登记",
+    "2": "取不到证据：区间表不可读、任务清单非法（2 绝不算通过）"
+  },
+  "source": "handwritten",
+  "verified": true,
+  "requirement": "REQ-101 / PROJ-CONC",
+  "inputs_contract": {
+    "config": "ai-control/config/concurrency_zones.json（区间唯一权威登记表）",
+    "lock_primitive": "scripts/lib/atomic_lock.sh（锁键与锁目录名一律对拍，禁止第二套洗键）"
+  },
+  "commands": [
+    "node scripts/zone_concurrency.mjs --list-zones",
+    "node scripts/zone_concurrency.mjs --plan tasks.jsonl --json",
+    "node scripts/zone_concurrency.mjs --run tasks.jsonl --concurrency 4",
+    "node scripts/zone_concurrency.mjs --check",
+    "node scripts/zone_concurrency.mjs --self-test"
+  ]
+}

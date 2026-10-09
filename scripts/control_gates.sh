@@ -662,7 +662,8 @@ check_concurrency() {
     "butler_scheduler.mjs|并发调度有牙(拒死锁/活锁)" \
     "plugin_install_queue.mjs|安装队列有界不空等" \
     "skill_carrier_audit.mjs|技能层载体齐备" \
-    "token_budget_audit.mjs|管控篇幅受管且能力不降"; do
+    "token_budget_audit.mjs|管控篇幅受管且能力不降" \
+    "zone_concurrency.mjs|区间并发可证(跨区间并发/同区间串行)"; do
     name="${entry%%|*}"; label="${entry##*|}"
     if [ ! -f "$script_dir/$name" ]; then
       undecided=$((undecided+1))
@@ -693,7 +694,7 @@ check_concurrency() {
   fi
   if (( fails > 0 )); then
     DETAIL="$detail"
-    HINT="未达标 ${fails} 项：逐条修复命令见 node scripts/task_layer_tree.mjs --check 等五条判定器输出"
+    HINT="未达标 ${fails} 项：逐条修复命令见 node scripts/task_layer_tree.mjs --check 等六条判定器输出（含 zone_concurrency.mjs --check，REQ-101 区间并发可证）"
     return 1
   fi
   DETAIL="$detail"

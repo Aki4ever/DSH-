@@ -1,0 +1,70 @@
+{
+  "schema": "dsh.concurrency-zones/1",
+  "concurrency_max": 4,
+  "timeout_s": 300,
+  "lock_root_mode": "per-repo",
+  "concurrency_max_source": "scripts/butler_scheduler.mjs DEFAULT_CONCURRENCY",
+  "registered_at": "2026-10-09",
+  "requirement": "REQ-101 / PROJ-CONC",
+  "zones": [
+    {
+      "repo": "全局规则",
+      "repo_path_glob": "/Users/linqiyu/Documents/DSH/全局规则",
+      "id": "全局规则/scripts",
+      "paths": ["scripts"]
+    },
+    {
+      "repo": "全局规则",
+      "repo_path_glob": "/Users/linqiyu/Documents/DSH/全局规则",
+      "id": "全局规则/ai-control",
+      "paths": ["ai-control"]
+    },
+    {
+      "repo": "全局规则",
+      "repo_path_glob": "/Users/linqiyu/Documents/DSH/全局规则",
+      "id": "全局规则/indexes",
+      "paths": ["indexes"]
+    },
+    {
+      "repo": "DSH股票",
+      "repo_path_glob": "/Users/linqiyu/Documents/DSH/DSH股票",
+      "id": "DSH股票/scripts",
+      "paths": ["scripts"]
+    },
+    {
+      "repo": "DSH每日健康评估",
+      "repo_path_glob": "/Users/linqiyu/Documents/DSH/DSH每日健康评估",
+      "id": "DSH每日健康评估/scripts",
+      "paths": ["scripts"]
+    },
+    {
+      "repo": "冗余垃圾文件清除",
+      "repo_path_glob": "/Users/linqiyu/Documents/DSH/冗余垃圾文件清除",
+      "id": "冗余垃圾文件清除/scripts",
+      "paths": ["scripts"]
+    },
+    {
+      "repo": "日常琐碎",
+      "repo_path_glob": "/Users/linqiyu/Documents/DSH/日常琐碎",
+      "id": "日常琐碎/scripts",
+      "paths": ["scripts"]
+    },
+    {
+      "repo": "采集需求",
+      "repo_path_glob": "/Users/linqiyu/Documents/DSH/采集需求",
+      "id": "采集需求/scripts",
+      "paths": ["scripts"]
+    }
+  ],
+  "notes": {
+    "discovery": "工程清单由 `ls /Users/linqiyu/Documents/DSH` 实测得出，未编造工程名",
+    "excluded": [
+      {
+        "name": "_retired_assets_20260923",
+        "reason": "无 .git、无 scripts，是退役资产暂存目录而非在役工程"
+      }
+    ],
+    "lock_key_rule": "锁键 = `zone:<区间 id>`；锁目录名一律由 scripts/lib/atomic_lock.sh --print-dir 产出，本配置不复制洗键逻辑",
+    "lock_dir_override": "ATOMIC_LOCK_ROOT=<repo_path>/.dsh_locks 用于实现 per-repo 锁根（跨工程不共享）"
+  }
+}

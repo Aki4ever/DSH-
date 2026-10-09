@@ -192,6 +192,14 @@ async function extractOracle() {
   const cache = join(tmpdir(), `dsh-source-oracle-${st.size}-${Math.round(st.mtimeMs)}`)
   const marker = join(cache, '.ready')
   if (existsSync(marker)) return { root: cache, asarPath, cached: true }
+  // 2026-10-06 修复（实测复现，非推测）：缓存目录存在但**没有** `.ready` ⇒ 上一次抽取中断留下的
+  // 半成品残骸。此后每一轮的 "Cannot find package" 会变成**绝对路径**
+  // （如 `<cache>/node_modules/@deepseek-ai/dsh-session-format-v2-to-v3/index.js`），
+  // 被 writePkg 当成包名 → hits=0 → 永远 return null ⇒ 判定器恒「不可判定」，
+  // 宿主 G5 落地与版本一致性门禁硬阻断、所有写工具被拒（本机实测死锁）。
+  // 实测证据：清除该残骸后，同一份 app.asar 在 14 轮内抽全闭包并通过宿主对拍（exit 0）。
+  // 结论：残骸必须先清掉再抽，判定器才能自愈，否则一次中断 = 永久不可判定。
+  if (existsSync(cache)) rmSync(cache, { recursive: true, force: true })
 
   const a = openAsar(asarPath)
   const all = asarList(a.header)
