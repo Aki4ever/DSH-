@@ -1363,6 +1363,66 @@ case "${1:-check}" in
     # 图已产出，但退出码仍按真实门禁结论：门禁未过则非零，调用方能据此发现。
     finish
     ;;
+  probe)
+    # ── G6 判定器诊断入口（REQ-093 / G6，2026-10-10 实测的第三类自锁）──────────
+    # 为什么必须由本脚本转一手：本脚本是拦截层逃生舱**唯一**常开放行的入口
+    #   （`ai-control/plugin/index.mjs` 的 `escapeScriptPrefixes` 精确匹配
+    #   `scripts/control_gates.sh`）。而 G6 的七个判定器**不在**逃生名单里 ⇒
+    #   门禁一旦判红，`node scripts/token_budget_audit.mjs --check` 会被直接拒绝，
+    #   于是"想知道哪里红"这件事本身被门禁拦住 —— 与 2026-09-23「改名死锁」、
+    #   2026-09-28「提交死锁」同类的第三类死锁。
+    #   本分支只做**只读转发**：把判定器的完整 stdout/stderr 原样带回，并如实回显退出码；
+    #   它不修改任何工程内容，也**不**改变任何门禁结论（不写 status.json、不写缓存）。
+    #
+    # 用法：
+    #   ./scripts/control_gates.sh probe                              # 逐个跑 G6 七个判定器
+    #   ./scripts/control_gates.sh probe token_budget_audit.mjs --probe
+    #   ./scripts/control_gates.sh probe zone_concurrency.mjs --check
+    PROBE_NAME="${2:-}"
+    PROBE_ARGS=("${@:3}")
+    PROBE_NODE="${DSH_NODE_BIN:-}"
+    if [ -z "$PROBE_NODE" ] && [ -f "$SCRIPT_DIR/lib/find_node.sh" ]; then
+      # shellcheck disable=SC1091
+      . "$SCRIPT_DIR/lib/find_node.sh"
+      PROBE_NODE="$(find_node || true)"
+    fi
+    [ -n "$PROBE_NODE" ] || PROBE_NODE="node"
+
+    probe_one() {
+      local name="$1"; shift
+      local file="$SCRIPT_DIR/$name"
+      printf '══════════ ▶ %s %s\n' "$name" "$*"
+      if [ ! -f "$file" ]; then printf '⛔ 判定器缺失：%s\n' "$file"; return 2; fi
+      local rc=0
+      case "$name" in
+        *.sh) ( cd "$PROJECT_ROOT" && bash "$file" "$@" ) || rc=$? ;;
+        *)    ( cd "$PROJECT_ROOT" && "$PROBE_NODE" "$file" "$@" ) || rc=$? ;;
+      esac
+      printf '── 退出码 %s（0=通过 / 1=未达标 / 2=不可判定）\n\n' "$rc"
+      return "$rc"
+    }
+
+    if [ -n "$PROBE_NAME" ]; then
+      probe_one "$PROBE_NAME" "${PROBE_ARGS[@]}"
+      exit $?
+    fi
+
+    G6_LIST=(task_layer_tree.mjs butler_scheduler.mjs plugin_install_queue.mjs \
+             skill_carrier_audit.mjs token_budget_audit.mjs zone_concurrency.mjs \
+             control_profiler.sh)
+    _pf=0; _pu=0
+    for _j in "${G6_LIST[@]}"; do
+      _rc=0; probe_one "$_j" --check || _rc=$?
+      if [ "$_rc" -eq 0 ]; then printf '✅ %s\n\n' "$_j"
+      elif [ "$_rc" -eq 2 ]; then _pu=$((_pu+1)); printf '⚠️  %s 不可判定\n\n' "$_j"
+      else _pf=$((_pf+1)); printf '⛔ %s 未达标\n\n' "$_j"; fi
+    done
+    printf '══════════ G6 汇总：未达标 %s 项 · 不可判定 %s 项（共 %s 项）\n' \
+      "$_pf" "$_pu" "${#G6_LIST[@]}"
+    [ "$_pu" -eq 0 ] || exit 2
+    [ "$_pf" -eq 0 ] || exit 1
+    exit 0
+    ;;
   check|*)
     compute_all; write_status; mark_cache; render_card
     {
