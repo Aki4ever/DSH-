@@ -16,6 +16,7 @@
 3. **查安全红线**：禁止越权删除与越界破坏；
 4. **过门禁**：跑 `./scripts/control.sh check`（累积门禁）与 `./scripts/control.sh lock`（物理锁阶梯）。
 5. **机制自证**：改动管控机制本体后，复跑 `node scripts/build_capabilities_index.mjs --check`、`node scripts/gen_skill_interfaces.mjs --check`、`node scripts/restore_skill_pool.mjs --check`。
+6. **门禁口径自证**：改动门禁/看板后，复跑 `node scripts/gate_registry_audit.mjs --check`（判定器清单是否已从注册表派生、失败提示是否点名实际失败项、看板是否仍在硬编码结论）。
 
 > **为什么是本工程入口**（REQ-092 实测根因）：实测 16 个外部工程会话里，全局改名/门禁/物理锁
 > 命中数**全部为 0** —— 规则写了，但工程内**没有可调用的入口**，于是规则只剩文字。

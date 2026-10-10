@@ -118,6 +118,7 @@ export const GATES = Object.freeze([
       { file: 'scripts/token_budget_audit.mjs', args: ['--check'], label: '管控篇幅受管且能力不降' },
       { file: 'scripts/zone_concurrency.mjs', args: ['--check'], label: '区间并发可证(跨区间并发/同区间串行)' },
       { file: 'scripts/control_profiler.sh', args: ['--check'], label: '耗时预算可证(实测整跑在预算内)' },
+      { file: 'scripts/gate_registry_audit.mjs', args: ['--check'], label: '门禁注册表自洽且提示引用实际失败项（REQ-103）' },
     ],
     hints: {
       fail: '执行层并发与载体一致性未达标：按下方失败项逐个跑对应判定器',
@@ -211,6 +212,19 @@ if (argv[0] === '--json') {
       judges: (g.judges ?? []).map((j) => j.file), hints: g.hints,
     })),
   }, null, 2))
+  process.exit(TRI_STATE.PASS)
+}
+
+if (argv[0] === '--judges') {
+  // 供 shell 侧派生判据清单：输出 "判据文件名|标签" 逐行（唯一机读来源）
+  const gate = gateById(argv[1] ?? '')
+  if (!gate) {
+    console.error(`未知门禁：${argv[1] ?? '(空)'}`)
+    process.exit(TRI_STATE.UNDECIDABLE)
+  }
+  for (const j of gate.judges ?? []) {
+    console.log(`${j.file.split('/').pop()}|${j.label}`)
+  }
   process.exit(TRI_STATE.PASS)
 }
 

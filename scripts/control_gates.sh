@@ -108,6 +108,55 @@ json_int_strict() { # $1=JSON 文本 $2=键名
   printf '%s' "$v"
 }
 
+# ── 门禁注册表桥接（REQ-103 / C1-a C1-b）─────────────────────────────────────
+# 为什么需要它：门禁的"名字、判据、失败提示"此前在本文件里写死成常量字符串，
+# 于是出现"实际判红的是 A，提示却让人去修 B"（实测 G6 真因 token_budget_audit.mjs，
+# 提示却指向 control_profiler.sh / task_layer_tree.mjs）。
+# 现在失败提示由注册表按**实际失败项**生成；注册表缺失或形状非法时**回落到通用提示**，
+# 绝不因为取不到注册表就把门禁判成通过。
+#
+# 注：清单由注册表 CLI 输出，shell 侧**不解析 JSON**（文本解析会随格式漂移而静默失效，
+#     实测 grep -E 不支持非贪婪 `.*?` 就足以让解析器悄悄返回空）。
+#     注册表不可读或门禁 id 未知 → 输出空 → 调用方判「不可判定」，绝不静默跳过判据。
+gate_registry_entries() { # $1=gate-id → 输出 "判据文件名|标签" 逐行
+  local gid="$1" script_dir node_bin out rc
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  [ -f "$script_dir/../ai-control/config/gates_registry.mjs" ] || return 1
+  node_bin="${DSH_NODE_BIN:-}"
+  if [ -z "$node_bin" ] && [ -f "$script_dir/lib/find_node.sh" ]; then
+    # shellcheck disable=SC1091
+    . "$script_dir/lib/find_node.sh"
+    node_bin="$(find_node || true)"
+  fi
+  [ -n "$node_bin" ] || node_bin="node"
+  out="$( "$node_bin" "$script_dir/../ai-control/config/gates_registry.mjs" --judges "$gid" 2>/dev/null )"
+  rc=$?
+  [ "$rc" -eq 0 ] || return 1
+  [ -n "$out" ] || return 1
+  printf '%s\n' "$out"
+}
+
+gate_registry_hint() { # $1=gate-id $2=失败项(换行分隔) $3=不可判定项(换行分隔)
+  local gid="$1" failed="$2" undecided="$3" script_dir out rc
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  [ -f "$script_dir/../ai-control/config/gates_registry.mjs" ] || return 1
+  local node_bin="${DSH_NODE_BIN:-}"
+  if [ -z "$node_bin" ] && [ -f "$script_dir/lib/find_node.sh" ]; then
+    # shellcheck disable=SC1091
+    . "$script_dir/lib/find_node.sh"
+    node_bin="$(find_node || true)"
+  fi
+  [ -n "$node_bin" ] || node_bin="node"
+  local f_csv u_csv
+  f_csv="$(printf '%s' "$failed" | paste -sd, - 2>/dev/null)"
+  u_csv="$(printf '%s' "$undecided" | paste -sd, - 2>/dev/null)"
+  out="$( "$node_bin" "$script_dir/../ai-control/config/gates_registry.mjs" --hint "$gid" "$f_csv" "$u_csv" 2>/dev/null )"
+  rc=$?
+  [ "$rc" -eq 0 ] || return 1
+  [ -n "$out" ] || return 1
+  printf '%s' "$out"
+}
+
 # ── 门禁定义（顺序即依赖链）──────────────────────────────────────────────────
 GATE_IDS=(init structure sync redundancy integrity concurrency score)
 GATE_NAMES=("项目初始化" "工程结构化" "需求文档同步" "冗余检测" "落地与版本一致性" "执行层并发与载体一致性" "纪律分")
@@ -589,21 +638,26 @@ check_integrity() {
   [ -n "$node_bin" ] || node_bin="node"
 
   local fails=0 undecided=0 total=0 detail=""
+  local failed_labels="" undecided_labels=""
   local entry name out rc
-  for entry in \
-    "scope_audit.mjs|全域管控覆盖" \
-    "req_version_audit.mjs|需求版本贯通" \
-    "anti_hallucination_audit.mjs|无悬空引用与空架子" \
-    "mobile_bridge_audit.mjs|手机远端操控可达（REQ-094）" \
-    "session_source_audit.mjs|会话消息来源合规（REQ-096）" \
-    "knowledge_audit.mjs|知识库条目与索引双向可达（REQ-097 R3）" \
-    "cli_plan_audit.mjs|立项 CLI 规划在位且真实（REQ-097 R4）" \
-    "domain_scope_selftest.mjs|全域写拦截判定有牙"; do
+  # REQ-103 / C1-a：判据清单由门禁注册表派生（唯一机读来源）。
+  # 此前清单在本文件里硬编码一份、文档里再写几份，于是必然漂移
+  # （实测 G5 提示说"三条判定器"而实跑八条）。取不到注册表即判不可判定，绝不静默跳过。
+  local entries_raw
+  entries_raw="$(gate_registry_entries integrity)"
+  if [ -z "$entries_raw" ]; then
+    DETAIL="门禁注册表不可读——判据清单取不到证据"
+    HINT="门禁注册表 ai-control/config/gates_registry.mjs 读取失败或形状非法；不得折算为通过"
+    return 2
+  fi
+  while IFS= read -r entry; do
+    [ -n "$entry" ] || continue
     name="${entry%%|*}"; label="${entry##*|}"
     if [ ! -f "$script_dir/$name" ]; then
       # 判定器缺失 = 不可判定，绝不折算为通过（元规则第三十六条）
       undecided=$((undecided+1))
       detail="${detail}${label}:判定器缺失; "
+      undecided_labels="${undecided_labels}${label}"$'\n'
       continue
     fi
     total=$((total+1))
@@ -614,14 +668,22 @@ check_integrity() {
     elif [ "$rc" -eq 2 ]; then
       undecided=$((undecided+1))
       detail="${detail}${label}:不可判定; "
+      undecided_labels="${undecided_labels}${label}"$'\n'
     else
       fails=$((fails+1))
       detail="${detail}${label}:⛔; "
+      failed_labels="${failed_labels}${label}"$'\n'
     fi
-  done
+  done <<< "$entries_raw"
 
+  # REQ-103 / C1-b：指标必须先于 return 赋值（此前在 return 1 之前赋"通过项"，
+  # 导致判红时快照仍写"8 落地判定通过 · 0 未达标项"，与实况相反）。
   METRIC_A="$((total - fails))"; METRIC_A_LABEL="落地判定通过"
   METRIC_B="$fails"; METRIC_B_LABEL="未达标项"
+  # REQ-103 / C1-b：失败提示必须引用**实际失败项**，禁止写死判定器名单
+  local gate_hint
+  gate_hint="$(gate_registry_hint integrity "$failed_labels" "$undecided_labels")"
+  [ -n "$gate_hint" ] && HINT="$gate_hint"
 
   if (( undecided > 0 )); then
     DETAIL="$detail"
@@ -656,19 +718,23 @@ check_concurrency() {
   [ -n "$node_bin" ] || node_bin="node"
 
   local fails=0 undecided=0 total=0 detail=""
+  local failed_labels="" undecided_labels=""
   local entry name label rc
-  for entry in \
-    "task_layer_tree.mjs|任务执行层树可溯源" \
-    "butler_scheduler.mjs|并发调度有牙(拒死锁/活锁)" \
-    "plugin_install_queue.mjs|安装队列有界不空等" \
-    "skill_carrier_audit.mjs|技能层载体齐备" \
-    "token_budget_audit.mjs|管控篇幅受管且能力不降" \
-    "zone_concurrency.mjs|区间并发可证(跨区间并发/同区间串行)" \
-    "control_profiler.sh|耗时预算可证(实测整跑在预算内)"; do
+  # REQ-103 / C1-a：同 G5，清单由注册表派生
+  local entries_raw
+  entries_raw="$(gate_registry_entries concurrency)"
+  if [ -z "$entries_raw" ]; then
+    DETAIL="门禁注册表不可读——判据清单取不到证据"
+    HINT="门禁注册表 ai-control/config/gates_registry.mjs 读取失败或形状非法；不得折算为通过"
+    return 2
+  fi
+  while IFS= read -r entry; do
+    [ -n "$entry" ] || continue
     name="${entry%%|*}"; label="${entry##*|}"
     if [ ! -f "$script_dir/$name" ]; then
       undecided=$((undecided+1))
       detail="${detail}${label}:判定器缺失; "
+      undecided_labels="${undecided_labels}${label}"$'\n'
       continue
     fi
     total=$((total+1))
@@ -683,23 +749,29 @@ check_concurrency() {
     elif [ "$rc" -eq 2 ]; then
       undecided=$((undecided+1))
       detail="${detail}${label}:不可判定; "
+      undecided_labels="${undecided_labels}${label}"$'\n'
     else
       fails=$((fails+1))
       detail="${detail}${label}:⛔; "
+      failed_labels="${failed_labels}${label}"$'\n'
     fi
-  done
+  done <<< "$entries_raw"
 
   METRIC_A="$((total - fails))"; METRIC_A_LABEL="并发与载体判定通过"
   METRIC_B="$fails"; METRIC_B_LABEL="未达标项"
+  # REQ-103 / C1-b：同上，提示由实际失败项生成
+  local gate_hint
+  gate_hint="$(gate_registry_hint concurrency "$failed_labels" "$undecided_labels")"
+  [ -n "$gate_hint" ] && HINT="$gate_hint"
 
   if (( undecided > 0 )); then
     DETAIL="$detail"
-    HINT="不可判定 ${undecided} 项（判定器缺失或取不到证据）——不得折算为通过"
+    [ -n "$gate_hint" ] || HINT="不可判定 ${undecided} 项（判定器缺失或取不到证据）——不得折算为通过"
     return 2
   fi
   if (( fails > 0 )); then
     DETAIL="$detail"
-    HINT="未达标 ${fails} 项：逐条修复命令见 node scripts/task_layer_tree.mjs --check 等七条判定器输出（含 zone_concurrency.mjs --check，REQ-101；control_profiler.sh --check，REQ-102 耗时预算）"
+    [ -n "$gate_hint" ] || HINT="未达标 ${fails} 项"
     return 1
   fi
   DETAIL="$detail"
@@ -863,6 +935,18 @@ compute_all() {
       CURRENT_NAME="会话未合规命名"
     fi
   fi
+
+  # REQ-103 / C1-d：G0 有**一票否决权却不占槽位**（GATE_IDS 只有 7 项），
+  # 上面对 CURRENT_ID/CURRENT_NAME 的覆盖因此没有配套的序号 ——
+  # 看板拿 gateIndex（此时仍是 7）去拼，渲染出"卡点：G7 会话未合规命名"，
+  # 把 G0 误标成 G7。现在把 G0 的序号与"是否否决"一并落盘，供看板如实渲染。
+  case "$CURRENT_ID" in
+    naming-block|naming-unknown)
+      NAMING_VETO="true"; CURRENT_GATE_SEQ=0 ;;
+    *)
+      NAMING_VETO="false"
+      CURRENT_GATE_SEQ=$GATE_INDEX ;;
+  esac
 }
 
 json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
@@ -918,6 +1002,8 @@ write_status_unlocked() {
     printf '  "currentGate": "%s",\n' "$CURRENT_ID"
     printf '  "currentGateName": "%s",\n' "$CURRENT_NAME"
     printf '  "gateIndex": %s,\n' "$GATE_INDEX"
+    printf '  "currentGateSeq": %s,\n' "${CURRENT_GATE_SEQ:-$GATE_INDEX}"
+    printf '  "namingVeto": %s,\n' "${NAMING_VETO:-false}"
     printf '  "snapshotPrimary": "%s",\n' "$(json_escape "$STATUS_JSON")"
     printf '  "snapshotFallback": "%s",\n' "$(json_escape "$STATUS_JSON_FALLBACK")"
     printf '  "gates": [\n'

@@ -15,7 +15,7 @@
  * ==============================================================================
  */
 
-import { evaluate, Config } from './index.mjs'
+import { evaluate, Config, renderCard } from './index.mjs'
 
 let pass = 0
 let fail = 0
@@ -297,6 +297,54 @@ check('极端参数 · 不抛出异常', threw, false)
   check('Loader 契约 · inject 声明 tools 依赖', loader.inject.includes('tools'), true)
   check('Loader 契约 · 导出 apply 函数', typeof loader.apply === 'function', true)
   check('Loader 契约 · inject 与内层插件一致', inner.inject.includes('tools'), true)
+}
+
+// 12) 看板渲染口径（REQ-103 / C1-c C1-d）：反例组。
+//     真实缺陷（2026-10-10 只读取证）：紧凑态把 `100% (4/4) 🟢 全部门禁通过`
+//     写成**字面量**，与磁盘实况无关；只取前 4 项指标，G5~G7 与 G0 全不可见；
+//     且 G0 有一票否决权却不占槽位，看板把它渲染成「G7 会话未合规命名」。
+{
+  const gate = (id, name, status, a, al, b, bl) => ({
+    id, name, status, metricA: a, metricALabel: al, metricB: b, metricBLabel: bl,
+  })
+  const sevenGates = [
+    gate('init', '项目初始化', 'pass', '11/11', '骨架齐备', '12/12', '防丢覆盖'),
+    gate('structure', '工程结构化', 'pass', '5/5', '合规项', '0', '孤儿目录'),
+    gate('sync', '需求文档同步', 'pass', '103', '需求条目', '0', '未提交变更'),
+    gate('redundancy', '冗余检测', 'pass', '0', '高相似块对', '50', '重复标题'),
+    gate('integrity', '落地与版本一致性', 'pass', '8', '落地判定通过', '0', '未达标项'),
+    gate('concurrency', '执行层并发与载体一致性', 'pass', '7', '并发与载体判定通过', '0', '未达标项'),
+    gate('score', '纪律分', 'pass', '15', '账本记录数', '65', '当前纪律分'),
+  ]
+  // 12-a：分母必须来自快照 —— 7 项快照不得渲染成 4/4
+  const allGreen = {
+    gatePassed: 7, gateTotal: 7, percent: 100, execAllowed: true,
+    currentGate: 'all-clear', currentGateName: '全部通过', gateIndex: 7, currentGateSeq: 7, namingVeto: false,
+    generatedAt: '2026-10-10 16:00:00', gates: sevenGates,
+  }
+  const c1 = renderCard(allGreen)
+  check('看板口径 · 全绿态分母取快照而非字面量 4/4', c1.includes('(7/7)'), true)
+  check('看板口径 · 全绿态不再出现写死的 (4/4)', c1.includes('(4/4)'), false)
+  // 12-b：不再截断到前 4 项指标（G5~G7 必须可见）
+  check('看板口径 · 第 5~7 项指标可见（未截断）', c1.includes('65当前纪律分'), true)
+  check('看板口径 · 不再写死 100%', /100% \(7\/7\)/.test(c1), true)
+  // 12-c：G0 一票否决必须显示为 G0，而不是 gateIndex 拼出的 G7
+  const namingBlock = {
+    ...allGreen, execAllowed: false, currentGate: 'naming-block', currentGateName: '会话未合规命名',
+    gateIndex: 7, currentGateSeq: 0, namingVeto: true,
+  }
+  const c2 = renderCard(namingBlock)
+  check('看板口径 · G0 否决显示为 G0', c2.includes('卡点：G0 会话未合规命名'), true)
+  check('看板口径 · G0 否决不再误标为 G7', c2.includes('G7 会话未合规命名'), false)
+  // 12-d：快照缺 currentGateSeq 时按 namingVeto 回落（旧快照兼容），仍不得误标
+  const legacyNaming = { ...namingBlock }
+  delete legacyNaming.currentGateSeq
+  check('看板口径 · 旧快照兼容：仍按 G0 渲染', renderCard(legacyNaming).includes('卡点：G0 '), true)
+  // 12-e：反向用例 —— 数值被篡改成"全绿但分母不符"时，必须说真话
+  const mismatch = { ...allGreen, gatePassed: 3, percent: 43, gates: sevenGates.slice(0, 3) }
+  const c3 = renderCard(mismatch)
+  check('看板口径 · 分母与通过数不符时不得宣称全绿', c3.includes('全部门禁通过'), false)
+  check('看板口径 · 分母与通过数不符时报真实数', c3.includes('(3/7)'), true)
 }
 
 // ── 汇总 ─────────────────────────────────────────────────────────────────────

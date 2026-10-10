@@ -643,19 +643,46 @@ export function renderTodoPanel(items, opts = {}) {
 
 /** 渲染面向模型的常显看板（Markdown，DSH GUI 原生渲染）。支持全绿态高密度 Token 压缩。
  *  第二个参数 usage 是"用量常显行"（DeepSeek 时段 + 剩余额度），由本仓已审计的
- *  探针 CLI 产出；取不到时为空串，看板照常渲染，绝不用假数字占位。 */
-function renderCard(s, usage = '', todoLines = []) {
+ *  探针 CLI 产出；取不到时为空串，看板照常渲染，绝不用假数字占位。
+ *  REQ-103 / C1-c：导出供 selftest 做反例验证（渲染口径必须有行为级回归）。 */
+export function renderCard(s, usage = '', todoLines = []) {
   const lines = []
   lines.push('<system-reminder>')
   if (s.execAllowed) {
     // 全绿态高密度紧凑输出（节约 ~65% Token）
-    lines.push(`**🎛️ 管控看板** \`${progressBar(s.gatePassed, s.gateTotal, 10)}\` **100% (4/4)** 🟢 全部门禁通过`)
-    const g = s.gates || []
-    const m0 = g[0] ? `${g[0].metricA ?? ''}骨架` : ''
-    const m1 = g[1] ? `${g[1].metricA ?? ''}合规` : ''
-    const m2 = g[2] ? `${g[2].metricA ?? ''}需求(${g[2].metricB ?? 0}未交)` : ''
-    const m3 = g[3] ? `${g[3].metricA ?? ''}冗余` : ''
-    lines.push(`> 指标实况：${[m0, m1, m2, m3].filter(Boolean).join(' · ')}`)
+    // REQ-103 / C1-c：此前此处把 `100% (4/4) 🟢 全部门禁通过` 写成**字面量**，
+    // 与磁盘实况无关；且只取前 4 项指标，G5~G7 与 G0 全不可见 ——
+    // 于是出现过"简版报全绿、详版报卡点"同屏并存的矛盾。
+    // 现在百分比、分母、结论全部由快照派生：分母不匹配就算不出 100%，
+    // 结论不是"全绿"就走卡点分支（本分支只在 execAllowed 为真时进入）。
+    const total = Number(s.gateTotal) || 0
+    const passed = Number(s.gatePassed) || 0
+    const pct = total > 0 ? Math.round((passed * 100) / total) : 0
+    const allGreen = total > 0 && passed === total
+    const verdict = allGreen ? '🟢 全部门禁通过' : `🟡 ${passed}/${total} 门禁通过`
+    lines.push(`**🎛️ 管控看板** \`${progressBar(passed, total, 10)}\` **${pct}% (${passed}/${total})** ${verdict}`)
+    // 指标不再截断到前 4 项：凡是快照给了 metricA/metricB 的门禁都展示，
+    // 避免"看不见的门禁"与"看不见的失败"。
+    const g = Array.isArray(s.gates) ? s.gates : []
+    const SHORT = {
+      项目初始化: '骨架', 工程结构化: '合规', 需求文档同步: '需求', 冗余检测: '冗余',
+      落地与版本一致性: '落地', 执行层并发与载体一致性: '并发载体', 纪律分: '纪律分',
+    }
+    const metrics = []
+    for (const item of g) {
+      if (!item) continue
+      const fullName = String(item.name || '')
+      const label = SHORT[fullName] ?? fullName
+      const a = item.metricA === undefined || item.metricA === null ? '' : String(item.metricA)
+      const b = item.metricB === undefined || item.metricB === null ? '' : String(item.metricB)
+      const bLabel = item.metricBLabel ? String(item.metricBLabel) : ''
+      let seg = ''
+      if (a !== '' && b !== '') seg = `${a}${label}(${b}${bLabel})`
+      else if (a !== '') seg = `${a}${label}`
+      else if (b !== '') seg = `${b}${bLabel || label}`
+      if (seg) metrics.push(seg)
+    }
+    if (metrics.length) lines.push(`> 指标实况：${metrics.join(' · ')}`)
     if (usage) lines.push(usage)
     lines.push(`刷新：\`./scripts/control_gates.sh check\`（${s.generatedAt || '最新'}）`)
     if (todoLines.length) { lines.push(''); lines.push(...todoLines) }
@@ -667,7 +694,14 @@ function renderCard(s, usage = '', todoLines = []) {
   lines.push('AI 执行流程管控看板（由磁盘实况推导，非模型自述）。这是每个步骤都会刷新一次的常显状态。')
   lines.push('')
   lines.push(`**进度** \`${progressBar(s.gatePassed, s.gateTotal)}\` **${s.percent}%** · ${s.gatePassed}/${s.gateTotal} 门禁通过`)
-  lines.push(`**状态** 🔴 卡点：G${s.gateIndex} ${s.currentGateName} —— 未通过前，改动型工具调用会被硬性拒绝。`)
+  // REQ-103 / C1-d：G0 是**独立的一票否决层**（0 号槽位，不计入 7 项分母）。
+  // 此前此处无条件用 `G${s.gateIndex}` 拼名字，而 G0 否决时 gateIndex 仍是 7，
+  // 于是渲染出"卡点：G7 会话未合规命名"——把 G0 误标成 G7。
+  // 现在优先用落盘块给出的真实序号（currentGateSeq）；缺该字段时按旧口径回落，绝不判通过。
+  const seq = Number.isInteger(s.currentGateSeq)
+    ? s.currentGateSeq
+    : (s.namingVeto ? 0 : Number(s.gateIndex))
+  lines.push(`**状态** 🔴 卡点：G${seq} ${s.currentGateName} —— 未通过前，改动型工具调用会被硬性拒绝。`)
   lines.push('')
   lines.push('| 门禁 | 状态 | 量化指标 |')
   lines.push('| :--- | :--- | :--- |')
