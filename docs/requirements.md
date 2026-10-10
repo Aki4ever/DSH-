@@ -3670,6 +3670,7 @@ P6 同批还留下一个无人引用的孤儿脚本 `scripts/scope_renewal_gate.
 - [x] **整跑降耗可证**：`./scripts/control_gates.sh check` 32~36s → **16.2s**，全门禁 7/7 通过；
       同一份 `perf_profile.json` 中 `scope_audit` 由 17.0s → 0.28s；
 - [x] `bash scripts/control_profiler.sh --check` 退出码 0（读实测产物判预算，不重跑门禁；产物缺失 / 过旧 / 形状非法 → 退出码 2）；
+- [x] `bash scripts/control_profiler.sh --selftest` 退出码 0（3/3：产物缺失与形状非法判不可判定；合法产物判通过**且证据 sha256 不变**）；
 - [x] `./scripts/control_gates.sh check` G6 判据由 6 条增至 7 条且全绿（第 7 条 `control_profiler.sh|耗时预算可证`）；
 - [x] 双检三扫与流程结构判定全过（`redundancy_scan` / `conflict_scan` / `legacy_align_scan` / `flow_control` / `output_audit` / `language_audit`）；
 - [x] `node scripts/req_version_audit.mjs --check --req REQ-102` 退出码 0（四处对拍一致）。
@@ -3690,7 +3691,9 @@ P6 同批还留下一个无人引用的孤儿脚本 `scripts/scope_renewal_gate.
 - **2026-10-10 [本轮自查抓出的缺陷（如实留痕）]**：① `control_profiler.sh --check` 初版会**再整跑一次门禁**，
   把降耗工具本身变成新的耗时源——改为读实测产物判预算，产物不可用即退出码 2；② G6 判定循环此前**一律按 node 跑**，
   会漏掉 `.sh` 判定器——已按扩展名分派；③ 首版新增自检用例里误用 `require`（该文件是 ESM）——
-  改为顶层 `zstdCompressSync` 导入。
+  改为顶层 `zstdCompressSync` 导入；④（收尾实测才抓到）`--check` 分支缺 `exit`，会继续走到"汇总"段，
+  用默认 `GATE_MS=0` 与空 rows **覆盖掉上一次实测产物**——判定器亲手抹掉自己的证据，还会打出"整跑 0.0s ✅"；
+  已补 `exit $?`，并加 `--selftest` 三条反向用例（含"判定通过时证据文件 sha256 必须不变"）。
 - **诚实缺口**：① "整跑 32~36s → 16.2s"是同机先后测量，非严格同时刻 A/B（机器负载未受控）；
   ② 剩余热点在 `zone_concurrency.mjs --check`（2.7s）与 `session_source_audit.mjs --check`（2.0s），本轮**未动**；
   ③ `mechanism_audit.mjs --exit`（17.6s）与 `process_supervisor.mjs --fast`（30.9s）不在门禁关键路径上，本轮未动；

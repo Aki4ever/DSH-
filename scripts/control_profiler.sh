@@ -43,14 +43,17 @@ case "${1:-}" in
   --quick) MODE="quick" ;;
   --json)  MODE="json" ;;
   --check) MODE="check" ;;
+  --selftest) MODE="selftest" ;;
   --measure) MODE="measure" ;;
   "")      MODE="full" ;;
-  *) echo "用法：bash scripts/control_profiler.sh [--quick|--json|--check|--measure]" >&2; exit 2 ;;
+  *) echo "用法：bash scripts/control_profiler.sh [--quick|--json|--check|--selftest|--measure]" >&2; exit 2 ;;
 esac
 
 OUT_DIR="$ROOT/ai-control/reports/state"
 mkdir -p "$OUT_DIR" 2>/dev/null || true
-OUT_JSON="$OUT_DIR/perf_profile.json"
+# 产物路径可被 `DSH_PERF_ARTIFACT` 覆盖——仅供 `--selftest` 在临时目录里造反向用例，
+# 避免"为了造反例而碰真实证据"。
+OUT_JSON="${DSH_PERF_ARTIFACT:-$OUT_DIR/perf_profile.json}"
 
 # ── 单项计时：毫秒级，输出 "耗时_毫秒 退出码 标签" ───────────────────────────────
 now_ms() { "$NODE_BIN" -e 'process.stdout.write(String(Date.now()))' 2>/dev/null || python3 -c 'import time;print(int(time.time()*1000))'; }
@@ -116,6 +119,48 @@ run_gate() {
 }
 
 case "$MODE" in
+  selftest)
+    # 反向用例（判据 5）：判定器必须能判红，且**不许动自己的证据**。
+    # 用例 1：产物缺失 → 退出码 2（取不到证据绝不折算通过）。
+    # 用例 2：产物形状非法（缺 gateTotalMs）→ 退出码 2。
+    # 用例 3：产物合法且在预算内 → 退出码 0，且**文件 sha256 未变**（判定器不得覆盖证据）。
+    FAKE="$(mktemp -d -t ctrlprof-st.XXXXXX)"
+    mkdir -p "$FAKE/ai-control/reports/state"
+    st_fail=0
+    # ① 产物缺失
+    if DSH_PERF_ARTIFACT="$FAKE/ai-control/reports/state/perf_profile.json" bash "$0" --check >/dev/null 2>&1; then
+      echo "   ❌ 用例1 失败：产物缺失竟判通过"; st_fail=$((st_fail+1))
+    else
+      echo "   ✅ 用例1：产物缺失 → 判不可判定（退出码 2）"
+    fi
+    # ② 形状非法
+    printf '{"generatedAt":"%s"}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$FAKE/ai-control/reports/state/perf_profile.json"
+    if DSH_PERF_ARTIFACT="$FAKE/ai-control/reports/state/perf_profile.json" bash "$0" --check >/dev/null 2>&1; then
+      echo "   ❌ 用例2 失败：形状非法竟判通过"; st_fail=$((st_fail+1))
+    else
+      echo "   ✅ 用例2：形状非法（缺 gateTotalMs）→ 判不可判定"
+    fi
+    # ③ 合法产物：判通过，且文件未被改写
+    printf '{"requirement":"REQ-102 / EFF-NOFLOW","generatedAt":"%s","mode":"measure","gateTotalMs":1000,"budgetMs":45000,"withinBudget":true,"itemCount":0,"slowest":[],"missingOrBroken":[]}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$FAKE/ai-control/reports/state/perf_profile.json"
+    before="$(shasum -a 256 "$FAKE/ai-control/reports/state/perf_profile.json" | awk '{print $1}')"
+    if DSH_PERF_ARTIFACT="$FAKE/ai-control/reports/state/perf_profile.json" bash "$0" --check >/dev/null 2>&1; then
+      after="$(shasum -a 256 "$FAKE/ai-control/reports/state/perf_profile.json" | awk '{print $1}')"
+      if [ "$before" = "$after" ]; then
+        echo "   ✅ 用例3：合法产物 → 判通过，且证据文件 sha256 未变"
+      else
+        echo "   ❌ 用例3 失败：--check 改写了证据文件（判定器覆盖自己的凭据）"; st_fail=$((st_fail+1))
+      fi
+    else
+      echo "   ❌ 用例3 失败：合法产物在预算内竟判不通过"; st_fail=$((st_fail+1))
+    fi
+    rm -rf "$FAKE"
+    if [ "$st_fail" -eq 0 ]; then
+      echo "🎉 耗时取证器反向用例全过：3/3"
+      exit 0
+    fi
+    echo "⛔ 反向用例失败 ${st_fail} 项"
+    exit 1
+    ;;
   quick) run_gate ;;
   measure) run_gate ;;
   check)
@@ -145,6 +190,10 @@ if (Array.isArray(d.slowest) && d.slowest.length) {
 console.log(ok ? '   ✅ 在预算内' : '   ⛔ 超预算：先定位热点（--measure 看 slowest），或按 perf_budget.conf 注释说明后调预算')
 process.exit(ok ? 0 : 1)
 NODE
+    # ⚠️ REQ-102 收尾实测抓到的缺陷：`--check` 必须**到此为止**。
+    # 缺了这行 exit，脚本会继续走到下面的"汇总"段，用默认 GATE_MS=0 与空 rows
+    # **覆盖掉上一次实测产物**——判定器亲手抹掉自己的证据（且会报"整跑 0.0s ✅"）。
+    exit $?
     ;;
   full|json)
     run_gate

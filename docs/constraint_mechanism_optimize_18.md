@@ -72,6 +72,7 @@
 ## 四、验收标准（每一条都可复跑，期望退出码 0）
 
 - [ ] `bash scripts/control_profiler.sh --check` 退出码 0，且 `perf_profile.json` 给出整跑毫秒数与逐项耗时；
+- [ ] `bash scripts/control_profiler.sh --selftest` 退出码 0（3/3：产物缺失 / 形状非法 → 判不可判定；合法产物 → 判通过**且证据文件 sha256 不变**）；
 - [ ] `node scripts/scope_audit.mjs --selftest` 退出码 0（14/14，含新增第 ⑥ 组转录证据反例）；
 - [ ] `node scripts/scope_audit.mjs --check` 退出码 0，且**判定结论与改造前一致**（同一批工程全托管）；
 - [ ] **降耗可证**：同机 A/B 对照下，单个"无本地留痕工程"的转录证据判定耗时下降 ≥ 10 倍，
