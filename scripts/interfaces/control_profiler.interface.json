@@ -1,0 +1,63 @@
+{
+  "id": "cli.rules.control_profiler",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/control_profiler.sh",
+  "invoke": "bash scripts/control_profiler.sh",
+  "summary": "管控耗时取证器与预算判定器：实跑累积门禁整跑并逐项计时，产出机读耗时产物；--check 读实测产物判是否在预算内（超预算判红、取不到证据判 2）。用于 REQ-102「不影响执行流程的降耗」——先有耗时实数，才谈优化。",
+  "inputs": [
+    {
+      "name": "--measure",
+      "type": "flag",
+      "required": false,
+      "desc": "整跑一次 control_gates.sh check 并落盘实测耗时（基准取样入口）"
+    },
+    {
+      "name": "--quick",
+      "type": "flag",
+      "required": false,
+      "desc": "只整跑计时，不逐项取样（约 20~40s，视门禁本体耗时）"
+    },
+    {
+      "name": "--check",
+      "type": "flag",
+      "required": false,
+      "desc": "门禁口径：读上一次实测产物判预算（不重跑门禁，避免判定器自身成为耗时源）"
+    },
+    {
+      "name": "--json",
+      "type": "flag",
+      "required": false,
+      "desc": "机器可读输出（含 slowest 逐项耗时）"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "stdout",
+      "type": "text",
+      "desc": "整跑毫秒数、预算、是否达标、最慢三项"
+    },
+    {
+      "name": "ai-control/reports/state/perf_profile.json",
+      "type": "file",
+      "desc": "耗时物理凭据：gateTotalMs / budgetMs / withinBudget / slowest[] / generatedAt / mode"
+    }
+  ],
+  "exitCodes": {
+    "0": "通过：实测整跑耗时在预算内（或取样成功）",
+    "1": "超预算：实测整跑超过 GATE_TOTAL_BUDGET_MS",
+    "2": "取不到证据：产物缺失/不可解析/形状非法/超过 24h（2 绝不算通过）"
+  },
+  "source": "handwritten",
+  "verified": true,
+  "requirement": "REQ-102 / EFF-NOFLOW",
+  "inputs_contract": {
+    "config": "ai-control/config/perf_budget.conf（GATE_TOTAL_BUDGET_MS / GATE_TOTAL_TARGET_MS / ITEM_HOTSPOT_MS）",
+    "readonly": "本器只读工程文件；唯一写入点是 ai-control/reports/state/perf_profile.json"
+  },
+  "commands": [
+    "bash scripts/control_profiler.sh --measure",
+    "bash scripts/control_profiler.sh --quick",
+    "bash scripts/control_profiler.sh --check",
+    "bash scripts/control_profiler.sh --json"
+  ]
+}

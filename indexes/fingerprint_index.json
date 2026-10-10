@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-07T00:33:57.882Z",
+  "generatedAt": "2026-10-10T06:09:56.351Z",
   "tool": "scripts/fingerprint_index.mjs",
   "algorithm": "sha256",
   "shortLength": 8,
@@ -18,7 +18,7 @@
     "AGENTS.md",
     "README.md"
   ],
-  "count": 337,
+  "count": 341,
   "files": [
     {
       "path": "AGENTS.md",
@@ -40,6 +40,13 @@
       "sha256": "575db13c376d6c07f341e19797a17691a1b37fe8cdaedaa3f863c7d0b6ecef9d",
       "bytes": 6312,
       "mtime": "2026-10-02T01:12:52.164Z"
+    },
+    {
+      "path": "ai-control/config/concurrency_zones.json",
+      "short": "e9e7b4d0",
+      "sha256": "e9e7b4d05285ca47c69895e461257fec4a3362d500865f54e0fc196a578a7b01",
+      "bytes": 2321,
+      "mtime": "2026-10-09T11:04:58.508Z"
     },
     {
       "path": "ai-control/config/flow_graph.json",
@@ -169,10 +176,10 @@
     },
     {
       "path": "ai-control/requirements/req_versions.json",
-      "short": "118203b0",
-      "sha256": "118203b06aa6f8bba8e83cf6c78d3cede6a6594095849b8387e4ba92dd7ceac4",
-      "bytes": 52098,
-      "mtime": "2026-10-07T00:33:57.848Z"
+      "short": "a617b9df",
+      "sha256": "a617b9df44037f7bb3afff5a99aa57b69cf5c8506ace71b9106dcb43600f61f3",
+      "bytes": 52388,
+      "mtime": "2026-10-09T11:12:11.423Z"
     },
     {
       "path": "docs/.gitkeep",
@@ -236,6 +243,13 @@
       "sha256": "914069dc8ca04ec58245071343a233aa2c274468f97508b39239a513739badcd",
       "bytes": 13822,
       "mtime": "2026-10-03T00:50:38.498Z"
+    },
+    {
+      "path": "docs/constraint_mechanism_optimize_17.md",
+      "short": "97069ab1",
+      "sha256": "97069ab146ba9a6fa1a2643e9d5946132cde21f3bab534e52f592542571f5efa",
+      "bytes": 10873,
+      "mtime": "2026-10-09T11:11:07.616Z"
     },
     {
       "path": "docs/constraint_mechanism_optimize_3.md",
@@ -316,10 +330,10 @@
     },
     {
       "path": "docs/requirements.md",
-      "short": "7140b5fc",
-      "sha256": "7140b5fcad9baaf04760898d90275a70fea1362ac5db5802d5a73e7064b55fd8",
-      "bytes": 294910,
-      "mtime": "2026-10-03T00:50:25.745Z"
+      "short": "397f92b2",
+      "sha256": "397f92b2a2222a2729895310951ecfb5d4832dacb70a6499cdda724f2810c1cb",
+      "bytes": 299519,
+      "mtime": "2026-10-09T11:11:27.191Z"
     },
     {
       "path": "docs/rules_tutorial.md",
@@ -351,17 +365,17 @@
     },
     {
       "path": "indexes/capabilities_index.json",
-      "short": "dc653bb4",
-      "sha256": "dc653bb45ab2663ec95ed1042f9fa3f92ec5bb151d6ea7f08928bb2962ae4e4a",
-      "bytes": 125263,
-      "mtime": "2026-10-03T00:17:39.600Z"
+      "short": "1b81a117",
+      "sha256": "1b81a117b93e439d0429431d6f7bb810cc8e0e04698395c7dec8f5c1ea834fda",
+      "bytes": 125643,
+      "mtime": "2026-10-09T11:11:41.523Z"
     },
     {
       "path": "indexes/capabilities_index.md",
-      "short": "1473d913",
-      "sha256": "1473d913ce083921a8dbf96443ed7c8a72c0e82c733d80a32c91b71568d11efd",
-      "bytes": 126511,
-      "mtime": "2026-10-03T00:50:38.494Z"
+      "short": "e308bc7a",
+      "sha256": "e308bc7af990c10b692a00f342cf8d0f8b9e2f6c2259b7eef06162c643f0a09d",
+      "bytes": 126770,
+      "mtime": "2026-10-09T11:11:41.521Z"
     },
     {
       "path": "indexes/dsh_capabilities.md",
@@ -393,10 +407,10 @@
     },
     {
       "path": "indexes/shortcuts_index.md",
-      "short": "5e8d9e49",
-      "sha256": "5e8d9e490efeffef6a0d2af3e1fa6dd0453d4440e9aa61b236f8d20c2992396c",
-      "bytes": 15476,
-      "mtime": "2026-10-03T00:50:38.495Z"
+      "short": "2c43fd65",
+      "sha256": "2c43fd657c2d6f2db85e0a6159a6c76fde8d5e916c157ad31f690e774d3597ee",
+      "bytes": 15900,
+      "mtime": "2026-10-09T11:06:21.549Z"
     },
     {
       "path": "indexes/tool_interfaces.md",
@@ -743,10 +757,10 @@
     },
     {
       "path": "rules/system/meta_rules.md",
-      "short": "1a44a7ba",
-      "sha256": "1a44a7ba453bf448ae5d887d5b7c7ef8f43f24b396e593ae62012c6e4580510f",
-      "bytes": 19984,
-      "mtime": "2026-10-03T00:50:38.485Z"
+      "short": "6b9ade0f",
+      "sha256": "6b9ade0f545ca2ffd441bf477e3b8f4acecdb72299fda50042bbfb6f9428d9cf",
+      "bytes": 20728,
+      "mtime": "2026-10-09T11:11:18.607Z"
     },
     {
       "path": "rules/system/output_standard.md",
@@ -1002,10 +1016,10 @@
     },
     {
       "path": "scripts/control_gates.sh",
-      "short": "f79f86c2",
-      "sha256": "f79f86c23bf906eaa9b915bdc10e05e1038a6639e09d1b5909e81a06830c50ae",
-      "bytes": 70677,
-      "mtime": "2026-10-02T01:06:54.798Z"
+      "short": "a13a8e71",
+      "sha256": "a13a8e713b4cc0d24766ec4a353fba5bd373e07cabe1d830888fbb544c00575b",
+      "bytes": 70825,
+      "mtime": "2026-10-09T11:09:50.912Z"
     },
     {
       "path": "scripts/deepseek_key_setup.sh",
@@ -1485,10 +1499,10 @@
     },
     {
       "path": "scripts/interfaces/market_guard_patch.interface.json",
-      "short": "18f952bf",
-      "sha256": "18f952bf967d06284487f62df3e72b921b4120d25a14c77e76f250dc16cbe9e2",
-      "bytes": 2165,
-      "mtime": "2026-10-01T22:19:31.092Z"
+      "short": "9ec6dfc7",
+      "sha256": "9ec6dfc71748fb6a5d193ec3ae5ac6969b5c3ad47affe43a416d37443ae31bbd",
+      "bytes": 2728,
+      "mtime": "2026-10-09T11:11:36.296Z"
     },
     {
       "path": "scripts/interfaces/mechanism_audit.interface.json",
@@ -1820,6 +1834,13 @@
       "mtime": "2026-09-30T22:27:43.331Z"
     },
     {
+      "path": "scripts/interfaces/zone_concurrency.interface.json",
+      "short": "cb53418e",
+      "sha256": "cb53418e20d69e6504381c0ed8fc872dfcee306fcd4fed4699e3937a819a3595",
+      "bytes": 3485,
+      "mtime": "2026-10-09T11:12:03.694Z"
+    },
+    {
       "path": "scripts/knowledge_audit.mjs",
       "short": "afef1317",
       "sha256": "afef1317243b0f1934c00e220d44afbc6229cabf074f9f6e10e660e9975a3672",
@@ -1968,10 +1989,10 @@
     },
     {
       "path": "scripts/market_guard_patch.mjs",
-      "short": "f135ef8b",
-      "sha256": "f135ef8b017e366fe8bb5e8d52b0c4f845940e8b1d4ced69869f40ad11a669a5",
-      "bytes": 14083,
-      "mtime": "2026-10-02T23:16:28.437Z"
+      "short": "640b27cb",
+      "sha256": "640b27cbb78d1bdf6d9a8e7ad80f19cb6419caa1cfbc11794d94d41a8bf868be",
+      "bytes": 23593,
+      "mtime": "2026-10-09T11:09:10.683Z"
     },
     {
       "path": "scripts/mechanism_audit.mjs",
@@ -2052,24 +2073,24 @@
     },
     {
       "path": "scripts/plugin_install_queue.mjs",
-      "short": "2d54c89c",
-      "sha256": "2d54c89c00ab332c0916d0cd3c0c76149bb3f497d16bd71c49c5547b31ce8a3a",
-      "bytes": 15508,
-      "mtime": "2026-10-01T22:19:27.075Z"
+      "short": "1964096f",
+      "sha256": "1964096f20af3f015efdcceefb7b995db008a0651a0d50100f09f7b240bf664e",
+      "bytes": 18497,
+      "mtime": "2026-10-09T11:08:06.397Z"
     },
     {
       "path": "scripts/plugin_reload.sh",
-      "short": "51d9ba3e",
-      "sha256": "51d9ba3eaf7e993ae4bdafb675084af5e08bca2fa6d5348b5dc98541712fec88",
-      "bytes": 6156,
-      "mtime": "2026-10-01T22:21:16.446Z"
+      "short": "f791430d",
+      "sha256": "f791430d04c641a472737480cf3a8279d17ade3079d628f80de9194f2904a554",
+      "bytes": 7831,
+      "mtime": "2026-10-09T11:05:44.484Z"
     },
     {
       "path": "scripts/plugin_sync.sh",
-      "short": "1640cdd1",
-      "sha256": "1640cdd149c49c2a339cc13beb03d1ff22992475d0f0c30f81232a0110088b68",
-      "bytes": 10186,
-      "mtime": "2026-10-02T23:15:56.604Z"
+      "short": "13fa257b",
+      "sha256": "13fa257bf7c008164227d44e1039eb352dde8aee7f4eacd217613542972485cd",
+      "bytes": 12192,
+      "mtime": "2026-10-09T11:05:41.196Z"
     },
     {
       "path": "scripts/probe_long_output.mjs",
@@ -2308,6 +2329,13 @@
       "sha256": "0b0c8facbe0168f96ddd05de457ffa3fcae87127955bda8cefb10827a047ea21",
       "bytes": 10175,
       "mtime": "2026-09-30T21:51:08.996Z"
+    },
+    {
+      "path": "scripts/zone_concurrency.mjs",
+      "short": "707d9c9f",
+      "sha256": "707d9c9fbeef25f238244885f3507faef8f7dafbee6a451dcdac0b8c403145f0",
+      "bytes": 36307,
+      "mtime": "2026-10-09T11:09:34.277Z"
     },
     {
       "path": "templates/.gitkeep",

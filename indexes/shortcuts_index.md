@@ -1,8 +1,8 @@
 # 快速通道指令路由与地图式高速干道导航索引
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.13`
-> - **对应实施版本**：`v4.29.13`
+> - **当前文档版本**：`v4.29.15`
+> - **对应实施版本**：`v4.29.15`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **最后更新日期**：2026-09-16
 > - **版本状态**：`[Release 稳定生效]`
@@ -48,6 +48,7 @@
 |**“区间并发可证吗”**（“跨项目并发/不同工程能不能同时跑”）|G1干线|按写域区间裁决并发：跨区间并发、同区间串行，锁重叠由独立采样取证|实跑 [`node scripts/zone_concurrency.mjs --check`](../scripts/zone_concurrency.mjs)（出方案用 `--plan`，真派单用 `--run`）|[`ai-control/config/concurrency_zones.json`](../ai-control/config/concurrency_zones.json)|
 |**“技能有没有载体”**（“空架子技能/技能物理触达”）|G1干线|技能层 178 条逐条判有无可执行载体|实跑 [`node scripts/skill_carrier_audit.mjs --check`](../scripts/skill_carrier_audit.mjs)|
 |**“管控机制瘦身”**（“压缩管控篇幅/token 用量”）|G2支线|能力等价+只许减不许涨（篇幅与 token 预算）|实跑 [`node scripts/token_budget_audit.mjs --check`](../scripts/token_budget_audit.mjs)|
+|**“管控跑得慢不慢”**（“执行效率/耗时预算/门禁多久”）|G1干线|实测整跑耗时并对预算判定；超预算判红，取不到证据不折算通过|实跑 [`bash scripts/control_profiler.sh --measure`](../scripts/control_profiler.sh)（判定用 `--check`，只读产物）|[`ai-control/config/perf_budget.conf`](../ai-control/config/perf_budget.conf)|
 |**“任务列表面板在跑吗”**（“逐条进度/完成打钩面板”）|G1干线|判定任务列表面板（逐条进度+完成打钩）是否触达物理层|实跑 [`node scripts/todo_panel_audit.mjs --check`](../scripts/todo_panel_audit.mjs)|
 |**“生态扩展”**|G1干线|查阅外部智能体扩展生态|读取 [`indexes/extension_ecosystem.md`](extension_ecosystem.md)|
 |**“生成图表”**|G1干线|查阅图表标准与决策树|读取 [`docs/diagram_generation_guide.md`](../docs/diagram_generation_guide.md)|

@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-09T11:11:41.521Z",
+  "generatedAt": "2026-10-10T07:07:54.379Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 281,
+  "total": 282,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 3,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 96
+    "脚本 (CLI)": 97
   },
-  "withInterface": 281,
+  "withInterface": 282,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1883,6 +1883,15 @@
       "invoke": "bash scripts/control_gates.sh",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/control_gates.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.control_profiler",
+      "path": "scripts/control_profiler.sh",
+      "desc": "",
+      "invoke": "bash scripts/control_profiler.sh",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/control_profiler.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

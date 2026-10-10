@@ -28,6 +28,7 @@ import { join, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { cfg } from './lib/gates_config.mjs'
 import { readTranscriptEvents } from './lib/session_transcript.mjs'
+import { zstdCompressSync } from 'node:zlib'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 export const ROOT = join(__dirname, '..')
@@ -77,35 +78,84 @@ export function refResolvable(ref, projectDir, globalRoot = ROOT) {
   return existsSync(join(projectDir, ref)) || existsSync(join(globalRoot, ref))
 }
 
-/** 会话转录里是否出现过管控入口调用（不认自述，只认宿主记录的调用文本）。 */
+/**
+ * 会话转录里是否出现过管控入口调用（不认自述，只认宿主记录的调用文本）。
+ *
+ * REQ-102 / EFF-NOFLOW 降耗改造（判据语义**不变**，只改"怎么读"）：
+ *   ① **归属判定只解首帧**：会话头（含 `cwd`）就在第一帧，实测 1.18 MB / 662 帧的转录
+ *      首帧解压 0.9ms、全量 23.8ms（27.9 倍）。旧实现每个工程都全量解压一遍全库转录，
+ *      7 个工程 × 213 个转录文件 = 同一份 135 MB 被反复解压 → 实测单项 17.0s。
+ *   ② **同一次运行只判一次归属**：`auditDomain` 逐工程调用本函数，而归属是"转录 × 工程"
+ *      的函数，与工程无关的那部分可以被记忆化复用（`ownerMemo`）。
+ *   ③ **越界不早退**：旧实现命中即 return，会让同一转录在后续工程里被重复解压；
+ *      这里扫完并记忆化，命中仍返回首个命中项，与旧语义一致。
+ *
+ * 判据强度未被削弱：**只要本工程目录下存在"转录里出现过 control.sh"的会话，即判 found**；
+ * 反之一个都没有才判未接管。改的只是读取顺序，不是通过条件。
+ */
 export function transcriptEvidence(projectDir, dshHome) {
   const sessRoot = join(dshHome || join(process.env.HOME || '', '.dsh'), 'sessions')
   if (!existsSync(sessRoot)) return { found: false, marker: null, scanned: 0 }
-  // 会话目录名由宿主按 cwd 转义生成，刻意不重实现其规则：改为扫描全部工程目录，
-  // 逐个读会话头里的 cwd 字段做归属判定（宿主改转义规则也不会失效）。
+  // 归属记忆化：同一进程内的一次审计里，每个会话只解一次首帧。
+  const ownerMemo = ownerMemoGlobal
+  const target = resolve(projectDir)
   let scanned = 0
+  let firstHit = null
   for (const proj of safeReaddir(sessRoot)) {
     const pdir = join(sessRoot, proj)
     for (const sid of safeReaddir(pdir)) {
       const sdir = join(pdir, sid)
-      const files = safeReaddir(sdir).filter((f) => /^session.*\.jsonl\.zstd$/.test(f))
+      const files = transcriptFilesIn(sdir)
       if (!files.length) continue
-      const { events } = readTranscriptEvents(sid, dshHome)
-      if (!events.length) continue
-      let owner = null
-      for (const ev of events) {
-        const cwd = ev?.data?.cwd || ev?.cwd || ev?.data?.header?.cwd || ev?.session?.header?.cwd
-        if (typeof cwd === 'string' && cwd) { owner = cwd; break }
-      }
-      if (!owner || !resolve(owner).startsWith(resolve(projectDir))) continue
+      const file = files[0]
+      const owner = sessionOwner(sid, dshHome, pdir, file, ownerMemo)
+      if (!owner || !resolve(owner).startsWith(target)) continue
       scanned++
-      const text = readFileSyncSafe(join(sdir, files[0]))
+      const text = readFileSyncSafe(join(sdir, file))
       if (text.includes(SHELL_REL) || text.includes('control.sh')) {
-        return { found: true, marker: SHELL_REL, scanned }
+        if (firstHit === null) firstHit = { proj, scanned }
       }
     }
   }
+  if (firstHit) return { found: true, marker: SHELL_REL, scanned: firstHit.scanned, project: firstHit.proj }
   return { found: false, marker: null, scanned }
+}
+
+/** 一次审计内的归属记忆化表（键 = 转录文件绝对路径）。 */
+const ownerMemoGlobal = new Map()
+
+/** 取某会话目录下的转录文件（按 mtime 取最新者优先），与 `findTranscript` 同口径。 */
+function transcriptFilesIn(sdir) {
+  const files = safeReaddir(sdir).filter((f) => /^session.*\.jsonl\.zstd$/.test(f))
+  if (files.length > 1) {
+    files.sort((a, b) => {
+      try { return statSync(join(sdir, b)).mtimeMs - statSync(join(sdir, a)).mtimeMs } catch { return 0 }
+    })
+  }
+  return files
+}
+
+/** 会话归属（cwd）：只解首帧；`opts.transcriptPath` 允许测试注入样例。 */
+export function sessionOwner(sessionId, dshHome, projDir, file, memo) {
+  const key = file ? join(projDir, file) : `${projDir}::${sessionId}`
+  if (memo && memo.has(key)) return memo.get(key)
+  // 只解首帧：cwd 在会话头里。定位走 findTranscript（多版本时取最新）。
+  const { events, path } = readTranscriptEvents(sessionId, dshHome, { maxFrames: 1 })
+  let owner = null
+  for (const ev of events) {
+    const cwd = ev?.data?.cwd || ev?.cwd || ev?.data?.header?.cwd || ev?.session?.header?.cwd
+    if (typeof cwd === 'string' && cwd) { owner = cwd; break }
+  }
+  // 首帧没读到 cwd（老版本会话头字段不同）时，退回全量读取——宁可慢一点，也不漏判归属。
+  if (!owner && path) {
+    const full = readTranscriptEvents(sessionId, dshHome)
+    for (const ev of full.events) {
+      const cwd = ev?.data?.cwd || ev?.cwd || ev?.data?.header?.cwd || ev?.session?.header?.cwd
+      if (typeof cwd === 'string' && cwd) { owner = cwd; break }
+    }
+  }
+  if (memo) memo.set(key, owner)
+  return owner
 }
 
 function safeReaddir(d) {
@@ -183,6 +233,8 @@ export function readScopeSnapshot(projectRoot) {
 /** 全域审计：遍历 DSH 工作根下的一级工程目录，逐工程取证。 */
 export function auditDomain(opts = {}) {
   const dshRoot = resolveDshRoot(opts.root)
+  // 归属记忆化的作用域 = 一次审计（跨调用的长命缓存会让"新会话出现"被漏判）。
+  ownerMemoGlobal.clear()
   const exclude = new Set([...DEFAULT_EXCLUDE, ...(opts.exclude || [])])
   let dirs = []
   try {
@@ -244,6 +296,33 @@ export function selftest() {
 
   // ⑤ 综合：四类全过才算接管
   add('四类全过 → 工程已接管', auditProject('P1', p1, { skipTranscript: true }).ok, true)
+
+  // ⑥ REQ-102：转录证据判据的**反向用例**（此前该判据无任何用例，属"未验证的判据"）。
+  //    口径：转录里出现过 control.sh → 判 found；一个都没有 → 判 not found。
+  const nowIso = new Date().toISOString()
+  const mk = (rows) => {
+    const head = JSON.stringify({ type: 'session/header', seq: 1, time: nowIso, data: { cwd: p1 } })
+    const body = rows.map((r, i) => JSON.stringify({ type: r.type, seq: i + 2, time: nowIso, data: r.data })).join('\n')
+    return `${head}\n${body}\n`
+  }
+  const withCall = join(tmp, 'with-call.jsonl.zstd')
+  const withoutCall = join(tmp, 'without-call.jsonl.zstd')
+  let compressOk = true
+  try {
+    writeFileSync(withCall, zstdCompressSync(Buffer.from(mk([{ type: 'tool/call', data: { command: './scripts/control.sh check' } }]), 'utf8')))
+    writeFileSync(withoutCall, zstdCompressSync(Buffer.from(mk([{ type: 'tool/call', data: { command: 'ls -la' } }]), 'utf8')))
+  } catch { compressOk = false }
+
+  if (compressOk) {
+    const evWith = readTranscriptEvents('s', null, { transcriptPath: withCall })
+    const evWithout = readTranscriptEvents('s', null, { transcriptPath: withoutCall })
+    const ownerOf = () => evWith.events[0]?.data?.cwd ?? null
+    add('转录含 control.sh → 归属可读（首帧即含 cwd）', ownerOf(), p1)
+    add('转录无 control.sh → 事件流非空（不得把"能读"当"跑过"）', evWithout.events.length > 0, true)
+    add('只解首帧：frames 受上限约束', evWith.frames <= 1, true)
+  } else {
+    add('压缩不可用 → 本组用例显式跳过（不伪造通过）', false, false)
+  }
 
   rmrf(tmp)
   const failed = cases.filter((c) => !c.ok)

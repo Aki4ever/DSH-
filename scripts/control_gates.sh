@@ -663,7 +663,8 @@ check_concurrency() {
     "plugin_install_queue.mjs|安装队列有界不空等" \
     "skill_carrier_audit.mjs|技能层载体齐备" \
     "token_budget_audit.mjs|管控篇幅受管且能力不降" \
-    "zone_concurrency.mjs|区间并发可证(跨区间并发/同区间串行)"; do
+    "zone_concurrency.mjs|区间并发可证(跨区间并发/同区间串行)" \
+    "control_profiler.sh|耗时预算可证(实测整跑在预算内)"; do
     name="${entry%%|*}"; label="${entry##*|}"
     if [ ! -f "$script_dir/$name" ]; then
       undecided=$((undecided+1))
@@ -671,7 +672,11 @@ check_concurrency() {
       continue
     fi
     total=$((total+1))
-    ( cd "$PROJECT_ROOT" && "$node_bin" "$script_dir/$name" --check >/dev/null 2>&1 )
+    # REQ-102：判定器可能是 .sh（耗时取证器）。此前一律按 node 跑，会漏掉 shell 判定器。
+    case "$name" in
+      *.sh) ( cd "$PROJECT_ROOT" && bash "$script_dir/$name" --check >/dev/null 2>&1 ) ;;
+      *)    ( cd "$PROJECT_ROOT" && "$node_bin" "$script_dir/$name" --check >/dev/null 2>&1 ) ;;
+    esac
     rc=$?
     if [ "$rc" -eq 0 ]; then
       detail="${detail}${label}:✅; "
@@ -694,11 +699,11 @@ check_concurrency() {
   fi
   if (( fails > 0 )); then
     DETAIL="$detail"
-    HINT="未达标 ${fails} 项：逐条修复命令见 node scripts/task_layer_tree.mjs --check 等六条判定器输出（含 zone_concurrency.mjs --check，REQ-101 区间并发可证）"
+    HINT="未达标 ${fails} 项：逐条修复命令见 node scripts/task_layer_tree.mjs --check 等七条判定器输出（含 zone_concurrency.mjs --check，REQ-101；control_profiler.sh --check，REQ-102 耗时预算）"
     return 1
   fi
   DETAIL="$detail"
-  HINT="任务层树可溯源 · 并发调度拒死锁活锁 · 安装队列有界 · 技能载体齐备 · 管控篇幅只减不涨"
+  HINT="任务层树可溯源 · 并发调度拒死锁活锁 · 安装队列有界 · 技能载体齐备 · 管控篇幅只减不涨 · 区间并发可证 · 耗时在预算内（REQ-102）"
   return 0
 }
 
