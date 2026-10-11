@@ -15,7 +15,8 @@
  * ==============================================================================
  */
 
-import { evaluate, Config, renderCard } from './index.mjs'
+import { evaluate, Config, renderCard, isScopedDiagnostic } from './index.mjs'
+import { fileURLToPath } from 'node:url'
 
 let pass = 0
 let fail = 0
@@ -60,6 +61,36 @@ const STALE = 999999   // 缓存过期
  */
 const ConfigNoTodo = { ...Config, enforceTodo: false }
 
+// ── 用户授权的受限诊断 ─────────────────────────────────────────────────────
+const diagnosticRoot = fileURLToPath(new URL('../../', import.meta.url)).replace(/\/$/, '')
+for (const command of [
+  'node scripts/legacy_align_scan.mjs --root . --top 10000',
+  'node scripts/incident_evidence_prototype.mjs --selftest',
+  'node scripts/align_version.mjs --dry-run',
+  'node scripts/fingerprint_index.mjs --drift',
+  'git --no-pager --no-optional-locks show bba3fa9:docs/constraint_mechanism_optimize_3.md',
+  'git --no-pager --no-optional-locks log -8 --format=oneline -- scripts/anti_hallucination_audit.mjs',
+  'shasum -a 256 ai-control/reports/state/history_bytes_zGmzM0/anti_hallucination_audit.mjs',
+]) {
+  const ex = { name: 'bash', arguments: { command, workdir: diagnosticRoot } }
+  check(`受限诊断允许 ${command}`, isScopedDiagnostic(ex), true)
+  check(`红灯下诊断允许 ${command}`, evaluate(ex, statusBlocked, Config, FRESH), undefined)
+}
+for (const command of [
+  'node scripts/align_version.mjs',
+  'node scripts/align_version.mjs --dry-run --root /tmp',
+  'node scripts/fingerprint_index.mjs --scan',
+  'node scripts/fingerprint_index.mjs --drift; true',
+  'node scripts/incident_evidence_prototype.mjs --selftest; true',
+  'node scripts/legacy_align_scan.mjs --root . > out',
+  'node scripts/legacy_align_scan.mjs --root /tmp',
+  'git --no-pager --no-optional-locks show HEAD:docs/requirements.md',
+  'git push', 'shasum -a 256 /etc/passwd',
+  'shasum -a 256 ai-control/reports/state/history_bytes_zGmzM0/*',
+]) check(`受限诊断拒绝 ${command}`, isScopedDiagnostic({ name: 'bash', arguments: { command, workdir: diagnosticRoot } }), false)
+check('诊断不得跨工作目录', isScopedDiagnostic({ name: 'bash', arguments: { command: 'node scripts/incident_evidence_prototype.mjs --selftest', workdir: '/tmp' } }), false)
+check('诊断无目录证据拒绝', isScopedDiagnostic({ name: 'bash', arguments: { command: 'node scripts/incident_evidence_prototype.mjs --selftest' } }), false)
+
 // ── 用例 ─────────────────────────────────────────────────────────────────────
 // 1) 门禁未通过 → 改动型工具必须被拒
 check('门禁未过 · write 被拒', evaluate({ name: 'write', ...args({ path: 'a.md', content: 'x' }) }, statusBlocked, Config, FRESH) !== undefined, true)
@@ -93,13 +124,15 @@ check('逃生舱 · 写检测器脚本放行', evaluate({ name: 'edit', ...args(
 //     是最自然的写法。旧实现只看脚本 token 的前一个 token（`&&`），故逃生舱失效，
 //     与消息推荐的另一条路（设 DSH_CONTROL_GUARD=off，同样需要 bash）叠加成完全死锁。
 //     下面这些用例当时全都会失败，补上后该类回归无法再次逃过自检。
-check('逃生舱 · cd 连接符后调用脚本放行', evaluate({ name: 'bash', ...args({ command: 'cd "/Users/x/全局规则" && ./scripts/control_gates.sh check' }) }, statusBlocked, Config, FRESH), undefined)
-check('逃生舱 · 分号连接后调用脚本放行', evaluate({ name: 'bash', ...args({ command: 'cd /tmp; ./scripts/control_gates.sh check' }) }, statusBlocked, Config, FRESH), undefined)
-check('逃生舱 · 管道后调用脚本放行', evaluate({ name: 'bash', ...args({ command: 'echo x | ./scripts/redundancy_scan.mjs' }) }, statusBlocked, Config, FRESH), undefined)
+// 安全收紧：用工具workdir代替cd；复合命令必须拆开，不能让白名单覆盖整条shell。
+for (const command of ['cd "/Users/x/全局规则" && ./scripts/control_gates.sh check', 'cd /tmp; ./scripts/control_gates.sh check', 'echo x | ./scripts/redundancy_scan.mjs']) {
+  check(`逃生舱 · 复合调用拒绝 ${command}`, evaluate({ name: 'bash', ...args({ command }) }, statusBlocked, Config, FRESH) !== undefined, true)
+}
+check('逃生舱 · 独立调用与workdir仍可用', evaluate({ name: 'bash', ...args({ command: './scripts/control_gates.sh check', workdir: fileURLToPath(new URL('../../', import.meta.url)) }) }, statusBlocked, Config, FRESH), undefined)
 check('逃生舱 · 裸 bash 调用脚本放行', evaluate({ name: 'bash', ...args({ command: 'bash scripts/control_gates.sh check' }) }, statusBlocked, Config, FRESH), undefined)
 // 含空格的绝对 node 路径（本机 node 不在 PATH，只有这条真实可用），必须带引号才是一个 token
 check('逃生舱 · 带引号绝对 node 路径放行', evaluate({ name: 'bash', ...args({ command: '"/Volumes/DSH Desktop/DSH Desktop.app/Contents/Resources/runtime/node" scripts/redundancy_scan.mjs --root .' }) }, statusBlocked, Config, FRESH), undefined)
-check('逃生舱 · cd 后带引号绝对 node 放行', evaluate({ name: 'bash', ...args({ command: 'cd "/Users/x/全局规则" && "/Volumes/DSH Desktop/DSH Desktop.app/Contents/Resources/runtime/node" scripts/redundancy_scan.mjs --root .' }) }, statusBlocked, Config, FRESH), undefined)
+check('逃生舱 · cd 包装绝对node拒绝', evaluate({ name: 'bash', ...args({ command: 'cd "/Users/x/全局规则" && "/Volumes/DSH Desktop/DSH Desktop.app/Contents/Resources/runtime/node" scripts/redundancy_scan.mjs --root .' }) }, statusBlocked, Config, FRESH) !== undefined, true)
 
 // 3a-反例：包裹形式**不能**变成放行任意命令的后门
 check('逃生舱反例 · && 后接非脚本命令被拒', evaluate({ name: 'bash', ...args({ command: 'cd /tmp && echo scripts/control_gates.sh' }) }, statusBlocked, Config, FRESH) !== undefined, true)
@@ -114,11 +147,11 @@ check('逃生舱 · 拦截层诊断脚本在逃生舱白名单内',
 check('逃生舱 · 重启判据脚本也在白名单内',
   Config.escapeScriptPrefixes.includes('scripts/verify_escape_hatch.sh'), true)
 check('逃生舱 · 绝对路径调用重启判据脚本放行',
-  evaluate({ name: 'bash', ...args({ command: '/Users/x/全局规则/scripts/verify_escape_hatch.sh' }) }, statusBlocked, Config, FRESH), undefined)
+  evaluate({ name: 'bash', ...args({ command: JSON.stringify(fileURLToPath(new URL('../../scripts/verify_escape_hatch.sh', import.meta.url))) }) }, statusBlocked, Config, FRESH), undefined)
 check('逃生舱 · 绝对路径调用诊断脚本放行',
-  evaluate({ name: 'bash', ...args({ command: '/Users/x/全局规则/scripts/verify_guard_live.sh' }) }, statusBlocked, Config, FRESH), undefined)
-check('逃生舱 · cd 后调用诊断脚本放行',
-  evaluate({ name: 'bash', ...args({ command: 'cd "/Users/x/全局规则" && ./scripts/verify_guard_live.sh' }) }, statusBlocked, Config, FRESH), undefined)
+  evaluate({ name: 'bash', ...args({ command: JSON.stringify(fileURLToPath(new URL('../../scripts/verify_guard_live.sh', import.meta.url))) }) }, statusBlocked, Config, FRESH), undefined)
+check('逃生舱 · cd 包装诊断脚本拒绝',
+  evaluate({ name: 'bash', ...args({ command: 'cd "/Users/x/全局规则" && ./scripts/verify_guard_live.sh' }) }, statusBlocked, Config, FRESH) !== undefined, true)
 
 // 3b) 逃生舱反例（关键补充）：以下调用**不属于**修复管控自身，必须被拒。
 //     这些用例正是旧实现（参数含 `control_` 即放行）的漏网之鱼，
@@ -129,6 +162,34 @@ check('逃生舱反例 · 命令尾部注释含 ai-control 被拒', evaluate({ n
 check('逃生舱反例 · 提及管控但非执行被拒', evaluate({ name: 'bash', ...args({ command: 'echo scripts/control_gates.sh' }) }, statusBlocked, Config, FRESH) !== undefined, true)
 check('逃生舱反例 · 写普通项目文件被拒', evaluate({ name: 'write', ...args({ path: 'src/app.ts', content: 'x' }) }, statusBlocked, Config, FRESH) !== undefined, true)
 check('逃生舱反例 · 内容里提 .dsh-control 不再放行', evaluate({ name: 'edit', ...args({ path: '/tmp/other/main.ts', new_string: '// .dsh-control' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+
+for (const field of ['content', 'old_string', 'new_string', 'description']) {
+  check(`逃生目标字段 · ${field}不能提供通行证`, evaluate({ name: 'edit', ...args({ file_path: 'src/app.ts', [field]: 'ai-control/config/gates.conf' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+}
+check('逃生目标字段 · file_path修复入口保留', evaluate({ name: 'edit', ...args({ file_path: 'ai-control/config/gates.conf', new_string: 'x' }) }, statusBlocked, Config, FRESH), undefined)
+
+for (const file_path of ['ai-control/../src/app.ts', 'scripts/../../outside.ts', '/tmp/ai-control/../other.ts', 'ai-control\\..\\src\\app.ts', 'ai-control/invalid\0name']) {
+  check(`逃生路径 · 跳出或非法目标拒绝 ${JSON.stringify(file_path)}`, evaluate({ name: 'edit', ...args({ file_path, new_string: 'x' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+}
+
+for (const file_path of ['/tmp/ai-control/config/gates.conf', '/tmp/scripts/probe.mjs', 'ai-control-foreign/config/gates.conf']) {
+  check(`逃生根绑定 · 外部同名目录拒绝 ${file_path}`, evaluate({ name: 'edit', ...args({ file_path }) }, statusBlocked, Config, FRESH) !== undefined, true)
+}
+check('逃生根绑定 · 异工作目录相对目标拒绝', evaluate({ name: 'edit', ...args({ file_path: 'ai-control/config/gates.conf', workdir: '/tmp' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+check('逃生根绑定 · 当前仓库绝对目标保留', evaluate({ name: 'edit', ...args({ file_path: fileURLToPath(new URL('../config/gates.conf', import.meta.url)) }) }, statusBlocked, Config, FRESH), undefined)
+
+for (const command of ['/tmp/scripts/control_gates.sh check', 'node /tmp/scripts/physical_reach_audit.mjs --check', './foreign/../scripts/control_gates.sh check']) {
+  check(`逃生脚本根绑定拒绝 ${command}`, evaluate({ name: 'bash', ...args({ command }) }, statusBlocked, Config, FRESH) !== undefined, true)
+}
+check('逃生脚本根绑定 · 异工作目录拒绝', evaluate({ name: 'bash', ...args({ command: './scripts/control_gates.sh check', workdir: '/tmp' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+
+// 逃生命令不得为同次调用中的无关动作提供通行证；这里只测试纯判定器，不执行命令。
+check('逃生舱反例 · 合法检查后接普通动作仍被拒', evaluate({ name: 'bash', ...args({ command: './scripts/control_gates.sh check; echo unrelated' }) }, statusBlocked, Config, FRESH) !== undefined, true)
+check('逃生舱反例 · 解释器代码参数提及脚本仍被拒', evaluate({ name: 'bash', ...args({ command: "node -e 'console.log(1)' scripts/control_gates.sh" }) }, statusBlocked, Config, FRESH) !== undefined, true)
+
+for (const command of ['npx scripts/control_gates.sh', "node '' scripts/control_gates.sh", "'./scripts/control_gates.sh", 'node "scripts/control_gates.sh', './scripts/control_gates.sh check > /tmp/probe', './scripts/control_gates.sh check &']) {
+  check(`逃生参数边界拒绝 ${command}`, evaluate({ name: 'bash', ...args({ command }) }, statusBlocked, Config, FRESH) !== undefined, true)
+}
 
 // 4) 依据不可证实 → 失败关闭；状态陈旧 → 放行（语义边界见 index.mjs 的 STALE_MS 注释）
 //    为什么陈旧要放行：实测真实调用派发延迟中位 3.93s、p90 16.90s，38.8% 超过 5s 窗口。

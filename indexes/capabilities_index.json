@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-10T09:43:26.643Z",
+  "generatedAt": "2026-10-11T05:36:26.866Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 288,
+  "total": 289,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 3,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 103
+    "脚本 (CLI)": 104
   },
-  "withInterface": 288,
+  "withInterface": 289,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -2084,6 +2084,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.incident_evidence_prototype",
+      "path": "scripts/incident_evidence_prototype.mjs",
+      "desc": "",
+      "invoke": "node scripts/incident_evidence_prototype.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/incident_evidence_prototype.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.init_dir",
       "path": "scripts/init_dir.sh",
       "desc": "",
@@ -2248,7 +2257,7 @@
       "layer": "脚本 (CLI)",
       "id": "cli.rules.physical_reach_audit",
       "path": "scripts/physical_reach_audit.mjs",
-      "desc": "==============================================================================",
+      "desc": "",
       "invoke": "node scripts/physical_reach_audit.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/physical_reach_audit.interface.json"

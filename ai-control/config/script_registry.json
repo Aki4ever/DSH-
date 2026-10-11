@@ -1,14 +1,21 @@
 {
   "version": "1.0.0",
   "generatedAt": "2026-10-10T09:43:35.152Z",
-  "total": 122,
+  "total": 123,
   "rolesSummary": {
     "judge": 59,
     "tool": 54,
-    "test": 9,
+    "test": 10,
     "legacy": 0
   },
+  "manualAmendment": "REQ-103: append independent prototype as fixture test; generatedAt retains original generation timestamp",
   "scripts": [
+    {
+      "path": "scripts/incident_evidence_prototype.mjs",
+      "role": "test",
+      "referencedBy": ["ai-control/README.md", "scripts/interfaces/incident_evidence_prototype.interface.json"],
+      "note": "Independent fixture prototype only; no production incident closure"
+    },
     {
       "path": "scripts/agent_life.mjs",
       "role": "tool",

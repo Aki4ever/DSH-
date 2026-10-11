@@ -173,13 +173,23 @@ function gitDirty() {
   }
 }
 
-/** 读台账全部记录（坏行跳过）。 */
+/** 读台账全部记录；坏行必须失败关闭，不得隐去历史事故。 */
 export function readLedger(file = LEDGER) {
   if (!existsSync(file)) return []
   const recs = []
-  for (const line of readFileSync(file, 'utf8').split('\n')) {
+  const bytes = readFileSync(file)
+  const text = bytes.toString('utf8')
+  if (!Buffer.from(text, 'utf8').equals(bytes)) throw new Error('台账含非法UTF-8字节，拒绝替换解码后计算原始摘要')
+  for (const [index, line] of text.split('\n').entries()) {
     if (!line.trim()) continue
-    try { recs.push(JSON.parse(line)) } catch { /* 坏行跳过 */ }
+    let record
+    try { record = JSON.parse(line) } catch { throw new Error(`台账第${index + 1}行JSON损坏，拒绝跳过`) }
+    if (!record || typeof record !== 'object' || Array.isArray(record) || !Array.isArray(record.files)) {
+      throw new Error(`台账第${index + 1}行记录结构非法，拒绝跳过`)
+    }
+    // 非枚举元数据保持原记录对象序列化不变；绑定磁盘该行UTF-8字节（不含LF）。
+    Object.defineProperty(record, '__ledgerRawLineDigest', { value: createHash('sha256').update(line, 'utf8').digest('hex'), enumerable: false })
+    recs.push(record)
   }
   return recs
 }
@@ -246,7 +256,10 @@ export function evaluate(records, dirty, anchorFn = (rel) => anchor(toAbs(rel)),
     const now = anchorFn(rel)
     if (!now) { missing.push(rel); continue }
     if (now.sha256 !== info.sha256) {
-      const row = { path: rel, recorded: info.sha256.slice(0, 12), now: now.sha256.slice(0, 12) }
+      const row = { path: rel, recorded: info.sha256.slice(0, 12), now: now.sha256.slice(0, 12),
+        recordedSha256: info.sha256, currentSha256: now.sha256, recordedAt: info.at,
+        judge: info.record?.judge ?? null, judgeExit: info.record?.judgeExit ?? null,
+        reviewStatus: 'unreviewed', remediation: '核对原哈希内容与当前差异后逐项实跑；禁止仅刷新哈希消除漂移' }
       if (exempt.has(rel)) driftExempt.push({ ...row, reason: exempt.get(rel).reason })
       else drifts.push(row)
     }
@@ -264,6 +277,11 @@ export function evaluate(records, dirty, anchorFn = (rel) => anchor(toAbs(rel)),
     if (typeof j === 'string' && isBypassJudge(j)) {
       bypassJudges.push({
         at: r.at, judge: j, judgeExit: r.judgeExit,
+        recordObjectDigest: createHash('sha256').update(JSON.stringify(r)).digest('hex'),
+        digestScope: 'JSON.stringify(parsed-record); not raw JSONL bytes',
+        rawLineDigest: r.__ledgerRawLineDigest ?? null,
+        rawLineDigestScope: 'UTF-8 line excluding LF; CR retained; null for injected objects',
+        remediationStatus: 'open', // 仅定位；本判定器没有生产结清适配器。
         files: (r.files || []).map((f) => f.path).slice(0, 4),
       })
     }
@@ -418,7 +436,8 @@ function cmdCheck(args) {
   console.log('-----------------------------------------')
   if (res.bypassJudges.length) {
     console.log(`⛔ 台账存在 ${res.bypassJudges.length} 条绕过式判据：判据可被写成永远成功 = "认实跑证据"被击穿`)
-    console.log('   → 不得因"历史遗留"放行；需重跑真实判据并重新登记该文件')
+    console.log('   → 不得因"历史遗留"放行；重新登记仅闭环文件状态，不能清除历史事故')
+    console.log('   → 生产事故结清适配器未实现：保留原记录，补历史来源、差异审查、真实复验与独立认可证据')
   }
   console.log(ok ? '✅ 台账与磁盘一致：改动都有记录、记录都对得上、判定都跑过' : '⛔ 台账与磁盘不一致（见上）')
   process.exit(ok ? 0 : 1)
@@ -487,7 +506,31 @@ function cmdReport(args) {
 function cmdSelftest() {
   const tmp = mkdtempSync(join(tmpdir(), 'ledger-selftest-'))
   let passed = 0
-  const total = 7
+  const total = 18
+  const fixtureLedger = join(tmp, 'fixture.jsonl')
+  writeFileSync(fixtureLedger, Buffer.concat([Buffer.from('{"files":[],"note":"'), Buffer.from([0xff]), Buffer.from('"}\n')]))
+  let invalidEncodingDenied = false
+  try { readLedger(fixtureLedger) } catch (e) { invalidEncodingDenied = e.message.includes('非法UTF-8') }
+  if (invalidEncodingDenied) { console.log('✅ 非法UTF-8不得替换解码后冒充原始字节'); passed++ }
+  else console.error('❌ 非法编码未被拒绝')
+  for (const bad of ['{broken', 'null', '[]', '{"files":{}}']) {
+    writeFileSync(fixtureLedger, '{"files":[]}\n' + bad + '\n', 'utf8')
+    let denied = false
+    try { readLedger(fixtureLedger) } catch (e) { denied = e.message.includes('第2行') }
+    if (denied) { console.log('✅ 损坏台账行不静默跳过：' + bad); passed++ }
+    else console.error('❌ 损坏台账行被跳过或错误定位缺失')
+  }
+  writeFileSync(fixtureLedger, '\n{"files":[]}\n\n', 'utf8')
+  if (readLedger(fixtureLedger).length === 1) { console.log('✅ 合法记录与空行仍可读取'); passed++ }
+  else console.error('❌ 合法记录读取失败')
+  const spaced = ' { "files": [], "judge": "node scripts/x.mjs --check || true" }\r'
+  writeFileSync(fixtureLedger, spaced + '\n', 'utf8')
+  const loaded = readLedger(fixtureLedger)[0]
+  const rawRow = evaluate([loaded], [], anchor).bypassJudges[0]
+  if (rawRow.rawLineDigest === createHash('sha256').update(spaced).digest('hex')
+      && rawRow.rawLineDigest !== rawRow.recordObjectDigest && !JSON.stringify(loaded).includes('__ledgerRawLineDigest')) {
+    console.log('✅ 原始行保留空白及CR摘要，元数据不污染原对象'); passed++
+  } else console.error('❌ 原始行摘要范围或非枚举元数据错误')
   const f = join(tmp, 'a.txt')
   writeFileSync(f, 'hello v1\n', 'utf8')
 
@@ -504,6 +547,13 @@ function cmdSelftest() {
   r = evaluate(recs, [], (rel) => anchor(rel === f ? f : rel))
   if (r.drifts.length === 1) { console.log('✅ 态2 改了没重记 → 检出漂移'); passed++ }
   else console.error('❌ 态2 期望 1 处漂移，实得 ' + r.drifts.length)
+
+  const review = r.drifts[0]
+  if (review?.recordedSha256 === a1.sha256 && review?.currentSha256 === anchor(f).sha256
+      && review?.recordedAt === recs[0].at && review?.judge === recs[0].judge
+      && review?.judgeExit === 0 && review?.reviewStatus === 'unreviewed' && r.drifts.length === 1) {
+    console.log('✅ 漂移复核包含完整锚点与原判据，仍判红'); passed++
+  } else console.error('❌ 漂移复核锚点不完整或漂移被消除')
 
   // 态 3：重新登记后 → 漂移清零
   const a2 = anchor(f)
@@ -523,6 +573,18 @@ function cmdSelftest() {
     if (r.bypassJudges.length === 1) { console.log(`✅ 态${4 + i} 绕过式判据被识别并判红：${j}`); passed++ }
     else console.error(`❌ 态${4 + i} 期望识别 1 条绕过式判据，实得 ${r.bypassJudges.length}`)
   }
+  for (const special of [{ at: '2026-10-10T07:11:38.812Z' }, { session: 'session-f9483760-7589-4102-9fb2-93860c828599' }]) {
+    const rec = [{ ...special, judge: 'node scripts/foo.mjs --check || true', judgeExit: 0, files: [] }]
+    if (evaluate(rec, [], anchor).bypassJudges.length === 1) { console.log('✅ 历史时间/会话不能豁免绕过式判据'); passed++ }
+    else console.error('❌ 历史污染被隐式豁免')
+  }
+  const incident = { at: 'fixture', judge: 'node scripts/foo.mjs --check || true', judgeExit: 0, files: [] }
+  const incidentRow = evaluate([incident], [], anchor).bypassJudges[0]
+  const changedRow = evaluate([{ ...incident, judgeExit: 1 }], [], anchor).bypassJudges[0]
+  if (incidentRow.recordObjectDigest === createHash('sha256').update(JSON.stringify(incident)).digest('hex')
+      && incidentRow.recordObjectDigest !== changedRow.recordObjectDigest && incidentRow.remediationStatus === 'open'
+      && incidentRow.digestScope.includes('not raw JSONL')) { console.log('✅ 事故对象摘要绑定整条记录且不冒充原始字节摘要'); passed++ }
+  else console.error('❌ 事故摘要或范围标记非法')
   // 态 6：parseJudgeArgv 对 "; true" 判据必须抛错拒绝登记
   let rejected = false
   try {

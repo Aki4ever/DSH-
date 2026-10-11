@@ -28,7 +28,7 @@
  * ==============================================================================
  */
 
-import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync, renameSync, realpathSync, openSync, closeSync, fstatSync, constants } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { join, dirname, relative, sep } from 'node:path'
@@ -182,6 +182,63 @@ export function diffIndex(index, current = null) {
 }
 function now_count(cur) { return cur.files.length }
 
+function sameFileSnapshot(a, b) {
+  return ['dev', 'ino', 'size', 'mtimeMs', 'ctimeMs'].every(k => a[k] === b[k])
+}
+
+/** 固定描述符读取，拒绝末级符号链接与读取期间变动。非恶意同用户的完备隔离。 */
+export function stableFingerprint(path) {
+  if (typeof path !== 'string' || !isManaged(path) || path.split('/').some(p => !p || p === '..' || p === '.')) throw new Error('指纹路径非法')
+  const absolute = join(realpathSync(REPO_ROOT), path)
+  const fd = openSync(absolute, constants.O_RDONLY | constants.O_NOFOLLOW)
+  try {
+    const before = fstatSync(fd)
+    if (!before.isFile()) throw new Error('指纹目标不是普通文件')
+    const bytes = readFileSync(fd)
+    const after = fstatSync(fd), named = statSync(absolute)
+    if (!sameFileSnapshot(before, after) || !sameFileSnapshot(after, named) || bytes.length !== after.size) throw new Error('指纹读取期间文件变化')
+    if (relative(realpathSync(REPO_ROOT), realpathSync(absolute)).split(sep).join('/') !== path) throw new Error('指纹路径解析变化')
+    const full = createHash('sha256').update(bytes).digest('hex')
+    return { path, short: full.slice(0, 8), sha256: full, bytes: bytes.length, mtime: after.mtime.toISOString() }
+  } finally { closeSync(fd) }
+}
+
+/** 从真实磁盘构造定向增量提案；不写盘、不接受调用方填充哈希。 */
+export function proposeMissingFingerprints(index, paths) {
+  if (!Array.isArray(paths) || !paths.length || paths.length > 100) throw new Error('增量提案路径预算非法')
+  const root = realpathSync(REPO_ROOT)
+  const records = paths.map(path => {
+    if (typeof path !== 'string' || !isManaged(path) || path.split('/').some(p => !p || p === '..' || p === '.')) throw new Error('增量路径非法')
+    const absolute = realpathSync(join(root, path))
+    if (relative(root, absolute).split(sep).join('/') !== path || !statSync(absolute).isFile()) throw new Error('增量路径逃逸或符号链接别名')
+    return stableFingerprint(path)
+  })
+  return appendMissingFingerprints(index, records)
+}
+
+/** 定向增量登记：仅构造新对象，不写盘、不刷新旧条目、不抹除漂移。 */
+export function appendMissingFingerprints(index, records, { at = new Date().toISOString() } = {}) {
+  if (!index || !Array.isArray(index.files) || !Array.isArray(records) || !records.length) throw new Error('增量登记输入非法')
+  if (index.amendments !== undefined && !Array.isArray(index.amendments)) throw new Error('原索引增量历史非法')
+  if (index.files.some(f => !f || typeof f.path !== 'string' || !f.path)) throw new Error('原索引条目非法，拒绝修改')
+  if (index.count !== index.files.length) throw new Error('原索引计数不一致，拒绝静默修正')
+  const known = new Set(index.files.map(f => f.path))
+  if (known.size !== index.files.length) throw new Error('原索引路径重复，拒绝归一化历史')
+  for (const row of records) {
+    if (!row || typeof row.path !== 'string' || !isManaged(row.path) || row.path.split('/').some(p => p === '..' || p === '.')) throw new Error('路径不属于受管资产')
+    if (known.has(row.path)) throw new Error(`不得更新已有锚点或重复登记: ${row.path}`)
+    if (!/^[a-f0-9]{64}$/.test(row.sha256) || row.short !== row.sha256.slice(0, 8) || !Number.isSafeInteger(row.bytes) || row.bytes < 0 || !Number.isFinite(Date.parse(row.mtime))) throw new Error('增量指纹指标非法')
+    known.add(row.path)
+  }
+  if (!Number.isFinite(Date.parse(at))) throw new Error('增量登记时间非法')
+  const next = JSON.parse(JSON.stringify(index))
+  next.files.push(...JSON.parse(JSON.stringify(records)))
+  next.count = next.files.length
+  next.amendments = [...(next.amendments || []), { at, kind: 'append-missing-only', paths: records.map(r => r.path) }]
+  // generatedAt保留原全量扫描时间，追加不是全量重验。
+  return next
+}
+
 /**
  * ⚠️ 已**停用**（保留函数仅供历史对照，不再被任何命令调用）。
  *
@@ -235,12 +292,13 @@ export function writeLedger(index, path = join(REPO_ROOT, 'memory', 'asset_finge
 export function writeIndex(index, path = INDEX_PATH) {
   mkdirSync(dirname(path), { recursive: true })
   withLockSync('assets:fingerprint_index', () => {
-    const tmp = `${path}.tmp-${process.pid}`
-    writeFileSync(tmp, `${JSON.stringify(index, null, 2)}\n`, 'utf8')
-    try { rmSync(path, { force: true }) } catch { /* ignore */ }
-    // 用 rename 保证读者永远看到完整 JSON
-    writeFileSync(path, readFileSync(tmp, 'utf8'), 'utf8')
-    rmSync(tmp, { force: true })
+    const tmp = `${path}.tmp-${process.pid}-${Date.now()}`
+    if (realpathSync(dirname(tmp)) !== realpathSync(dirname(path)) || !path.endsWith('.json')) throw new Error('指纹发布路径非法')
+    const payload = `${JSON.stringify(index, null, 2)}\n`
+    writeFileSync(tmp, payload, { encoding: 'utf8', flag: 'wx' })
+    if (readFileSync(tmp, 'utf8') !== payload) throw new Error('指纹暂存回读不一致')
+    // 不先删除旧索引；同目录原子替换，失败保留旧索引。
+    renameSync(tmp, path)
   }, { why: '指纹索引整文件重写', staleMs: 30_000 })
   return path
 }
@@ -349,6 +407,38 @@ function cmdSelftest() {
   const d3 = diffIndex(ghost, cur)
   chk('反向用例：索引有磁盘无 → 检出消失', d3.missing.length === 1, `消失 ${d3.missing.length}`)
 
+  const base = { generatedAt: cur.generatedAt, files: [cur.files[0]], count: 1 }
+  const baseBefore = JSON.stringify(base)
+  const appended = appendMissingFingerprints(base, [cur.files[1]])
+  chk('增量：原对象不修改', JSON.stringify(base) === baseBefore)
+  chk('增量：旧锚点不刷新', JSON.stringify(appended.files[0]) === JSON.stringify(base.files[0]))
+  chk('增量：不冒充全盘重验', appended.generatedAt === base.generatedAt && appended.count === 2)
+  const rejects = fn => { try { fn(); return false } catch { return true } }
+  chk('增量：已有锚点拒绝', rejects(() => appendMissingFingerprints(base, [cur.files[0]])))
+  chk('增量：重复新路径拒绝', rejects(() => appendMissingFingerprints(base, [cur.files[1], cur.files[1]])))
+  chk('增量：路径逃逸拒绝', rejects(() => appendMissingFingerprints(base, [{ ...cur.files[1], path: 'scripts/../outside.mjs' }])))
+  chk('增量：假哈希拒绝', rejects(() => appendMissingFingerprints(base, [{ ...cur.files[1], sha256: 'fake' }])))
+  chk('增量：旧计数不一致拒绝', rejects(() => appendMissingFingerprints({ ...base, count: 9 }, [cur.files[1]])))
+  chk('增量：旧历史形状非法拒绝', rejects(() => appendMissingFingerprints({ ...base, amendments: 'bad' }, [cur.files[1]])))
+  chk('增量：旧空条目拒绝', rejects(() => appendMissingFingerprints({ ...base, files: [null] }, [cur.files[1]])))
+
+  const publicationDir = join(tmpdir(), `dsh-fingerprint-publish-${process.pid}-${Date.now()}`)
+  mkdirSync(publicationDir)
+  const publicationPath = join(publicationDir, 'index.json')
+  writeIndex(base, publicationPath)
+  writeIndex(appended, publicationPath)
+  chk('原子发布：真实临时索引替换后完整', JSON.stringify(readIndex(publicationPath)) === JSON.stringify(appended))
+  console.log(`  ℹ️ 发布测试临时产物保留：${publicationPath}`)
+  const snapshot = { dev: 1, ino: 2, size: 3, mtimeMs: 4, ctimeMs: 5 }
+  chk('稳定读取：同一快照接受', sameFileSnapshot(snapshot, { ...snapshot }))
+  for (const key of Object.keys(snapshot)) chk(`稳定读取：${key}变化拒绝`, !sameFileSnapshot(snapshot, { ...snapshot, [key]: 99 }))
+  chk('稳定读取：真实文件哈希一致', stableFingerprint(cur.files[1].path).sha256 === hashFile(cur.files[1].path).sha256)
+  const proposed = proposeMissingFingerprints(base, [cur.files[1].path])
+  chk('磁盘提案：哈希来自真实文件', proposed.files[1].sha256 === hashFile(cur.files[1].path).sha256)
+  chk('磁盘提案：旧对象不修改', JSON.stringify(base) === baseBefore)
+  chk('磁盘提案：目录拒绝', rejects(() => proposeMissingFingerprints(base, ['scripts'])))
+  chk('磁盘提案：逃逸路径拒绝', rejects(() => proposeMissingFingerprints(base, ['scripts/../AGENTS.md'])))
+
   console.log('-----------------------------------------')
   console.log(`共 ${pass + fail} 项 · ${fail === 0 ? '🎉 全部通过' : `❌ ${fail} 项未过`}`)
   return fail === 0 ? 0 : 1
@@ -356,6 +446,41 @@ function cmdSelftest() {
 
 function main() {
   const args = process.argv.slice(2)
+  if (args[0] === '--append-missing') {
+    try {
+      if (args.length < 2) throw new Error('需显式指定新增路径')
+      withLockSync('assets:fingerprint_index', () => {
+        const original = readFileSync(INDEX_PATH, 'utf8')
+        const index = JSON.parse(original)
+        const next = proposeMissingFingerprints(index, args.slice(1))
+        const newRows = next.files.slice(index.files.length)
+        for (const row of newRows) {
+          const current = stableFingerprint(row.path)
+          if (JSON.stringify(current) !== JSON.stringify(row)) throw new Error('新增资产在登记期间变化')
+        }
+        if (readFileSync(INDEX_PATH, 'utf8') !== original) throw new Error('索引在登记期间变化，拒绝覆盖')
+        if (JSON.stringify(next.files.slice(0, index.files.length)) !== JSON.stringify(index.files)) throw new Error('旧锚点发生变化，拒绝登记')
+        const tmp = `${INDEX_PATH}.append-${process.pid}-${Date.now()}.tmp`
+        if (realpathSync(dirname(tmp)) !== realpathSync(dirname(INDEX_PATH))) throw new Error('发布路径非法')
+        const payload = JSON.stringify(next, null, 2) + '\n'
+        writeFileSync(tmp, payload, { encoding: 'utf8', flag: 'wx' })
+        if (readFileSync(tmp, 'utf8') !== payload) throw new Error('暂存回读不一致')
+        renameSync(tmp, INDEX_PATH)
+        console.log(JSON.stringify({ mode: 'append-missing-only', preserved: index.files.length, appended: newRows.map(r => r.path), generatedAtPreserved: next.generatedAt }, null, 2))
+      }, { why: '仅新增缺失指纹，保留旧锚点' })
+      return 0
+    } catch (e) { console.error(e.message); return 2 }
+  }
+  if (args[0] === '--propose-missing') {
+    try {
+      if (args.length < 2) throw new Error('需显式指定缺失路径，不自动追加全部新增资产')
+      const index = readIndex()
+      if (!index) throw new Error('权威索引不可读，拒绝创建替代索引')
+      const next = proposeMissingFingerprints(index, args.slice(1))
+      console.log(JSON.stringify({ mode: 'proposal-only', writes: false, originalGeneratedAt: index.generatedAt, preservedCount: index.files.length, proposed: next.files.slice(index.files.length), amendment: next.amendments.at(-1) }, null, 2))
+      return 0
+    } catch (e) { console.error(e.message); return 2 }
+  }
   if (args.includes('selftest')) return cmdSelftest()
   if (args.includes('--scan')) return cmdScan()
   if (args.includes('--drift')) return cmdDrift()

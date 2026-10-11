@@ -1,8 +1,8 @@
 # 全能力层全景索引与双层接口法典 (Comprehensive Capabilities Index & Interface Matrix)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前文档版本**：`v4.29.16`
-> - **对应实施版本**：`v4.29.16`
+> - **当前文档版本**：`v4.29.17`
+> - **对应实施版本**：`v4.29.17`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
 > - **需求依据**：`REQ-051` / `CR-006`（能力层索引与正负案例规格）
 > - **生效状态**：`[Release 稳定生效]`
@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：288**（技能 178 · 其他执行层 110）
+**执行层条目总数：289**（技能 178 · 其他执行层 111）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -567,6 +567,7 @@
 | 脚本 (CLI) | `cli.rules.generate_naming_plan` | `scripts/generate_naming_plan.mjs` | ✅ `scripts/interfaces/generate_naming_plan.interface.json` | `node scripts/generate_naming_plan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.git_sync_remote` | `scripts/git_sync_remote.sh` | ✅ `scripts/interfaces/git_sync_remote.interface.json` | `bash scripts/git_sync_remote.sh` | DSH 工程远程 Git 智能探针、缺地址开页引导、动态摘要提交与强同步引擎 |
 | 脚本 (CLI) | `cli.rules.global_scheduler_lock` | `scripts/global_scheduler_lock.sh` | ✅ `scripts/interfaces/global_scheduler_lock.interface.json` | `bash scripts/global_scheduler_lock.sh` | DSH 全自动轻量级全局调度锁中枢与并发资源防冲突引擎 |
+| 脚本 (CLI) | `cli.rules.incident_evidence_prototype` | `scripts/incident_evidence_prototype.mjs` | ✅ `scripts/interfaces/incident_evidence_prototype.interface.json` | `node scripts/incident_evidence_prototype.mjs` | — |
 | 脚本 (CLI) | `cli.rules.init_dir` | `scripts/init_dir.sh` | ✅ `scripts/interfaces/init_dir.interface.json` | `bash scripts/init_dir.sh` | — |
 | 脚本 (CLI) | `cli.rules.init_project` | `scripts/init_project.sh` | ✅ `scripts/interfaces/init_project.interface.json` | `bash scripts/init_project.sh` | — |
 | 脚本 (CLI) | `cli.rules.install_host_gate` | `scripts/install_host_gate.sh` | ✅ `scripts/interfaces/install_host_gate.interface.json` | `bash scripts/install_host_gate.sh` | — |
@@ -585,7 +586,7 @@
 | 脚本 (CLI) | `cli.rules.patch_dsh_todo_progress` | `scripts/patch_dsh_todo_progress.cjs` | ✅ `scripts/interfaces/patch_dsh_todo_progress.interface.json` | `node scripts/patch_dsh_todo_progress.cjs` | ⛔⛔⛔ [DEPRECATED 已废弃 · 2026-10-01 · REQ-089 D4] ⛔⛔⛔ |
 | 脚本 (CLI) | `cli.rules.period_parity` | `scripts/period_parity.mjs` | ✅ `scripts/interfaces/period_parity.interface.json` | `node scripts/period_parity.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.physical_lock` | `scripts/physical_lock.sh` | ✅ `scripts/interfaces/physical_lock.interface.json` | `bash scripts/physical_lock.sh` | — |
-| 脚本 (CLI) | `cli.rules.physical_reach_audit` | `scripts/physical_reach_audit.mjs` | ✅ `scripts/interfaces/physical_reach_audit.interface.json` | `node scripts/physical_reach_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.physical_reach_audit` | `scripts/physical_reach_audit.mjs` | ✅ `scripts/interfaces/physical_reach_audit.interface.json` | `node scripts/physical_reach_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.plugin_install_queue` | `scripts/plugin_install_queue.mjs` | ✅ `scripts/interfaces/plugin_install_queue.interface.json` | `node scripts/plugin_install_queue.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.plugin_reload` | `scripts/plugin_reload.sh` | ✅ `scripts/interfaces/plugin_reload.interface.json` | `bash scripts/plugin_reload.sh` | — |
 | 脚本 (CLI) | `cli.rules.plugin_sync` | `scripts/plugin_sync.sh` | ✅ `scripts/interfaces/plugin_sync.interface.json` | `bash scripts/plugin_sync.sh` | — |

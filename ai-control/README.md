@@ -35,6 +35,12 @@ ai-control/
 
 ---
 
+## 🧪 REQ-103 独立事故证据原型（未接入生产）
+
+- 入口：`node scripts/incident_evidence_prototype.mjs --selftest`，仅运行隔离夹具，不写事故状态。
+- 当前宿主实跑18/18通过；不代表真实事故已结清，也不替代完整历史内容、真实复验与独立人工认可。
+- 协议：`ai-control/reports/state/incident_closure_proposal.md`（DRAFT / NOT ENABLED）。
+
 ## 🔍 判定层（双检与存量校准）
 
 - `scripts/redundancy_scan.mjs`：写两遍 → 合权威源

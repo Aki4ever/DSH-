@@ -1,0 +1,16 @@
+{
+  "id": "cli.rules.incident_evidence_prototype",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/incident_evidence_prototype.mjs",
+  "invoke": "node scripts/incident_evidence_prototype.mjs --selftest",
+  "summary": "REQ-103 独立事故证据夹具原型；不接入生产，不结清真实事故",
+  "inputs": [{ "name": "--selftest", "type": "arg", "required": true, "desc": "运行18条隔离正反例" }],
+  "outputs": [{ "name": "stdout", "type": "text", "desc": "逐例结果和仅夹具汇总" }],
+  "exitCodes": { "0": "全部夹具通过，不代表生产验收", "1": "夹具断言失败", "2": "无生产入口或用法错误" },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": ["node scripts/incident_evidence_prototype.mjs --selftest"],
+  "source": "handwritten",
+  "verified": true
+}

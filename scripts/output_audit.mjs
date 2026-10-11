@@ -185,7 +185,7 @@ export function structureChecks(text, conf) {
     maxHeadingDepth: cfgNum('OUT_MAX_HEADING_DEPTH', 3, c),
     maxListDepth: cfgNum('OUT_MAX_LIST_DEPTH', 3, c),
     proIcon: cfg('OUT_PRO_ICON', '⚙️ 专业档', c),
-    receiptFields: cfg('OUT_RECEIPT_FIELDS', '🔧 本轮做了什么|🧪 判定证据|📊 完成度|🚧 还差什么', c)
+    receiptFields: cfg('OUT_RECEIPT_FIELDS', '🔧 本轮做了什么|🏷️ 输出版本|🏷️ 需求版本|🧪 判定证据|📊 完成度|🎯 当前纪律分|🚧 还差什么', c)
       .split('|')
       .map((s) => s.trim())
       .filter(Boolean),
@@ -259,6 +259,10 @@ export function structureChecks(text, conf) {
 
   // ④ 进度回执四字段
   const missingReceipt = T.receiptFields.filter((f) => !raw.includes(f))
+  // 字段出现不等于披露版本：必须有独立字段行及明确三段版本号。
+  // 只证明格式，不将版本号解释为发布/验收状态。
+  const outputVersionOk = nonEmpty.some(line => /^\s*(?:[-*+]\s+|>\s*)?(?:\*\*)?🏷️ 输出版本(?:\*\*)?\s*[:：]\s*(?:`|\*\*)?v?\d+\.\d+\.\d+(?=$|[\s`*（(·，,。])/u.test(line))
+  if (!outputVersionOk && !missingReceipt.includes('🏷️ 输出版本')) missingReceipt.push('🏷️ 输出版本（缺少明确版本值）')
   const receiptOk = missingReceipt.length === 0
 
   // ⑤ 档位标记（唯一性）
@@ -326,7 +330,7 @@ export function selfTest() {
 
   // REQ-090：输出结构契约判据的双向断言（先证明"该红的能判红"）
   // REQ-092 / R2-a：回执由四项扩为五项，新增 `🏷️ 需求版本` 硬判据字段
-  const receipt = '🔧 本轮做了什么：写入 a.md\n🏷️ 需求版本：REQ-092 · v1.0.0\n🧪 判定证据：node x --check 退出码 0\n📊 完成度：R1 2/4\n🚧 还差什么：R2 未开始'
+  const receipt = '🔧 本轮做了什么：写入 a.md\n🏷️ 输出版本：v4.29.17\n🏷️ 需求版本：REQ-092 · v1.0.0\n🧪 判定证据：node x --check 退出码 0\n📊 完成度：R1 2/4\n🎯 当前纪律分：65\n🚧 还差什么：R2 未开始'
   const good = `🟢 【实施完成态】\n\n**一句话总结**：这是一句简短的结论式摘要。\n\n## 一、正文\n\n### 细节\n\n${receipt}\n\n${tail}`
   add('结构契约齐备 → 通过', structureChecks(good).gatePass, true)
   add('缺首行徽标 → 判红', structureChecks(good.replace('🟢 【实施完成态】\n\n', '')).bannerOk, false)
@@ -339,6 +343,12 @@ export function selfTest() {
   // REQ-092 / R2-a：新增字段必须自带反向用例，否则"加了字段"这件事本身不可证伪
   add('缺「需求版本」字段 → 判红', structureChecks(good.replace('🏷️ 需求版本：REQ-092 · v1.0.0\n', '')).receiptOk, false)
   add('带「需求版本」字段 → 通过', structureChecks(good).receiptOk, true)
+  add('缺「输出版本」字段 → 判红', structureChecks(good.replace('🏷️ 输出版本：v4.29.17\n', '')).receiptOk, false)
+  add('输出版本与需求版本同时齐备 → 通过', structureChecks(good).receiptOk, true)
+  for (const value of ['', '见台账', 'v4.29', 'v4.29.17fake']) {
+    add(`输出版本值非法 ${JSON.stringify(value)} → 判红`, structureChecks(good.replace('🏷️ 输出版本：v4.29.17', `🏷️ 输出版本：${value}`)).receiptOk, false)
+  }
+  add('输出版本加粗与代码样式 → 通过', structureChecks(good.replace('🏷️ 输出版本：v4.29.17', '- **🏷️ 输出版本**：`v4.29.17`（契约版本）')).receiptOk, true)
   add('专业档标记重复出现 → 判红', structureChecks(good.replace('## 一、正文', '## 一、正文 ⚙️ 专业档 ⚙️ 专业档')).laneOk, false)
 
   const failed = cases.filter((c) => !c.ok)
@@ -431,5 +441,6 @@ function main() {
 }
 
 const invokedDirectly = process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop())
-if (invokedDirectly && process.argv.includes('--self-test')) selfTest()
+// 兼容仓库通用--selftest，避免自检拼写差异静默落到宿主正文审计。
+if (invokedDirectly && process.argv.some(arg => ['--self-test', '--selftest'].includes(arg))) selfTest()
 else if (invokedDirectly) main()

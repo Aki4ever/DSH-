@@ -28,6 +28,13 @@ import {
 const GATES_SH = join(ROOT, 'scripts', 'control_gates.sh')
 const PLUGIN = join(ROOT, 'ai-control', 'plugin', 'index.mjs')
 
+/** 源码契约回归：两个指标均须扣除不可判定；不是shell行为测试的替代品。 */
+export function auditTristateMetrics(shellText) {
+  const code = shellText.split('\n').filter(l => !/^\s*#/.test(l)).join('\n')
+  const metrics = [...code.matchAll(/METRIC_A="\$\(\(([^\n]+?)\)\)"; METRIC_A_LABEL="(落地判定通过|并发与载体判定通过)"/g)]
+  return metrics.length === 2 && metrics.every(m => m[1].replace(/\s/g, '') === 'total-fails-undecided')
+}
+
 /** 判据①注册表自洽 + ②与门禁本体条目一致 + ③提示点名正确 + ④展示层无硬编码 */
 export function audit() {
   const problems = []
@@ -50,6 +57,7 @@ export function audit() {
   }
   const sh = readFileSync(GATES_SH, 'utf8')
   const shCode = sh.split('\n').filter((l) => !/^\s*#/.test(l)).join('\n')
+  if (!auditTristateMetrics(sh)) problems.push('④ G5/G6通过数没有同时扣除失败与不可判定项')
   // 真实判红回归：生成 gate_hint 后不得被旧固定名单覆盖。
   if (/HINT=.*等三条判定器输出/.test(shCode)) problems.push('③ 门禁失败分支仍以固定名单覆盖注册表提示')
   for (const gate of [gateById('integrity'), gateById('concurrency')]) {
@@ -149,6 +157,10 @@ export function selftest() {
 
   // ② 条目一致：注册表声明的 G6 判据数与门禁本体一致
   const res = audit()
+  const shell = readFileSync(GATES_SH, 'utf8')
+  add('三态指标：实际G5/G6均扣除不可判定', auditTristateMetrics(shell))
+  add('三态指标反例：漏扣一处必须拒绝', !auditTristateMetrics(shell.replace('total - fails - undecided', 'total - fails')))
+  add('三态指标反例：注释伪造不算契约', !auditTristateMetrics('# ' + shell.split('\n').filter(l => l.includes('METRIC_A=')).join('\n# ')))
   add('条目一致：审计返回三态之一', [0, 1, 2].includes(res.code), `code=${res.code}`)
 
   // ③ 提示互不串台（关键反例）

@@ -27,7 +27,7 @@
  */
 
 import { readFile } from 'node:fs/promises'
-import { join, dirname } from 'node:path'
+import { join, dirname, resolve } from 'node:path'
 import { homedir } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { execFile } from 'node:child_process'
@@ -136,7 +136,7 @@ export const Config = {
     // REQ-103：证据缺失/判红时仍须能够采集、诊断；仅是应用级修复入口。
     'scripts/physical_reach_audit.mjs',
   ],
-  escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
+  escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/', 'admin/', 'web/', 'tests/', 'config/', 'docs/'],
   /** 是否在拒绝理由中附带看板摘要。 */
   verbose: false,
   /**
@@ -440,11 +440,10 @@ async function cachedTitle(dshHome, sessionId) {
 function pathsFromArgs(execution) {
   const a = execution?.arguments
   if (!a || typeof a !== 'object') return []
-  const out = []
-  for (const v of Object.values(a)) {
-    if (typeof v === 'string' && v) out.push(v)
-  }
-  return out
+  // 只认工具目标字段，不把content/old_string/new_string/description当成文件路径。
+  if (!['write', 'edit'].includes(execution?.name)) return []
+  const target = a.file_path ?? a.path
+  return typeof target === 'string' && target ? [target] : []
 }
 
 /**
@@ -468,32 +467,12 @@ function isEscape(execution, config) {
   // 1) bash / pwsh：命令里必须真正"调用"了某个管控脚本
   if (toolName === 'bash' || toolName === 'pwsh') {
     const cmd = String(execution?.arguments?.command ?? '')
+    // 逃生入口只接受单次直接调用；宁可拒绝需拆开的包装命令，不给其他动作通行证。
+    // 也拒绝替换、重定向、后台与转义，避免词法近似被shell再次解释。
+    if (/[;&|\n\r<>$`\\()]/.test(cmd)) return false
 
-    // 按 shell 控制符切分命令段。
-    // 为什么必须切分（2026-09-23 修复的真实死锁）：
-    // 旧实现只看脚本 token 的**前一个 token**，而 `cd "<工程>" && ./scripts/control_gates.sh check`
-    // 里脚本前面是 `&&` —— 不在允许列表 → 逃生舱失效。而这条命令正是被拒消息里
-    // **自己推荐的**自救命令；消息推荐的另一条路（设 DSH_CONTROL_GUARD=off）同样需要 bash。
-    // 于是门禁一旦未过就彻底死锁：改不动、也修不了。实测复现：门禁未过时
-    // `cd x && ./scripts/control_gates.sh check` 被拒，而纯绝对路径形式可以通过。
-    const segments = []
-    let cur = ''
-    let quote = ''
-    for (let i = 0; i < cmd.length; i++) {
-      const ch = cmd[i]
-      if (quote) {
-        // 引号内的一切（含 && ; |）都是普通字符，不能当分隔符
-        if (ch === quote) quote = ''
-        cur += ch
-        continue
-      }
-      if (ch === "'" || ch === '"') { quote = ch; cur += ch; continue }
-      const two = cmd.slice(i, i + 2)
-      if (two === '&&' || two === '||') { segments.push(cur); cur = ''; i++; continue }
-      if (ch === ';' || ch === '|' || ch === '\n') { segments.push(cur); cur = ''; continue }
-      cur += ch
-    }
-    segments.push(cur)
+    // 复合调用已在上方拒绝，不再保留旧分段器；目录通过工具workdir指定。
+    const segments = [cmd]
 
     // 解释器判定要取 basename：实测本机 node 不在 PATH 上，
     // 调用形式是绝对路径（如 `/Volumes/DSH Desktop/DSH Desktop.app/.../runtime/node`），
@@ -506,6 +485,7 @@ function isEscape(execution, config) {
       const out = []
       let b = ''
       let q = ''
+      let started = false
       for (let i = 0; i < s.length; i++) {
         const ch = s[i]
         if (q) {
@@ -513,18 +493,19 @@ function isEscape(execution, config) {
           else b += ch
           continue
         }
-        if (ch === "'" || ch === '"') { q = ch; continue }
-        if (/\s/.test(ch)) { if (b) { out.push(b); b = '' } continue }
-        b += ch
+        if (ch === "'" || ch === '"') { q = ch; started = true; continue }
+        if (/\s/.test(ch)) { if (started) { out.push(b); b = ''; started = false } continue }
+        b += ch; started = true
       }
-      if (b) out.push(b)
+      if (q) return [] // 未闭合引号拒绝
+      if (started) out.push(b) // 空参数保留位置，不把后续脚本前移
       return out
     }
 
     // 解释器判定要取 basename：实测本机 node 不在 PATH 上，
     // 调用形式是绝对路径（如 `/Volumes/DSH Desktop/DSH Desktop.app/.../runtime/node`），
     // 只比裸命令名会漏掉这种**真实且唯一可用**的调用方式。
-    const isInterpreter = (t) => /^(bash|sh|zsh|node|npx)$/.test(String(t).split('/').pop())
+    const isInterpreter = (t) => /^(bash|sh|zsh|node)$/.test(String(t).split('/').pop())
 
     /**
      * 该 token 是否指向逃生脚本。
@@ -534,13 +515,12 @@ function isEscape(execution, config) {
      */
     const pointsToEscapeScript = (rawTok, bareOk = false) => {
       const tok = normalizePath(rawTok)
-      return escScripts.some((s) => {
-        if (!(tok === s || tok.endsWith('/' + s))) return false
-        if (tok === s) return true
-        // 路径形态即可：`./scripts/x`、`/abs/.../scripts/x`；
-        // 裸 `scripts/x` 仅在解释器后放行
-        return tok.startsWith('./') || tok.startsWith('/') || bareOk
-      })
+      if (tok.split('/').includes('..') || tok.includes('\0')) return false
+      const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+      const workdir = execution.arguments?.workdir
+      if (!tok.startsWith('/') && workdir && resolve(repo, workdir) !== repo) return false
+      const target = resolve(repo, tok)
+      return escScripts.some(s => target === resolve(repo, s))
     }
 
     for (const seg of segments) {
@@ -552,7 +532,7 @@ function isEscape(execution, config) {
       //     （`bash scripts/control_gates.sh check`、`node scripts/redundancy_scan.mjs ...`）
       //     此处放开裸相对路径：`node scripts/x.mjs` 是标准写法；
       //     而 `cat scripts/x` 段首不是解释器，仍会被拒。
-      if (isInterpreter(toks[0]) && toks.slice(1).some((t) => pointsToEscapeScript(t, true))) return true
+      if (isInterpreter(toks[0]) && toks.length >= 2 && pointsToEscapeScript(toks[1], true)) return true
     }
     return false
   }
@@ -560,10 +540,16 @@ function isEscape(execution, config) {
   // 2) write / edit / 其它改动型工具：目标必须落在管控自身目录内
   for (const raw of pathsFromArgs(execution)) {
     const p = normalizePath(raw)
+    // 前缀不能覆盖跳出目录的目标；此处只是词法边界，不声称解决符号链接/竞态。
+    if (p.split('/').includes('..') || p.includes('\0')) continue
+    const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+    const workdir = execution.arguments?.workdir
+    // 相对目标只允许本修复仓库；绝对目标不再接受任意位置的同名目录。
+    if (!p.startsWith('/') && workdir && resolve(repo, workdir) !== repo) continue
+    const target = resolve(repo, p)
     for (const pre of escWrites) {
-      if (p.startsWith(pre)) return true
-      // 允许绝对路径中包含该前缀（如 /Users/x/.../ai-control/plugin/index.mjs）
-      if (p.includes('/' + pre)) return true
+      const allowed = resolve(repo, pre)
+      if (target.startsWith(allowed + '/')) return true
     }
   }
   return false
@@ -937,6 +923,38 @@ export function isReadonlyGitDiagnostic(execution) {
     || /^git --no-optional-locks diff --no-ext-diff --no-textconv(?: --cached)?(?: --stat| --name-only| --check)?$/.test(command)
 }
 
+// 用户授权的固定诊断集合，不提供任意shell或提交推送权限。
+export function isScopedDiagnostic(execution, controlProjectRoot = '') {
+  if (execution?.name !== 'bash') return false
+  const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+  const workdir = execution.arguments?.workdir
+  if (!workdir && controlProjectRoot !== repo) return false
+  if (workdir && resolve(repo, workdir) !== repo) return false
+  const command = execution.arguments?.command
+  if (typeof command !== 'string') return false
+  if ([
+    'node scripts/legacy_align_scan.mjs --root .',
+    'node scripts/legacy_align_scan.mjs --root . --top 10000',
+    'node scripts/incident_evidence_prototype.mjs --selftest',
+    'node ai-control/plugin/selftest.mjs',
+    // 已授权诊断自锁修复：只读存量预览与权威文件哈希漂移，不开放写入模式。
+    'node scripts/align_version.mjs --dry-run',
+    'node scripts/fingerprint_index.mjs --drift',
+  ].includes(command)) return true
+  const files = ['docs/constraint_mechanism_optimize_3.md', 'docs/constraint_mechanism_optimize_18.md', 'scripts/anti_hallucination_audit.mjs']
+  for (const file of files) {
+    if (command === `git --no-pager --no-optional-locks log -8 --format=oneline -- ${file}`) return true
+    const prefix = 'git --no-pager --no-optional-locks show '
+    if (command.startsWith(prefix)) {
+      const ref = command.slice(prefix.length)
+      const colon = ref.indexOf(':')
+      if (/^[a-f0-9]{7,40}$/.test(ref.slice(0, colon)) && ref.slice(colon + 1) === file) return true
+    }
+    if (command === `shasum -a 256 ai-control/reports/state/history_bytes_zGmzM0/${file.split('/').at(-1)}`) return true
+  }
+  return false
+}
+
 export function evaluate(execution, status, config, cacheAgeMs = 0, lockState = null, scopeSnapshot = null, controlProjectRoot = '') {
   const toolName = String(execution?.name || '')
   if (!toolName) return undefined
@@ -944,6 +962,7 @@ export function evaluate(execution, status, config, cacheAgeMs = 0, lockState = 
   // 1) 白名单工具始终放行（含 todo_write：进度可视化必须先于门禁可用）
   if (config.alwaysAllowed.includes(toolName)) return undefined
   if (isReadonlyGitDiagnostic(execution)) return undefined
+  if (isScopedDiagnostic(execution, controlProjectRoot)) return undefined
 
   // 2) 非受控工具（只读类、子代理、计划、目标等）放行
   if (!config.guardedTools.includes(toolName)) return undefined

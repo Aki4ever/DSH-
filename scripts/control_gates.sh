@@ -678,7 +678,7 @@ check_integrity() {
 
   # REQ-103 / C1-b：指标必须先于 return 赋值（此前在 return 1 之前赋"通过项"，
   # 导致判红时快照仍写"8 落地判定通过 · 0 未达标项"，与实况相反）。
-  METRIC_A="$((total - fails))"; METRIC_A_LABEL="落地判定通过"
+  METRIC_A="$((total - fails - undecided))"; METRIC_A_LABEL="落地判定通过"
   METRIC_B="$fails"; METRIC_B_LABEL="未达标项"
   # REQ-103 / C1-b：失败提示必须引用**实际失败项**，禁止写死判定器名单
   local gate_hint
@@ -757,7 +757,7 @@ check_concurrency() {
     fi
   done <<< "$entries_raw"
 
-  METRIC_A="$((total - fails))"; METRIC_A_LABEL="并发与载体判定通过"
+  METRIC_A="$((total - fails - undecided))"; METRIC_A_LABEL="并发与载体判定通过"
   METRIC_B="$fails"; METRIC_B_LABEL="未达标项"
   # REQ-103 / C1-b：同上，提示由实际失败项生成
   local gate_hint
