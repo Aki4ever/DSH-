@@ -1,0 +1,30 @@
+{
+  "id": "cli.rules.physical_reach_audit",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/physical_reach_audit.mjs",
+  "invoke": "node scripts/physical_reach_audit.mjs --check",
+  "summary": "REQ-103 物理触达判定器：physical_reach_audit",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": false, "desc": "执行判定（退出码 0/1/2）" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "执行正反例夹具自检，不代表宿主取证" },
+    { "name": "--collect", "type": "arg", "required": false, "desc": "受限 argv 实跑矩阵命令，单命令30秒超时，回读证据" },
+    { "name": "--plan", "type": "arg", "required": false, "desc": "自动拆解缺失条件，默认3层/100节点，宿主接口缺失则阻塞" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "结构化判定报告与结论" }
+  ],
+  "exitCodes": {
+    "0": "判定通过",
+    "1": "判定未通过（红灯）",
+    "2": "不可判定（缺失证据）或参数错误"
+  },
+  "sideEffects": ["--collect 写入真实执行证据；被调用的既有判定/自检可能更新其专属状态文件"],
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/physical_reach_audit.mjs --check",
+    "node scripts/physical_reach_audit.mjs --selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

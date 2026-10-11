@@ -1524,10 +1524,20 @@
     },
     "REQ-103": {
       "title": "管控机制三处收敛与递归触达（CTRL-CONVERGE）",
-      "requirement_version": "v1.0.0",
+      "requirement_version": "v1.0.1",
       "requirement_version_derived": false,
-      "implementation_version": "v4.29.16",
-      "files": [],
+      "implementation_version": "v4.29.17",
+      "files": [
+        "ai-control/config/gates_registry.mjs",
+        "scripts/tristate_sweep.mjs",
+        "scripts/progress_ledger.mjs",
+        "scripts/lib/physical_lock.mjs",
+        "scripts/scope_audit.mjs",
+        "AGENTS.md",
+        "scripts/exec_bit_audit.mjs",
+        "ai-control/config/script_registry.json",
+        "ai-control/reports/state/physical_reach_matrix.json"
+      ],
       "missing_files": [],
       "change_log": []
     }

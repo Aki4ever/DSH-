@@ -52,7 +52,7 @@ export const NAMING_GATE = Object.freeze({
   note: '一票否决：不合规即 execAllowed=false（不计入 7 项分母，但必须单列展示，禁止渲染成其它门禁）',
   judges: [{ file: 'scripts/check_task_naming.sh', args: ['--exit'], label: '会话命名合规' }],
   hints: {
-    fail: '会话命名不合规：标题必须为「[分类编号][难度分] 概述」三段式；修复入口 `./scripts/control.sh naming "<标题>"`',
+    fail: '会话命名不合规：标题必须为「[分类编号][难度分] 概述」三段式；修复入口 `./scripts/name_me.sh "<标题>"`，随后 `./scripts/control.sh naming` 校验',
     undecidable: '会话命名无法判定：标题未记录或宿主转录取不到标题（不得折算为通过）',
     pass: '会话标题符合三段式规范',
   },
@@ -100,6 +100,7 @@ export const GATES = Object.freeze([
       { file: 'scripts/knowledge_audit.mjs', args: ['--check'], label: '知识库条目与索引双向可达（REQ-097 R3）' },
       { file: 'scripts/cli_plan_audit.mjs', args: ['--check'], label: '立项 CLI 规划在位且真实（REQ-097 R4）' },
       { file: 'scripts/domain_scope_selftest.mjs', args: ['--check'], label: '全域写拦截判定有牙' },
+      { file: 'scripts/physical_reach_audit.mjs', args: ['--check'], label: '真实命令触达证据（不等于宿主隔离）' },
     ],
     hints: {
       fail: '落地与版本一致性未达标：按下方失败项逐个跑对应判定器',

@@ -687,12 +687,12 @@ check_integrity() {
 
   if (( undecided > 0 )); then
     DETAIL="$detail"
-    HINT="不可判定 ${undecided} 项（判定器缺失或取不到证据）——不得折算为通过"
+    HINT="${gate_hint:-不可判定 ${undecided} 项；见实际判定器明细，不得折算为通过}"
     return 2
   fi
   if (( fails > 0 )); then
     DETAIL="$detail"
-    HINT="未达标 ${fails} 项：定向修复命令见 node scripts/scope_audit.mjs --check 等三条判定器输出"
+    HINT="${gate_hint:-未达标 ${fails} 项；见实际判定器明细}"
     return 1
   fi
   DETAIL="$detail"

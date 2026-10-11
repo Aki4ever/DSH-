@@ -161,38 +161,85 @@ export function danglingRefs(root = ROOT, opts = {}) {
   return { checked, dangling: found, pending, docs: docs.length, plannedDocs: planned.size }
 }
 
-/** 判据七：逐条登记机制取"运行凭据"（新鲜度超限即判未通电）。 */
+/**
+ * REQ-103 / C2-a：内容证据验真。
+ * mtime 新鲜度绝不得单独当内容证据——空文件、`{}`、或不可解析的损坏 JSON 必须被判为无内容证据（不可判定）。
+ */
+export function verifyContentEvidence(absPath) {
+  try {
+    const raw = readFileSync(absPath, 'utf8').trim()
+    if (!raw) return { valid: false, reason: '文件内容为空（仅有 mtime 无实质内容）' }
+    if (absPath.endsWith('.jsonl')) {
+      const lines = raw.split('\n').filter(Boolean)
+      if (lines.length === 0) return { valid: false, reason: 'JSONL 无任何记录行' }
+      const obj = JSON.parse(lines[lines.length - 1])
+      if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0) {
+        return { valid: false, reason: 'JSONL 末行记录为空对象' }
+      }
+      return { valid: true }
+    }
+    if (absPath.endsWith('.json')) {
+      const obj = JSON.parse(raw)
+      if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0) {
+        return { valid: false, reason: 'JSON 内容为空对象 {}（仅有 mtime 无实质内容）' }
+      }
+      return { valid: true }
+    }
+    return { valid: raw.length > 0 }
+  } catch (e) {
+    return { valid: false, reason: `内容解析失败: ${e?.message || e}` }
+  }
+}
+
+/** 判据七：逐条登记机制取"运行凭据"（新鲜度 + 内容非空结构有效才算通电；缺内容证据判 undecidable）。 */
 export function poweredEvidence(root = ROOT, now = Date.now()) {
   const rows = []
   for (const item of POWERED_EVIDENCE) {
     let best = null
+    let contentCheck = { valid: false, reason: '文件不存在' }
     for (const f of item.files) {
       const abs = join(root, f)
       if (!existsSync(abs)) continue
       const st = statSync(abs)
       const ageHours = (now - st.mtimeMs) / 3600000
-      if (!best || ageHours < best.ageHours) best = { file: f, ageHours: Number(ageHours.toFixed(2)) }
+      if (!best || ageHours < best.ageHours) {
+        best = { file: f, ageHours: Number(ageHours.toFixed(2)) }
+        contentCheck = verifyContentEvidence(abs)
+      }
     }
-    const ok = !!best && best.ageHours <= item.maxAgeHours
+    const fresh = !!best && best.ageHours <= item.maxAgeHours
+    const ok = fresh && contentCheck.valid
+    const undecidable = !best || !contentCheck.valid
     rows.push({
       id: item.id,
       ok,
-      detail: best ? `${best.file}（${best.ageHours} 小时前，上限 ${item.maxAgeHours}）` : `无留痕（候选 ${item.files.join(' / ')} 均不存在）`,
+      undecidable,
+      detail: !best
+        ? `无留痕（候选 ${item.files.join(' / ')} 均不存在）`
+        : !contentCheck.valid
+          ? `${best.file} 内容无效（${contentCheck.reason} · 禁止仅凭 mtime 判通电）`
+          : `${best.file}（${best.ageHours} 小时前，上限 ${item.maxAgeHours}，内容有效）`,
     })
   }
   return rows
 }
 
-/** 综合判定。 */
+/** 综合判定（三态：0 pass / 1 fail / 2 undecidable）。 */
 export function audit(root = ROOT, opts = {}) {
   const refs = danglingRefs(root, opts)
   const power = poweredEvidence(root, opts.now)
   const problems = []
+  const undecidable = []
   if (refs.dangling.length) problems.push(`悬空引用 ${refs.dangling.length} 条（判据八）`)
   const unpowered = power.filter((p) => !p.ok)
-  if (unpowered.length) problems.push(`无运行凭据的机制 ${unpowered.length} 项（判据七）：${unpowered.map((p) => p.id).join('、')}`)
+  for (const p of unpowered) {
+    if (p.undecidable) undecidable.push(`机制「${p.id}」缺少有效内容证据：${p.detail}`)
+    else problems.push(`机制「${p.id}」凭据过期：${p.detail}`)
+  }
+  const exitCode = problems.length > 0 ? 1 : undecidable.length > 0 ? 2 : 0
   return {
-    ok: problems.length === 0,
+    ok: exitCode === 0,
+    exitCode,
     checkedRefs: refs.checked,
     docsScanned: refs.docs,
     dangling: refs.dangling,
@@ -200,6 +247,7 @@ export function audit(root = ROOT, opts = {}) {
     plannedDocs: refs.plannedDocs,
     powered: power,
     problems,
+    undecidable,
     generatedAt: new Date().toISOString(),
   }
 }
@@ -223,6 +271,14 @@ export function selftest() {
   const power = poweredEvidence(ROOT)
   add('通电判据在本仓库有凭据', power.filter((p) => p.ok).length > 0, true)
   add('人为指定一个不存在的凭据文件 → 判未通电', poweredEvidence(ROOT).length > 0, true)
+
+  // 反例用例：空 JSON 凭据文件不得仅凭 mtime 算通过，必须判不可判定（exitCode=2）
+  const emptyTmp = join(process.env.TMPDIR || '/tmp', `anti-empty-${process.pid}-${Date.now()}`)
+  mkdirp(join(emptyTmp, 'ai-control/reports/state'))
+  writeFile(join(emptyTmp, 'ai-control/reports/state/status.json'), '{}')
+  const emptyRes = audit(emptyTmp, { docs: [] })
+  add('空 JSON 凭据文件不得仅凭 mtime 判通电（必须判不可判定 exit 2）', emptyRes.exitCode, 2)
+  rmrf(emptyTmp)
 
   // 造一个带悬空引用的临时仓库，验证判据八真的会判红
   const tmp = join(process.env.TMPDIR || '/tmp', `anti-fake-${process.pid}-${Date.now()}`)
@@ -271,7 +327,8 @@ function main() {
   if (!res.ok) {
     console.error('\n⛔ 判定不通过：')
     for (const p of res.problems) console.error(`   · ${p}`)
-    process.exit(1)
+    for (const u of res.undecidable) console.error(`   · [不可判定] ${u}`)
+    process.exit(res.exitCode)
   }
   console.log('\n✅ 无悬空引用，登记机制均有运行凭据')
   process.exit(0)

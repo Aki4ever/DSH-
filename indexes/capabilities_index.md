@@ -147,7 +147,7 @@
 > 级别与分类取自真相源 `skill-pool/docs/operations/skill-catalog.json`，并**逐条对拍磁盘**。
 > 覆盖率由 `node scripts/build_capabilities_index.mjs --check` 判定，未收录数必须为 0。
 
-**执行层条目总数：282**（技能 178 · 其他执行层 104）
+**执行层条目总数：288**（技能 178 · 其他执行层 110）
 **catalog 分级口径**：L1 43 · L2 96 · L3 43 · L4 1
 
 ### 3.0 能力分级与集群（真相源口径）
@@ -535,6 +535,7 @@
 | 脚本 (CLI) | `cli.rules.batch_rename_sessions` | `scripts/batch_rename_sessions.mjs` | ✅ `scripts/interfaces/batch_rename_sessions.interface.json` | `node scripts/batch_rename_sessions.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.build_capabilities_index` | `scripts/build_capabilities_index.mjs` | ✅ `scripts/interfaces/build_capabilities_index.interface.json` | `node scripts/build_capabilities_index.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.butler_scheduler` | `scripts/butler_scheduler.mjs` | ✅ `scripts/interfaces/butler_scheduler.interface.json` | `node scripts/butler_scheduler.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.bypass_audit` | `scripts/bypass_audit.mjs` | ✅ `scripts/interfaces/bypass_audit.interface.json` | `node scripts/bypass_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.channel_audit` | `scripts/channel_audit.mjs` | ✅ `scripts/interfaces/channel_audit.interface.json` | `node scripts/channel_audit.mjs` | 快速通道注册审计器 —— 校验"通道表"是否真的可用（对应 REQ-045） |
 | 脚本 (CLI) | `cli.rules.check_freshness` | `scripts/check_freshness.mjs` | ✅ `scripts/interfaces/check_freshness.interface.json` | `node scripts/check_freshness.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.check_layer_interfaces` | `scripts/check_layer_interfaces.mjs` | ✅ `scripts/interfaces/check_layer_interfaces.interface.json` | `node scripts/check_layer_interfaces.mjs` | ============================================================================== |
@@ -552,10 +553,12 @@
 | 脚本 (CLI) | `cli.rules.discipline_score` | `scripts/discipline_score.mjs` | ✅ `scripts/interfaces/discipline_score.interface.json` | `node scripts/discipline_score.mjs` | — |
 | 脚本 (CLI) | `cli.rules.disk_check_and_cleanup` | `scripts/disk_check_and_cleanup.sh` | ✅ `scripts/interfaces/disk_check_and_cleanup.interface.json` | `bash scripts/disk_check_and_cleanup.sh` | DSH 宿主磁盘空间周期性健康检测与安全自愈清理脚本 (支持文档元数据标记定位) |
 | 脚本 (CLI) | `cli.rules.domain_scope_selftest` | `scripts/domain_scope_selftest.mjs` | ✅ `scripts/interfaces/domain_scope_selftest.interface.json` | `node scripts/domain_scope_selftest.mjs` | — |
+| 脚本 (CLI) | `cli.rules.exec_bit_audit` | `scripts/exec_bit_audit.mjs` | ✅ `scripts/interfaces/exec_bit_audit.interface.json` | `node scripts/exec_bit_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.fingerprint_audit` | `scripts/fingerprint_audit.sh` | ✅ `scripts/interfaces/fingerprint_audit.interface.json` | `bash scripts/fingerprint_audit.sh` | DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎 |
 | 脚本 (CLI) | `cli.rules.fingerprint_index` | `scripts/fingerprint_index.mjs` | ✅ `scripts/interfaces/fingerprint_index.interface.json` | `node scripts/fingerprint_index.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.flow_control` | `scripts/flow_control.mjs` | ✅ `scripts/interfaces/flow_control.interface.json` | `node scripts/flow_control.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.flow_router` | `scripts/flow_router.mjs` | ✅ `scripts/interfaces/flow_router.interface.json` | `node scripts/flow_router.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.gate_registry_audit` | `scripts/gate_registry_audit.mjs` | ✅ `scripts/interfaces/gate_registry_audit.interface.json` | `node scripts/gate_registry_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.gate_selftest` | `scripts/gate_selftest.sh` | ✅ `scripts/interfaces/gate_selftest.interface.json` | `bash scripts/gate_selftest.sh` | — |
 | 脚本 (CLI) | `cli.rules.gen_common_chars` | `scripts/gen_common_chars.mjs` | ✅ `scripts/interfaces/gen_common_chars.interface.json` | `node scripts/gen_common_chars.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.gen_control_map` | `scripts/gen_control_map.mjs` | ✅ `scripts/interfaces/gen_control_map.interface.json` | `node scripts/gen_control_map.mjs` | 把「管控机制当前实况」画成一张简单明了的单页图（SVG） |
@@ -582,6 +585,7 @@
 | 脚本 (CLI) | `cli.rules.patch_dsh_todo_progress` | `scripts/patch_dsh_todo_progress.cjs` | ✅ `scripts/interfaces/patch_dsh_todo_progress.interface.json` | `node scripts/patch_dsh_todo_progress.cjs` | ⛔⛔⛔ [DEPRECATED 已废弃 · 2026-10-01 · REQ-089 D4] ⛔⛔⛔ |
 | 脚本 (CLI) | `cli.rules.period_parity` | `scripts/period_parity.mjs` | ✅ `scripts/interfaces/period_parity.interface.json` | `node scripts/period_parity.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.physical_lock` | `scripts/physical_lock.sh` | ✅ `scripts/interfaces/physical_lock.interface.json` | `bash scripts/physical_lock.sh` | — |
+| 脚本 (CLI) | `cli.rules.physical_reach_audit` | `scripts/physical_reach_audit.mjs` | ✅ `scripts/interfaces/physical_reach_audit.interface.json` | `node scripts/physical_reach_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.plugin_install_queue` | `scripts/plugin_install_queue.mjs` | ✅ `scripts/interfaces/plugin_install_queue.interface.json` | `node scripts/plugin_install_queue.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.plugin_reload` | `scripts/plugin_reload.sh` | ✅ `scripts/interfaces/plugin_reload.interface.json` | `bash scripts/plugin_reload.sh` | — |
 | 脚本 (CLI) | `cli.rules.plugin_sync` | `scripts/plugin_sync.sh` | ✅ `scripts/interfaces/plugin_sync.interface.json` | `bash scripts/plugin_sync.sh` | — |
@@ -601,6 +605,7 @@
 | 脚本 (CLI) | `cli.rules.route_navigate` | `scripts/route_navigate.mjs` | ✅ `scripts/interfaces/route_navigate.interface.json` | `node scripts/route_navigate.mjs` | route_navigate.mjs |
 | 脚本 (CLI) | `cli.rules.route_plan` | `scripts/route_plan.mjs` | ✅ `scripts/interfaces/route_plan.interface.json` | `node scripts/route_plan.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.scope_audit` | `scripts/scope_audit.mjs` | ✅ `scripts/interfaces/scope_audit.interface.json` | `node scripts/scope_audit.mjs` | — |
+| 脚本 (CLI) | `cli.rules.script_registry_audit` | `scripts/script_registry_audit.mjs` | ✅ `scripts/interfaces/script_registry_audit.interface.json` | `node scripts/script_registry_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.session_naming_audit` | `scripts/session_naming_audit.mjs` | ✅ `scripts/interfaces/session_naming_audit.interface.json` | `node scripts/session_naming_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.session_source_audit` | `scripts/session_source_audit.mjs` | ✅ `scripts/interfaces/session_source_audit.interface.json` | `node scripts/session_source_audit.mjs` | — |
 | 脚本 (CLI) | `cli.rules.skill_carrier_audit` | `scripts/skill_carrier_audit.mjs` | ✅ `scripts/interfaces/skill_carrier_audit.interface.json` | `node scripts/skill_carrier_audit.mjs` | ============================================================================== |
@@ -615,6 +620,7 @@
 | 脚本 (CLI) | `cli.rules.todo_gate` | `scripts/todo_gate.sh` | ✅ `scripts/interfaces/todo_gate.interface.json` | `bash scripts/todo_gate.sh` | — |
 | 脚本 (CLI) | `cli.rules.todo_panel_audit` | `scripts/todo_panel_audit.mjs` | ✅ `scripts/interfaces/todo_panel_audit.interface.json` | `node scripts/todo_panel_audit.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.token_budget_audit` | `scripts/token_budget_audit.mjs` | ✅ `scripts/interfaces/token_budget_audit.interface.json` | `node scripts/token_budget_audit.mjs` | ============================================================================== |
+| 脚本 (CLI) | `cli.rules.tristate_sweep` | `scripts/tristate_sweep.mjs` | ✅ `scripts/interfaces/tristate_sweep.interface.json` | `node scripts/tristate_sweep.mjs` | ============================================================================== |
 | 脚本 (CLI) | `cli.rules.verify_auto_naming_e2e` | `scripts/verify_auto_naming_e2e.mjs` | ✅ `scripts/interfaces/verify_auto_naming_e2e.interface.json` | `node scripts/verify_auto_naming_e2e.mjs` | 自动命名端到端验收（重启后运行，一次给出结论）。 |
 | 脚本 (CLI) | `cli.rules.verify_escape_hatch` | `scripts/verify_escape_hatch.sh` | ✅ `scripts/interfaces/verify_escape_hatch.interface.json` | `bash scripts/verify_escape_hatch.sh` | — |
 | 脚本 (CLI) | `cli.rules.verify_guard_live` | `scripts/verify_guard_live.sh` | ✅ `scripts/interfaces/verify_guard_live.interface.json` | `bash scripts/verify_guard_live.sh` | — |

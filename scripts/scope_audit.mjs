@@ -183,7 +183,9 @@ export function auditProject(name, projectDir, opts = {}) {
   const agentsText = existsSync(agentsPath) ? readFileSyncSafeText(agentsPath) : null
   const refs = agentsText ? extractScriptPaths(agentsText) : []
   const dangling = refs.filter((r) => !refResolvable(r, projectDir, globalRoot))
-  const docsOk = !!agentsText && refs.length > 0 && dangling.length === 0
+  // REQ-103 / C4：docs 判据必须包含 DSH-CONTROL-SCOPE:BEGIN 与 END 标记块
+  const hasScopeBlock = !!agentsText && agentsText.includes('<!-- DSH-CONTROL-SCOPE:BEGIN') && agentsText.includes('<!-- DSH-CONTROL-SCOPE:END -->')
+  const docsOk = !!agentsText && refs.length > 0 && dangling.length === 0 && hasScopeBlock
 
   const auditFile = join(projectDir, AUDIT_REL)
   const localRun = existsSync(auditFile)
@@ -195,7 +197,7 @@ export function auditProject(name, projectDir, opts = {}) {
 
   const items = {
     carrier: { ok: carrierOk, detail: shellExists ? `${SHELL_REL}${executable ? ' 可执行' : ' 不可执行'} · 子命令 ${actionsFound.length}/4` : `${SHELL_REL} 不存在` },
-    docs: { ok: docsOk, detail: agentsText ? `引用 ${refs.length} 条 · 悬空 ${dangling.length} 条` : 'AGENTS.md 缺失' },
+    docs: { ok: docsOk, detail: !agentsText ? 'AGENTS.md 缺失' : !hasScopeBlock ? 'AGENTS.md 缺少 DSH-CONTROL-SCOPE 标记块' : `引用 ${refs.length} 条 · 悬空 ${dangling.length} 条` },
     runtime: { ok: runtimeOk, detail: localRun ? `本地留痕 ${AUDIT_REL}` : (transcript.found ? `会话转录留痕（扫 ${transcript.scanned} 个会话）` : '无任何调用留痕') },
     version: { ok: reqOk, detail: reqOk ? 'docs/requirements.md 含版本条目' : 'docs/requirements.md 缺失或无版本条目' },
   }
@@ -275,12 +277,14 @@ export function selftest() {
   chmodSync(join(p1, SHELL_REL), 0o755)
   add('入口齐备且可执行 → carrier 通过', auditProject('P1', p1, { skipTranscript: true }).items.carrier.ok, true)
 
-  // ② 文档路径判据（悬空引用）
+  // ② 文档路径判据（悬空引用 + DSH-CONTROL-SCOPE 标记块）
   add('无 AGENTS.md → docs 判红', auditProject('P1', p1, { skipTranscript: true }).items.docs.ok, false)
   writeFileSync(join(p1, 'AGENTS.md'), '跑 `./scripts/control.sh check` 与 `./scripts/not-exist.sh`。\n')
   add('引用不存在的脚本 → docs 判红（悬空引用）', auditProject('P1', p1, { skipTranscript: true }).items.docs.ok, false)
   writeFileSync(join(p1, 'AGENTS.md'), '跑 `./scripts/control.sh check`。\n')
-  add('引用真实存在的脚本 → docs 通过', auditProject('P1', p1, { skipTranscript: true }).items.docs.ok, true)
+  add('引用真实存在但缺 DSH-CONTROL-SCOPE 标记块 → docs 判红（REQ-103 / C4 反例）', auditProject('P1', p1, { skipTranscript: true }).items.docs.ok, false)
+  writeFileSync(join(p1, 'AGENTS.md'), '<!-- DSH-CONTROL-SCOPE:BEGIN -->\n跑 `./scripts/control.sh check`。\n<!-- DSH-CONTROL-SCOPE:END -->\n')
+  add('引用真实存在的脚本且含 SCOPE 标记块 → docs 通过', auditProject('P1', p1, { skipTranscript: true }).items.docs.ok, true)
 
   // ③ 运行留痕判据
   add('无任何调用留痕 → runtime 判红', auditProject('P1', p1, { skipTranscript: true }).items.runtime.ok, false)

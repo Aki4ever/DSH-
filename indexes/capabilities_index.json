@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-10T07:07:54.379Z",
+  "generatedAt": "2026-10-10T09:43:26.643Z",
   "generator": "scripts/build_capabilities_index.mjs",
   "authority": "磁盘扫盘实况（skills/ · skill-pool/agents · skill-pool/plugins · scripts/）",
-  "total": 282,
+  "total": 288,
   "byLayer": {
     "技能 (Skill)": 178,
     "智能体 (Agent)": 3,
     "插件 (Plugin)": 4,
-    "脚本 (CLI)": 97
+    "脚本 (CLI)": 103
   },
-  "withInterface": 282,
+  "withInterface": 288,
   "entries": [
     {
       "layer": "技能 (Skill)",
@@ -1796,6 +1796,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.bypass_audit",
+      "path": "scripts/bypass_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/bypass_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/bypass_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.channel_audit",
       "path": "scripts/channel_audit.mjs",
       "desc": "快速通道注册审计器 —— 校验\"通道表\"是否真的可用（对应 REQ-045）",
@@ -1949,6 +1958,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.exec_bit_audit",
+      "path": "scripts/exec_bit_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/exec_bit_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/exec_bit_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.fingerprint_audit",
       "path": "scripts/fingerprint_audit.sh",
       "desc": "DSH 工程全域资产数字指纹计算、新鲜度嗅探与对齐审计引擎",
@@ -1982,6 +2000,15 @@
       "invoke": "node scripts/flow_router.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/flow_router.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.gate_registry_audit",
+      "path": "scripts/gate_registry_audit.mjs",
+      "desc": "",
+      "invoke": "node scripts/gate_registry_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/gate_registry_audit.interface.json"
     },
     {
       "layer": "脚本 (CLI)",
@@ -2219,6 +2246,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.physical_reach_audit",
+      "path": "scripts/physical_reach_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/physical_reach_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/physical_reach_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.plugin_install_queue",
       "path": "scripts/plugin_install_queue.mjs",
       "desc": "==============================================================================",
@@ -2390,6 +2426,15 @@
     },
     {
       "layer": "脚本 (CLI)",
+      "id": "cli.rules.script_registry_audit",
+      "path": "scripts/script_registry_audit.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/script_registry_audit.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/script_registry_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
       "id": "cli.rules.session_naming_audit",
       "path": "scripts/session_naming_audit.mjs",
       "desc": "==============================================================================",
@@ -2513,6 +2558,15 @@
       "invoke": "node scripts/token_budget_audit.mjs",
       "invokeKind": "cli",
       "interface": "scripts/interfaces/token_budget_audit.interface.json"
+    },
+    {
+      "layer": "脚本 (CLI)",
+      "id": "cli.rules.tristate_sweep",
+      "path": "scripts/tristate_sweep.mjs",
+      "desc": "==============================================================================",
+      "invoke": "node scripts/tristate_sweep.mjs",
+      "invokeKind": "cli",
+      "interface": "scripts/interfaces/tristate_sweep.interface.json"
     },
     {
       "layer": "脚本 (CLI)",

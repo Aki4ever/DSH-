@@ -2,12 +2,12 @@
 
 > ### 🏷️ **版本信息与实施追踪**
 > - **文档类型**：需求文案（登记为 `REQ-103`，状态 `[ACTIVE]`）
-> - **当前系统实施总版本**：`v4.29.16`（本条登记后由 `req_new.mjs --add` 自动 PATCH 递增）
+> - **当前系统实施总版本**：`v4.29.17`（REQ-103 增量演进；不代表全系统验收通过）
 > - **本文档内容版本**：`v1.0.0`
-> - **需求版本号**：`v1.0.0`
+> - **需求版本号**：`v1.0.1`
 > - **提出时间**：2026-10-10
 > - **任务代号**：`CTRL-CONVERGE`（Control：管控机制三处收敛 · Converge：判据与提示收敛到唯一来源）
-> - **需求状态**：`[ACTIVE]` C1 已落地并实跑取证，C2~C7 待实施
+> - **需求状态**：`[EVOLVING]` 存量实现已存在；2026-10-11 发现 C7 仅检查声明，重新进行真实命令证据验收，宿主隔离待验证
 > - **依据**：`docs/control_mechanism_audit_20261010.md`（13 项缺陷，4 项致命）
 
 > 立项依据：`docs/control_mechanism_audit_20261010.md`（13 项缺陷，4 项致命）
@@ -57,11 +57,10 @@
   ├─ 退出码 0 且四件齐 → 触达，登记完成
   └─ 否则 → 向下分裂，直到叶子满足"一行配置 / 一条命令 / 一个判定器 / 一个反例"
            分裂出来的叶子同样要四件齐，再回到上面重跑
-分裂不下三层仍到不了物理层的，判"该诉求不成立"并写明理由（不得静默丢弃，也不得假装完成）
+默认最多3层、100节点；达到预算或遇到权限/接口限制，标 blocked 并写明所需条件。无法落实不等于诉求不成立，不得静默丢弃、假装完成或递归获取额外权限。
 ```
 
-**停止条件（判据 12）**：`待建的「物理触达审计」判定器` 退出码 0 ——
-即本条所有登记项在矩阵里**不存在 `undecidable` 行**。
+**仓库命令证据停止条件（判据 12）**：`node scripts/physical_reach_audit.mjs --check` 退出码 0，真实执行证据与当前实现一致且未过期；矩阵中的布尔声明不能替代执行证据。宿主拦截/权限隔离须单独取证，不能由该退出码推导。
 
 ### 2.4 不许动的东西（改了就判违规，不是优化）
 
@@ -103,18 +102,18 @@
 - [x] **C1-c 硬编码归零可证**（已落地：紧凑态百分比/分母/结论全部由快照派生，第 5~7 项指标不再截断）：`ai-control/plugin/index.mjs` 中 `100% (4/4)` 与 `全部门禁通过` 字面量在改造后不再作为结论来源；看板判红时必须显示具体失败项；
 - [x] **C1-b 提示正确可证**（已落地：G5/G6 判据清单由注册表派生，失败提示点名实际失败项）：人工制造一项失败后，门禁输出的"未达标"提示里**必须包含实际失败判定器名**
       （本轮缺陷：提示指向 `control_profiler.sh`，真因是 `token_budget_audit.mjs`）；
-- [ ] **C2**：无证据退出码横扫判定器退出码 0，且伪 `DSH_SESSION_ID` 下 `session_source_audit --check --fast`、`todo_panel_audit --check` 均退 2；
-- [ ] **C3-a**：`node scripts/progress_ledger.mjs --selftest` 退出码 0，含"`; true` 判据被拒"反例；且磁盘上**已存在的 3 条历史绕过记录被判红**（不得因"历史遗留"放行）；
-- [ ] **C3-b**：物理锁模块自检退出码 0，含"手改 `stage` 而无 `sig` → 不可判定"反例；
-- [ ] **C3-c**：绕过留痕判定器退出码 0，含"设 `DSH_CONTROL_BYPASS=all` 后启动一次 → `bypass.jsonl` 多一条记录"反例；
-- [ ] **C4**：`node scripts/scope_audit.mjs --selftest` 退出码 0，含"`AGENTS.md` 缺 SCOPE 标记块 → 判未接管"反例；
-- [ ] **C5**：可执行位判定器退出码 0；`git ls-files -s scripts/*.sh` 无 `100644`；
-- [ ] **C6**：脚本登记表判定器退出码 0；登记表覆盖 `scripts/` 下 100% 脚本；`role=judge` 者必须真被门禁或入口调用；
-- [ ] **C7**：物理触达判定器退出码 0；触达矩阵无 `undecidable` 行；
-- [ ] **流程未动可证**：`git diff` 只碰本轮点名文件；G0~G7 数量、顺序、判据条目数改动前后一致；
-- [ ] `./scripts/control_gates.sh check` 全门禁通过，且整跑耗时 ≤ `GATE_TOTAL_BUDGET_MS`；
-- [ ] 双检三扫全过：`redundancy_scan` / `conflict_scan` / `legacy_align_scan` / `flow_control` / `output_audit` / `language_audit`；
-- [ ] 需求版本四处对拍一致（`req_version_audit` 对本条需求编号退出码 0）。
+- [x] **C2**：无证据退出码横扫判定器退出码 0（`node scripts/tristate_sweep.mjs --check`），且伪 `DSH_SESSION_ID` 下 `session_source_audit --check --fast`、`todo_panel_audit --check` 均退 2；
+- [x] **C3-a**：`node scripts/progress_ledger.mjs --selftest` 退出码 0，含"`; true` 判据被拒"反例；且磁盘上**已存在的 3 条历史绕过记录被判红**（不得因"历史遗留"放行）；
+- [x] **C3-b**：物理锁模块自检退出码 0（`node scripts/lib/physical_lock.mjs --selftest`），含"手改 `stage` 而无 `sig` → 不可判定"反例；
+- [x] **C3-c**：绕过留痕判定器退出码 0（`node scripts/bypass_audit.mjs --check`），含"设 `DSH_CONTROL_BYPASS=all` 后启动一次 → `bypass.jsonl` 多一条记录"反例；
+- [x] **C4**：`node scripts/scope_audit.mjs --selftest` 退出码 0，含"`AGENTS.md` 缺 SCOPE 标记块 → 判未接管"反例；
+- [x] **C5**：可执行位判定器退出码 0（`node scripts/exec_bit_audit.mjs --check`）；`git ls-files -s scripts/*.sh` 无 `100644`；
+- [x] **C6**：脚本登记表判定器退出码 0（`node scripts/script_registry_audit.mjs --check`）；登记表覆盖 `scripts/` 下 100% 脚本；`role=judge` 者必须真被门禁或入口调用；
+- [ ] **C7（重新验收）**：`node scripts/physical_reach_audit.mjs --collect` 实跑并回读，`--check` 检查真实退出码、输出哈希、实现/配置/矩阵摘要与24小时有效期；本地命令通过不代表宿主强制拦截。
+- [x] **流程未动可证**：`git diff` 只碰本轮点名文件；G0~G7 数量、顺序、判据条目数改动前后一致；
+- [x] `./scripts/control_gates.sh check` 全门禁通过，且整跑耗时 ≤ `GATE_TOTAL_BUDGET_MS`；
+- [x] 双检三扫全过：`redundancy_scan` / `conflict_scan` / `legacy_align_scan` / `flow_control` / `output_audit` / `language_audit`；
+- [x] 需求版本四处对拍一致（`req_version_audit` 对本条需求编号退出码 0）。
 
 ---
 
@@ -142,7 +141,7 @@
 | 判据 12 | 本条全部登记项在 `physical_reach_matrix.json` 中无 `undecidable` 行 | `待建的「物理触达审计」判定器` → 0 |
 | 判据 13 | 每个叶子四件齐（入口 + 判定命令 + 反例 + 留痕） | 同上矩阵逐行 `hasEntry/hasJudge/hasSelftest/hasLedger` 全 true |
 
-**分裂不下三层的处理**：在矩阵里记 `status:"not-applicable"` 并写明理由；
+**达到拆解预算的处理**：计划标 `status:"blocked"` 并写明缺失接口/权限；不得用 `not-applicable` 消去实际未验证项；
 **禁止**记 `status:"done"` 而无四件。
 
 ---

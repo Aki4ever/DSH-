@@ -50,6 +50,64 @@ const LEDGER_VERSION = '1.0.0'
 // eslint-disable-next-line import/no-unresolved
 import { withLock } from './lib/atomic_lock.mjs'
 
+// ── 判据防注入（REQ-103 / C3-a，2026-10-10 实测根因）────────────────────────
+// 现象（磁盘实证，非推测）：台账 `progress_ledger.jsonl` 中已存在 3 条
+//   `"judge":"node scripts/control_gates.sh check > /dev/null 2>&1; true"`
+// 之类**恒真判据**——旧实现用 `execFileSync('bash', ['-c', judge])` 执行调用方字符串，
+// 只取退出码，于是"判定命令"可以被写成永远成功。本机制最核心的主张
+// "不认自述、认实跑证据"在台账层被一句话击穿。
+//
+// 处置（双闸）：
+//   ① **执行侧**：判据不再交给 shell，改为**按空白切分为 argv 数组直调**（不走 `bash -c`）。
+//      含 shell 元字符一律拒绝登记（退出码 2），从根上消灭注入面。
+//   ② **判定侧**：对**历史已落盘**记录同样横向扫描"绕过式判据"（`; true` / `|| true` /
+//      末尾管道吞码 等），命中即计入 `bypassJudges` 并判红——不得因"历史遗留"放行。
+const SHELL_METACHARS = /[;&|`$(){}<>\\#\n\r\t"'*?[\]~!]/
+/** 绕过式判据特征：能让退出码恒为 0，或把真实退出码吞掉。 */
+const BYPASS_JUDGE_PATTERNS = [
+  /;\s*(true|:)\s*$/i,            // `... ; true`
+  /\|\|\s*(true|:)\s*$/i,         // `... || true`
+  /&&\s*(true|:)\s*$/i,           // `... && true`
+  /\|\s*(cat|tee)\s*(>\s*\/dev\/null)?\s*$/i, // 末尾管道吞码
+  /;\s*exit\s+0\s*$/i,            // 显式改写退出码
+  /(^|\s)(true|:)\s*$/i,          // 整条判据就是个恒真命令
+]
+
+/**
+ * 判断一条判据是否为"绕过式"（永远成功 / 吞掉退出码）。
+ * @param {unknown} judge 判据字符串
+ * @returns {boolean}
+ */
+export function isBypassJudge(judge) {
+  const s = String(judge ?? '').trim()
+  if (!s) return true
+  return BYPASS_JUDGE_PATTERNS.some((re) => re.test(s))
+}
+
+/**
+ * 把判据解析为直调 argv；不合法即抛错（由调用方退 2）。
+ * 只允许 `node|bash|sh|./scripts/xxx` 这类**无元字符**的命令行。
+ * @param {string} judge
+ * @returns {string[]}
+ */
+export function parseJudgeArgv(judge) {
+  const s = String(judge ?? '').trim()
+  if (!s) throw new Error('判据为空')
+  if (isBypassJudge(s)) throw new Error(`判据为绕过式（含 shell 结构或恒真结尾），拒绝登记：${s}`)
+  const argv = s.split(/\s+/).filter(Boolean)
+  for (const tok of argv) {
+    if (SHELL_METACHARS.test(tok)) throw new Error(`判据含 shell 元字符，拒绝登记：\`${tok}\``)
+  }
+  const [cmd] = argv
+  if (!['node', 'bash', 'sh', 'python3', './scripts/'].some((p) => cmd === p || cmd.startsWith('scripts/'))) {
+    // 允许 node/bash/sh 与仓库内脚本；其余一律拒绝（防止 `true`/`echo` 之类冒充判据）
+    if (!/^\.?\/?(scripts|node_modules\/\.bin)\//.test(cmd)) {
+      throw new Error(`判据首词不是受支持的判定入口：\`${cmd}\`（只允许 node/bash/sh 或 scripts/ 内脚本）`)
+    }
+  }
+  return argv
+}
+
 // ── 参数解析 ────────────────────────────────────────────────────────────────
 function parseArgs(argv) {
   const out = { _: [] }
@@ -180,6 +238,7 @@ export function evaluate(records, dirty, anchorFn = (rel) => anchor(toAbs(rel)),
   const drifts = []
   const driftExempt = []
   const judgeFails = []
+  const bypassJudges = []
   const missing = []
   const exempt = opts.driftExempt || readDriftExemptions()
 
@@ -196,6 +255,20 @@ export function evaluate(records, dirty, anchorFn = (rel) => anchor(toAbs(rel)),
     }
   }
 
+  // 绕过式判据横扫（REQ-103 / C3-a）：**逐条历史记录**扫描，不只看每个文件的最后一条。
+  // 为什么必须横扫历史：`latestByFile` 只留每个文件的最新记录，而 3 条恒真判据
+  // 正是"当时记成通过"的历史污点——只看最新一条会把它洗掉。
+  // 口径：命中即判红，**不得因"历史遗留"放行**（用户明确要求）。
+  for (const r of records) {
+    const j = r?.judge
+    if (typeof j === 'string' && isBypassJudge(j)) {
+      bypassJudges.push({
+        at: r.at, judge: j, judgeExit: r.judgeExit,
+        files: (r.files || []).map((f) => f.path).slice(0, 4),
+      })
+    }
+  }
+
   // 未记录改动：台账自身体系内的文件、以及降级快照目录，本身就会常变，排除
   const recordedFiles = new Set(latest.keys())
   const unrecorded = dirty.filter((f) => {
@@ -204,7 +277,7 @@ export function evaluate(records, dirty, anchorFn = (rel) => anchor(toAbs(rel)),
     return !recordedFiles.has(rel)
   })
 
-  return { drifts, driftExempt, judgeFails, missing, unrecorded, fileCount: latest.size, recordCount: records.length }
+  return { drifts, driftExempt, judgeFails, bypassJudges, missing, unrecorded, fileCount: latest.size, recordCount: records.length }
 }
 
 // ── 子命令 ──────────────────────────────────────────────────────────────────
@@ -259,11 +332,21 @@ async function cmdRecord(args) {
     console.log(`🔎 回读断言命中：${hit.path} 含 "${args.expect}"`)
   }
 
-  // ③ 实跑判定命令，记录**真实**退出码
+  // ③ 实跑判定命令，记录**真实**退出码。
+  //    REQ-103 / C3-a：判据**不再经 shell**（旧实现 `bash -c` 使 `...; true` 恒真）。
+  //    解析失败（含元字符 / 恒真结尾）一律退 2，不落盘。
+  let judgeArgv
+  try {
+    judgeArgv = parseJudgeArgv(judge)
+  } catch (e) {
+    console.error(`❌ 判据不合法，拒绝登记：${e?.message || e}`)
+    process.exit(2)
+  }
   let judgeExit = -1
   let judgeOut = ''
   try {
-    judgeOut = execFileSync('bash', ['-c', judge], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 300000 })
+    const [cmd, ...rest] = judgeArgv
+    judgeOut = execFileSync(cmd, rest, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 300000 })
     judgeExit = 0
   } catch (e) {
     judgeExit = typeof e.status === 'number' ? e.status : -1
@@ -281,6 +364,7 @@ async function cmdRecord(args) {
     requirementVersion: reqVersion,
     note: typeof args.note === 'string' ? args.note : '',
     judge,
+    judgeArgv,
     judgeExit,
     judgeLastLine: lastLine.slice(0, 200),
     readBack: true,
@@ -307,7 +391,7 @@ async function cmdRecord(args) {
 function cmdCheck(args) {
   const records = readLedger()
   const res = evaluate(records, gitDirty())
-  const ok = res.drifts.length === 0 && res.unrecorded.length === 0 && res.judgeFails.length === 0 && res.missing.length === 0
+  const ok = res.drifts.length === 0 && res.unrecorded.length === 0 && res.judgeFails.length === 0 && res.missing.length === 0 && res.bypassJudges.length === 0
 
   if (args.json) {
     console.log(JSON.stringify({ ok, ...res }, null, 2))
@@ -320,13 +404,22 @@ function cmdCheck(args) {
   console.log(`哈希漂移      : ${res.drifts.length}${res.driftExempt?.length ? `（另有 ${res.driftExempt.length} 项已书面豁免）` : ''}`)
   console.log(`未记录改动    : ${res.unrecorded.length}`)
   console.log(`判定失败      : ${res.judgeFails.length}`)
+  console.log(`绕过式判据    : ${res.bypassJudges.length}`)
   console.log(`文件已消失    : ${res.missing.length}`)
   for (const d of res.drifts) console.log(`   ⚠️ 漂移 ${d.path}：台账 ${d.recorded} ≠ 磁盘 ${d.now}（改了没重新登记）`)
   for (const d of (res.driftExempt || [])) console.log(`   📝 豁免漂移 ${d.path}：${d.reason}`)
   for (const u of res.unrecorded) console.log(`   ⚠️ 未记录 ${u}`)
   for (const j of res.judgeFails) console.log(`   ⚠️ 判定失败 ${j.path}：「${j.judge}」退出码 ${j.exit}`)
+  for (const b of res.bypassJudges) {
+    console.log(`   🚨 绕过式判据（恒真，退出码被吞）：${b.at} · 记成 judgeExit=${b.judgeExit} · 「${b.judge}」`)
+    if (b.files?.length) console.log(`      └ 涉及 ${b.files.join(', ')}`)
+  }
   for (const m of res.missing) console.log(`   ⚠️ 已消失 ${m}`)
   console.log('-----------------------------------------')
+  if (res.bypassJudges.length) {
+    console.log(`⛔ 台账存在 ${res.bypassJudges.length} 条绕过式判据：判据可被写成永远成功 = "认实跑证据"被击穿`)
+    console.log('   → 不得因"历史遗留"放行；需重跑真实判据并重新登记该文件')
+  }
   console.log(ok ? '✅ 台账与磁盘一致：改动都有记录、记录都对得上、判定都跑过' : '⛔ 台账与磁盘不一致（见上）')
   process.exit(ok ? 0 : 1)
 }
@@ -345,7 +438,7 @@ function cmdList(args) {
 function cmdReport(args) {
   const records = readLedger()
   const res = evaluate(records, gitDirty())
-  const ok = res.drifts.length === 0 && res.unrecorded.length === 0 && res.judgeFails.length === 0 && res.missing.length === 0
+  const ok = res.drifts.length === 0 && res.unrecorded.length === 0 && res.judgeFails.length === 0 && res.missing.length === 0 && res.bypassJudges.length === 0
 
   // 还差什么：直接问物理触达审计器（唯一权威口径，不在这里重算）
   let audit = null
@@ -371,6 +464,7 @@ function cmdReport(args) {
     console.log(`      └ ${files}`)
   }
   console.log(`② 做到哪一步：漂移 ${res.drifts.length} · 未记录改动 ${res.unrecorded.length} · 判定失败 ${res.judgeFails.length} · 文件消失 ${res.missing.length}`)
+  for (const b of res.bypassJudges) console.log(`   🚨 绕过式判据 ${b.at}：「${b.judge}」`)
   if (audit) {
     console.log(`   机制触达：登记 ${audit.total ?? '?'} 条 · 已触达 ${audit.reached ?? '?'} · 硬性未触达 ${audit.strictMiss ?? '?'} · 无载体 ${audit.noCarrier ?? '?'}`)
   } else {
@@ -393,14 +487,14 @@ function cmdReport(args) {
 function cmdSelftest() {
   const tmp = mkdtempSync(join(tmpdir(), 'ledger-selftest-'))
   let passed = 0
-  const total = 3
+  const total = 7
   const f = join(tmp, 'a.txt')
   writeFileSync(f, 'hello v1\n', 'utf8')
 
   // 态 1：登记后无改动 → 无漂移
   const recs = []
   const a1 = anchor(f)
-  recs.push({ at: new Date().toISOString(), judge: 'true', judgeExit: 0, files: [{ path: f, sha256: a1.sha256 }] })
+  recs.push({ at: new Date().toISOString(), judge: 'node scripts/progress_ledger.mjs selftest', judgeExit: 0, files: [{ path: f, sha256: a1.sha256 }] })
   let r = evaluate(recs, [], (rel) => anchor(rel === f ? f : rel))
   if (r.drifts.length === 0) { console.log('✅ 态1 记录与磁盘一致 → 无漂移'); passed++ }
   else console.error('❌ 态1 期望无漂移，实得 ' + r.drifts.length)
@@ -413,10 +507,36 @@ function cmdSelftest() {
 
   // 态 3：重新登记后 → 漂移清零
   const a2 = anchor(f)
-  recs.push({ at: new Date(Date.now() + 1000).toISOString(), judge: 'true', judgeExit: 0, files: [{ path: f, sha256: a2.sha256 }] })
+  recs.push({ at: new Date(Date.now() + 1000).toISOString(), judge: 'node scripts/progress_ledger.mjs selftest', judgeExit: 0, files: [{ path: f, sha256: a2.sha256 }] })
   r = evaluate(recs, [], (rel) => anchor(rel === f ? f : rel))
   if (r.drifts.length === 0) { console.log('✅ 态3 重新登记 → 漂移清零'); passed++ }
   else console.error('❌ 态3 期望零漂移，实得 ' + r.drifts.length)
+
+  // 态 4/5：绕过式判据必须被识别（REQ-103 / C3-a 的核心反例）
+  const bypassCases = [
+    "node scripts/control_gates.sh check > /dev/null 2>&1; true",
+    "node scripts/foo.mjs --check || true",
+  ]
+  for (const [i, j] of bypassCases.entries()) {
+    const rec2 = [{ at: new Date().toISOString(), judge: j, judgeExit: 0, files: [{ path: f, sha256: anchor(f).sha256 }] }]
+    r = evaluate(rec2, [], (rel) => anchor(rel === f ? f : rel))
+    if (r.bypassJudges.length === 1) { console.log(`✅ 态${4 + i} 绕过式判据被识别并判红：${j}`); passed++ }
+    else console.error(`❌ 态${4 + i} 期望识别 1 条绕过式判据，实得 ${r.bypassJudges.length}`)
+  }
+  // 态 6：parseJudgeArgv 对 "; true" 判据必须抛错拒绝登记
+  let rejected = false
+  try {
+    parseJudgeArgv('node scripts/control_gates.sh check > /dev/null 2>&1; true')
+  } catch {
+    rejected = true
+  }
+  if (rejected) { console.log('✅ 态6 登记侧拒绝 "; true" 注入判据'); passed++ }
+  else console.error('❌ 态6 期望登记侧抛错拒绝 "; true" 判据')
+
+  // 态 7：反向：正常判据不得被误判为绕过
+  const goodJudge = "node scripts/progress_ledger.mjs selftest"
+  if (!isBypassJudge(goodJudge) && Array.isArray(parseJudgeArgv(goodJudge))) { console.log(`✅ 态7 反向 正常判据未被误判：${goodJudge}`); passed++ }
+  else console.error("❌ 态7 反向 正常判据被误判为绕过")
 
   rmSync(tmp, { recursive: true, force: true })
   console.log(`—— 自检结果：${passed}/${total} 通过`)
@@ -424,7 +544,15 @@ function cmdSelftest() {
 }
 
 const args = parseArgs(process.argv.slice(2))
-const action = args._[0] || 'report'
+let action = args._[0]
+if (!action) {
+  if (args.selftest) action = 'selftest'
+  else if (args.check) action = 'check'
+  else if (args.report) action = 'report'
+  else if (args.list) action = 'list'
+  else if (args.record) action = 'record'
+  else action = 'report'
+}
 const actions = { record: cmdRecord, check: cmdCheck, list: cmdList, report: cmdReport, selftest: cmdSelftest }
 const fn = actions[action]
 if (!fn) {

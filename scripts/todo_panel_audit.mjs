@@ -34,6 +34,7 @@ import path from 'node:path'
 import os from 'node:os'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { resolveTodoEvidenceSync } from './lib/todo_tracker.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
@@ -133,7 +134,7 @@ export async function behaviorCheck(opts = {}) {
 
 async function main() {
   const argv = process.argv.slice(2)
-  if (argv.includes('--self-test')) {
+  if (argv.includes('--self-test') || argv.includes('--selftest')) {
     // 反向用例：用一个"永远返回空 + 不画打钩"的假实现，行为断言必须判红
     const fake = () => []
     const r = await behaviorCheck({ renderer: fake })
@@ -155,6 +156,15 @@ async function main() {
   const beh = await behaviorCheck()
   const issues = [...res.issues, ...beh.issues]
 
+  // REQ-103 / C2-a：三态统一。离线夹具验证载体之后，若当前指定了 DSH_SESSION_ID，
+  // 必须取得到该会话的真实待办落盘证据；取不到真实会话证据则判为不可判定（exit 2），
+  // 不得仅凭离线夹具（FIXTURE）把无证据会话判为 0 通过。
+  const sid = process.env.DSH_SESSION_ID
+  let sessionEv = null
+  if (sid) {
+    sessionEv = resolveTodoEvidenceSync(sid, res.facts.dshHome)
+  }
+
   console.log('📋 任务列表面板（逐条进度 + 完成打钩）· 载体判定')
   console.log('-----------------------------------------')
   console.log(`载体：${path.relative(ROOT, PLUGIN)}`)
@@ -162,11 +172,18 @@ async function main() {
   console.log(`  ${res.facts.registered ? '✅' : '⛔'} 已进宿主（dependencies + bundles 双登记）`)
   console.log('行为断言（真实调用，不查字符串）：')
   for (const line of beh.rendered || []) console.log(`  ${line}`)
+  if (sid) {
+    console.log(`会话实况（${sid}）：${sessionEv ? `✅ 已取到真实待办证据（total=${sessionEv.total}, inProgress=${sessionEv.inProgress}）` : '⚠️ 未取到该会话的真实待办证据'}`)
+  }
   console.log('-----------------------------------------')
   if (issues.length) {
     for (const i of issues) console.log(`   ⛔ ${i}`)
     console.log(`⛔ 未触达物理实现层：${issues.length} 项未过`)
     process.exit(1)
+  }
+  if (sid && !sessionEv) {
+    console.log(`⚠️ 不可判定（exit 2）：离线夹具通过，但当前会话 ${sid} 无真实待办证据，不得折算为通过`)
+    process.exit(2)
   }
   console.log('✅ 已触达：载体在位 · 逐条打钩与总进度可复算 · 空列表不画假进度 · 已进宿主 bundles 通道')
   process.exit(0)

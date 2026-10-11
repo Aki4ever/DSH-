@@ -17,13 +17,101 @@
  */
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { createHmac, randomBytes } from 'node:crypto'
 import { join, dirname } from 'node:path'
 import { homedir } from 'node:os'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { parseTitle } from './auto_naming.mjs'
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
+const SECRET_FILE = join(REPO_ROOT, '.dsh_locks', 'lock_hmac.key')
+
+/** 获取或初始化物理锁 HMAC 密钥（绑定宿主控制目录与工程锁目录） */
+export function getLockHmacKey(dshHome) {
+  if (process.env.DSH_LOCK_SECRET) return process.env.DSH_LOCK_SECRET
+  const home = dshHome || process.env.DSH_HOME || join(homedir(), '.dsh')
+  const hostSecret = join(home, '.dsh-control', 'lock_hmac.key')
+  for (const p of [hostSecret, SECRET_FILE]) {
+    try {
+      if (existsSync(p)) {
+        const k = readFileSync(p, 'utf8').trim()
+        if (k.length >= 16) return k
+      }
+    } catch {}
+  }
+  const generated = randomBytes(32).toString('hex')
+  for (const p of [hostSecret, SECRET_FILE]) {
+    try {
+      mkdirSync(dirname(p), { recursive: true })
+      writeFileSync(p, generated, { encoding: 'utf8', mode: 0o600 })
+      return generated
+    } catch {}
+  }
+  return 'dsh_physlock_fallback_hmac_key_v1'
+}
+
+/**
+ * 计算物理锁凭据 HMAC-SHA256 签名（REQ-103 / C3-b：stage + proofs 参与签名）
+ * @param {object} state
+ * @param {string} [dshHome]
+ * @returns {string}
+ */
+export function computeLockSignature(state, dshHome) {
+  const key = getLockHmacKey(dshHome)
+  const sid = String(state?.sessionId || '')
+  const stg = Number(state?.stage ?? 0)
+  // 对 proofs 按键稳定序列化
+  const proofs = state?.proofs && typeof state.proofs === 'object' ? state.proofs : {}
+  const sortedKeys = Object.keys(proofs).sort()
+  const canonicalProofs = {}
+  for (const k of sortedKeys) {
+    const p = proofs[k]
+    if (p && typeof p === 'object') {
+      const pk = Object.keys(p).sort()
+      const cp = {}
+      for (const sub of pk) cp[sub] = p[sub]
+      canonicalProofs[k] = cp
+    } else {
+      canonicalProofs[k] = p
+    }
+  }
+  const payload = `v1|${sid}|${stg}|${JSON.stringify(canonicalProofs)}`
+  return createHmac('sha256', key).update(payload).digest('hex')
+}
+
+/**
+ * 校验物理锁状态签名：stage > 0 时必须具备合法 sig 且 proofs 非空
+ * @param {object} state
+ * @param {string} [dshHome]
+ * @returns {{ok: boolean, reason?: string}}
+ */
+export function verifyLockSignature(state, dshHome) {
+  if (!state || typeof state.stage !== 'number') {
+    return { ok: false, reason: '状态结构非法（缺少数字型 stage）' }
+  }
+  if (state.stage === 0) {
+    if (!state.sig) return { ok: true }
+    const expected0 = computeLockSignature(state, dshHome)
+    return state.sig === expected0
+      ? { ok: true }
+      : { ok: false, reason: 'STAGE 0 签名不匹配（疑似被篡改）' }
+  }
+  if (!state.sig || typeof state.sig !== 'string') {
+    return { ok: false, reason: `STAGE ${state.stage} 缺少 HMAC 签名 sig（疑似手改 stage 伪造凭据）` }
+  }
+  const proofs = state.proofs && typeof state.proofs === 'object' ? state.proofs : {}
+  for (let s = 1; s <= state.stage; s++) {
+    if (!proofs[s] || typeof proofs[s] !== 'object') {
+      return { ok: false, reason: `STAGE ${state.stage} 缺少第 ${s} 阶凭据 proofs[${s}]` }
+    }
+  }
+  const expected = computeLockSignature(state, dshHome)
+  if (state.sig !== expected) {
+    return { ok: false, reason: `STAGE ${state.stage} 的 HMAC 签名校验不通过（stage 或 proofs 被篡改）` }
+  }
+  return { ok: true }
+}
 
 export const STAGES = {
   INIT: 0,
@@ -81,14 +169,23 @@ export async function getLockState(sessionId, dshHome) {
       if (!existsSync(file)) continue
       const data = JSON.parse(await readFile(file, 'utf8'))
       if (typeof data.stage !== 'number') continue
-      if (!best || data.stage > best.stage) best = data
+      // REQ-103 / C3-b：HMAC 验签。stage > 0 时必须具备合法签名且 proofs 齐备
+      const verify = verifyLockSignature(data, dshHome)
+      if (!verify.ok) {
+        data.tampered = true
+        data.invalid = true
+        data.tamperReason = verify.reason
+        data.rawStage = data.stage
+        data.stage = STAGES.INIT // 凭据伪造即自动降阶至 INIT 保护
+      }
+      if (!best || (data.tampered ? -1 : data.stage) > (best.tampered ? -1 : best.stage)) best = data
     } catch {
       // 单源损坏不影响另一源
     }
   }
   if (best) return best
 
-  return {
+  const init = {
     version: '1.0.0',
     sessionId: sessionId || process.env.DSH_SESSION_ID || 'global_session',
     stage: STAGES.INIT,
@@ -99,12 +196,16 @@ export async function getLockState(sessionId, dshHome) {
       { stage: STAGES.INIT, at: new Date().toISOString(), note: '物理锁初始化' }
     ]
   }
+  init.sig = computeLockSignature(init, dshHome)
+  return init
 }
 
-/** 持久化锁状态 */
+/** 持久化锁状态（自动注入 HMAC 签名） */
 export async function saveLockState(state, dshHome) {
   state.updatedAt = new Date().toISOString()
   state.stageName = STAGE_NAMES[state.stage] || `STAGE_${state.stage}`
+  // REQ-103 / C3-b：自动签署 HMAC 凭据
+  state.sig = computeLockSignature(state, dshHome)
   const payload = JSON.stringify(state, null, 2)
   const primary = getLockFilePath(state.sessionId, dshHome)
   try {
@@ -147,6 +248,10 @@ export async function advanceLock(sessionId, targetStage, proofData, dshHome) {
     }
   }
 
+  delete state.tampered
+  delete state.invalid
+  delete state.tamperReason
+  delete state.rawStage
   state.stage = targetStage
   state.proofs[targetStage] = { ...(proofData || {}), at: new Date().toISOString() }
   state.history.push({ stage: targetStage, at: new Date().toISOString(), note: `阶梯晋升至 ${STAGE_NAMES[targetStage]}` })
@@ -241,6 +346,20 @@ export function evaluatePhysicalLock(execution, lockState) {
 
   const currentStage = lockState.stage ?? STAGES.INIT
 
+  // 0. REQ-103 / C3-b：篡改保护。验签失败或凭据伪造时，物理拦截所有改动型工具
+  if (lockState.tampered || lockState.invalid) {
+    if (['write', 'edit', 'bash', 'pwsh'].includes(toolName)) {
+      return {
+        stage: currentStage,
+        stageName: 'LOCK-TAMPERED (凭据篡改保护)',
+        toolName,
+        requiredStage: STAGES.INIT,
+        requiredStageName: STAGE_NAMES[STAGES.INIT],
+        message: `🚨 [物理锁阻断] 物理锁凭据签名失效或被非法篡改（${lockState.tamperReason || 'HMAC校验失败'}）！已降阶保护！请先调用 ./scripts/physical_lock.sh reset 或 sync 恢复合规凭据！`
+      }
+    }
+  }
+
   // 1. 只读探查与辅助工具任何阶段始终放行
   const readOnlyTools = ['read', 'grep', 'glob', 'ask_user_question', 'job_output', 'job_list', 'list_agents', 'render_ui', 'validate_dsh_ui']
   if (readOnlyTools.includes(toolName)) {
@@ -250,11 +369,13 @@ export function evaluatePhysicalLock(execution, lockState) {
   // 2. STAGE 0 (INIT)：未完成探境定标
   //    在此阶段，严禁任何业务代码改动或攻坚工具调用
   if (currentStage === STAGES.INIT) {
-    // 允许调用改名脚本或门禁检查
+    // 允许调用改名脚本或门禁检查（禁复合命令注入绕过）
     if (toolName === 'bash' || toolName === 'pwsh') {
-      const cmd = String(execution?.arguments?.command || '')
-      if (cmd.includes('name_me.sh') || cmd.includes('control_gates.sh') || cmd.includes('physical_lock.sh')) {
-        return null
+      const cmd = String(execution?.arguments?.command || '').trim()
+      if (!/[;&|\n]/.test(cmd)) {
+        if (cmd.includes('name_me.sh') || cmd.includes('control_gates.sh') || cmd.includes('physical_lock.sh')) {
+          return null
+        }
       }
     }
     // 其它改动型操作全部物理拦截
@@ -277,9 +398,11 @@ export function evaluatePhysicalLock(execution, lockState) {
       return null // 放行 todo_write，这是本阶段必须完成的动作！
     }
     if (toolName === 'bash' || toolName === 'pwsh') {
-      const cmd = String(execution?.arguments?.command || '')
-      if (cmd.includes('global_scheduler_lock.sh') || cmd.includes('physical_lock.sh') || cmd.includes('redundancy_scan.mjs')) {
-        return null
+      const cmd = String(execution?.arguments?.command || '').trim()
+      if (!/[;&|\n]/.test(cmd)) {
+        if (cmd.includes('global_scheduler_lock.sh') || cmd.includes('physical_lock.sh') || cmd.includes('redundancy_scan.mjs')) {
+          return null
+        }
       }
     }
     if (['write', 'edit'].includes(toolName)) {
@@ -298,7 +421,7 @@ export function evaluatePhysicalLock(execution, lockState) {
   //    放行 write / edit 与编译命令；但严禁在未质检的情况下执行 git push 归卷
   if (currentStage === STAGES.PLAN_PASSED) {
     if (toolName === 'bash' || toolName === 'pwsh') {
-      const cmd = String(execution?.arguments?.command || '')
+      const cmd = String(execution?.arguments?.command || '').trim()
       if (cmd.includes('git push') || cmd.includes('git_sync_remote.sh')) {
         return {
           stage: currentStage,
@@ -315,4 +438,80 @@ export function evaluatePhysicalLock(execution, lockState) {
 
   // 5. STAGE 3 (VERIFY_PASSED) & STAGE 4 (DELIVERED)：放行
   return null
+}
+
+/**
+ * 自检入口（REQ-103 / C3-b 验收）
+ */
+export async function runPhysicalLockSelftest() {
+  const testSid = 'selftest_sid_' + Date.now()
+  let passed = 0
+  const total = 5
+
+  // 1. 初始化产生合法签名
+  const s0 = await resetLock(testSid)
+  const v0 = verifyLockSignature(s0)
+  if (s0.stage === STAGES.INIT && v0.ok) {
+    console.log('✅ 用例1: 初始化产生 STAGES.INIT 且 HMAC 签名校验通过')
+    passed++
+  } else {
+    console.error('❌ 用例1 失败:', v0)
+  }
+
+  // 2. 正常晋升产生有效 sig
+  const adv = await advanceLock(testSid, STAGES.SPEC_PASSED, { token: 'selftest_proof' })
+  const s1 = await getLockState(testSid)
+  const v1 = verifyLockSignature(s1)
+  if (adv.success && s1.stage === STAGES.SPEC_PASSED && v1.ok) {
+    console.log('✅ 用例2: 正常晋升至 STAGE 1 且附带有效 HMAC 签名')
+    passed++
+  } else {
+    console.error('❌ 用例2 失败:', v1)
+  }
+
+  // 3. 反例：手改 stage 而无合法 sig → 必须被判不可判定/篡改降阶
+  const tamperedState = {
+    ...s1,
+    stage: STAGES.DELIVERED, // 恶意篡改至 4
+  }
+  const vTamper = verifyLockSignature(tamperedState)
+  if (!vTamper.ok) {
+    console.log('✅ 用例3 (反例): 手改 stage 而无对应 sig → 验签直接拒绝:', vTamper.reason)
+    passed++
+  } else {
+    console.error('❌ 用例3 期望验签失败，实为成功')
+  }
+
+  // 4. evaluatePhysicalLock 阻断篡改状态
+  const evalTamper = evaluatePhysicalLock({ name: 'write', arguments: { file_path: 'foo.js' } }, { ...tamperedState, tampered: true, tamperReason: vTamper.reason })
+  if (evalTamper !== null && evalTamper.message.includes('物理锁阻断')) {
+    console.log('✅ 用例4: 篡改凭据在 evaluatePhysicalLock 中被硬阻断')
+    passed++
+  } else {
+    console.error('❌ 用例4 期望篡改凭据被阻断，实得放行')
+  }
+
+  // 5. 反例：复合命令注入绕过 (cat name_me.sh; rm file) 在 STAGE 0 被拒
+  const evalCompound = evaluatePhysicalLock({ name: 'bash', arguments: { command: 'cat scripts/name_me.sh; rm -rf /tmp/test' } }, s0)
+  if (evalCompound !== null && evalCompound.message.includes('物理锁阻断')) {
+    console.log('✅ 用例5 (反例): 复合命令注入绕过在 STAGE 0 被硬阻断')
+    passed++
+  } else {
+    console.error('❌ 用例5 期望复合命令被阻断，实得放行')
+  }
+
+  // 清理
+  await resetLock(testSid)
+  console.log(`—— 物理锁自检结果: ${passed}/${total} 通过`)
+  return passed === total
+}
+
+// CLI 直调支持
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  const isSelftest = process.argv.includes('--selftest') || process.argv.includes('selftest')
+  const isCheck = process.argv.includes('--check') || process.argv.includes('check')
+  if (isSelftest || isCheck) {
+    const ok = await runPhysicalLockSelftest()
+    process.exit(ok ? 0 : 1)
+  }
 }

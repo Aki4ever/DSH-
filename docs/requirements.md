@@ -1,11 +1,11 @@
 # 全局需求管理台账 (Requirements Ledger)
 
 > ### 🏷️ **版本信息与实施追踪**
-> - **当前系统实施总版本**：`v4.29.16`
+> - **当前系统实施总版本**：`v4.29.17`
 > - **版本治理规范**：遵循 [`rules/workflow/versioning_standard.md`](../rules/workflow/versioning_standard.md)
-> - **最后同步时间**：2026-10-03
-> - **版本状态**：`[Release 稳定生效]`
-> - **本次 PATCH 递增说明**：`v4.29.15 → v4.29.16`，依据 REQ-103（管控机制三处收敛与递归触达（CTRL-CONVERGE））；属规则细化 + 只读判定器与知识库条目接入（向下兼容），故不启用 REQ-093 预留的 `v4.30.0`。
+> - **最后同步时间**：2026-10-11
+> - **版本状态**：`[EVOLVING 待验收]`
+> - **本次 PATCH 递增说明**：`v4.29.16 → v4.29.17`，依据 REQ-103 增量演进：真实命令证据、有界拆解与门禁接线；历史台账缺陷和宿主隔离仍待验收，版本递增不等于全绿。
 > - **上一次 PATCH 递增说明**：`v4.29.14 → v4.29.15`，依据 REQ-102（管控流程降耗与物理触达闭环（EFF-NOFLOW））；属规则细化 + 只读判定器与知识库条目接入（向下兼容），故不启用 REQ-093 预留的 `v4.30.0`。
 > - **上上次 PATCH 递增说明**：`v4.29.10 → v4.29.11`，依据 REQ-092 第三批（口径扩容：机制全集 × 工程全集）；属需求文案增补 + 台账登记（**本轮未改任何机制载体**，向下兼容）。
 > - **历史跳号留痕**：`v4.24.0 → v4.26.0` 曾跳过 `v4.25.0`（`v4.25.0` 归 REQ-089、`v4.26.0` 归 REQ-090，两笔账一次结清）。
@@ -3708,18 +3708,43 @@ P6 同批还留下一个无人引用的孤儿脚本 `scripts/scope_renewal_gate.
 > - **生成会话**: `未登记`
 > - **到期/清理条件**: `[随版本演进]`
 
-- **当前状态**：`[ACTIVE]` 需求已登记，按验收标准逐步落地
-- **实施版本**：`v4.29.16`（PATCH 递增：新增需求条目与其判定入口，向下兼容）
-- **需求版本**：`v1.0.0`
+- **当前状态**：`[EVOLVING]` C7 重新验收；本地命令证据已实施，历史台账缺陷仍判红，宿主权限隔离未验证
+- **实施版本**：`v4.29.17`（PATCH：真实命令证据、有界拆解与门禁接线；不代表全系统验收通过）
+- **需求版本**：`v1.0.1`
 - **提出时间**：2026-10-10
-- **最新更新**：2026-10-10
+- **最新更新**：2026-10-11
 - **责任归属**：用户（提出与授权判定） / AI 智能体（取证、分裂与实施）
 - **需求文案**：[`docs/constraint_mechanism_optimize_19.md`](constraint_mechanism_optimize_19.md)（唯一权威出处，本条目只放指针不复述细则）
 
 #### 1. 核心诉求与目标
 
-1. **待补**：由需求文案给出「改什么、判据是什么、怎么复跑」；
+1. **三处脱钩与收敛收口（C1~C3）**：
+   - C1：门禁注册表（`ai-control/config/gates_registry.mjs`）解耦判定与提示，看板字面量硬编码清零；
+   - C2：无证据退出码统一为 2（不可判定），`scripts/tristate_sweep.mjs` 杜绝假绿放行；
+   - C3：凭据层防伪（`scripts/progress_ledger.mjs` 防注入、`scripts/lib/physical_lock.mjs` HMAC 验签、逃生舱事件留痕）。
+2. **存量规范与物理触达（C4~C7）**：
+   - C4：全域覆盖审计 `scripts/scope_audit.mjs` 穿透校验 `AGENTS.md` 的 DSH-CONTROL-SCOPE 标记块；
+   - C5：可执行位审计 `scripts/exec_bit_audit.mjs`，修复存量 shell 脚本索引模式 100644 ➔ 100755；
+   - C6：脚本登记表 `ai-control/config/script_registry.json` 覆盖 100% 磁盘脚本；
+   - C7：物理触达矩阵 `ai-control/reports/state/physical_reach_matrix.json` 零 `undecidable` 行收敛。
 
 #### 2. 验收标准
 
-- [ ] 待补：验收标准必须逐条对应可跑命令与期望退出码。
+- [x] **C1 门禁注册表与提示解耦**：`node scripts/gate_registry_audit.mjs --check` 退出码 0，反例 9/9 通过；
+- [x] **C2 三态退出码横扫**：`node scripts/tristate_sweep.mjs --check` 退出码 0，缺证据场景严格返回 2；
+- [x] **C3-a 台账防注入**：`node scripts/progress_ledger.mjs --selftest` 退出码 0，直接 argv 规避复合命令注入；
+- [x] **C3-b 物理锁凭据 HMAC 签名**：`node scripts/lib/physical_lock.mjs --selftest` 退出码 0，手改 stage 自动降阶拦截；
+- [x] **C3-c 绕过留痕与看板警示**：`node scripts/bypass_audit.mjs --check` 退出码 0，自检 5/5 通过；
+- [x] **C4 全域覆盖穿透**：`node scripts/scope_audit.mjs --check` 退出码 0，自检 15/15 通过；
+- [x] **C5 可执行位审计与修复**：`node scripts/exec_bit_audit.mjs --check` 退出码 0，29 个脚本均为 100755；
+- [x] **C6 脚本登记表覆盖率**：`node scripts/script_registry_audit.mjs --check` 退出码 0，覆盖率 100%；
+- [ ] **C7 物理触达证据收敛（重新验收）**：`node scripts/physical_reach_audit.mjs --collect` 实跑后，`--check` 必须检查命令真实退出码、输出摘要哈希、实现/配置/矩阵变化与24小时有效期；`--selftest` 的夹具成功不等于生产通过，更不等于宿主权限隔离。
+- [ ] **累积门禁重新验收**：`./scripts/control_gates.sh check` 新增真实证据判据后须如实显示失败，不沿用旧全绿结论。
+
+#### 3. 2026-10-11 增量实施记录（需求版本 v1.0.1）
+- 修复 C7：不再采信 hasEntry/hasJudge/hasSelftest/hasLedger 自述；增加受限 argv 实跑、输出哈希、实现摘要、24小时有效期及回读。
+- 自动拆解默认3层/100节点；缺权限或宿主接口标 blocked，不用 not-applicable 消去失败，不自动创建未验证 skill。
+- 接入 G5 注册表；G0~G7 顺序不变，但 G5 判据增加1条（明确增量，不冒称判据数未变）。
+- 首次采集18次调用，17次成功、台账 check 失败：79处哈希漂移、7项未记录改动、3条历史绕过判据；不删除历史、不伪造清零。
+- 机制自证发现136个技能共292处接口待补；这是既有缺口，不因文件存在而算内容完备。
+- 本地命令证据与宿主强制隔离分开报告；未重启/发布宿主插件，未修改系统权限或提交现有工作树。

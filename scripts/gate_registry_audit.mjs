@@ -50,6 +50,8 @@ export function audit() {
   }
   const sh = readFileSync(GATES_SH, 'utf8')
   const shCode = sh.split('\n').filter((l) => !/^\s*#/.test(l)).join('\n')
+  // 真实判红回归：生成 gate_hint 后不得被旧固定名单覆盖。
+  if (/HINT=.*等三条判定器输出/.test(shCode)) problems.push('③ 门禁失败分支仍以固定名单覆盖注册表提示')
   for (const gate of [gateById('integrity'), gateById('concurrency')]) {
     const declared = (gate?.judges ?? []).map((j) => j.file.split('/').pop())
     if (!new RegExp(`gate_registry_entries\\s+${gate.id}\\b`).test(shCode)) {

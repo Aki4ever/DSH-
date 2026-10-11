@@ -1,0 +1,28 @@
+{
+  "id": "cli.rules.tristate_sweep",
+  "layer": "脚本 (CLI)",
+  "path": "scripts/tristate_sweep.mjs",
+  "invoke": "node scripts/tristate_sweep.mjs --check",
+  "summary": "REQ-103 物理触达判定器：tristate_sweep",
+  "inputs": [
+    { "name": "--check", "type": "arg", "required": false, "desc": "执行判定（退出码 0/1/2）" },
+    { "name": "--selftest", "type": "arg", "required": false, "desc": "执行反向用例自检" }
+  ],
+  "outputs": [
+    { "name": "stdout", "type": "text", "desc": "结构化判定报告与结论" }
+  ],
+  "exitCodes": {
+    "0": "判定通过",
+    "1": "判定未通过（红灯）",
+    "2": "不可判定（缺失证据）或参数错误"
+  },
+  "sideEffects": [],
+  "dependencies": [],
+  "parallel": "readonly",
+  "examples": [
+    "node scripts/tristate_sweep.mjs --check",
+    "node scripts/tristate_sweep.mjs --selftest"
+  ],
+  "source": "handwritten",
+  "verified": true
+}

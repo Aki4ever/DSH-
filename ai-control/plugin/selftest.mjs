@@ -73,6 +73,14 @@ check('门禁未过 · glob 放行', evaluate({ name: 'glob' }, statusBlocked, C
 check('门禁未过 · todo_write 放行', evaluate({ name: 'todo_write' }, statusBlocked, Config, FRESH), undefined)
 check('门禁未过 · ask_user_question 放行', evaluate({ name: 'ask_user_question' }, statusBlocked, Config, FRESH), undefined)
 
+// 精确Git诊断允许，禁止任意配置、写操作及shell复合形式。
+for (const command of ['git --no-optional-locks status --short', 'git --no-optional-locks diff --no-ext-diff --no-textconv --stat', 'git --no-optional-locks diff --no-ext-diff --no-textconv --cached --name-only']) {
+  check(`只读Git诊断放行: ${command}`, evaluate({ name: 'bash', ...args({ command }) }, statusBlocked, Config, FRESH), undefined)
+}
+for (const command of ['git status --short', 'git --no-optional-locks status --short; touch probe', 'git --no-optional-locks status --short > probe', 'git --no-optional-locks diff --output=probe', 'git -c core.pager=touch status', 'git --no-optional-locks add .']) {
+  check(`Git诊断边界拒绝: ${command}`, evaluate({ name: 'bash', ...args({ command }) }, statusBlocked, Config, FRESH) !== undefined, true)
+}
+
 // 3) 逃生舱：只有"真正修复管控自身"的调用才放行，否则会掩盖真实门禁
 check('逃生舱 · 运行管控脚本放行', evaluate({ name: 'bash', ...args({ command: './scripts/control_gates.sh check' }) }, statusBlocked, Config, FRESH), undefined)
 check('逃生舱 · 运行冗余检测放行', evaluate({ name: 'bash', ...args({ command: 'node scripts/redundancy_scan.mjs' }) }, statusBlocked, Config, FRESH), undefined)

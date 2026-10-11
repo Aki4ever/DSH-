@@ -27,11 +27,11 @@
  */
 
 import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { join, dirname } from 'node:path'
 import { homedir } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { execFile } from 'node:child_process'
-import { existsSync, writeFileSync, appendFileSync, readFileSync } from 'node:fs'
+import { existsSync, writeFileSync, appendFileSync, readFileSync, mkdirSync } from 'node:fs'
 import { autoNameOnce, parseTitle as parseNamingTitle } from '../../scripts/lib/auto_naming.mjs'
 import { evaluatePhysicalLock, getLockState, advanceLockTo, STAGES } from '../../scripts/lib/physical_lock.mjs'
 import { checkTodoGate, recordTodoWriteSync, resolveTodoEvidenceSync, summarize } from '../../scripts/lib/todo_tracker.mjs'
@@ -133,6 +133,8 @@ export const Config = {
     // 2026-10-02 补（REQ-095，同类自锁第四次）：会话来源合规审计器是**只读判定器**，
     // 而它要拦的正是"插件产出把整轮判失败"这一类故障；门禁红时最需要它上场定位。
     'scripts/session_source_audit.mjs',
+    // REQ-103：证据缺失/判红时仍须能够采集、诊断；仅是应用级修复入口。
+    'scripts/physical_reach_audit.mjs',
   ],
   escapeWritePrefixes: ['ai-control/', 'scripts/', '.dsh-control/'],
   /** 是否在拒绝理由中附带看板摘要。 */
@@ -641,13 +643,53 @@ export function renderTodoPanel(items, opts = {}) {
   return lines
 }
 
+/**
+ * 判定当前是否处于逃生舱绕过态（REQ-103 / C3-c）
+ */
+export function isBypassActive(env = process.env) {
+  return env?.DSH_CONTROL_GUARD === 'off' || env?.DSH_CONTROL_BYPASS === 'all'
+}
+
+/**
+ * 绕过留痕：当逃生舱放行或门禁被关闭时，必须落盘留痕，严禁零痕迹绕过
+ */
+export function recordBypass(reason, extra = {}, stateDir = '') {
+  const homeDir = stateDir || join(homedir(), '.dsh', '.dsh-control')
+  const repoStateDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'reports', 'state')
+  const entry = {
+    at: new Date().toISOString(),
+    pid: process.pid,
+    uid: typeof process.getuid === 'function' ? process.getuid() : 0,
+    reason: String(reason || 'escape_hatch'),
+    env: {
+      DSH_CONTROL_GUARD: process.env.DSH_CONTROL_GUARD || '',
+      DSH_CONTROL_BYPASS: process.env.DSH_CONTROL_BYPASS || '',
+      DSH_CONTROL_TODO: process.env.DSH_CONTROL_TODO || '',
+    },
+    ...extra,
+  }
+  const line = JSON.stringify(entry) + '\n'
+  const targets = extra?.selftest ? [homeDir] : [homeDir, repoStateDir]
+  for (const d of targets) {
+    try {
+      mkdirSync(d, { recursive: true })
+      appendFileSync(join(d, 'bypass.jsonl'), line, 'utf8')
+    } catch {}
+  }
+  return entry
+}
+
 /** 渲染面向模型的常显看板（Markdown，DSH GUI 原生渲染）。支持全绿态高密度 Token 压缩。
  *  第二个参数 usage 是"用量常显行"（DeepSeek 时段 + 剩余额度），由本仓已审计的
  *  探针 CLI 产出；取不到时为空串，看板照常渲染，绝不用假数字占位。
  *  REQ-103 / C1-c：导出供 selftest 做反例验证（渲染口径必须有行为级回归）。 */
-export function renderCard(s, usage = '', todoLines = []) {
+export function renderCard(s, usage = '', todoLines = [], bypassOverride = undefined) {
+  const bypassed = bypassOverride !== undefined ? Boolean(bypassOverride) : isBypassActive()
   const lines = []
   lines.push('<system-reminder>')
+  if (bypassed) {
+    lines.push('⚠️ **【管控警示】本次管控已被绕过**（`DSH_CONTROL_BYPASS=all` 或 `DSH_CONTROL_GUARD=off` · 门禁处于非生效态，已落盘 `bypass.jsonl`）')
+  }
   if (s.execAllowed) {
     // 全绿态高密度紧凑输出（节约 ~65% Token）
     // REQ-103 / C1-c：此前此处把 `100% (4/4) 🟢 全部门禁通过` 写成**字面量**，
@@ -886,12 +928,22 @@ export function evaluateDomainScope(execution, scopeSnapshot, controlProjectRoot
  * 导出以便自检脚本在不启动 DSH 的情况下验证判定逻辑。
  * @returns 拒绝理由字符串；`undefined` 表示放行。
  */
+// 精确只读诊断：禁可选索引写锁、外部diff/textconv、复合命令及任意Git配置。
+export function isReadonlyGitDiagnostic(execution) {
+  if (execution?.name !== 'bash') return false
+  const command = execution?.arguments?.command
+  if (typeof command !== 'string') return false
+  return /^git --no-optional-locks status --short$/.test(command)
+    || /^git --no-optional-locks diff --no-ext-diff --no-textconv(?: --cached)?(?: --stat| --name-only| --check)?$/.test(command)
+}
+
 export function evaluate(execution, status, config, cacheAgeMs = 0, lockState = null, scopeSnapshot = null, controlProjectRoot = '') {
   const toolName = String(execution?.name || '')
   if (!toolName) return undefined
 
   // 1) 白名单工具始终放行（含 todo_write：进度可视化必须先于门禁可用）
   if (config.alwaysAllowed.includes(toolName)) return undefined
+  if (isReadonlyGitDiagnostic(execution)) return undefined
 
   // 2) 非受控工具（只读类、子代理、计划、目标等）放行
   if (!config.guardedTools.includes(toolName)) return undefined
@@ -1223,8 +1275,14 @@ export async function apply(ctx, config = {}) {
 
   // ── 硬门禁：拒绝门禁未通过时的改动型调用 ──────────────────────────────────
   if (cfg.enforce) {
-    if (process.env.DSH_CONTROL_GUARD === 'off') return
-    if (process.env.DSH_CONTROL_BYPASS === 'all') return
+    if (process.env.DSH_CONTROL_GUARD === 'off') {
+      recordBypass('DSH_CONTROL_GUARD=off', { trigger: 'apply_enforce' }, stateDir)
+      return
+    }
+    if (process.env.DSH_CONTROL_BYPASS === 'all') {
+      recordBypass('DSH_CONTROL_BYPASS=all', { trigger: 'apply_enforce' }, stateDir)
+      return
+    }
 
     // 防御性检查：服务必须真实可用。若宿主在 tools 尚未就绪时调用了 apply，
     // 这里绝不能抛错 —— 否则管控插件会拖垮宿主启动，违背"故障安全"原则。

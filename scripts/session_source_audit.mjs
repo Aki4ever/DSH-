@@ -365,7 +365,9 @@ async function main() {
     }
   }
 
-  const exitCode = !staticOk ? 1 : !probe.ran ? (fast ? 0 : 2) : probe.ok ? 0 : 1
+  // REQ-103 / C2-a：三态统一。--fast 未执行宿主实跑对拍（!probe.ran），属于缺证据，
+  // 必须返回 2（不可判定），不得返回 0 假装通过。
+  const exitCode = !staticOk ? 1 : !probe.ran ? 2 : probe.ok ? 0 : 1
   const payload = {
     at: new Date().toISOString(),
     verdict: exitCode === 0 ? 'pass' : exitCode === 2 ? 'undecided' : 'fail',
